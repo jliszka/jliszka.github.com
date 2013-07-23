@@ -15,6 +15,8 @@ I'm a big fan of Scala and Haskell so you'll see a lot of code in those language
 You should probably <a href="http://twitter.com/jliszka">follow me on twitter</a>.
 I promise I won't spam your feed.
 
+I also make no claims about being a gentleman, title of this blog aside.
+
 ### Blog Archive 
 <ul class="posts">
   {% for post in site.posts %}
