@@ -55,7 +55,11 @@ task :post do
     puts "Error - date format must be YYYY-MM-DD, please check you typed it correctly!"
     exit -1
   end
-  filename = File.join(dir, "#{date}-#{slug}.#{CONFIG['post_ext']}")
+  if ENV["draft"]
+    filename = File.join(dir, "#{slug}.#{CONFIG['post_ext']}")
+  else
+    filename = File.join(dir, "#{date}-#{slug}.#{CONFIG['post_ext']}")
+  end
   if File.exist?(filename)
     abort("rake aborted!") if ask("#{filename} already exists. Do you want to overwrite?", ['y', 'n']) == 'n'
   end
@@ -102,7 +106,8 @@ desc "Publish a draft post"
 task :publish do
   old_file = ENV["draft"]
   draft = File.basename(old_file)
-  new_file = File.join(CONFIG['posts'], draft)
+  date = Time.now.strftime('%Y-%m-%d')
+  new_file = File.join(CONFIG['posts'], "#{date}-#{draft}")
   system "mv #{old_file} #{new_file}"
 end # task :publish
 
