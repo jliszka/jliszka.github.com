@@ -8,18 +8,19 @@ tags: [ "probability" ]
 {% include JB/setup %}
 
 I am a frequentist. Or rather, any time I get confused by probability and statistics, I fall back to thinking,
-OK, if I did this 10,000 times, how many times would I get one outcome vs. another? This is fundamentally what
-statistics is about, but so often it gets obscured by tidy closed-form expressions — which, to be sure, are handy
-when you want to compute values with pencil and paper. Fortunately, there are other ways of computing. For instance, computers.
+OK, if I did this 10,000 times, how many times would I get one outcome vs. another? I know that this is fundamentally what
+probability is about, but these simple ideas often get obscured by mathematical gymnastics, the purpose of which
+seems to be to arrive at tidy closed-form expressions — which, to be sure, are handy when you want to compute values
+with pencil and paper. Fortunately, there are other ways of computing. For instance, computers.
 
-So let's use computers to do our computing, and instead of terse, opaque mathemetical expressions, our notation will be
-concise, readable code.
+Code is as expressive a notation as traditional mathematics, so I'm going to try to find a way to formulate concepts
+in probability and statistics in code in a way that is at once readable and executable.
 
 ### Random variables
 
-A good place to start is something that always confused me in my intro stats classes — the concept of a random variable.
+Something always confused me in my intro stats classes — the concept of a random variable.
 They're not variables like I'm used to thinking about them, like something that has one value at a time.
-Rather a random variable is an object that you can sample values from, and the
+A random variable is an object that you can sample values from, and the
 values you get will be distributed according to some underlying probability distribution.
 
 In that way it sort of acts like a container, where the only operation is to sample a value from the container.
@@ -32,7 +33,7 @@ trait Distribution[A] {
 
 The idea is that ```get``` returns a different value from the distribution every time you call it.
 
-Before I go any further I'm going to add a ```sample``` method that lets me draw a sample of any size I want from the distribution.
+I'm going to add a ```sample``` method that lets me draw a sample of any size I want from the distribution.
 Useful for debugging.
 
 {% highlight scala %}
@@ -45,7 +46,7 @@ trait Distribution[A] {
 }
 {% endhighlight %}
 
-Now let's create a random variable that returns values uniformly distributed between 0 and 1.
+Now to create a simple distribution that returns values uniformly distributed between 0 and 1.
 
 {% highlight scala %}
 object Distribution {
@@ -71,11 +72,9 @@ And sampling it gives
     0.4133782959276152
     0.8152378840945975
 
-This is pretty straightforward, but what I'm eventually going to do is
-construct almost every other probability distribution you may or may not have heard of on top of this one.
-So first we need some machinery for transforming distributions.
-
 ### Transforming distributions
+
+Every good container should have a ```map``` method.
 
 {% highlight scala %}
 trait Distribution[A] {
@@ -86,8 +85,7 @@ trait Distribution[A] {
 }
 {% endhighlight %}
 
-As a simple illustration of the ```map``` method, I can map ```* 2``` over the uniform distribution, giving me a uniform
-distribution between 0 and 2:
+Now I can map ```* 2``` over the uniform distribution, giving a uniform distribution between 0 and 2:
 
     scala> uniform.map(_ * 2).sample(10).foreach(println)
     1.608298200368093
@@ -101,7 +99,7 @@ distribution between 0 and 2:
     1.35497977515358
     0.5874386820078819
 
-We can also transform distributions into different types:
+```map``` also lets you create distributions of different types:
 
     scala> val tf = uniform.map(_ < 0.5)
     tf: Distribution[Boolean] = <distribution>
@@ -109,9 +107,9 @@ We can also transform distributions into different types:
     scala> tf.sample(10)
     res2: List[Boolean] = List(true, true, true, true, false, false, false, false, true, false)
 
-Here I've created a ```Distribution[Boolean]``` that should give ```true``` and ```false``` with equal probability.
-Actually it would be a bit more useful to be able to create distributions giving ```true``` and ```false``` with arbitrary
-probabilities. This is called the Bernoulli distribution and I'll add it to the collection.
+```tf``` is a ```Distribution[Boolean]``` that should give ```true``` and ```false``` with equal probability.
+Actually, it would be a bit more useful to be able to create distributions giving ```true``` and ```false``` with arbitrary
+probabilities. This is called the Bernoulli distribution.
 
 {% highlight scala %}
 object Distribution {
@@ -122,12 +120,12 @@ object Distribution {
 }
 {% endhighlight %}
 
-Let's try it out:
+Trying it out:
 
     scala> bernoulli(0.8).sample(10)
     res0: List[Boolean] = List(true, false, true, true, true, true, true, true, true, true)
 
-OK now that you get the idea, here's some more machinery for transforming and measuring distributions:
+Now some more machinery for transforming and measuring distributions:
 
 {% highlight scala %}
 trait Distribution[A] {
@@ -188,7 +186,6 @@ Let's see how this works.
     scala> dice.pr(_ == 11)
     res4: Double = 0.0542
 
-
 I'm tired of looking at individual probabilities. What I really want is a way to visualize the entire distribution.
 
     scala> dice.hist
@@ -204,9 +201,8 @@ I'm tired of looking at individual probabilities. What I really want is a way to
     11  5.64% #####
     12  2.79% ##
 
-That's better. (The code for this is tedious; all it's doing is pulling 10,000 samples from the distribution, bucketing them,
-counting the size of the buckets, and finding a good way to display it. If you're interested, this and everything that
-appears in this post is available [here](http://github.com/jliszka/probability-monad).)
+That's better. ```hist``` pulls 10,000 samples from the distribution, buckets them, counts the size of the buckets,
+and finds a good way to display it. (The code is tedious so I'm not going to reproduce it here.)
 
 ### Don't tell anyone it's a monad
 
@@ -216,8 +212,7 @@ Another way to represent two die rolls is to sample from ```die``` twice and add
 val dice = die.map(d1 => die.map(d2 => d1 + d2))
 {% endhighlight %}
 
-But wait, that gives me a ```Distribution[Distribution[Int]]```, which is nonsense. Fortunately this is a well-known pattern
-with a simple fix.
+But wait, that gives me a ```Distribution[Distribution[Int]]```, which is nonsense. Fortunately there's an easy fix.
 
 {% highlight scala %}
 trait Distribution[A] {
@@ -243,8 +238,8 @@ val dice = for {
 } yield d1 + d2
 {% endhighlight %}
 
-This is really nice. The ```<-``` notation can be read as sampling a value from the distribution, and so
-```d1``` and ```d2``` both have type ```Int```. And what you ```yield``` is a single sample from the distribution
+This is really nice. The ```<-``` notation can be read as sampling a value from the distribution
+(```d1``` and ```d2``` both have type ```Int```). And what you ```yield``` is a single sample from the distribution
 you're creating.
 
 ### Monty Hall
@@ -274,7 +269,7 @@ Just as expected, switching gives you a 2/3 chance of finding the prize!
 
 Another fun problem: if you flip a coin repeatedly, which pattern do you expect to see first, heads-tails-heads or heads-tails-tails?
 
-To model this I need another tool.
+First I need the following method:
 
 {% highlight scala %}
 trait Distribution[A] {
@@ -292,8 +287,7 @@ trait Distribution[A] {
 }
 {% endhighlight %}
 
-This method samples from the distribution, adding the samples to the list until the list satisfies some predicate.
-It's worth noting that new samples are added to the head of the list.
+```until``` samples from the distribution, adding the samples to the head of a list until the list satisfies some predicate.
 
 Now I can do:
 
@@ -302,7 +296,7 @@ val hth = bernoulli(0.5).until(_.take(3) == List(true, false, true)).map(_.lengt
 val htt = bernoulli(0.5).until(_.take(3) == List(false, false, true)).map(_.length)
 {% endhighlight %}
 
-Let's look at the distributions:
+Looking at the distributions:
 
     scala> hth.hist
      3 11.63% ###########
@@ -358,8 +352,8 @@ trait Distribution[A] {
 {% endhighlight %}
 
 Hm, that ```.sum``` is not going to work for all ```A```s.
-I mean, what would you expect ```bernoulli(0.5).ev``` to be, when ```A``` is ```Boolean```?
-So let me just constrain ```A``` for the purposes of this method.
+I mean, what would you expect ```bernoulli(0.5).ev``` to be, where ```A``` is ```Boolean```?
+So I need to constrain ```A``` for the purposes of this method.
 
 {% highlight scala %}
 trait Distribution[A] {
@@ -384,9 +378,9 @@ Perfect, I like having to make the conversion to ```Double``` explicit.
 
 There we go, numerical confirmation that HTT is expected to appear after 8 flips and HTH after 10 flips.
 
-I'm curious. Suppose we played a game where we each flipped a coin until I got HTH and you got HTT. Then we announce
-how many flips it took, and whoever took more flips pays the other person the difference in dollars. What is the expected
-value of this game? Is it 2? It doesn't have to be 2, does it? Maybe the distributions are funky in some way that makes
+I'm curious. Suppose you and I played a game where we each flipped a coin until I got HTH and you got HTT.
+Then whoever took more flips pays the other person the difference. What is the expected value of this game? Is it 2?
+It doesn't have to be 2, does it? Maybe the distributions are funky in some way that makes
 the difference in expected value 2 but the expected difference something else.
 
 Well, easy enough to try it.
@@ -417,7 +411,7 @@ object Distribution {
 }
 {% endhighlight %}
 
-Let's try it out:
+Here's what it looks like:
 
     scala> normal.hist
     -3.50  0.04% 
@@ -490,9 +484,9 @@ The frequentist approach lines up really well with my intuitions about probabili
 provide a suggestive syntax for constructing new random variables from existing ones. So I'm going to continue
 to explore various concepts in probability and statistics using these tools.
 
-In later posts I'll talk about Bayesian inference, Markov chains, the Central Limit Theorem, probablistic graphical models,
-and a bunch of related distributions, all through a frequentist/computational lens.
+In later posts I'll try to model Bayesian inference, Markov chains, the Central Limit Theorem, probablistic graphical models,
+and a bunch of related distributions.
 
-If you're interested, all of the code for this is on [github](http://github.com/jliszka/probability-monad).
+All of the code for this is on [github](http://github.com/jliszka/probability-monad).
 
 
