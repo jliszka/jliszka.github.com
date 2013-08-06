@@ -19,8 +19,8 @@ in probability and statistics in code in a way that is at once readable and exec
 ### Random variables
 
 Something always confused me in my intro stats classes — the concept of a random variable.
-They're not variables like I'm used to thinking about them, like something that has one value at a time.
-A random variable is an object that you can sample values from, and the
+A random variable is not a variable like I'm used to thinking about, like something that has one value at a time.
+A random variable is instead an object that you can sample values from, and the
 values you get will be distributed according to some underlying probability distribution.
 
 In that way it sort of acts like a container, where the only operation is to sample a value from the container.
@@ -31,22 +31,21 @@ trait Distribution[A] {
 }
 {% endhighlight %}
 
-The idea is that ```get``` returns a different value from the distribution every time you call it.
+The idea is that ```get``` returns a different value (of type ```A```) from the distribution every time you call it.
 
 I'm going to add a ```sample``` method that lets me draw a sample of any size I want from the distribution.
-Useful for debugging.
 
 {% highlight scala %}
 trait Distribution[A] {
   def get: A
 
   def sample(n: Int): List[Int] = {
-    List.fill(n)(self.get)
+    List.fill(n)(this.get)
   }
 }
 {% endhighlight %}
 
-Now to create a simple distribution that returns values uniformly distributed between 0 and 1.
+Now to create a simple distribution. Here's one whose samples are uniformly distributed between 0 and 1.
 
 {% highlight scala %}
 object Distribution {
@@ -78,12 +77,15 @@ Every good container should have a ```map``` method.
 
 {% highlight scala %}
 trait Distribution[A] {
+  self =>
   // ...
   def map[B](f: A => B): Distribution[B] = new Distribution[B] {
     override def get = f(self.get)
   }
 }
 {% endhighlight %}
+
+(Quick technical note: I added a self-type annotation that makes ```self``` an alias for ```this``` so that it's easier to refer to in anonymous inner classes.)
 
 Now I can map ```* 2``` over the uniform distribution, giving a uniform distribution between 0 and 2:
 
@@ -109,7 +111,7 @@ Now I can map ```* 2``` over the uniform distribution, giving a uniform distribu
 
 ```tf``` is a ```Distribution[Boolean]``` that should give ```true``` and ```false``` with equal probability.
 Actually, it would be a bit more useful to be able to create distributions giving ```true``` and ```false``` with arbitrary
-probabilities. This is called the Bernoulli distribution.
+probabilities. This kind of distribution is called the Bernoulli distribution.
 
 {% highlight scala %}
 object Distribution {
@@ -238,13 +240,17 @@ val dice = for {
 } yield d1 + d2
 {% endhighlight %}
 
-This is really nice. The ```<-``` notation can be read as sampling a value from the distribution
-(```d1``` and ```d2``` both have type ```Int```). And what you ```yield``` is a single sample from the distribution
-you're creating.
+This is really nice. The ```<-``` notation can be read as sampling a value from a distribution.
+```d1``` and ```d2``` are samples from ```die``` and both have type ```Int```.
+```d1 + d2``` is a sample from ```dice```, the distribution I'm creating.
+
+In other words, I'm creating a new distribution just by writing code that constructs a sample from that distribution
+in terms of individual samples from other distributions.
+This is pretty handy! Lots of common distributions can be constructed this way. (More on that soon!)
 
 ### Monty Hall
 
-I think it would be fun to model the Monty Hall problem.
+I think it would be fun to model the [Monty Hall problem](http://en.wikipedia.org/wiki/Monty_Hall_problem).
 
 {% highlight scala %}
 val montyHall: Distribution[(Int, Int)] = {
@@ -258,12 +264,14 @@ val montyHall: Distribution[(Int, Int)] = {
 }
 {% endhighlight %}
 
-Now let's try it:
+This code constructs a distribution of pairs representing the door the prize is behind and the door you switched to.
+Let's see how often those are the same door:
 
     scala> montyHall.pr{ case (prize, switch) => prize == switch }
     res0: Double = 0.6671
 
-Just as expected, switching gives you a 2/3 chance of finding the prize!
+Just as expected. Lots of people have a hard time believing
+the explanation behind why this is correct, but there's no arguing with just trying it 10,000 times!
 
 ### HTH vs HTT
 
@@ -287,7 +295,7 @@ trait Distribution[A] {
 }
 {% endhighlight %}
 
-```until``` samples from the distribution, adding the samples to the head of a list until the list satisfies some predicate.
+```until``` samples from the distribution, adding the samples to the _front_ of the list until the list satisfies some predicate.
 
 Now I can do:
 
@@ -340,7 +348,7 @@ Looking at the distributions:
 
 Eyeballing it, it appears that HTT is likely to occur earlier than HTH. (How can this be? Excercise for the reader!)
 But I'd like to get a more concrete answer than that. What I want to know is how many flips you expect to see before
-seeing either pattern. Let me add a method to compute the expected value of a distribution:
+seeing either pattern. So let me add a method to compute the expected value of a distribution:
 
 {% highlight scala %}
 trait Distribution[A] {
@@ -352,8 +360,8 @@ trait Distribution[A] {
 {% endhighlight %}
 
 Hm, that ```.sum``` is not going to work for all ```A```s.
-I mean, what would you expect ```bernoulli(0.5).ev``` to be, where ```A``` is ```Boolean```?
-So I need to constrain ```A``` for the purposes of this method.
+I mean, ```A``` could certainly be ```Boolean``` as in the case of the ```bernoulli``` distribution (what is the expected value of a coin flip?).
+So I need to constrain ```A``` to ```Double``` for the purposes of this method.
 
 {% highlight scala %}
 trait Distribution[A] {
@@ -368,7 +376,8 @@ trait Distribution[A] {
     <console>:15: error: Cannot prove that Int <:< Double.
                   hth.ev
 
-Perfect, I like having to make the conversion to ```Double``` explicit.
+Perfect. You know, it always bothered me that the expected value of a die roll is 3.5.
+Requiring an explicit conversion to ```Double``` before computing the expected value makes that fact a lot more palatable.
 
     scala> hth.map(_.toDouble).ev
     res0: Double = 9.9204
@@ -376,7 +385,7 @@ Perfect, I like having to make the conversion to ```Double``` explicit.
     scala> htt.map(_.toDouble).ev
     res1: Double = 7.9854
 
-There we go, numerical confirmation that HTT is expected to appear after 8 flips and HTH after 10 flips.
+There we go, empirical confirmation that HTT is expected to appear after 8 flips and HTH after 10 flips.
 
 I'm curious. Suppose you and I played a game where we each flipped a coin until I got HTH and you got HTT.
 Then whoever took more flips pays the other person the difference. What is the expected value of this game? Is it 2?
