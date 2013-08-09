@@ -7,19 +7,8 @@ tags: [ "probability" ]
 ---
 {% include JB/setup %}
 
-I am a frequentist. Or rather, any time I get confused by probability and statistics, I fall back to thinking,
-OK, if I did this 10,000 times, how many times would I get one outcome vs. another? I know that this is fundamentally what
-probability is about, but these simple ideas often get obscured by mathematical gymnastics, the purpose of which
-seems to be to arrive at tidy closed-form expressions — which, to be sure, are handy when you want to compute values
-with pencil and paper. Fortunately, there are other ways of computing. For instance, computers.
-
-Code is as expressive a notation as traditional mathematics, so I'm going to try to find a way to formulate concepts
-in probability and statistics in code in a way that is at once readable and executable.
-
-### Random variables
-
-Something always confused me in my intro stats classes — the concept of a random variable.
-A random variable is not a variable like I'm used to thinking about, like something that has one value at a time.
+One thing that always confused me in my intro stats classes was the concept of a random variable.
+A random variable is not a variable like I'm used to thinking about, like a thing that has one value at a time.
 A random variable is instead an object that you can sample values from, and the
 values you get will be distributed according to some underlying probability distribution.
 
@@ -127,7 +116,9 @@ Trying it out:
     scala> bernoulli(0.8).sample(10)
     res0: List[Boolean] = List(true, false, true, true, true, true, true, true, true, true)
 
-Now some more machinery for transforming and measuring distributions:
+Cool. Now I want to measure the probability that a random variable will take on certain values.
+This is easy to do empirically by pulling 10,000 sample values and counting how often the values
+satisfy the given predicate.
 
 {% highlight scala %}
 trait Distribution[A] {
@@ -136,7 +127,19 @@ trait Distribution[A] {
   def pr(predicate: A => Boolean): Double = {
     this.sample(N).count(predicate).toDouble / N
   }
+}
+{% endhighlight %}
 
+    scala> uniform.pr(_ < 0.4)
+    res2: Double = 0.4015
+
+It works! It's not exact, but it's close enough.
+
+Now I need two ways to transform a distribution.
+
+{% highlight scala %}
+trait Distribution[A] {
+  // ...
   def given(predicate: A => Boolean): Distribution[A] = new Distribution[A] {
     @tailrec
     override def get = {
@@ -153,7 +156,11 @@ trait Distribution[A] {
 }
 {% endhighlight %}
 
-And one more distribution:
+```given``` creates a new distribution by sampling from the original distribution and only emitting values
+that match the given predicate. ```repeat``` creates a ```Distribution[List[A]]``` from a ```Distribution[A]```
+by creating samples that are lists of samples from the original distributions.
+
+OK, now one more distribution:
 
 {% highlight scala %}
 object Distribution {
@@ -165,7 +172,7 @@ object Distribution {
 }
 {% endhighlight %}
 
-Let's see how this works.
+Let's see how all this works.
 
     scala> val die = discreteUniform(1 to 6)
     die: Distribution[Int] = <distribution>
@@ -188,7 +195,9 @@ Let's see how this works.
     scala> dice.pr(_ == 11)
     res4: Double = 0.0542
 
-I'm tired of looking at individual probabilities. What I really want is a way to visualize the entire distribution.
+Neat! This is getting useful.
+
+OK I'm tired of looking at individual probabilities. What I really want is a way to visualize the entire distribution.
 
     scala> dice.hist
      2  2.67% ##
