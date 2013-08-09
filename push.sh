@@ -1,9 +1,11 @@
 #!/bin/sh
 
+shopt -s extglob && \
 git checkout master && \
-rm -rf 201*/ assets/ *.xml *.html *.txt
+rm -rf !\(_site\) && \
 cp -a _site/* . && \
 git add . && \
 git commit -m 'Site updated' && \
 git push origin master && \
-git checkout source
+git checkout source && \
+shopt -u extglob
