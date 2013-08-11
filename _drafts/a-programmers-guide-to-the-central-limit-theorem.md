@@ -7,10 +7,17 @@ tags: []
 ---
 {% include JB/setup %}
 
-Suppose I have a random variable whose underlying distribution is unknown to me. I take sample of a reasonable size (say 100)
-find the mean of the sample. What can I expect the mean to look like?
+This post is a continuation of a series of posts about exploring probability distributions through code. The first post
+is [here]({{ page.previous.previous.url }}).
 
-What I really want is the distribution of the sample mean.
+In this post I'm going to look at the Central Limit Theorem.
+
+### Sample means
+
+Suppose I have a random variable whose underlying distribution is unknown to me. I take sample of a reasonable size (say 100)
+and find the mean of the sample. What can I say about the sample mean?
+
+The most comprehensive answer to this is to look at the distribution of the sample mean.
 
 {% highlight scala %}
 def sampleMean(d: Distribution[Double], n: Int = 100): Distribution[Double] = {
@@ -18,7 +25,10 @@ def sampleMean(d: Distribution[Double], n: Int = 100): Distribution[Double] = {
 }
 {% endhighlight %}
 
-Let's try it on some of the distributions we've created.
+This method takes any distribution and returns the distribution of means of samples from that distribution. You can
+specify the sample size but by default we'll use 100.
+
+Let's try it on some of the distributions we've [created]({{ page.previous.url }}).
 
     scala> sampleMean(uniform).hist
     0.40  0.01% 
@@ -140,19 +150,40 @@ OK, starting to see a pattern here. Let's look at some discrete distributions.
     5.80  0.00% 
     6.00  0.01% 
 
+    scala> sampleMean(poisson(5).map(_.toDouble)).hist
+    4.30  0.15% 
+    4.40  0.43% 
+    4.50  1.34% #
+    4.60  3.42% ###
+    4.70  7.19% #######
+    4.80 12.04% ############
+    4.90 15.49% ###############
+    5.00 18.02% ##################
+    5.10 15.82% ###############
+    5.20 11.99% ###########
+    5.30  7.37% #######
+    5.40  4.03% ####
+    5.50  1.81% #
+    5.60  0.64% 
+    5.70  0.16% 
+
 All of these distributions look vaguely normal and they're all clustered around the mean of the underlying distribution.
-This is basically a statement of the Central Limit Theorem — samples of reasonable size drawn from some underlying
-distribution will be normally distributed around the mean of the underlying distribution. The Central Limit Theorem even
-tells you how to compute the standard deviation of this normal distribution — it's just the standard deviation of the
+
+### The Central Limit Theorem
+
+Surprise! That little observation was basically a statement of the Central Limit Theorem — means samples of a reasonable
+size drawn from any probability
+distribution will be normally distributed around the mean of the distribution. The Central Limit Theorem even
+tells you how to compute the standard deviation of the distribution of sample means: it's just the standard deviation of the
 underlying distribution divided by the square root of the sample size.
 
 {% math %}
 \bar{\sigma} = \frac{\sigma}{\sqrt{n}}
 {% endmath %}
 
-The most remarkable fact is that, as demonstrated above, this works no matter what the underlying distribution is.
+The most remarkable fact is that, as demonstrated above, this works no matter what distribution you try it on.
 
-Let's revisit each of the examples above and try to see if it pans out.
+Let's revisit each of the examples above and see if it pans out.
 
     scala> uniform.ev
     res0: Double = 0.49596431533522234
@@ -168,7 +199,7 @@ So the Central Limit Theorem would predict that ```sampleMean(uniform)``` will h
     scala> sampleMean(uniform).stdev
     res3: Double = 0.028763987024078164
 
-Hm, alright. Let's keep going. (I'm going to omit the mean calculations because it seems like an obvious fact. So I'm just
+Wow, OK! Let's keep going. (I'm going to omit the mean calculations because it seems like an obvious fact. So I'm just
 looking to see that the standard deviation of the distribution of sample means is 1/10th the standard deviation of the underlying distribution.)
 
     scala> exponential(1).stdev
@@ -189,25 +220,34 @@ looking to see that the standard deviation of the distribution of sample means i
     scala> sampleMean(binomial(0.2, 10).map(_.toDouble)).stdev
     res6: Double = 0.12688793641635224
 
+    scala> poisson(5).map(_.toDouble).stdev
+    res7: Double = 2.2423514867210077
+
+    scala> sampleMean(poisson(5).map(_.toDouble)).stdev
+    res8: Double = 0.2251131007715896
+
     scala> geometric(0.2).map(_.toDouble).stdev
-    res7: Double = 4.439230239579939
+    res9: Double = 4.439230239579939
 
     scala> sampleMean(geometric(0.2).map(_.toDouble)).stdev
-    res8: Double = 0.4428929231078312
+    res10: Double = 0.4428929231078312
 
 And one more with a different sample size:
 
     scala> sampleMean(geometric(0.2).map(_.toDouble), n = 625).stdev
-    res9: Double = 0.17952533894556522
+    res11: Double = 0.17952533894556522
 
-    scala> res8 / 25
-    res10: Double = 0.17756920958319758
+    scala> geometric(0.2).stdev / 25
+    res12: Double = 0.17756920958319758
 
 Crazy! OK that's enough experimental proof for me.
 
+### Exceptions
+
 You might have noticed that I skipped the Pareto distribution. It turns out that the Central Limit Theorem actually
 doesn't work with the Pareto distribution. This is due to one sneaky fact — sample means are clustered around the mean of the
-underlying distribution _if it exists_. The Pareto distribution actually has an infinite mean.
+underlying distribution _if it exists_. The Pareto distribution doesn't have a mean (actually its mean is infinite, but 
+that's basically saying the same thing).
 
 The sample means are not normally distributed:
 
@@ -284,7 +324,9 @@ We can also calculate this probability directly by looking at the distribution o
     scala> sampleMean(d, n = 100).pr(_ < -0.3)
     res0: Double = 0.0104
 
-OK, so we were able to use the Central Limit Theorem to reason about a sample from a geometric distribution, knowing that
+### Conclusion
+
+We were able to use the Central Limit Theorem to reason about a sample from a geometric distribution (or almost any other), knowing that
 the mean of such a sample is expected to fall within a bell-shaped curve around the mean of the underlying distribution.
 This is great because we don't need special analysis tools for each kind of distribution we might come across. 
 No matter what the underlying distribution is, you can always treat sample means as normally distributed.
@@ -292,7 +334,7 @@ No matter what the underlying distribution is, you can always treat sample means
 ... unless the underlying distribution has no mean.
 
 We actually run into this all the time at Foursquare. Certain things like, say, the distribution of the number of friends
-users have is Pareto-distributed (the vast majority of users have very few friends, but some users have thousands of friends).
+users have is Pareto-distributed (the vast majority of users have a small number of friends, but some users have thousands of friends).
 So if you're running an experiment that is intended to increase the average number of friends
 users have, you're going to run into trouble. You aren't going to be able to use standard statistical techniques to analyze
 the results of the experiment. Well, actually, you can try, and you'll get some convincing-looking numbers out, but those

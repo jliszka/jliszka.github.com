@@ -13,6 +13,7 @@ A random variable is instead an object that you can sample values from, and the
 values you get will be distributed according to some underlying probability distribution.
 
 In that way it sort of acts like a container, where the only operation is to sample a value from the container.
+In Scala it might look something like:
 
 {% highlight scala %}
 trait Distribution[A] {
@@ -37,12 +38,9 @@ trait Distribution[A] {
 Now to create a simple distribution. Here's one whose samples are uniformly distributed between 0 and 1.
 
 {% highlight scala %}
-object Distribution {
-  val rand = new java.util.Random()
-
-  val uniform = new Distribution[Double] {
-    override def get = rand.nextDouble()
-  }
+val uniform = new Distribution[Double] {
+  private val rand = new java.util.Random()
+  override def get = rand.nextDouble()
 }
 {% endhighlight %}
 
@@ -62,7 +60,8 @@ And sampling it gives
 
 ### Transforming distributions
 
-Every good container should have a ```map``` method.
+Every good container should have a ```map``` method. ```map``` will transform values produced by the distribution
+according to some function you pass it.
 
 {% highlight scala %}
 trait Distribution[A] {
@@ -103,11 +102,8 @@ Actually, it would be a bit more useful to be able to create distributions givin
 probabilities. This kind of distribution is called the Bernoulli distribution.
 
 {% highlight scala %}
-object Distribution {
-  // ...
-  def bernoulli(p: Double): Distribution[Boolean] = {
-    uniform.map(_ < p)
-  }
+def bernoulli(p: Double): Distribution[Boolean] = {
+  uniform.map(_ < p)
 }
 {% endhighlight %}
 
@@ -117,7 +113,7 @@ Trying it out:
     res0: List[Boolean] = List(true, false, true, true, true, true, true, true, true, true)
 
 Cool. Now I want to measure the probability that a random variable will take on certain values.
-This is easy to do empirically by pulling 10,000 sample values and counting how often the values
+This is easy to do empirically by pulling 10,000 sample values and counting how many of the values
 satisfy the given predicate.
 
 {% highlight scala %}
@@ -156,19 +152,16 @@ trait Distribution[A] {
 }
 {% endhighlight %}
 
-```given``` creates a new distribution by sampling from the original distribution and only emitting values
-that match the given predicate. ```repeat``` creates a ```Distribution[List[A]]``` from a ```Distribution[A]```
-by creating samples that are lists of samples from the original distributions.
+```given``` creates a new distribution by sampling from the original distribution and discarding values
+that don't match the given predicate. ```repeat``` creates a ```Distribution[List[A]]``` from a ```Distribution[A]```
+by producing samples that are lists of samples from the original distributions.
 
 OK, now one more distribution:
 
 {% highlight scala %}
-object Distribution {
-  // ...
-  def discreteUniform[A](values: Iterable[A]): Distribution[A] = {
-    val vec = values.toVector
-    uniform.map(x => vec((x * vec.length).toInt))
-  }
+def discreteUniform[A](values: Iterable[A]): Distribution[A] = {
+  val vec = values.toVector
+  uniform.map(x => vec((x * vec.length).toInt))
 }
 {% endhighlight %}
 
@@ -195,6 +188,9 @@ Let's see how all this works.
     scala> dice.pr(_ == 11)
     res4: Double = 0.0542
 
+    scala> dice.pr(_ < 4)
+    res5: Double = 0.0811
+
 Neat! This is getting useful.
 
 OK I'm tired of looking at individual probabilities. What I really want is a way to visualize the entire distribution.
@@ -219,9 +215,8 @@ and finds a good way to display it. (The code is tedious so I'm not going to rep
 
 Another way to represent two die rolls is to sample from ```die``` twice and add the samples.
 
-{% highlight scala %}
-val dice = die.map(d1 => die.map(d2 => d1 + d2))
-{% endhighlight %}
+    scala> val dice = die.map(d1 => die.map(d2 => d1 + d2))
+    dice: Distribution[Distribution[Int]] = <distribution>
 
 But wait, that gives me a ```Distribution[Distribution[Int]]```, which is nonsense. Fortunately there's an easy fix.
 
@@ -234,13 +229,27 @@ trait Distribution[A] {
 }
 {% endhighlight %}
 
-Now this will work:
+Let's try it now.
 
-{% highlight scala %}
-val dice = die.flatMap(d1 => die.map(d2 => d1 + d2))
-{% endhighlight %}
+    scala> val dice = die.flatMap(d1 => die.map(d2 => d1 + d2))
+    dice: Distribution[Int] = <distribution>
 
-The code above can be re-written using Scala's ```for```-comprehension syntax:
+    scala> dice.hist
+     2  2.71% ##
+     3  5.17% #####
+     4  8.23% ########
+     5 11.54% ###########
+     6 14.04% ##############
+     7 16.67% ################
+     8 13.53% #############
+     9 10.97% ##########
+    10  8.81% ########
+    11  5.62% #####
+    12  2.71% ##
+
+It worked!
+
+The definition of ```dice``` can be re-written using Scala's ```for```-comprehension syntax:
 
 {% highlight scala %}
 val dice = for {
@@ -253,8 +262,8 @@ This is really nice. The ```<-``` notation can be read as sampling a value from 
 ```d1``` and ```d2``` are samples from ```die``` and both have type ```Int```.
 ```d1 + d2``` is a sample from ```dice```, the distribution I'm creating.
 
-In other words, I'm creating a new distribution just by writing code that constructs a sample from that distribution
-in terms of individual samples from other distributions.
+In other words, I'm creating a new distribution by writing code that constructs a single sample of the distribution
+from individual samples of other distributions.
 This is pretty handy! Lots of common distributions can be constructed this way. (More on that soon!)
 
 ### Monty Hall
@@ -305,6 +314,7 @@ trait Distribution[A] {
 {% endhighlight %}
 
 ```until``` samples from the distribution, adding the samples to the _front_ of the list until the list satisfies some predicate.
+A single sample from the resulting distribution is a list that satisfies the predicate.
 
 Now I can do:
 
@@ -369,7 +379,7 @@ trait Distribution[A] {
 {% endhighlight %}
 
 Hm, that ```.sum``` is not going to work for all ```A```s.
-I mean, ```A``` could certainly be ```Boolean``` as in the case of the ```bernoulli``` distribution (what is the expected value of a coin flip?).
+I mean, ```A``` could certainly be ```Boolean```, as in the case of the ```bernoulli``` distribution (what is the expected value of a coin flip?).
 So I need to constrain ```A``` to ```Double``` for the purposes of this method.
 
 {% highlight scala %}
@@ -385,8 +395,9 @@ trait Distribution[A] {
     <console>:15: error: Cannot prove that Int <:< Double.
                   hth.ev
 
-Perfect. You know, it always bothered me that the expected value of a die roll is 3.5.
-Requiring an explicit conversion to ```Double``` before computing the expected value makes that fact a lot more palatable.
+Perfect. You know, it really bothered me when I first learned that the expected value of a die roll is 3.5.
+Requiring an explicit conversion to ```Double``` before computing the expected value of any distribution
+makes that fact a lot more palatable.
 
     scala> hth.map(_.toDouble).ev
     res0: Double = 9.9204
@@ -415,17 +426,67 @@ val diff = for {
 
 Actually, it does have to be 2. Expectation is linear!
 
+### Unbiased rounding
+
+At Foursquare we have some code that computes how much our customers owe us, and charges them for it. Our payments provider,
+[Stripe](http://www.stripe.com), only allows us to charge in whole cents, but for complicated business reasons sometimes a
+customer owes us fractional cents.
+(No, this is not an Office Space or Superman III reference.) So we just round to the nearest whole cent (actually
+we use unbiased rounding, or [banker's rounding](http://en.wikipedia.org/wiki/Rounding#Round_half_to_even), which rounds
+0.5 cents up half the time and down half the time).
+
+Because we're paranoid and also curious, we want to know how much money we are losing or gaining due to rounding. Let's
+say that during some period of time we saw that we rounded 125 times, and the sum of all the roundings totaled +8.5 cents.
+That kinda seems like a lot, but it could happen by chance. If fractional cents are uniformly distributed, what is the
+probability that you would see a difference that big after 125 roundings?
+
+Let's find out.
+
+    scala> val d = uniform.map(x => if (x < 0.5) -x else 1.0-x).repeat(125).map(_.sum)
+    d: Distribution[Double] = <distribution>
+
+    scala> d.hist
+    -10.0  0.02% 
+     -9.0  0.20% 
+     -8.0  0.57% 
+     -7.0  1.32% #
+     -6.0  2.15% ##
+     -5.0  3.75% ###
+     -4.0  5.12% #####
+     -3.0  7.83% #######
+     -2.0 10.58% ##########
+     -1.0 11.44% ###########
+      0.0 12.98% ############
+      1.0 11.57% ###########
+      2.0 10.68% ##########
+      3.0  7.73% #######
+      4.0  5.70% #####
+      5.0  3.88% ###
+      6.0  2.32% ##
+      7.0  1.21% #
+      8.0  0.65% 
+      9.0  0.25% 
+     10.0  0.06% 
+
+There's the distribution. Each instance is either a loss of ```x``` if ```x < 0.5``` or a gain of ```1.0-x```.
+Repeat 125 times and sum it all up to get the total gain or loss from rounding.
+
+Now what's the probability that we'd see a total greater than 8.5 cents? (Or less than -8.5 cents — a loss of 8.5
+cents would be equally surprising.)
+
+    scala> d.pr(x => math.abs(x) > 8.5)
+    res0: Double = 0.0098
+
+Pretty unlikely, about 1%! So the distribution of fractional cents is probably not uniform. We should maybe look into that.
+
 ### The normal distribution
 
-One last example. It turns out the normal distribution can be approximated pretty well by summing 12 uniformly distributed
-random variables and subtracting 6. In code:
+One last example. It turns out the [normal distribution](http://en.wikipedia.org/wiki/Normal_distribution)
+can be approximated pretty well by summing 12 uniformly distributed random variables and subtracting 6. In code:
 
 {% highlight scala %}
-object Distribution {
-  // ...
-  val normal: Distribution[Double] = {
-    uniform.repeat(12).map(_.sum - 6)
-  }
+val normal: Distribution[Double] = {
+  uniform.repeat(12).map(_.sum - 6)
 }
 {% endhighlight %}
 
@@ -475,6 +536,9 @@ trait Distribution[A] {
 }
 {% endhighlight %}
 
+The variance {%m%}\sigma^2{%em%} of a random variable {%m%}X{%em%} with mean {%m%}\mu{%em%} is {%m%}E[(X-\mu)^2]{%em%},
+and the standard deviation {%m%}\sigma{%em%} is just the square root of the variance.
+
 And now:
 
     scala> normal.stdev
@@ -486,12 +550,9 @@ This is a great approximation and all, but ```java.util.Random``` actually provi
 so for the sake of performance I'm just going to use that.
 
 {% highlight scala %}
-object Distribution {
-  // ...
-  val normal: Distribution[Double] = new Distribution[Double] {
-    override def get = {
-      rand.nextGaussian()
-    }
+val normal: Distribution[Double] = new Distribution[Double] {
+  override def get = {
+    rand.nextGaussian()
   }
 }
 {% endhighlight %}

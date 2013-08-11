@@ -3,7 +3,7 @@ layout: post
 title: "Climbing the probability distribution ladder"
 description: ""
 category: 
-tags: []
+tags: [ "probability" ]
 ---
 {% include JB/setup %}
 
@@ -13,10 +13,10 @@ the uniform distribution and derived the Bernoulli and normal distributions from
 
 In this post I'll construct some more common distributions in the same manner.
 
-### Exponential and Pareto distributions
+### The exponential distribution
 
-If {%m%}X{%em%} is a uniformly distributed random variable, then {%m%}-log(X)/\lambda{%em%} is called the [exponential
-distribution](http://en.wikipedia.org/wiki/Exponential_distribution).
+If {%m%}X{%em%} is a uniformly distributed random variable, then {%m%}-log(X)/\lambda{%em%} is distributed according to
+the [exponential distribution](http://en.wikipedia.org/wiki/Exponential_distribution).
 The parameter {%m%}\lambda{%em%} is just a scaling factor. In code:
 
 {% highlight scala %}
@@ -48,12 +48,15 @@ It looks like this:
      7.5  0.03% 
      8.0  0.01% 
 
-It seems backwards to me that the exponential distribution is implemented using a logarithm. It probably has something
+It seems backwards that the exponential distribution is implemented using a logarithm. It probably has something
 to do with this particular technique of constructing distributions. I'm describing where to put each piece of probability mass
 (here, by taking the log of each sample) rather than describing how much probability mass lives at each value of {%m%}x{%em%}
-(for the exponential distribution, {%m%}\lambda e^{-\lambda x}{%em%} lives at {%m%}x{%em%}).
+(for the exponential distribution, {%m%}\lambda e^{-\lambda x}{%em%} lives at {%m%}x{%em%}, so from that definition it's
+clear why it's called the exponential distribution).
 
-We can construct the [Pareto distribution](http://en.wikipedia.org/wiki/Pareto_distribution)
+### The Pareto distribution
+
+You can construct the [Pareto distribution](http://en.wikipedia.org/wiki/Pareto_distribution)
 from the uniform distribution in a similar way.
 If {%m%}X{%em%} is a uniformly distributed random variable, then {%m%}x_m X^{-1/\alpha}{%em%} is a Pareto-distributed random variable.
 The parameter {%m%}x_m{%em%} is the minimum value the distribution can take, and {%m%}\alpha{%em%} is a factor that determines
@@ -136,9 +139,11 @@ Exponential:
 f_\lambda(x) = \lambda e^{-\lambda x}
 {% endmath%}
 
-### Chi-squared and Student's _t_-distribution
+Hm.
 
-A [Chi-squared distribution](http://en.wikipedia.org/wiki/Chi-squared_distribution)
+### The chi-squared distribution
+
+A [chi-squared distribution](http://en.wikipedia.org/wiki/Chi-squared_distribution)
 can be constructed by squaring and then summing several normal distributions.
 It is parameterized by the number of degrees of freedom, ```df```, which just indicates how many squared normal distributions
 to sum up. Here's the code:
@@ -149,13 +154,13 @@ def chi2(df: Int): Distribution[Double] = {
 }
 {% endhighlight %}
 
-This is a lot easier to look at than its probability density function for {%m%}k{%em%} degrees of freedom:
+Its probability density function is a lot easier to understand, though:
 
 {% math %}
 f_k(x) = \frac{x^{(k/2)-1}e^{-x/2}}{2^{k/2}\Gamma(\frac{k}{2})}
 {% endmath %}
 
-Gross. I'm not going to even get into what {%m%}\Gamma{%em%} is.
+Just kidding! This is gross. I'm not going to even get into what {%m%}\Gamma{%em%} is.
 
 OK here's what it looks like for different degrees of freedom:
 
@@ -190,7 +195,9 @@ OK here's what it looks like for different degrees of freedom:
     14.0  0.59% 
     15.0  0.00% 
 
-If {%m%}Z{%em%} is a normally distributed random variable and {%m%}V{%em%} is a Chi-squared random variable with
+### Student's _t_-distribution
+
+If {%m%}Z{%em%} is a normally distributed random variable and {%m%}V{%em%} is a chi-squared random variable with
 {%m%}k{%em%} degrees of freedom, then {%m%}Z * \sqrt{k/V}{%em%} is a random variable distributed according to the
 [Student's _t_-distribution](http://en.wikipedia.org/wiki/Student's_t-distribution).
 
@@ -231,17 +238,52 @@ The closed-form probability density function is too gross to even consider. Here
      5.0  0.14% 
 
 It looks a lot like the normal distribution, and in fact as the degrees of freedom goes up, it becomes a better and
-better approximation to it. At smaller degrees of freedom, though, there is more probability mass in the tails.
+better approximation to it. At smaller degrees of freedom, though, there is more probability mass in the tails (it has
+"fatter tails" as some people say).
 
-### The Binomial and Geometric distributions
+### The geometric distribution
 
-I'm going to switch gears for a minute and look at two discrete distributions. These are constructed from the Bernoulli
-distribution (a biased coin flip) rather than the uniform or normal distribution. Although recall that the Bernoulli distribution
-itself can be [constructed from the uniform distribution]({{ page.previous.url }}).
+The [geometric distribution](http://en.wikipedia.org/wiki/Geometric_distribution) is a discrete distribution
+that can be constructed from the Bernoulli distribution (a biased coin flip).
+Although recall that the Bernoulli distribution itself can be [constructed from the uniform distribution]({{ page.previous.url }})
+pretty easily.
+
+The geometric distribution describes the number of failures
+you will see before seeing your first success in repeated Bernoulli trials with bias ```p```.
+In other words, if I flip a coin repeatedly, how many tails will I see before get my first head?
+
+{% highlight scala %}
+def geometric(p: Double): Distribution[Int] = {
+  bernoulli(p).until(_.headOption == Some(true)).map(_.size - 1)
+}
+{% endhighlight %}
+
+    scala> geometric(0.5).hist
+     0 49.56% #################################################
+     1 25.83% #########################
+     2 12.06% ############
+     3  6.23% ######
+     4  3.08% ###
+     5  1.68% #
+     6  0.75% 
+     7  0.40% 
+     8  0.21% 
+     9  0.10% 
+    10  0.04% 
+    11  0.04% 
+    12  0.02% 
+
+Half the time heads comes up on the 1st flip, a quarter of the time it comes up on the 2nd flip, an eighth of the time it comes
+up on the 3rd flip, etc. {%m%}\frac{1}{2}, \frac{1}{4}, \frac{1}{8}, ..., (\frac{1}{2})^n{%em%} is a geometric sequence
+and that's where this distribution gets its name.
+If you used a biased coin, you would get a different (but still geometric) sequence.
+
+### The binomial distribution
 
 The [binomial distribution](http://en.wikipedia.org/wiki/Binomial_distribution) can be modeled as the number of successes
-you will see in {%m%}n{%em%} Bernoulli trials with bias {%m%}p{%em%}. In other words, if I flip a fair coin
-20 times, how many times will it come up heads? Let's see:
+you will see in ```n``` Bernoulli trials with bias ```p```.
+
+For example: I flip a fair coin 20 times, how many times will it come up heads? Let's see:
 
 {% highlight scala %}
 def binomial(p: Double, n: Int): Distribution[Int] = {
@@ -271,8 +313,8 @@ def binomial(p: Double, n: Int): Distribution[Int] = {
 10 is the most likely result, as you would expect, although other outcomes are possible too. This distribution spells out
 exactly how probable each outcome is.
 
-This distribution also looks a lot like the normal distribution, and in fact as ```n``` increases, the binomial distribution approximates the
-normal distribution.
+This distribution also looks a lot like the normal distribution, and in fact as ```n``` increases, the binomial distribution
+better approximates the normal distribution.
 
 The probability density function involves some combinatorics, which is not entirely surprising.
 
@@ -280,31 +322,100 @@ The probability density function involves some combinatorics, which is not entir
 f(k) = {n \choose k}p^k(1-p)^{n-k}
 {% endmath %}
 
-The [geometric distribution](http://en.wikipedia.org/wiki/Geometric_distribution) can be modeled as the number of failures
-you will see before seeing your first success in repeated Bernoulli trials with bias {%m%}p{%em%}.
-In other words, if I flip a coin repeatedly, how many tails will I see before get my first head?
+### The negative binomial distribution
+
+The [negative binomial distribution](http://en.wikipedia.org/wiki/Negative_binomial_distribution) is a relative of the
+binomial distribution. It counts the number of successes you will see in repeated Bernoulli trials (with bias ```p```)
+before you see ```r``` failures.
+
+Here's the code:
 
 {% highlight scala %}
-def geometric(p: Double): Distribution[Int] = {
-  bernoulli(p).until(_.headOption == Some(true)).map(_.size - 1)
+def negativeBinomial(p: Double, r: Int): Distribution[Int] = {
+  bernoulli(p).until(_.count(_ == false) == r).map(_.size - r)
 }
 {% endhighlight %}
 
-    scala> geometric(0.5).hist
-     0 49.56% #################################################
-     1 25.83% #########################
-     2 12.06% ############
-     3  6.23% ######
-     4  3.08% ###
-     5  1.68% #
-     6  0.75% 
-     7  0.40% 
-     8  0.21% 
-     9  0.10% 
-    10  0.04% 
-    11  0.04% 
-    12  0.02% 
+Straightforward stuff at this point.
 
-Half the time heads comes up right away, a quarter of the time it comes up on the second flip, an eighth of the time it comes
-up on the 3rd flip, etc. {%m%}\frac{1}{2}, \frac{1}{4}, \frac{1}{8}, ..., (\frac{1}{2})^n{%em%} is a geometric series and that's where this distribution
-gets its name. If you used a biased coin, you would get a different (but still geometric) series.
+### The Poisson distribution
+
+A [Poisson distribution](http://en.wikipedia.org/wiki/Poisson_distribution) with parameter {%m%}\lambda{%em%} gives the
+distribution of the number of discrete events that will occur during a given time period if {%m%}\lambda{%em%} events
+are expected to occur on average.
+
+Wikipedia gives the following [algorithm](http://en.wikipedia.org/wiki/Poisson_distribution#Generating_Poisson-distributed_random_variables)
+for generating values from a Poisson distribution:
+
+Sample values from a uniform distribution one at a time until their cumulative product is less than {%m%}e^{-\lambda}{%em%}.
+The number of samples this requires (minus 1) will be Poisson-distributed.
+
+In code:
+
+{% highlight scala %}
+def poisson(lambda: Double): Distribution[Int] = {
+  val m = math.exp(-lambda)
+  uniform.until(_.product < m).map(_.size - 1)
+}
+{% endhighlight %}
+
+To me this obscures what's really going on. If you take the negative log of everything, this algorithm becomes:
+
+Sample values from a uniform distribution, take the negative log, and keep a running sum until
+the sum is greater than {%m%}\lambda{%em%}. The number of samples this requires (minus 1) will be Poisson-distributed.
+
+{% highlight scala %}
+def poisson(lambda: Double): Distribution[Int] = {
+  val d = uniform.map(x => -math.log(x))
+  d.until(_.sum > lambda).map(_.size - 1)
+}
+{% endhighlight %}
+
+This sounds more complicated until you remember that the negative log of the uniform distribution is the exponential
+distribution.
+
+{% highlight scala %}
+def poisson(lambda: Double): Distribution[Int] = {
+  val d = exponential(1)
+  d.until(_.sum > lambda).map(_.size - 1)
+}
+{% endhighlight %}
+
+Now this is what the Poisson distribution is really about. The time between events in a Poisson process follows
+the exponential distribution. So if you wanted to know how many events will happen in, say {%m%}\lambda{%em%} seconds,
+you could add up inter-event timings drawn from the exponential distribution until you get to {%m%}\lambda{%em%}.
+That's exactly what the code above does.
+The exponential distribution has mean 1, so you would expect to get {%m%}\lambda{%em%} events on average.
+
+But why does the exponential distribution model the time between events in the first place?
+In a rigorous sense, the exponential distribution is the most natural choice for this.
+First of all, it produces values between 0 and {%m%}\infty{%em%} (in the parlance, it has "support" {%m%}[0, \infty){%em%}),
+which makes sense for modeling timings between events. And second, of all the distributions with support
+{%m%}[0, \infty){%em%}, the exponential distribution is the one that makes the fewest additional assumptions —
+that is, it contains the least extra information, which is the same as saying that it has the highest
+[entropy](http://en.wikipedia.org/wiki/Maximum_entropy_probability_distribution).
+
+Anyway, with a little rewriting, you can see how the negative binomial distribution is sort of the discrete counterpart to the
+Poisson distribution. Here is ```negativeBinomial``` rewritten to show the similarity:
+
+{% highlight scala %}
+def negativeBinomial(p: Double, r: Int): Distribution[Int] = {
+  val d = bernoulli(p).map(b => if (b) 0 else 1)
+  d.until(_.sum == r).map(_.size - r)
+}
+{% endhighlight %}
+
+If you squint, sorta? If you squint even harder, or you are drunk, you can probably even convince yourself that
+```if (b) 0 else 1``` is a discrete analog of ```-math.log(x)```.
+
+### Conclusion
+
+I hope this was a little bit illuminating about how various probability distributions arise and how they are related to
+one another. Obviously there is a lot more to say, but this should give you a taste for how code can shed light on
+some of the more esoteric concepts in mathematics.
+
+In the next post I'll look at the Central Limit Theorem, which sounds scary but I promise you is not.
+
+All of the code in this post is available on [github](http://github.com/jliszka/probability-monad).
+
+
