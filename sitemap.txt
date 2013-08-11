@@ -1,0 +1,5 @@
+
+http://jliszka.github.io/2013/08/11/climbing-the-probability-distribution-ladder.html
+http://jliszka.github.io/2013/08/11/a-programmers-guide-to-the-central-limit-theorem.html
+http://jliszka.github.io/2013/08/11/a-frequentist-approach-to-probability.html
+http://jliszka.github.io/2013/08/11/a-frequentist-approach-to-bayesian-inference.html

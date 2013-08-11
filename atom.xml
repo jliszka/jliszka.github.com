@@ -4,13 +4,1349 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-08-11T10:24:13-04:00</updated>
+ <updated>2013-08-11T12:58:03-04:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
    <email>jliszka@alumni.cmu.edu</email>
  </author>
 
+ 
+ <entry>
+   <title>Climbing the probability distribution ladder</title>
+   <link href="http://jliszka.github.io/2013/08/11/climbing-the-probability-distribution-ladder.html"/>
+   <updated>2013-08-11T12:57:09-04:00</updated>
+   <id>http://jliszka.github.io/2013/08/11/climbing-the-probability-distribution-ladder</id>
+   <content type="html">&lt;p&gt;In my &lt;a href='/2013/08/11/a-programmers-guide-to-the-central-limit-theorem.html'&gt;last post&lt;/a&gt; I created a tool for constructing probability distributions. I started with the uniform distribution and derived the Bernoulli and normal distributions from it.&lt;/p&gt;
+
+&lt;p&gt;In this post I&amp;#8217;ll construct some more common distributions in the same manner.&lt;/p&gt;
+
+&lt;h3 id='the_exponential_distribution'&gt;The exponential distribution&lt;/h3&gt;
+
+&lt;p&gt;If &lt;script type='math/tex'&gt;X&lt;/script&gt; is a uniformly distributed random variable, then &lt;script type='math/tex'&gt;-log(X)/\lambda&lt;/script&gt; is distributed according to the &lt;a href='http://en.wikipedia.org/wiki/Exponential_distribution'&gt;exponential distribution&lt;/a&gt;. The parameter &lt;script type='math/tex'&gt;\lambda&lt;/script&gt; is just a scaling factor. In code:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;exponential&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;l&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;for&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='n'&gt;x&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;uniform&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt; &lt;span class='k'&gt;yield&lt;/span&gt; &lt;span class='n'&gt;math&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;log&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='o'&gt;*&lt;/span&gt; &lt;span class='o'&gt;(-&lt;/span&gt;&lt;span class='mi'&gt;1&lt;/span&gt;&lt;span class='o'&gt;/&lt;/span&gt;&lt;span class='n'&gt;l&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;It looks like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; exponential(1).bucketedHist(0, 8, 16, roundDown = true)
+ 0.0 39.40% #######################################
+ 0.5 23.15% #######################
+ 1.0 15.11% ###############
+ 1.5  9.13% #########
+ 2.0  4.93% ####
+ 2.5  3.32% ###
+ 3.0  1.84% #
+ 3.5  1.19% #
+ 4.0  0.71% 
+ 4.5  0.53% 
+ 5.0  0.32% 
+ 5.5  0.15% 
+ 6.0  0.07% 
+ 6.5  0.07% 
+ 7.0  0.03% 
+ 7.5  0.03% 
+ 8.0  0.01% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It seems backwards that the exponential distribution is implemented using a logarithm. It probably has something to do with this particular technique of constructing distributions. I&amp;#8217;m describing where to put each piece of probability mass (here, by taking the log of each sample) rather than describing how much probability mass lives at each value of &lt;script type='math/tex'&gt;x&lt;/script&gt; (for the exponential distribution, &lt;script type='math/tex'&gt;\lambda e^{-\lambda x}&lt;/script&gt; lives at &lt;script type='math/tex'&gt;x&lt;/script&gt;, so from that definition it&amp;#8217;s clear why it&amp;#8217;s called the exponential distribution).&lt;/p&gt;
+
+&lt;h3 id='the_pareto_distribution'&gt;The Pareto distribution&lt;/h3&gt;
+
+&lt;p&gt;You can construct the &lt;a href='http://en.wikipedia.org/wiki/Pareto_distribution'&gt;Pareto distribution&lt;/a&gt; from the uniform distribution in a similar way. If &lt;script type='math/tex'&gt;X&lt;/script&gt; is a uniformly distributed random variable, then &lt;script type='math/tex'&gt;x_m X^{-1/\alpha}&lt;/script&gt; is a Pareto-distributed random variable. The parameter &lt;script type='math/tex'&gt;x_m&lt;/script&gt; is the minimum value the distribution can take, and &lt;script type='math/tex'&gt;\alpha&lt;/script&gt; is a factor that determines how spread out the distribution is. In code:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;pareto&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;xm&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt; &lt;span class='o'&gt;=&lt;/span&gt; &lt;span class='mf'&gt;1.0&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;for&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='n'&gt;x&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;uniform&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt; &lt;span class='k'&gt;yield&lt;/span&gt; &lt;span class='n'&gt;xm&lt;/span&gt; &lt;span class='o'&gt;*&lt;/span&gt; &lt;span class='n'&gt;math&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;pow&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt;&lt;span class='mi'&gt;1&lt;/span&gt;&lt;span class='o'&gt;/&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;It looks like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; pareto(1).bucketedHist(1, 10, 18, roundDown = true)
+ 1.0 37.60% #####################################
+ 1.5 17.59% #################
+ 2.0 10.52% ##########
+ 2.5  7.61% #######
+ 3.0  5.43% #####
+ 3.5  4.04% ####
+ 4.0  2.85% ##
+ 4.5  2.64% ##
+ 5.0  1.61% #
+ 5.5  1.77% #
+ 6.0  1.37% #
+ 6.5  1.10% #
+ 7.0  1.06% #
+ 7.5  0.98% 
+ 8.0  0.90% 
+ 8.5  0.83% 
+ 9.0  0.68% 
+ 9.5  0.56% 
+10.0  0.39% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Hm, the implementations of &lt;code&gt;pareto&lt;/code&gt; and &lt;code&gt;exponential&lt;/code&gt; look pretty similar. It&amp;#8217;s more obvious if I rewrite &lt;code&gt;exponential&lt;/code&gt; slightly, moving the product inside the log.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;exponential&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;l&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;for&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='n'&gt;x&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;uniform&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt; &lt;span class='k'&gt;yield&lt;/span&gt; &lt;span class='n'&gt;math&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;log&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;math&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;pow&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt;&lt;span class='mi'&gt;1&lt;/span&gt;&lt;span class='o'&gt;/&lt;/span&gt;&lt;span class='n'&gt;l&lt;/span&gt;&lt;span class='o'&gt;))&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;And now it looks like &lt;code&gt;exponential&lt;/code&gt; is just the log of &lt;code&gt;pareto&lt;/code&gt;. Let&amp;#8217;s check.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; pareto(1).map(math.log).bucketedHist(0, 8, 16, roundDown = true)
+ 0.0 38.76% ######################################
+ 0.5 24.28% ########################
+ 1.0 14.47% ##############
+ 1.5  9.09% #########
+ 2.0  5.10% #####
+ 2.5  3.29% ###
+ 3.0  1.92% #
+ 3.5  1.29% #
+ 4.0  0.77% 
+ 4.5  0.43% 
+ 5.0  0.22% 
+ 5.5  0.14% 
+ 6.0  0.09% 
+ 6.5  0.04% 
+ 7.0  0.02% 
+ 7.5  0.04% 
+ 8.0  0.04% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Yep, pretty close! But you wouldn&amp;#8217;t know how closely they are related by looking at the probabily density functions.&lt;/p&gt;
+
+&lt;p&gt;Pareto:&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+f_\alpha(x) = \frac{\alpha}{x^{\alpha+1}}
+&lt;/script&gt;
+&lt;p&gt;Exponential:&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+f_\lambda(x) = \lambda e^{-\lambda x}
+&lt;/script&gt;
+&lt;p&gt;Hm.&lt;/p&gt;
+
+&lt;h3 id='the_chisquared_distribution'&gt;The chi-squared distribution&lt;/h3&gt;
+
+&lt;p&gt;A &lt;a href='http://en.wikipedia.org/wiki/Chi-squared_distribution'&gt;chi-squared distribution&lt;/a&gt; can be constructed by squaring and then summing several normal distributions. It is parameterized by the number of degrees of freedom, &lt;code&gt;df&lt;/code&gt;, which just indicates how many squared normal distributions to sum up. Here&amp;#8217;s the code:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;chi2&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;df&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;normal&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='o'&gt;*&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;repeat&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;df&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;sum&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Its probability density function is a lot easier to understand, though:&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+f_k(x) = \frac{x^{(k/2)-1}e^{-x/2}}{2^{k/2}\Gamma(\frac{k}{2})}
+&lt;/script&gt;
+&lt;p&gt;Just kidding! This is gross. I&amp;#8217;m not going to even get into what &lt;script type='math/tex'&gt;\Gamma&lt;/script&gt; is.&lt;/p&gt;
+
+&lt;p&gt;OK here&amp;#8217;s what it looks like for different degrees of freedom:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; chi2(1).bucketedHist(0, 10, 10, roundDown = true)
+ 0.0 68.20% ####################################################################
+ 1.0 15.49% ###############
+ 2.0  7.67% #######
+ 3.0  3.83% ###
+ 4.0  2.07% ##
+ 5.0  1.30% #
+ 6.0  0.66% 
+ 7.0  0.42% 
+ 8.0  0.26% 
+ 9.0  0.10% 
+10.0  0.00% 
+
+scala&amp;gt; chi2(5).bucketedHist(0, 15, 15, roundDown = true)
+ 0.0  3.84% ###
+ 1.0 11.48% ###########
+ 2.0 14.71% ##############
+ 3.0 15.07% ###############
+ 4.0 13.67% #############
+ 5.0 10.83% ##########
+ 6.0  8.75% ########
+ 7.0  6.43% ######
+ 8.0  4.99% ####
+ 9.0  3.51% ###
+10.0  2.43% ##
+11.0  1.64% #
+12.0  1.22% #
+13.0  0.85% 
+14.0  0.59% 
+15.0  0.00% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id='students_tdistribution'&gt;Student&amp;#8217;s &lt;em&gt;t&lt;/em&gt;-distribution&lt;/h3&gt;
+
+&lt;p&gt;If &lt;script type='math/tex'&gt;Z&lt;/script&gt; is a normally distributed random variable and &lt;script type='math/tex'&gt;V&lt;/script&gt; is a chi-squared random variable with &lt;script type='math/tex'&gt;k&lt;/script&gt; degrees of freedom, then &lt;script type='math/tex'&gt;Z * \sqrt{k/V}&lt;/script&gt; is a random variable distributed according to the &lt;a href='http://en.wikipedia.org/wiki/Student&amp;apos;s_t-distribution'&gt;Student&amp;#8217;s &lt;em&gt;t&lt;/em&gt;-distribution&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;#8217;s the code:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;students_t&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;df&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;for&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='n'&gt;z&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;normal&lt;/span&gt;
+    &lt;span class='n'&gt;v&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;chi2&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;df&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt; &lt;span class='k'&gt;yield&lt;/span&gt; &lt;span class='n'&gt;z&lt;/span&gt; &lt;span class='o'&gt;*&lt;/span&gt; &lt;span class='n'&gt;math&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;sqrt&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;df&lt;/span&gt; &lt;span class='o'&gt;/&lt;/span&gt; &lt;span class='n'&gt;v&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The closed-form probability density function is too gross to even consider. Here&amp;#8217;s a plot though:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; students_t(3).bucketedHist(-5, 5, 20)
+-5.0  0.12% 
+-4.5  0.38% 
+-4.0  0.51% 
+-3.5  0.63% 
+-3.0  1.41% #
+-2.5  2.24% ##
+-2.0  3.72% ###
+-1.5  5.89% #####
+-1.0 10.03% ##########
+-0.5 15.90% ###############
+ 0.0 18.38% ##################
+ 0.5 15.88% ###############
+ 1.0 11.01% ###########
+ 1.5  5.83% #####
+ 2.0  3.37% ###
+ 2.5  2.07% ##
+ 3.0  1.13% #
+ 3.5  0.62% 
+ 4.0  0.49% 
+ 4.5  0.26% 
+ 5.0  0.14% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It looks a lot like the normal distribution, and in fact as the degrees of freedom goes up, it becomes a better and better approximation to it. At smaller degrees of freedom, though, there is more probability mass in the tails (it has &amp;#8220;fatter tails&amp;#8221; as some people say).&lt;/p&gt;
+
+&lt;h3 id='the_geometric_distribution'&gt;The geometric distribution&lt;/h3&gt;
+
+&lt;p&gt;The &lt;a href='http://en.wikipedia.org/wiki/Geometric_distribution'&gt;geometric distribution&lt;/a&gt; is a discrete distribution that can be constructed from the Bernoulli distribution (a biased coin flip). Although recall that the Bernoulli distribution itself can be &lt;a href='/2013/08/11/a-programmers-guide-to-the-central-limit-theorem.html'&gt;constructed from the uniform distribution&lt;/a&gt; pretty easily.&lt;/p&gt;
+
+&lt;p&gt;The geometric distribution describes the number of failures you will see before seeing your first success in repeated Bernoulli trials with bias &lt;code&gt;p&lt;/code&gt;. In other words, if I flip a coin repeatedly, how many tails will I see before get my first head?&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;geometric&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;p&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;bernoulli&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;p&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;until&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;headOption&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='nc'&gt;Some&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='kc'&gt;true&lt;/span&gt;&lt;span class='o'&gt;)).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;size&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='mi'&gt;1&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; geometric(0.5).hist
+ 0 49.56% #################################################
+ 1 25.83% #########################
+ 2 12.06% ############
+ 3  6.23% ######
+ 4  3.08% ###
+ 5  1.68% #
+ 6  0.75% 
+ 7  0.40% 
+ 8  0.21% 
+ 9  0.10% 
+10  0.04% 
+11  0.04% 
+12  0.02% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Half the time heads comes up on the 1st flip, a quarter of the time it comes up on the 2nd flip, an eighth of the time it comes up on the 3rd flip, etc. &lt;script type='math/tex'&gt;\frac{1}{2}, \frac{1}{4}, \frac{1}{8}, ..., (\frac{1}{2})^n&lt;/script&gt; is a geometric sequence and that&amp;#8217;s where this distribution gets its name. If you used a biased coin, you would get a different (but still geometric) sequence.&lt;/p&gt;
+
+&lt;h3 id='the_binomial_distribution'&gt;The binomial distribution&lt;/h3&gt;
+
+&lt;p&gt;The &lt;a href='http://en.wikipedia.org/wiki/Binomial_distribution'&gt;binomial distribution&lt;/a&gt; can be modeled as the number of successes you will see in &lt;code&gt;n&lt;/code&gt; Bernoulli trials with bias &lt;code&gt;p&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;For example: I flip a fair coin 20 times, how many times will it come up heads? Let&amp;#8217;s see:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;binomial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;p&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;bernoulli&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;p&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;repeat&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;count&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='kc'&gt;true&lt;/span&gt;&lt;span class='o'&gt;))&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; binomial(0.5, 20).hist
+ 2  0.02% 
+ 3  0.11% 
+ 4  0.46% 
+ 5  1.33% #
+ 6  3.81% ###
+ 7  7.35% #######
+ 8 11.73% ###########
+ 9 15.84% ###############
+10 18.05% ##################
+11 16.19% ################
+12 11.75% ###########
+13  7.50% #######
+14  3.71% ###
+15  1.51% #
+16  0.48% 
+17  0.13% 
+18  0.03% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;10 is the most likely result, as you would expect, although other outcomes are possible too. This distribution spells out exactly how probable each outcome is.&lt;/p&gt;
+
+&lt;p&gt;This distribution also looks a lot like the normal distribution, and in fact as &lt;code&gt;n&lt;/code&gt; increases, the binomial distribution better approximates the normal distribution.&lt;/p&gt;
+
+&lt;p&gt;The probability density function involves some combinatorics, which is not entirely surprising.&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+f(k) = {n \choose k}p^k(1-p)^{n-k}
+&lt;/script&gt;
+&lt;h3 id='the_negative_binomial_distribution'&gt;The negative binomial distribution&lt;/h3&gt;
+
+&lt;p&gt;The &lt;a href='http://en.wikipedia.org/wiki/Negative_binomial_distribution'&gt;negative binomial distribution&lt;/a&gt; is a relative of the binomial distribution. It counts the number of successes you will see in repeated Bernoulli trials (with bias &lt;code&gt;p&lt;/code&gt;) before you see &lt;code&gt;r&lt;/code&gt; failures.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;#8217;s the code:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;negativeBinomial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;p&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;bernoulli&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;p&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;until&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;count&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='kc'&gt;false&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;size&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Straightforward stuff at this point.&lt;/p&gt;
+
+&lt;h3 id='the_poisson_distribution'&gt;The Poisson distribution&lt;/h3&gt;
+
+&lt;p&gt;A &lt;a href='http://en.wikipedia.org/wiki/Poisson_distribution'&gt;Poisson distribution&lt;/a&gt; with parameter &lt;script type='math/tex'&gt;\lambda&lt;/script&gt; gives the distribution of the number of discrete events that will occur during a given time period if &lt;script type='math/tex'&gt;\lambda&lt;/script&gt; events are expected to occur on average.&lt;/p&gt;
+
+&lt;p&gt;Wikipedia gives the following &lt;a href='http://en.wikipedia.org/wiki/Poisson_distribution#Generating_Poisson-distributed_random_variables'&gt;algorithm&lt;/a&gt; for generating values from a Poisson distribution:&lt;/p&gt;
+
+&lt;p&gt;Sample values from a uniform distribution one at a time until their cumulative product is less than &lt;script type='math/tex'&gt;e^{-\lambda}&lt;/script&gt;. The number of samples this requires (minus 1) will be Poisson-distributed.&lt;/p&gt;
+
+&lt;p&gt;In code:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;poisson&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;lambda&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;m&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;math&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;exp&lt;/span&gt;&lt;span class='o'&gt;(-&lt;/span&gt;&lt;span class='n'&gt;lambda&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+  &lt;span class='n'&gt;uniform&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;until&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;product&lt;/span&gt; &lt;span class='o'&gt;&amp;lt;&lt;/span&gt; &lt;span class='n'&gt;m&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;size&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='mi'&gt;1&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;To me this obscures what&amp;#8217;s really going on. If you take the negative log of everything, this algorithm becomes:&lt;/p&gt;
+
+&lt;p&gt;Sample values from a uniform distribution, take the negative log, and keep a running sum until the sum is greater than &lt;script type='math/tex'&gt;\lambda&lt;/script&gt;. The number of samples this requires (minus 1) will be Poisson-distributed.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;poisson&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;lambda&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;d&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;uniform&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt;&lt;span class='n'&gt;math&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;log&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='o'&gt;))&lt;/span&gt;
+  &lt;span class='n'&gt;d&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;until&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;sum&lt;/span&gt; &lt;span class='o'&gt;&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;lambda&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;size&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='mi'&gt;1&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This sounds more complicated until you remember that the negative log of the uniform distribution is the exponential distribution.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;poisson&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;lambda&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;d&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;exponential&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='mi'&gt;1&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+  &lt;span class='n'&gt;d&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;until&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;sum&lt;/span&gt; &lt;span class='o'&gt;&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;lambda&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;size&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='mi'&gt;1&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now this is what the Poisson distribution is really about. The time between events in a Poisson process follows the exponential distribution. So if you wanted to know how many events will happen in, say &lt;script type='math/tex'&gt;\lambda&lt;/script&gt; seconds, you could add up inter-event timings drawn from the exponential distribution until you get to &lt;script type='math/tex'&gt;\lambda&lt;/script&gt;. That&amp;#8217;s exactly what the code above does. The exponential distribution has mean 1, so you would expect to get &lt;script type='math/tex'&gt;\lambda&lt;/script&gt; events on average.&lt;/p&gt;
+
+&lt;p&gt;But why does the exponential distribution model the time between events in the first place? In a rigorous sense, the exponential distribution is the most natural choice for this. First of all, it produces values between 0 and &lt;script type='math/tex'&gt;\infty&lt;/script&gt; (in the parlance, it has &amp;#8220;support&amp;#8221; &lt;script type='math/tex'&gt;[0, \infty)&lt;/script&gt;), which makes sense for modeling timings between events. And second, of all the distributions with support &lt;script type='math/tex'&gt;[0, \infty)&lt;/script&gt;, the exponential distribution is the one that makes the fewest additional assumptions — that is, it contains the least extra information, which is the same as saying that it has the highest &lt;a href='http://en.wikipedia.org/wiki/Maximum_entropy_probability_distribution'&gt;entropy&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Anyway, with a little rewriting, you can see how the negative binomial distribution is sort of the discrete counterpart to the Poisson distribution. Here is &lt;code&gt;negativeBinomial&lt;/code&gt; rewritten to show the similarity:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;negativeBinomial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;p&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;d&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;bernoulli&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;p&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;b&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='k'&gt;if&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;b&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='mi'&gt;0&lt;/span&gt; &lt;span class='k'&gt;else&lt;/span&gt; &lt;span class='mi'&gt;1&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+  &lt;span class='n'&gt;d&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;until&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;sum&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;size&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;If you squint, sorta? If you squint even harder, or you are drunk, you can probably even convince yourself that &lt;code&gt;if (b) 0 else 1&lt;/code&gt; is a discrete analog of &lt;code&gt;-math.log(x)&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id='conclusion'&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;I hope this was a little bit illuminating about how various probability distributions arise and how they are related to one another. Obviously there is a lot more to say, but this should give you a taste for how code can shed light on some of the more esoteric concepts in mathematics.&lt;/p&gt;
+
+&lt;p&gt;In the next post I&amp;#8217;ll look at the Central Limit Theorem, which sounds scary but I promise you is not.&lt;/p&gt;
+
+&lt;p&gt;All of the code in this post is available on &lt;a href='http://github.com/jliszka/probability-monad'&gt;github&lt;/a&gt;.&lt;/p&gt;</content>
+ </entry>
+ 
+ <entry>
+   <title>A Programmer's Guide to the Central Limit Theorem</title>
+   <link href="http://jliszka.github.io/2013/08/11/a-programmers-guide-to-the-central-limit-theorem.html"/>
+   <updated>2013-08-11T12:57:09-04:00</updated>
+   <id>http://jliszka.github.io/2013/08/11/a-programmers-guide-to-the-central-limit-theorem</id>
+   <content type="html">&lt;p&gt;This post is a continuation of a series of posts about exploring probability distributions through code. The first post is &lt;a href='/2013/08/11/a-frequentist-approach-to-bayesian-inference.html'&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In this post I&amp;#8217;m going to look at the Central Limit Theorem.&lt;/p&gt;
+
+&lt;h3 id='sample_means'&gt;Sample means&lt;/h3&gt;
+
+&lt;p&gt;Suppose I have a random variable whose underlying distribution is unknown to me. I take sample of a reasonable size (say 100) and find the mean of the sample. What can I say about the sample mean?&lt;/p&gt;
+
+&lt;p&gt;The most comprehensive answer to this is to look at the distribution of the sample mean.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;sampleMean&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;d&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;],&lt;/span&gt; &lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt; &lt;span class='o'&gt;=&lt;/span&gt; &lt;span class='mi'&gt;100&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;d&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;repeat&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;sum&lt;/span&gt; &lt;span class='o'&gt;/&lt;/span&gt; &lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This method takes any distribution and returns the distribution of means of samples from that distribution. You can specify the sample size but by default we&amp;#8217;ll use 100.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;#8217;s try it on some of the distributions we&amp;#8217;ve &lt;a href='/2013/08/11/a-frequentist-approach-to-probability.html'&gt;created&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(uniform).hist
+0.40  0.01% 
+0.41  0.06% 
+0.42  0.36% 
+0.43  0.79% 
+0.44  1.63% #
+0.45  2.95% ##
+0.46  5.18% #####
+0.47  8.33% ########
+0.48 11.43% ###########
+0.49 12.80% ############
+0.50 14.22% ##############
+0.51 12.47% ############
+0.52 10.74% ##########
+0.53  8.00% ########
+0.54  5.47% #####
+0.55  2.78% ##
+0.56  1.60% #
+0.57  0.70% 
+0.58  0.32% 
+0.59  0.07% 
+0.60  0.06% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Not surprising. All the sample means are clustered around the actual mean (0.5).&lt;/p&gt;
+
+&lt;p&gt;Let&amp;#8217;s try a couple more.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(exponential(1)).hist
+0.60  0.00% 
+0.65  0.02% 
+0.70  0.16% 
+0.75  0.69% 
+0.80  2.38% ##
+0.85  6.68% ######
+0.90 13.12% #############
+0.95 17.93% #################
+1.00 19.21% ###################
+1.05 17.27% #################
+1.10 11.26% ###########
+1.15  6.53% ######
+1.20  3.01% ###
+1.25  1.28% #
+1.30  0.36% 
+1.35  0.07% 
+1.40  0.02% 
+1.45  0.00% 
+1.50  0.01% 
+
+scala&amp;gt; sampleMean(chi2(5)).hist
+3.90  0.02% 
+4.00  0.08% 
+4.10  0.14% 
+4.20  0.40% 
+4.30  0.95% 
+4.40  1.89% #
+4.50  3.63% ###
+4.60  5.68% #####
+4.70  8.52% ########
+4.80 10.25% ##########
+4.90 12.23% ############
+5.00 13.18% #############
+5.10 11.19% ###########
+5.20 10.37% ##########
+5.30  7.61% #######
+5.40  5.84% #####
+5.50  3.67% ###
+5.60  2.04% ##
+5.70  1.23% #
+5.80  0.64% 
+5.90  0.29% 
+6.00  0.10% 
+6.10  0.03% 
+6.20  0.02% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;OK, starting to see a pattern here. Let&amp;#8217;s look at some discrete distributions.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(binomial(0.2, 10).map(_.toDouble)).hist
+1.50  0.00% 
+1.55  0.03% 
+1.60  0.08% 
+1.65  0.32% 
+1.70  1.00% #
+1.75  2.35% ##
+1.80  4.61% ####
+1.85  7.88% #######
+1.90 11.20% ###########
+1.95 14.62% ##############
+2.00 16.07% ################
+2.05 14.82% ##############
+2.10 11.42% ###########
+2.15  7.43% #######
+2.20  4.60% ####
+2.25  2.15% ##
+2.30  0.97% 
+2.35  0.34% 
+2.40  0.09% 
+2.45  0.02% 
+2.50  0.00% 
+
+scala&amp;gt; sampleMean(geometric(0.2).map(_.toDouble)).hist
+2.40  0.01% 
+2.60  0.09% 
+2.80  0.29% 
+3.00  1.14% #
+3.20  3.59% ###
+3.40  7.31% #######
+3.60 12.92% ############
+3.80 16.75% ################
+4.00 17.69% #################
+4.20 15.31% ###############
+4.40 11.16% ###########
+4.60  7.03% #######
+4.80  3.84% ###
+5.00  1.70% #
+5.20  0.79% 
+5.40  0.29% 
+5.60  0.08% 
+5.80  0.00% 
+6.00  0.01% 
+
+scala&amp;gt; sampleMean(poisson(5).map(_.toDouble)).hist
+4.30  0.15% 
+4.40  0.43% 
+4.50  1.34% #
+4.60  3.42% ###
+4.70  7.19% #######
+4.80 12.04% ############
+4.90 15.49% ###############
+5.00 18.02% ##################
+5.10 15.82% ###############
+5.20 11.99% ###########
+5.30  7.37% #######
+5.40  4.03% ####
+5.50  1.81% #
+5.60  0.64% 
+5.70  0.16% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;All of these distributions look vaguely normal and they&amp;#8217;re all clustered around the mean of the underlying distribution.&lt;/p&gt;
+
+&lt;h3 id='the_central_limit_theorem'&gt;The Central Limit Theorem&lt;/h3&gt;
+
+&lt;p&gt;Surprise! That little observation was basically a statement of the Central Limit Theorem — means samples of a reasonable size drawn from any probability distribution will be normally distributed around the mean of the distribution. The Central Limit Theorem even tells you how to compute the standard deviation of the distribution of sample means: it&amp;#8217;s just the standard deviation of the underlying distribution divided by the square root of the sample size.&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+\bar{\sigma} = \frac{\sigma}{\sqrt{n}}
+&lt;/script&gt;
+&lt;p&gt;The most remarkable fact is that, as demonstrated above, this works no matter what distribution you try it on.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;#8217;s revisit each of the examples above and see if it pans out.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; uniform.ev
+res0: Double = 0.49596431533522234
+
+scala&amp;gt; uniform.stdev
+res1: Double = 0.290545289200811&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;So the Central Limit Theorem would predict that &lt;code&gt;sampleMean(uniform)&lt;/code&gt; will have mean 0.5 and stdev &lt;script type='math/tex'&gt;0.29 / \sqrt{100} = 0.029&lt;/script&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(uniform).ev
+res2: Double = 0.49968258747065275
+
+scala&amp;gt; sampleMean(uniform).stdev
+res3: Double = 0.028763987024078164&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Wow, OK! Let&amp;#8217;s keep going. (I&amp;#8217;m going to omit the mean calculations because it seems like an obvious fact. So I&amp;#8217;m just looking to see that the standard deviation of the distribution of sample means is 1/10th the standard deviation of the underlying distribution.)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; exponential(1).stdev
+res0: Double = 0.9971584111946743
+
+scala&amp;gt; sampleMean(exponential(1)).stdev
+res2: Double = 0.09987372019328666
+
+scala&amp;gt; chi2(5).stdev
+res3: Double = 3.1542391941582766
+
+scala&amp;gt; sampleMean(chi2(5)).stdev
+res4: Double = 0.3180622311083607
+
+scala&amp;gt; binomial(0.2, 10).map(_.toDouble).stdev
+res5: Double = 1.2733502267640227
+
+scala&amp;gt; sampleMean(binomial(0.2, 10).map(_.toDouble)).stdev
+res6: Double = 0.12688793641635224
+
+scala&amp;gt; poisson(5).map(_.toDouble).stdev
+res7: Double = 2.2423514867210077
+
+scala&amp;gt; sampleMean(poisson(5).map(_.toDouble)).stdev
+res8: Double = 0.2251131007715896
+
+scala&amp;gt; geometric(0.2).map(_.toDouble).stdev
+res9: Double = 4.439230239579939
+
+scala&amp;gt; sampleMean(geometric(0.2).map(_.toDouble)).stdev
+res10: Double = 0.4428929231078312&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And one more with a different sample size:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(geometric(0.2).map(_.toDouble), n = 625).stdev
+res11: Double = 0.17952533894556522
+
+scala&amp;gt; geometric(0.2).stdev / 25
+res12: Double = 0.17756920958319758&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Crazy! OK that&amp;#8217;s enough experimental proof for me.&lt;/p&gt;
+
+&lt;h3 id='exceptions'&gt;Exceptions&lt;/h3&gt;
+
+&lt;p&gt;You might have noticed that I skipped the Pareto distribution. It turns out that the Central Limit Theorem actually doesn&amp;#8217;t work with the Pareto distribution. This is due to one sneaky fact — sample means are clustered around the mean of the underlying distribution &lt;em&gt;if it exists&lt;/em&gt;. The Pareto distribution doesn&amp;#8217;t have a mean (actually its mean is infinite, but that&amp;#8217;s basically saying the same thing).&lt;/p&gt;
+
+&lt;p&gt;The sample means are not normally distributed:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(pareto(1)).bucketedHist(0, 20, 20)
+ 0.0  0.00% 
+ 1.0  0.00% 
+ 2.0  0.00% 
+ 3.0  3.04% ###
+ 4.0 16.03% ################
+ 5.0 20.08% ####################
+ 6.0 16.61% ################
+ 7.0 12.16% ############
+ 8.0  8.08% ########
+ 9.0  5.87% #####
+10.0  4.42% ####
+11.0  2.90% ##
+12.0  2.72% ##
+13.0  1.67% #
+14.0  1.51% #
+15.0  1.31% #
+16.0  1.14% #
+17.0  0.88% 
+18.0  0.83% 
+19.0  0.53% 
+20.0  0.22% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And the standard deviation of the distribution of sample means is completely meaningless:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(pareto(1)).stdev
+res0: Double = 157.6098722134558
+
+scala&amp;gt; sampleMean(pareto(1)).stdev
+res1: Double = 477.9797744569662&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;So the Central Limit Theorem doesn&amp;#8217;t apply.&lt;/p&gt;
+
+&lt;h3 id='so_what'&gt;So what?&lt;/h3&gt;
+
+&lt;p&gt;Experimental analysis leans heavily on the Central Limit Theorem. A common question in experimental analysis is whether a sample is likely to have been drawn from a particular probability distribution.&lt;/p&gt;
+
+&lt;p&gt;For example, let&amp;#8217;s say your friend tells you he has a fair coin and offers to play a game. You pay him $1 to play, and he flips his coin until it comes up heads. He gives you $1 for every time the coin comes up tails until that happens.&lt;/p&gt;
+
+&lt;p&gt;After 100 rounds of this, you notice that you&amp;#8217;ve lost $30. Did your friend cheat you?&lt;/p&gt;
+
+&lt;p&gt;In standard experimental analysis terms, the null hypothesis is that your friend has a fair coin. You can reject the null hypothesis if you can show that there is less than, say, a 5% chance of losing $30 after 100 rounds.&lt;/p&gt;
+
+&lt;p&gt;You can model the distribution of outcomes for a single round of the game as follows:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;d&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;geometric&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='mf'&gt;0.5&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;toDouble&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='mf'&gt;1.0&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code&gt;geometric(0.5)&lt;/code&gt; models your winnings and &lt;code&gt;- 1.0&lt;/code&gt; represents the cost to play the round. The expected value and standard deviation of this distribution are:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; d.ev
+res102: Double = -0.0093
+
+scala&amp;gt; d.stdev
+res105: Double = 1.406354208583263&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We&amp;#8217;ll call that 0 and 1.4. You have a sample of 100 rounds and an average loss of $0.30 per round. What is the probability that 100 samples from &lt;code&gt;d&lt;/code&gt; would have a mean of -0.3? Well, the distribution of sample means has mean 0 and standard deviation &lt;script type='math/tex'&gt;1.4 / \sqrt{100} = 0.14&lt;/script&gt;. So your sample mean of -0.3 is slightly more than 2 standard deviations away from the average sample mean, meaning there&amp;#8217;s less than a 2% chance that your sample was drawn from that distribution. That&amp;#8217;s enough to reject the null hypothesis.&lt;/p&gt;
+
+&lt;p&gt;We can also calculate this probability directly by looking at the distribution of sample means.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(d, n = 100).pr(_ &amp;lt; -0.3)
+res0: Double = 0.0104&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id='conclusion'&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;We were able to use the Central Limit Theorem to reason about a sample from a geometric distribution (or almost any other), knowing that the mean of such a sample is expected to fall within a bell-shaped curve around the mean of the underlying distribution. This is great because we don&amp;#8217;t need special analysis tools for each kind of distribution we might come across. No matter what the underlying distribution is, you can always treat sample means as normally distributed.&lt;/p&gt;
+
+&lt;p&gt;&amp;#8230; unless the underlying distribution has no mean.&lt;/p&gt;
+
+&lt;p&gt;We actually run into this all the time at Foursquare. Certain things like, say, the distribution of the number of friends users have is Pareto-distributed (the vast majority of users have a small number of friends, but some users have thousands of friends). So if you&amp;#8217;re running an experiment that is intended to increase the average number of friends users have, you&amp;#8217;re going to run into trouble. You aren&amp;#8217;t going to be able to use standard statistical techniques to analyze the results of the experiment. Well, actually, you can try, and you&amp;#8217;ll get some convincing-looking numbers out, but those numbers will be completely meaningless! And if no one notices, you might end up making Important Product Decisions based on completely meaningless numbers.&lt;/p&gt;</content>
+ </entry>
+ 
+ <entry>
+   <title>A Frequentist Approach to Probability</title>
+   <link href="http://jliszka.github.io/2013/08/11/a-frequentist-approach-to-probability.html"/>
+   <updated>2013-08-11T12:57:09-04:00</updated>
+   <id>http://jliszka.github.io/2013/08/11/a-frequentist-approach-to-probability</id>
+   <content type="html">&lt;p&gt;One thing that always confused me in my intro stats classes was the concept of a random variable. A random variable is not a variable like I&amp;#8217;m used to thinking about, like a thing that has one value at a time. A random variable is instead an object that you can sample values from, and the values you get will be distributed according to some underlying probability distribution.&lt;/p&gt;
+
+&lt;p&gt;In that way it sort of acts like a container, where the only operation is to sample a value from the container. In Scala it might look something like:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;trait&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;get&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The idea is that &lt;code&gt;get&lt;/code&gt; returns a different value (of type &lt;code&gt;A&lt;/code&gt;) from the distribution every time you call it.&lt;/p&gt;
+
+&lt;p&gt;I&amp;#8217;m going to add a &lt;code&gt;sample&lt;/code&gt; method that lets me draw a sample of any size I want from the distribution.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;trait&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;get&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt;
+
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;sample&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='nc'&gt;List&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;fill&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='o'&gt;)(&lt;/span&gt;&lt;span class='k'&gt;this&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;get&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now to create a simple distribution. Here&amp;#8217;s one whose samples are uniformly distributed between 0 and 1.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;uniform&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;private&lt;/span&gt; &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;rand&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='n'&gt;java&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;util&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='nc'&gt;Random&lt;/span&gt;&lt;span class='o'&gt;()&lt;/span&gt;
+  &lt;span class='k'&gt;override&lt;/span&gt; &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;get&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;rand&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;nextDouble&lt;/span&gt;&lt;span class='o'&gt;()&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;And sampling it gives&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; uniform.sample(10).foreach(println)
+0.15738645964157327
+0.7827120503875181
+0.8787176537434814
+0.38506604599728245
+0.9469681837641953
+0.20822217752687067
+0.8229649049912187
+0.7767540566158817
+0.4133782959276152
+0.8152378840945975&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id='transforming_distributions'&gt;Transforming distributions&lt;/h3&gt;
+
+&lt;p&gt;Every good container should have a &lt;code&gt;map&lt;/code&gt; method. &lt;code&gt;map&lt;/code&gt; will transform values produced by the distribution according to some function you pass it.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;trait&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;self&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt;
+  &lt;span class='c1'&gt;// ...&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;B&lt;/span&gt;&lt;span class='o'&gt;](&lt;/span&gt;&lt;span class='n'&gt;f&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='o'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;B&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;B&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;B&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;override&lt;/span&gt; &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;get&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;f&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;get&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;(Quick technical note: I added a self-type annotation that makes &lt;code&gt;self&lt;/code&gt; an alias for &lt;code&gt;this&lt;/code&gt; so that it&amp;#8217;s easier to refer to in anonymous inner classes.)&lt;/p&gt;
+
+&lt;p&gt;Now I can map &lt;code&gt;* 2&lt;/code&gt; over the uniform distribution, giving a uniform distribution between 0 and 2:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; uniform.map(_ * 2).sample(10).foreach(println)
+1.608298200368093
+0.14423181179528677
+0.31844160650777886
+1.6299535560273648
+1.0188592816936894
+1.9150473071752487
+0.9324757358322544
+0.5287503566916676
+1.35497977515358
+0.5874386820078819&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;map&lt;/code&gt; also lets you create distributions of different types:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val tf = uniform.map(_ &amp;lt; 0.5)
+tf: Distribution[Boolean] = &amp;lt;distribution&amp;gt;
+
+scala&amp;gt; tf.sample(10)
+res2: List[Boolean] = List(true, true, true, true, false, false, false, false, true, false)&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;tf&lt;/code&gt; is a &lt;code&gt;Distribution[Boolean]&lt;/code&gt; that should give &lt;code&gt;true&lt;/code&gt; and &lt;code&gt;false&lt;/code&gt; with equal probability. Actually, it would be a bit more useful to be able to create distributions giving &lt;code&gt;true&lt;/code&gt; and &lt;code&gt;false&lt;/code&gt; with arbitrary probabilities. This kind of distribution is called the Bernoulli distribution.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;bernoulli&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;p&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Boolean&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;uniform&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt; &lt;span class='o'&gt;&amp;lt;&lt;/span&gt; &lt;span class='n'&gt;p&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Trying it out:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; bernoulli(0.8).sample(10)
+res0: List[Boolean] = List(true, false, true, true, true, true, true, true, true, true)&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Cool. Now I want to measure the probability that a random variable will take on certain values. This is easy to do empirically by pulling 10,000 sample values and counting how many of the values satisfy the given predicate.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;trait&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='c1'&gt;// ...&lt;/span&gt;
+  &lt;span class='k'&gt;private&lt;/span&gt; &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;N&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='mi'&gt;10000&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;pr&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;predicate&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='o'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='nc'&gt;Boolean&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt; &lt;span class='o'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;this&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;sample&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;N&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;count&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;predicate&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;toDouble&lt;/span&gt; &lt;span class='o'&gt;/&lt;/span&gt; &lt;span class='n'&gt;N&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; uniform.pr(_ &amp;lt; 0.4)
+res2: Double = 0.4015&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It works! It&amp;#8217;s not exact, but it&amp;#8217;s close enough.&lt;/p&gt;
+
+&lt;p&gt;Now I need two ways to transform a distribution.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;trait&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='c1'&gt;// ...&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;given&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;predicate&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='o'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='nc'&gt;Boolean&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='nd'&gt;@tailrec&lt;/span&gt;
+    &lt;span class='k'&gt;override&lt;/span&gt; &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;get&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+      &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;a&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;get&lt;/span&gt;
+      &lt;span class='k'&gt;if&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;predicate&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='o'&gt;))&lt;/span&gt; &lt;span class='n'&gt;a&lt;/span&gt; &lt;span class='k'&gt;else&lt;/span&gt; &lt;span class='k'&gt;this&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;get&lt;/span&gt;
+    &lt;span class='o'&gt;}&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;repeat&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;override&lt;/span&gt; &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;get&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+      &lt;span class='nc'&gt;List&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;fill&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='o'&gt;)(&lt;/span&gt;&lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;get&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+    &lt;span class='o'&gt;}&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code&gt;given&lt;/code&gt; creates a new distribution by sampling from the original distribution and discarding values that don&amp;#8217;t match the given predicate. &lt;code&gt;repeat&lt;/code&gt; creates a &lt;code&gt;Distribution[List[A]]&lt;/code&gt; from a &lt;code&gt;Distribution[A]&lt;/code&gt; by producing samples that are lists of samples from the original distributions.&lt;/p&gt;
+
+&lt;p&gt;OK, now one more distribution:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;discreteUniform&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;](&lt;/span&gt;&lt;span class='n'&gt;values&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Iterable&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;vec&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;values&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;toVector&lt;/span&gt;
+  &lt;span class='n'&gt;uniform&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;vec&lt;/span&gt;&lt;span class='o'&gt;((&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt; &lt;span class='o'&gt;*&lt;/span&gt; &lt;span class='n'&gt;vec&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;length&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;toInt&lt;/span&gt;&lt;span class='o'&gt;))&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Let&amp;#8217;s see how all this works.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val die = discreteUniform(1 to 6)
+die: Distribution[Int] = &amp;lt;distribution&amp;gt;
+
+scala&amp;gt; die.sample(10)
+res0: List[Int] = List(1, 5, 6, 5, 4, 3, 5, 4, 1, 1)
+
+scala&amp;gt; die.pr(_ == 4)
+res1: Double = 0.1668
+
+scala&amp;gt; die.given(_ % 2 == 0).pr(_ == 4)
+res2: Double = 0.3398
+
+scala&amp;gt; val dice = die.repeat(2).map(_.sum)
+dice: Distribution[Int] = &amp;lt;distribution&amp;gt;
+
+scala&amp;gt; dice.pr(_ == 7)
+res3: Double = 0.1653
+
+scala&amp;gt; dice.pr(_ == 11)
+res4: Double = 0.0542
+
+scala&amp;gt; dice.pr(_ &amp;lt; 4)
+res5: Double = 0.0811&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Neat! This is getting useful.&lt;/p&gt;
+
+&lt;p&gt;OK I&amp;#8217;m tired of looking at individual probabilities. What I really want is a way to visualize the entire distribution.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; dice.hist
+ 2  2.67% ##
+ 3  5.21% #####
+ 4  8.48% ########
+ 5 11.52% ###########
+ 6 13.78% #############
+ 7 16.61% ################
+ 8 13.47% #############
+ 9 11.17% ###########
+10  8.66% ########
+11  5.64% #####
+12  2.79% ##&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That&amp;#8217;s better. &lt;code&gt;hist&lt;/code&gt; pulls 10,000 samples from the distribution, buckets them, counts the size of the buckets, and finds a good way to display it. (The code is tedious so I&amp;#8217;m not going to reproduce it here.)&lt;/p&gt;
+
+&lt;h3 id='dont_tell_anyone_its_a_monad'&gt;Don&amp;#8217;t tell anyone it&amp;#8217;s a monad&lt;/h3&gt;
+
+&lt;p&gt;Another way to represent two die rolls is to sample from &lt;code&gt;die&lt;/code&gt; twice and add the samples.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val dice = die.map(d1 =&amp;gt; die.map(d2 =&amp;gt; d1 + d2))
+dice: Distribution[Distribution[Int]] = &amp;lt;distribution&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;But wait, that gives me a &lt;code&gt;Distribution[Distribution[Int]]&lt;/code&gt;, which is nonsense. Fortunately there&amp;#8217;s an easy fix.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;trait&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='c1'&gt;// ...&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;flatMap&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;B&lt;/span&gt;&lt;span class='o'&gt;](&lt;/span&gt;&lt;span class='n'&gt;f&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='o'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;B&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;B&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;B&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;override&lt;/span&gt; &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;get&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;f&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;get&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;get&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Let&amp;#8217;s try it now.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val dice = die.flatMap(d1 =&amp;gt; die.map(d2 =&amp;gt; d1 + d2))
+dice: Distribution[Int] = &amp;lt;distribution&amp;gt;
+
+scala&amp;gt; dice.hist
+ 2  2.71% ##
+ 3  5.17% #####
+ 4  8.23% ########
+ 5 11.54% ###########
+ 6 14.04% ##############
+ 7 16.67% ################
+ 8 13.53% #############
+ 9 10.97% ##########
+10  8.81% ########
+11  5.62% #####
+12  2.71% ##&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It worked!&lt;/p&gt;
+
+&lt;p&gt;The definition of &lt;code&gt;dice&lt;/code&gt; can be re-written using Scala&amp;#8217;s &lt;code&gt;for&lt;/code&gt;-comprehension syntax:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;dice&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;for&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;d1&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;die&lt;/span&gt;
+  &lt;span class='n'&gt;d2&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;die&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt; &lt;span class='k'&gt;yield&lt;/span&gt; &lt;span class='n'&gt;d1&lt;/span&gt; &lt;span class='o'&gt;+&lt;/span&gt; &lt;span class='n'&gt;d2&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This is really nice. The &lt;code&gt;&amp;lt;-&lt;/code&gt; notation can be read as sampling a value from a distribution. &lt;code&gt;d1&lt;/code&gt; and &lt;code&gt;d2&lt;/code&gt; are samples from &lt;code&gt;die&lt;/code&gt; and both have type &lt;code&gt;Int&lt;/code&gt;. &lt;code&gt;d1 + d2&lt;/code&gt; is a sample from &lt;code&gt;dice&lt;/code&gt;, the distribution I&amp;#8217;m creating.&lt;/p&gt;
+
+&lt;p&gt;In other words, I&amp;#8217;m creating a new distribution by writing code that constructs a single sample of the distribution from individual samples of other distributions. This is pretty handy! Lots of common distributions can be constructed this way. (More on that soon!)&lt;/p&gt;
+
+&lt;h3 id='monty_hall'&gt;Monty Hall&lt;/h3&gt;
+
+&lt;p&gt;I think it would be fun to model the &lt;a href='http://en.wikipedia.org/wiki/Monty_Hall_problem'&gt;Monty Hall problem&lt;/a&gt;.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;montyHall&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[(&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;, &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;doors&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='mi'&gt;1&lt;/span&gt; &lt;span class='n'&gt;to&lt;/span&gt; &lt;span class='mi'&gt;3&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;toSet&lt;/span&gt;
+  &lt;span class='k'&gt;for&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='n'&gt;prize&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;discreteUniform&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;doors&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;   &lt;span class='c1'&gt;// The prize is placed randomly&lt;/span&gt;
+    &lt;span class='n'&gt;choice&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;discreteUniform&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;doors&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;  &lt;span class='c1'&gt;// You choose randomly&lt;/span&gt;
+    &lt;span class='n'&gt;opened&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;discreteUniform&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;doors&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='n'&gt;prize&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='n'&gt;choice&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;   &lt;span class='c1'&gt;// Monty opens one of the other doors&lt;/span&gt;
+    &lt;span class='n'&gt;switch&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;discreteUniform&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;doors&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='n'&gt;choice&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='n'&gt;opened&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;  &lt;span class='c1'&gt;// You switch to the unopened door&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt; &lt;span class='k'&gt;yield&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;prize&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;switch&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This code constructs a distribution of pairs representing the door the prize is behind and the door you switched to. Let&amp;#8217;s see how often those are the same door:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; montyHall.pr{ case (prize, switch) =&amp;gt; prize == switch }
+res0: Double = 0.6671&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Just as expected. Lots of people have a hard time believing the explanation behind why this is correct, but there&amp;#8217;s no arguing with just trying it 10,000 times!&lt;/p&gt;
+
+&lt;h3 id='hth_vs_htt'&gt;HTH vs HTT&lt;/h3&gt;
+
+&lt;p&gt;Another fun problem: if you flip a coin repeatedly, which pattern do you expect to see first, heads-tails-heads or heads-tails-tails?&lt;/p&gt;
+
+&lt;p&gt;First I need the following method:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;trait&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='c1'&gt;// ...&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;until&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;pred&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='nc'&gt;Boolean&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;override&lt;/span&gt; &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;get&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+      &lt;span class='nd'&gt;@tailrec&lt;/span&gt;
+      &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;helper&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;sofar&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+        &lt;span class='k'&gt;if&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;pred&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;sofar&lt;/span&gt;&lt;span class='o'&gt;))&lt;/span&gt; &lt;span class='n'&gt;sofar&lt;/span&gt;
+        &lt;span class='k'&gt;else&lt;/span&gt; &lt;span class='n'&gt;helper&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;get&lt;/span&gt; &lt;span class='o'&gt;::&lt;/span&gt; &lt;span class='n'&gt;sofar&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+      &lt;span class='o'&gt;}&lt;/span&gt;
+      &lt;span class='n'&gt;helper&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='nc'&gt;Nil&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+    &lt;span class='o'&gt;}&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code&gt;until&lt;/code&gt; samples from the distribution, adding the samples to the &lt;em&gt;front&lt;/em&gt; of the list until the list satisfies some predicate. A single sample from the resulting distribution is a list that satisfies the predicate.&lt;/p&gt;
+
+&lt;p&gt;Now I can do:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;hth&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;bernoulli&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='mf'&gt;0.5&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;until&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;take&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='mi'&gt;3&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='nc'&gt;List&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='kc'&gt;true&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='kc'&gt;false&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='kc'&gt;true&lt;/span&gt;&lt;span class='o'&gt;)).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;length&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;htt&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;bernoulli&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='mf'&gt;0.5&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;until&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;take&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='mi'&gt;3&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='nc'&gt;List&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='kc'&gt;false&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='kc'&gt;false&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='kc'&gt;true&lt;/span&gt;&lt;span class='o'&gt;)).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;length&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Looking at the distributions:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; hth.hist
+ 3 11.63% ###########
+ 4 12.43% ############
+ 5  9.50% #########
+ 6  7.82% #######
+ 7  7.31% #######
+ 8  6.51% ######
+ 9  5.41% #####
+10  4.57% ####
+11  4.56% ####
+12  3.78% ###
+13  3.44% ###
+14  3.04% ###
+15  2.52% ##
+16  2.08% ##
+17  1.76% #
+18  1.70% #
+19  1.34% #
+20  1.34% #
+
+scala&amp;gt; htt.hist
+ 3 12.94% ############
+ 4 12.18% ############
+ 5 12.48% ############
+ 6 11.29% ###########
+ 7  9.88% #########
+ 8  7.67% #######
+ 9  6.07% ######
+10  5.32% #####
+11  4.18% ####
+12  3.51% ###
+13  2.78% ##
+14  2.23% ##
+15  1.75% #
+16  1.40% #
+17  1.21% #
+18  0.92% 
+19  0.78% 
+20  0.60% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Eyeballing it, it appears that HTT is likely to occur earlier than HTH. (How can this be? Excercise for the reader!) But I&amp;#8217;d like to get a more concrete answer than that. What I want to know is how many flips you expect to see before seeing either pattern. So let me add a method to compute the expected value of a distribution:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;trait&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='c1'&gt;// ...&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;ev&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt; &lt;span class='o'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='nc'&gt;Stream&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;fill&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;N&lt;/span&gt;&lt;span class='o'&gt;)(&lt;/span&gt;&lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;get&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;sum&lt;/span&gt; &lt;span class='o'&gt;/&lt;/span&gt; &lt;span class='n'&gt;N&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Hm, that &lt;code&gt;.sum&lt;/code&gt; is not going to work for all &lt;code&gt;A&lt;/code&gt;s. I mean, &lt;code&gt;A&lt;/code&gt; could certainly be &lt;code&gt;Boolean&lt;/code&gt;, as in the case of the &lt;code&gt;bernoulli&lt;/code&gt; distribution (what is the expected value of a coin flip?). So I need to constrain &lt;code&gt;A&lt;/code&gt; to &lt;code&gt;Double&lt;/code&gt; for the purposes of this method.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;trait&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='c1'&gt;// ...&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;ev&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;implicit&lt;/span&gt; &lt;span class='n'&gt;toDouble&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;:&lt;/span&gt;&lt;span class='kt'&gt;&amp;lt;&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt; &lt;span class='o'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='nc'&gt;Stream&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;fill&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;N&lt;/span&gt;&lt;span class='o'&gt;)(&lt;/span&gt;&lt;span class='n'&gt;toDouble&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;get&lt;/span&gt;&lt;span class='o'&gt;)).&lt;/span&gt;&lt;span class='n'&gt;sum&lt;/span&gt; &lt;span class='o'&gt;/&lt;/span&gt; &lt;span class='n'&gt;N&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; hth.ev
+&amp;lt;console&amp;gt;:15: error: Cannot prove that Int &amp;lt;:&amp;lt; Double.
+              hth.ev&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Perfect. You know, it really bothered me when I first learned that the expected value of a die roll is 3.5. Requiring an explicit conversion to &lt;code&gt;Double&lt;/code&gt; before computing the expected value of any distribution makes that fact a lot more palatable.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; hth.map(_.toDouble).ev
+res0: Double = 9.9204
+
+scala&amp;gt; htt.map(_.toDouble).ev
+res1: Double = 7.9854&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There we go, empirical confirmation that HTT is expected to appear after 8 flips and HTH after 10 flips.&lt;/p&gt;
+
+&lt;p&gt;I&amp;#8217;m curious. Suppose you and I played a game where we each flipped a coin until I got HTH and you got HTT. Then whoever took more flips pays the other person the difference. What is the expected value of this game? Is it 2? It doesn&amp;#8217;t have to be 2, does it? Maybe the distributions are funky in some way that makes the difference in expected value 2 but the expected difference something else.&lt;/p&gt;
+
+&lt;p&gt;Well, easy enough to try it.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;diff&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;for&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;me&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;hth&lt;/span&gt;
+  &lt;span class='n'&gt;you&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;htt&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt; &lt;span class='k'&gt;yield&lt;/span&gt; &lt;span class='n'&gt;me&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='n'&gt;you&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; diff.map(_.toDouble).ev
+res3: Double = 1.9976&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Actually, it does have to be 2. Expectation is linear!&lt;/p&gt;
+
+&lt;h3 id='unbiased_rounding'&gt;Unbiased rounding&lt;/h3&gt;
+
+&lt;p&gt;At Foursquare we have some code that computes how much our customers owe us, and charges them for it. Our payments provider, &lt;a href='http://www.stripe.com'&gt;Stripe&lt;/a&gt;, only allows us to charge in whole cents, but for complicated business reasons sometimes a customer owes us fractional cents. (No, this is not an Office Space or Superman III reference.) So we just round to the nearest whole cent (actually we use unbiased rounding, or &lt;a href='http://en.wikipedia.org/wiki/Rounding#Round_half_to_even'&gt;banker&amp;#8217;s rounding&lt;/a&gt;, which rounds 0.5 cents up half the time and down half the time).&lt;/p&gt;
+
+&lt;p&gt;Because we&amp;#8217;re paranoid and also curious, we want to know how much money we are losing or gaining due to rounding. Let&amp;#8217;s say that during some period of time we saw that we rounded 125 times, and the sum of all the roundings totaled +8.5 cents. That kinda seems like a lot, but it could happen by chance. If fractional cents are uniformly distributed, what is the probability that you would see a difference that big after 125 roundings?&lt;/p&gt;
+
+&lt;p&gt;Let&amp;#8217;s find out.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val d = uniform.map(x =&amp;gt; if (x &amp;lt; 0.5) -x else 1.0-x).repeat(125).map(_.sum)
+d: Distribution[Double] = &amp;lt;distribution&amp;gt;
+
+scala&amp;gt; d.hist
+-10.0  0.02% 
+ -9.0  0.20% 
+ -8.0  0.57% 
+ -7.0  1.32% #
+ -6.0  2.15% ##
+ -5.0  3.75% ###
+ -4.0  5.12% #####
+ -3.0  7.83% #######
+ -2.0 10.58% ##########
+ -1.0 11.44% ###########
+  0.0 12.98% ############
+  1.0 11.57% ###########
+  2.0 10.68% ##########
+  3.0  7.73% #######
+  4.0  5.70% #####
+  5.0  3.88% ###
+  6.0  2.32% ##
+  7.0  1.21% #
+  8.0  0.65% 
+  9.0  0.25% 
+ 10.0  0.06% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There&amp;#8217;s the distribution. Each instance is either a loss of &lt;code&gt;x&lt;/code&gt; if &lt;code&gt;x &amp;lt; 0.5&lt;/code&gt; or a gain of &lt;code&gt;1.0-x&lt;/code&gt;. Repeat 125 times and sum it all up to get the total gain or loss from rounding.&lt;/p&gt;
+
+&lt;p&gt;Now what&amp;#8217;s the probability that we&amp;#8217;d see a total greater than 8.5 cents? (Or less than -8.5 cents — a loss of 8.5 cents would be equally surprising.)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; d.pr(x =&amp;gt; math.abs(x) &amp;gt; 8.5)
+res0: Double = 0.0098&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Pretty unlikely, about 1%! So the distribution of fractional cents is probably not uniform. We should maybe look into that.&lt;/p&gt;
+
+&lt;h3 id='the_normal_distribution'&gt;The normal distribution&lt;/h3&gt;
+
+&lt;p&gt;One last example. It turns out the &lt;a href='http://en.wikipedia.org/wiki/Normal_distribution'&gt;normal distribution&lt;/a&gt; can be approximated pretty well by summing 12 uniformly distributed random variables and subtracting 6. In code:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;normal&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;uniform&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;repeat&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='mi'&gt;12&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;sum&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='mi'&gt;6&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Here&amp;#8217;s what it looks like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; normal.hist
+-3.50  0.04% 
+-3.00  0.18% 
+-2.50  0.80% 
+-2.00  2.54% ##
+-1.50  6.62% ######
+-1.00 12.09% ############
+-0.50 17.02% #################
+ 0.00 20.12% ####################
+ 0.50 17.47% #################
+ 1.00 12.63% ############
+ 1.50  6.85% ######
+ 2.00  2.61% ##
+ 2.50  0.82% 
+ 3.00  0.29% 
+ 3.50  0.01% 
+
+scala&amp;gt; normal.pr(x =&amp;gt; math.abs(x) &amp;lt; 1)
+res0: Double = 0.6745
+
+scala&amp;gt; normal.pr(x =&amp;gt; math.abs(x) &amp;lt; 2)
+res1: Double = 0.9566
+
+scala&amp;gt; normal.pr(x =&amp;gt; math.abs(x) &amp;lt; 3)
+res2: Double = 0.9972&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I believe it! One more check though.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;trait&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='c1'&gt;// ...&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;variance&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;implicit&lt;/span&gt; &lt;span class='n'&gt;toDouble&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;:&lt;/span&gt;&lt;span class='kt'&gt;&amp;lt;&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt; &lt;span class='o'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;mean&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;this&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;ev&lt;/span&gt;
+    &lt;span class='k'&gt;this&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+      &lt;span class='n'&gt;math&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;pow&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;toDouble&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='n'&gt;mean&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='mi'&gt;2&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+    &lt;span class='o'&gt;}).&lt;/span&gt;&lt;span class='n'&gt;ev&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;stdev&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;implicit&lt;/span&gt; &lt;span class='n'&gt;toDouble&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;:&lt;/span&gt;&lt;span class='kt'&gt;&amp;lt;&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt; &lt;span class='o'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='n'&gt;math&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;sqrt&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;this&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;variance&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The variance &lt;script type='math/tex'&gt;\sigma^2&lt;/script&gt; of a random variable &lt;script type='math/tex'&gt;X&lt;/script&gt; with mean &lt;script type='math/tex'&gt;\mu&lt;/script&gt; is &lt;script type='math/tex'&gt;E[(X-\mu)^2]&lt;/script&gt;, and the standard deviation &lt;script type='math/tex'&gt;\sigma&lt;/script&gt; is just the square root of the variance.&lt;/p&gt;
+
+&lt;p&gt;And now:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; normal.stdev
+res0: Double = 0.9990012220368588&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Perfect.&lt;/p&gt;
+
+&lt;p&gt;This is a great approximation and all, but &lt;code&gt;java.util.Random&lt;/code&gt; actually provides a &lt;code&gt;nextGaussian&lt;/code&gt; method, so for the sake of performance I&amp;#8217;m just going to use that.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;normal&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;override&lt;/span&gt; &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;get&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='n'&gt;rand&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;nextGaussian&lt;/span&gt;&lt;span class='o'&gt;()&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id='conclusion'&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;The frequentist approach lines up really well with my intuitions about probability. And Scala&amp;#8217;s &lt;code&gt;for&lt;/code&gt;-comprehensions provide a suggestive syntax for constructing new random variables from existing ones. So I&amp;#8217;m going to continue to explore various concepts in probability and statistics using these tools.&lt;/p&gt;
+
+&lt;p&gt;In later posts I&amp;#8217;ll try to model Bayesian inference, Markov chains, the Central Limit Theorem, probablistic graphical models, and a bunch of related distributions.&lt;/p&gt;
+
+&lt;p&gt;All of the code for this is on &lt;a href='http://github.com/jliszka/probability-monad'&gt;github&lt;/a&gt;.&lt;/p&gt;</content>
+ </entry>
+ 
+ <entry>
+   <title>A Frequentist Approach to Bayesian Inference</title>
+   <link href="http://jliszka.github.io/2013/08/11/a-frequentist-approach-to-bayesian-inference.html"/>
+   <updated>2013-08-11T12:57:09-04:00</updated>
+   <id>http://jliszka.github.io/2013/08/11/a-frequentist-approach-to-bayesian-inference</id>
+   <content type="html">&lt;p&gt;Say you have a biased coin, but you don&amp;#8217;t know what the &amp;#8220;true&amp;#8221; bias is. You flip the coin 10 times and observe 8 heads. What can you say now about the true bias?&lt;/p&gt;
+
+&lt;p&gt;This sounds like a classic problem in Bayesian inference. You might think that a problem like this would not be amenable to a frequentist approach. In fact, I&amp;#8217;ll show the contrary, that a frequentist approach can be quite illuminating, especially if you (like me) are a little wobbly on your Bayesian inference.&lt;/p&gt;
+
+&lt;h3 id='the_experiment'&gt;The experiment&lt;/h3&gt;
+
+&lt;p&gt;The frequentist approach to this problem is to run an experiment consisting of a large number of trials. A single trial will look like this:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Choose a bias at random&lt;/li&gt;
+
+&lt;li&gt;Flip a coin with that bias 10 times&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;After you run this experiment, say, 10,000 times, you look at all the times you got 8 heads, and see what biases were involved in those trials. The percent of the time each bias comes up in this subset of trials gives you the probability (the &amp;#8220;posterior probability&amp;#8221;) that that bias is the &amp;#8220;true&amp;#8221; bias.&lt;/p&gt;
+
+&lt;h3 id='the_prior'&gt;The prior&lt;/h3&gt;
+
+&lt;p&gt;When you start to code this up, one question jumps out: In step 1, when you choose a bias &amp;#8220;at random,&amp;#8221; what distribution do you draw it from?&lt;/p&gt;
+
+&lt;p&gt;The only answer that makes sense is the uniform distribution between 0 and 1, reflecting no particular prior knowledge about what the true bias is. Later on we&amp;#8217;ll see what happens to the posterior distribution when you start with different priors.&lt;/p&gt;
+
+&lt;h3 id='the_code'&gt;The code&lt;/h3&gt;
+
+&lt;p&gt;First, a case class that represents the outcome of one trial:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='k'&gt;class&lt;/span&gt; &lt;span class='nc'&gt;Trial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;flips&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Boolean&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;And the experiment itself:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;experiment&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Trial&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;for&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='n'&gt;bias&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;uniform&lt;/span&gt;
+    &lt;span class='n'&gt;flips&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;bernoulli&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;repeat&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='mi'&gt;10&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt; &lt;span class='k'&gt;yield&lt;/span&gt; &lt;span class='nc'&gt;Trial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;flips&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The bias is drawn from the uniform distribution and feeds into a bernoulli distribution, which represents a coin flip, with &lt;code&gt;true&lt;/code&gt; corresponding to heads and &lt;code&gt;false&lt;/code&gt; corresponding to tails.&lt;/p&gt;
+
+&lt;p&gt;Now let&amp;#8217;s analyze the experiment. Recall we only care about the time we got 8 heads.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;posterior&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;experiment&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;given&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;flips&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;count&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='kc'&gt;true&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='mi'&gt;8&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Let&amp;#8217;s see what it looks like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; posterior.bucketedHist(0, 1, 20)
+0.00  0.00% 
+0.05  0.00% 
+0.10  0.00% 
+0.15  0.00% 
+0.20  0.01% 
+0.25  0.03% 
+0.30  0.09% 
+0.35  0.18% 
+0.40  0.63% 
+0.45  1.37% #
+0.50  2.32% ##
+0.55  3.85% ###
+0.60  6.69% ######
+0.65  9.35% #########
+0.70 12.73% ############
+0.75 15.49% ###############
+0.80 16.91% ################
+0.85 15.08% ###############
+0.90 10.60% ##########
+0.95  4.48% ####
+1.00  0.19% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That looks pretty good! It&amp;#8217;s clear that 0.8 is the most likely bias (in technical terms, the &amp;#8220;maximum likelihood estimate&amp;#8221;).&lt;/p&gt;
+
+&lt;p&gt;Alright, now suppose I flip the same coin 10 more times and get only 6 heads this time. I should be able to model it the same way, only using &lt;code&gt;posterior&lt;/code&gt; as my new prior.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;experiment2&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;for&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='n'&gt;bias&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;posterior&lt;/span&gt;
+    &lt;span class='n'&gt;flips&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;bernoulli&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;repeat&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='mi'&gt;10&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt; &lt;span class='k'&gt;yield&lt;/span&gt; &lt;span class='nc'&gt;Trial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;flips&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;posterior2&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;experiment2&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;given&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;flips&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;count&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='kc'&gt;true&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='mi'&gt;6&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; p2.bucketedHist(0, 1, 20)
+0.00  0.00% 
+0.05  0.00% 
+0.10  0.00% 
+0.15  0.00% 
+0.20  0.00% 
+0.25  0.00% 
+0.30  0.00% 
+0.35  0.18% 
+0.40  0.55% 
+0.45  1.84% #
+0.50  4.25% ####
+0.55  7.79% #######
+0.60 12.91% ############
+0.65 17.86% #################
+0.70 19.41% ###################
+0.75 17.66% #################
+0.80 11.37% ###########
+0.85  4.98% ####
+0.90  1.14% #
+0.95  0.06% 
+1.00  0.00% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Great, exactly what you would expect. Playing around with it, you can see that as you do more trials and observe more outcomes, the distribution gets narrower.&lt;/p&gt;
+
+&lt;p&gt;To make that easier I&amp;#8217;m going to abstract this out to a method.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;trait&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='c1'&gt;// ...&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;posterior&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;B&lt;/span&gt;&lt;span class='o'&gt;](&lt;/span&gt;&lt;span class='n'&gt;experiment&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='o'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;B&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt;
+                   &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;observed&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;B&lt;/span&gt; &lt;span class='o'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='nc'&gt;Boolean&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='k'&gt;class&lt;/span&gt; &lt;span class='nc'&gt;Trial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;outcome&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;B&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+    &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;d&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;for&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+      &lt;span class='n'&gt;a&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='k'&gt;this&lt;/span&gt;
+      &lt;span class='n'&gt;e&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;experiment&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+    &lt;span class='o'&gt;}&lt;/span&gt; &lt;span class='k'&gt;yield&lt;/span&gt; &lt;span class='nc'&gt;Trial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;e&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+    &lt;span class='n'&gt;d&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;given&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;t&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;observed&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;t&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;outcome&lt;/span&gt;&lt;span class='o'&gt;)).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This method treats &lt;code&gt;this&lt;/code&gt; as a prior and returns the posterior distribution after running an experiment that depends on values sampled from &lt;code&gt;this&lt;/code&gt;. The function &lt;code&gt;observed&lt;/code&gt; indicates what outcomes were actually observed and which were not.&lt;/p&gt;
+
+&lt;p&gt;So now our coin-flip experiment becomes:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;p1&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;uniform&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;posterior&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;bernoulli&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;repeat&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='mi'&gt;10&lt;/span&gt;&lt;span class='o'&gt;))(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;count&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='kc'&gt;true&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='mi'&gt;8&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;p2&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;p1&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;posterior&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;bernoulli&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;repeat&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='mi'&gt;10&lt;/span&gt;&lt;span class='o'&gt;))(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;count&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='kc'&gt;true&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='mi'&gt;6&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;We can eyeball that &lt;code&gt;p2&lt;/code&gt; gives the same result as flipping a coin 20 times and observing 14 heads:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; uniform.posterior(bias =&amp;gt; bernoulli(bias).repeat(20))(_.count(_ == true) == 14).bucketedHist(0, 1, 20)
+0.00  0.00% 
+0.05  0.00% 
+0.10  0.00% 
+0.15  0.00% 
+0.20  0.00% 
+0.25  0.00% 
+0.30  0.06% 
+0.35  0.13% 
+0.40  0.53% 
+0.45  1.83% #
+0.50  3.88% ###
+0.55  8.20% ########
+0.60 13.40% #############
+0.65 17.61% #################
+0.70 19.28% ###################
+0.75 18.30% ##################
+0.80 11.33% ###########
+0.85  4.40% ####
+0.90  0.98% 
+0.95  0.07% 
+1.00  0.00% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And that flipping the coin more times gives a narrower distribution:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; uniform.posterior(bias =&amp;gt; bernoulli(bias).repeat(100))(_.count(_ == true) == 72).bucketedHist(0, 1, 20)
+0.00  0.00% 
+0.05  0.00% 
+0.10  0.00% 
+0.15  0.00% 
+0.20  0.00% 
+0.25  0.00% 
+0.30  0.00% 
+0.35  0.00% 
+0.40  0.00% 
+0.45  0.00% 
+0.50  0.01% 
+0.55  0.14% 
+0.60  2.35% ##
+0.65 15.58% ###############
+0.70 39.42% #######################################
+0.75 33.53% #################################
+0.80  8.60% ########
+0.85  0.37% 
+0.90  0.00% 
+0.95  0.00% 
+1.00  0.00% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Pretty neat!&lt;/p&gt;
+
+&lt;h3 id='other_priors'&gt;Other priors&lt;/h3&gt;
+
+&lt;p&gt;Now let&amp;#8217;s play around with other priors and see what posterior distributions come out.&lt;/p&gt;
+
+&lt;p&gt;Suppose we start with some knowledge that coin favors tails over heads. So we know the bias is less than 0.5. We&amp;#8217;ll model this with a uniform distribution between 0 and 0.5.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val prior = uniform.given(_ &amp;lt; 0.5)
+prior: Distribution[Double] = &amp;lt;distribution&amp;gt;
+
+scala&amp;gt; prior.posterior(bias =&amp;gt; bernoulli(bias).repeat(10))(_.count(_ == true) == 8).bucketedHist(0, 1, 20, roundDown = true)
+0.00  0.00% 
+0.05  0.00% 
+0.10  0.00% 
+0.15  0.01% 
+0.20  0.33% 
+0.25  1.47% #
+0.30  4.42% ####
+0.35 11.61% ###########
+0.40 26.93% ##########################
+0.45 55.23% #######################################################
+0.50  0.00% 
+0.55  0.00% 
+0.60  0.00% 
+0.65  0.00% 
+0.70  0.00% 
+0.75  0.00% 
+0.80  0.00% 
+0.85  0.00% 
+0.90  0.00% 
+0.95  0.00% 
+1.00  0.00% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Makes sense, all the probabily mass crowds as close to 0.5 as it can. (&lt;code&gt;roundDown = true&lt;/code&gt; labels each bucket with the minimum value of the bucket instead of the middle value. So here, the &amp;#8220;0.45&amp;#8221; bucket includes all values between 0.45 and 0.50, whereas normally that bucket would include values between 0.425 and 0.475. I just did this to align the bucket boundaries with where I know the cutoff in the distribution is.)&lt;/p&gt;
+
+&lt;p&gt;OK, let&amp;#8217;s say someone tells us that they don&amp;#8217;t know what the bias is, but it is definitely &lt;em&gt;not&lt;/em&gt; between 0.7 and 0.8.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val prior = uniform.given(x =&amp;gt; x &amp;lt;= 0.7 || x &amp;gt;= 0.8)
+prior: Distribution[Double] = &amp;lt;distribution&amp;gt;
+
+scala&amp;gt; prior.posterior(bias =&amp;gt; bernoulli(bias).repeat(10))(_.count(_ == true) == 8).bucketedHist(0, 1, 20, roundDown = true)
+0.00  0.00% 
+0.05  0.00% 
+0.10  0.00% 
+0.15  0.00% 
+0.20  0.03% 
+0.25  0.02% 
+0.30  0.20% 
+0.35  0.39% 
+0.40  1.21% #
+0.45  2.79% ##
+0.50  4.67% ####
+0.55  7.52% #######
+0.60 11.68% ###########
+0.65 16.20% ################
+0.70  0.00% 
+0.75  0.00% 
+0.80 23.96% #######################
+0.85 18.53% ##################
+0.90 10.52% ##########
+0.95  2.28% ##
+1.00  0.00% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Fun! Makes perfect sense though, the prior distribution isn&amp;#8217;t generating any biases between 0.7 and 0.8, so it&amp;#8217;s not going to show up in the results.&lt;/p&gt;</content>
+ </entry>
  
  
 </feed>
