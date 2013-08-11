@@ -1,11 +1,9 @@
 #!/bin/sh
 
-shopt -s extglob && \
 git checkout master && \
-rm -rf !\(_site\) && \
+for f in $(\ls -1 .); do git rm -r $f; done && \
 cp -a _site/* . && \
 git add . && \
 git commit -m 'Site updated' && \
 git push origin master && \
-git checkout source && \
-shopt -u extglob
+git checkout source
