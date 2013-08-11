@@ -5,8 +5,8 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-08-11T12:58:03-04:00</lastBuildDate>
-        <pubDate>2013-08-11T12:58:03-04:00</pubDate>
+        <lastBuildDate>2013-08-11T13:02:26-04:00</lastBuildDate>
+        <pubDate>2013-08-11T13:02:26-04:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -327,7 +327,7 @@ f(k) = {n \choose k}p^k(1-p)^{n-k}
 &lt;p&gt;All of the code in this post is available on &lt;a href='http://github.com/jliszka/probability-monad'&gt;github&lt;/a&gt;.&lt;/p&gt;</description>
                 <link>http://jliszka.github.io/2013/08/11/climbing-the-probability-distribution-ladder.html</link>
                 <guid>http://jliszka.github.io/2013/08/11/climbing-the-probability-distribution-ladder</guid>
-                <pubDate>2013-08-11T12:57:09-04:00</pubDate>
+                <pubDate>2013-08-11T12:58:24-04:00</pubDate>
         </item>
 
         <item>
@@ -630,7 +630,7 @@ res0: Double = 0.0104&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;We actually run into this all the time at Foursquare. Certain things like, say, the distribution of the number of friends users have is Pareto-distributed (the vast majority of users have a small number of friends, but some users have thousands of friends). So if you&amp;#8217;re running an experiment that is intended to increase the average number of friends users have, you&amp;#8217;re going to run into trouble. You aren&amp;#8217;t going to be able to use standard statistical techniques to analyze the results of the experiment. Well, actually, you can try, and you&amp;#8217;ll get some convincing-looking numbers out, but those numbers will be completely meaningless! And if no one notices, you might end up making Important Product Decisions based on completely meaningless numbers.&lt;/p&gt;</description>
                 <link>http://jliszka.github.io/2013/08/11/a-programmers-guide-to-the-central-limit-theorem.html</link>
                 <guid>http://jliszka.github.io/2013/08/11/a-programmers-guide-to-the-central-limit-theorem</guid>
-                <pubDate>2013-08-11T12:57:09-04:00</pubDate>
+                <pubDate>2013-08-11T12:58:24-04:00</pubDate>
         </item>
 
         <item>
@@ -1096,7 +1096,7 @@ res0: Double = 0.9990012220368588&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;All of the code for this is on &lt;a href='http://github.com/jliszka/probability-monad'&gt;github&lt;/a&gt;.&lt;/p&gt;</description>
                 <link>http://jliszka.github.io/2013/08/11/a-frequentist-approach-to-probability.html</link>
                 <guid>http://jliszka.github.io/2013/08/11/a-frequentist-approach-to-probability</guid>
-                <pubDate>2013-08-11T12:57:09-04:00</pubDate>
+                <pubDate>2013-08-11T12:58:24-04:00</pubDate>
         </item>
 
         <item>
@@ -1343,7 +1343,7 @@ scala&amp;gt; prior.posterior(bias =&amp;gt; bernoulli(bias).repeat(10))(_.count
 &lt;p&gt;Fun! Makes perfect sense though, the prior distribution isn&amp;#8217;t generating any biases between 0.7 and 0.8, so it&amp;#8217;s not going to show up in the results.&lt;/p&gt;</description>
                 <link>http://jliszka.github.io/2013/08/11/a-frequentist-approach-to-bayesian-inference.html</link>
                 <guid>http://jliszka.github.io/2013/08/11/a-frequentist-approach-to-bayesian-inference</guid>
-                <pubDate>2013-08-11T12:57:09-04:00</pubDate>
+                <pubDate>2013-08-11T12:58:24-04:00</pubDate>
         </item>
 
 

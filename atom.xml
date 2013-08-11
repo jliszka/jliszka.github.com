@@ -4,7 +4,7 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-08-11T12:58:03-04:00</updated>
+ <updated>2013-08-11T13:02:26-04:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
@@ -15,7 +15,7 @@
  <entry>
    <title>Climbing the probability distribution ladder</title>
    <link href="http://jliszka.github.io/2013/08/11/climbing-the-probability-distribution-ladder.html"/>
-   <updated>2013-08-11T12:57:09-04:00</updated>
+   <updated>2013-08-11T12:58:24-04:00</updated>
    <id>http://jliszka.github.io/2013/08/11/climbing-the-probability-distribution-ladder</id>
    <content type="html">&lt;p&gt;In my &lt;a href='/2013/08/11/a-programmers-guide-to-the-central-limit-theorem.html'&gt;last post&lt;/a&gt; I created a tool for constructing probability distributions. I started with the uniform distribution and derived the Bernoulli and normal distributions from it.&lt;/p&gt;
 
@@ -335,7 +335,7 @@ f(k) = {n \choose k}p^k(1-p)^{n-k}
  <entry>
    <title>A Programmer's Guide to the Central Limit Theorem</title>
    <link href="http://jliszka.github.io/2013/08/11/a-programmers-guide-to-the-central-limit-theorem.html"/>
-   <updated>2013-08-11T12:57:09-04:00</updated>
+   <updated>2013-08-11T12:58:24-04:00</updated>
    <id>http://jliszka.github.io/2013/08/11/a-programmers-guide-to-the-central-limit-theorem</id>
    <content type="html">&lt;p&gt;This post is a continuation of a series of posts about exploring probability distributions through code. The first post is &lt;a href='/2013/08/11/a-frequentist-approach-to-bayesian-inference.html'&gt;here&lt;/a&gt;.&lt;/p&gt;
 
@@ -638,7 +638,7 @@ res0: Double = 0.0104&lt;/code&gt;&lt;/pre&gt;
  <entry>
    <title>A Frequentist Approach to Probability</title>
    <link href="http://jliszka.github.io/2013/08/11/a-frequentist-approach-to-probability.html"/>
-   <updated>2013-08-11T12:57:09-04:00</updated>
+   <updated>2013-08-11T12:58:24-04:00</updated>
    <id>http://jliszka.github.io/2013/08/11/a-frequentist-approach-to-probability</id>
    <content type="html">&lt;p&gt;One thing that always confused me in my intro stats classes was the concept of a random variable. A random variable is not a variable like I&amp;#8217;m used to thinking about, like a thing that has one value at a time. A random variable is instead an object that you can sample values from, and the values you get will be distributed according to some underlying probability distribution.&lt;/p&gt;
 
@@ -1104,7 +1104,7 @@ res0: Double = 0.9990012220368588&lt;/code&gt;&lt;/pre&gt;
  <entry>
    <title>A Frequentist Approach to Bayesian Inference</title>
    <link href="http://jliszka.github.io/2013/08/11/a-frequentist-approach-to-bayesian-inference.html"/>
-   <updated>2013-08-11T12:57:09-04:00</updated>
+   <updated>2013-08-11T12:58:24-04:00</updated>
    <id>http://jliszka.github.io/2013/08/11/a-frequentist-approach-to-bayesian-inference</id>
    <content type="html">&lt;p&gt;Say you have a biased coin, but you don&amp;#8217;t know what the &amp;#8220;true&amp;#8221; bias is. You flip the coin 10 times and observe 8 heads. What can you say now about the true bias?&lt;/p&gt;
 
