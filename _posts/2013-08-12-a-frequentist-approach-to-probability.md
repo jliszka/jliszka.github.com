@@ -29,7 +29,7 @@ I'm going to add a ```sample``` method that lets me draw a sample of any size I 
 trait Distribution[A] {
   def get: A
 
-  def sample(n: Int): List[Int] = {
+  def sample(n: Int): List[A] = {
     List.fill(n)(this.get)
   }
 }
