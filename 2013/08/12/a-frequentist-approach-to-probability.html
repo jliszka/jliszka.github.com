@@ -130,7 +130,7 @@
 <div class='highlight'><pre><code class='scala'><span class='k'>trait</span> <span class='nc'>Distribution</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='o'>{</span>
   <span class='k'>def</span> <span class='n'>get</span><span class='k'>:</span> <span class='kt'>A</span>
 
-  <span class='k'>def</span> <span class='n'>sample</span><span class='o'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>Int</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='k'>def</span> <span class='n'>sample</span><span class='o'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
     <span class='nc'>List</span><span class='o'>.</span><span class='n'>fill</span><span class='o'>(</span><span class='n'>n</span><span class='o'>)(</span><span class='k'>this</span><span class='o'>.</span><span class='n'>get</span><span class='o'>)</span>
   <span class='o'>}</span>
 <span class='o'>}</span>
