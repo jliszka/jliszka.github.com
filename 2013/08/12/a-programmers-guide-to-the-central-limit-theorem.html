@@ -123,7 +123,7 @@
 
 <h3 id='sample_means'>Sample means</h3>
 
-<p>Suppose I have a random variable whose underlying distribution is unknown to me. I take sample of a reasonable size (say 100) and find the mean of the sample. What can I say about the sample mean?</p>
+<p>Suppose I have a random variable whose underlying distribution is unknown to me. I take sample of a reasonable size (say 100) and find the mean of the sample. What can I say about the relationship between the true mean and the sample mean?</p>
 
 <p>The most comprehensive answer to this is to look at the distribution of the sample mean.</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>sampleMean</span><span class='o'>(</span><span class='n'>d</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Double</span><span class='o'>],</span> <span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='o'>=</span> <span class='mi'>100</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Double</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
@@ -157,7 +157,7 @@
 0.59  0.07% 
 0.60  0.06% </code></pre>
 
-<p>Not surprising. All the sample means are clustered around the actual mean (0.5).</p>
+<p>Not surprising. All the sample means are clustered around the true mean (0.5).</p>
 
 <p>Let&#8217;s try a couple more.</p>
 
@@ -343,7 +343,7 @@ res12: Double = 0.17756920958319758</code></pre>
 
 <p>You might have noticed that I skipped the Pareto distribution. It turns out that the Central Limit Theorem actually doesn&#8217;t work with the Pareto distribution. This is due to one sneaky fact — sample means are clustered around the mean of the underlying distribution <em>if it exists</em>. The Pareto distribution doesn&#8217;t have a mean (actually its mean is infinite, but that&#8217;s basically saying the same thing).</p>
 
-<p>The sample means are not normally distributed:</p>
+<p>The means of samples drawn from the Pareto distribution are not normally distributed:</p>
 
 <pre><code>scala&gt; sampleMean(pareto(1)).bucketedHist(0, 20, 20)
  0.0  0.00% 
@@ -389,7 +389,7 @@ res1: Double = 477.9797744569662</code></pre>
 <p>In standard experimental analysis terms, the null hypothesis is that your friend has a fair coin. You can reject the null hypothesis if you can show that there is less than, say, a 5% chance of losing $30 after 100 rounds.</p>
 
 <p>You can model the distribution of outcomes for a single round of the game as follows:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>val</span> <span class='n'>d</span> <span class='k'>=</span> <span class='n'>geometric</span><span class='o'>(</span><span class='mf'>0.5</span><span class='o'>).</span><span class='n'>map</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>toDouble</span> <span class='o'>-</span> <span class='mf'>1.0</span><span class='o'>)</span>
+<div class='highlight'><pre><code class='scala'><span class='k'>val</span> <span class='n'>d</span> <span class='k'>=</span> <span class='n'>geometric</span><span class='o'>(</span><span class='mf'>0.5</span><span class='o'>).</span><span class='n'>map</span><span class='o'>(</span><span class='k'>_</span> <span class='o'>-</span> <span class='mf'>1.0</span><span class='o'>)</span>
 </code></pre></div>
 <p><code>geometric(0.5)</code> models your winnings and <code>- 1.0</code> represents the cost to play the round. The expected value and standard deviation of this distribution are:</p>
 
@@ -431,7 +431,6 @@ res0: Double = 0.0104</code></pre>
 
   <div id="disqus_thread"></div>
 <script type="text/javascript">
-    var disqus_developer = 1;
     var disqus_shortname = 'jliszka'; // required: replace example with your forum shortname
     
     /* * * DON'T EDIT BELOW THIS LINE * * */
@@ -463,6 +462,22 @@ res0: Double = 0.0104</code></pre>
     </div>
 
     
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-42567355-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
   </body>
 </html>
 

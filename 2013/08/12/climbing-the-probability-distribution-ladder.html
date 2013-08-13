@@ -117,7 +117,7 @@
       <span>12 August 2013</span>
     </div>
     <div class="content">
-      <p>In my <a href=''>last post</a> I created a tool for constructing probability distributions. I started with the uniform distribution and derived the Bernoulli and normal distributions from it.</p>
+      <p>In my <a href=''>last post</a> I created a simple library for constructing probability distributions, based on the <a href='http://en.wikipedia.org/wiki/Monte_Carlo_method'>Monte Carlo method</a>. I started with the uniform distribution and derived the Bernoulli and normal distributions from it.</p>
 
 <p>In this post I&#8217;ll construct some more common distributions in the same manner.</p>
 
@@ -152,6 +152,8 @@
  8.0  0.01% </code></pre>
 
 <p>It seems backwards that the exponential distribution is implemented using a logarithm. It probably has something to do with this particular technique of constructing distributions. I&#8217;m describing where to put each piece of probability mass (here, by taking the log of each sample) rather than describing how much probability mass lives at each value of <script type='math/tex'>x</script> (for the exponential distribution, <script type='math/tex'>\lambda e^{-\lambda x}</script> lives at <script type='math/tex'>x</script>, so from that definition it&#8217;s clear why it&#8217;s called the exponential distribution).</p>
+
+<p>This distribution is the continuous analog of the geometric distribution, and plays an interesting role on the construction of the Poisson distribution, both of which I&#8217;ll get to in a minute.</p>
 
 <h3 id='the_pareto_distribution'>The Pareto distribution</h3>
 
@@ -225,6 +227,8 @@ f_\lambda(x) = \lambda e^{-\lambda x}
 </script>
 <p>Hm.</p>
 
+<p>Anyway, this distribution shows up a lot in &#8220;rich get richer&#8221; scenarios — distribution of income, the population of cities, file sizes on your computer, etc. But I don&#8217;t have a good explanation as to why.</p>
+
 <h3 id='the_chisquared_distribution'>The chi-squared distribution</h3>
 
 <p>A <a href='http://en.wikipedia.org/wiki/Chi-squared_distribution'>chi-squared distribution</a> can be constructed by squaring and then summing several normal distributions. It is parameterized by the number of degrees of freedom, <code>df</code>, which just indicates how many squared normal distributions to sum up. Here&#8217;s the code:</p>
@@ -271,16 +275,18 @@ scala&gt; chi2(5).bucketedHist(0, 15, 15, roundDown = true)
 14.0  0.59% 
 15.0  0.00% </code></pre>
 
+<p>This distribution is useful in <a href='http://en.wikipedia.org/wiki/Pearson%27s_chi-squared_test'>analyzing</a> whether an observed sample is likely to have been drawn from a given theoretical distribution, where you construct a &#8220;test statistic&#8221; by summing the squares of the deviations of the observed values from their theoretical values. It&#8217;s this sum of squared differences that makes the chi-squared distribution an appropriate tool here. Why the chi-squared distribution is the sum of squared <em>normal</em> distributions is a topic for another post.</p>
+
 <h3 id='students_tdistribution'>Student&#8217;s <em>t</em>-distribution</h3>
 
-<p>If <script type='math/tex'>Z</script> is a normally distributed random variable and <script type='math/tex'>V</script> is a chi-squared random variable with <script type='math/tex'>k</script> degrees of freedom, then <script type='math/tex'>Z * \sqrt{k/V}</script> is a random variable distributed according to the <a href='http://en.wikipedia.org/wiki/Student&apos;s_t-distribution'>Student&#8217;s <em>t</em>-distribution</a>.</p>
+<p>If <script type='math/tex'>Z</script> is a normally distributed random variable and <script type='math/tex'>V</script> is a chi-squared random variable with <script type='math/tex'>k</script> degrees of freedom, then <script type='math/tex'>Z / \sqrt{V/k}</script> is a random variable distributed according to the <a href='http://en.wikipedia.org/wiki/Student&apos;s_t-distribution'>Student&#8217;s <em>t</em>-distribution</a>.</p>
 
 <p>Here&#8217;s the code:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>students_t</span><span class='o'>(</span><span class='n'>df</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Double</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>students_t</span><span class='o'>(</span><span class='n'>k</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Double</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
   <span class='k'>for</span> <span class='o'>{</span>
     <span class='n'>z</span> <span class='k'>&lt;-</span> <span class='n'>normal</span>
-    <span class='n'>v</span> <span class='k'>&lt;-</span> <span class='n'>chi2</span><span class='o'>(</span><span class='n'>df</span><span class='o'>)</span>
-  <span class='o'>}</span> <span class='k'>yield</span> <span class='n'>z</span> <span class='o'>*</span> <span class='n'>math</span><span class='o'>.</span><span class='n'>sqrt</span><span class='o'>(</span><span class='n'>df</span> <span class='o'>/</span> <span class='n'>v</span><span class='o'>)</span>
+    <span class='n'>v</span> <span class='k'>&lt;-</span> <span class='n'>chi2</span><span class='o'>(</span><span class='n'>k</span><span class='o'>)</span>
+  <span class='o'>}</span> <span class='k'>yield</span> <span class='n'>z</span> <span class='o'>/</span> <span class='n'>math</span><span class='o'>.</span><span class='n'>sqrt</span><span class='o'>(</span><span class='n'>v</span> <span class='o'>/</span> <span class='n'>k</span><span class='o'>)</span>
 <span class='o'>}</span>
 </code></pre></div>
 <p>The closed-form probability density function is too gross to even consider. Here&#8217;s a plot though:</p>
@@ -307,6 +313,8 @@ scala&gt; chi2(5).bucketedHist(0, 15, 15, roundDown = true)
  4.0  0.49% 
  4.5  0.26% 
  5.0  0.14% </code></pre>
+
+<p>This distribution arises by modeling the location of the true mean of a distribution with unknown mean and unknown standard deviation, when all you have is a small sample from the distribution. <script type='math/tex'>k</script> represents the sample size. <script type='math/tex'>Z</script> represents the distribution of the sample mean around the true mean (why it&#8217;s a normal distribution is a subject for another post). <script type='math/tex'>V/k</script> represents the variance of the sample — as the sum of squared differences of samples from the sample mean, it is naturally modeled as a chi-squared distribution. Its square root represents the standard deviation of the sample. So basically we&#8217;re scaling a normal distribution (representing the sample mean) by the standard deviation of the sample.</p>
 
 <p>It looks a lot like the normal distribution, and in fact as the degrees of freedom goes up, it becomes a better and better approximation to it. At smaller degrees of freedom, though, there is more probability mass in the tails (it has &#8220;fatter tails&#8221; as some people say).</p>
 
@@ -411,9 +419,9 @@ f(k) = {n \choose k}p^k(1-p)^{n-k}
   <span class='n'>d</span><span class='o'>.</span><span class='n'>until</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>sum</span> <span class='o'>&gt;</span> <span class='n'>lambda</span><span class='o'>).</span><span class='n'>map</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>size</span> <span class='o'>-</span> <span class='mi'>1</span><span class='o'>)</span>
 <span class='o'>}</span>
 </code></pre></div>
-<p>Now this is what the Poisson distribution is really about. The time between events in a Poisson process follows the exponential distribution. So if you wanted to know how many events will happen in, say <script type='math/tex'>\lambda</script> seconds, you could add up inter-event timings drawn from the exponential distribution until you get to <script type='math/tex'>\lambda</script>. That&#8217;s exactly what the code above does. The exponential distribution has mean 1, so you would expect to get <script type='math/tex'>\lambda</script> events on average.</p>
+<p>Now this is what the Poisson distribution is really about. Why? The time between events in a Poisson process follows the exponential distribution. So if you wanted to know how many events will happen in, say <script type='math/tex'>\lambda</script> seconds, you could add up inter-event timings drawn from the exponential distribution (which has mean 1) until you get to <script type='math/tex'>\lambda</script>. That&#8217;s exactly what the code above does.</p>
 
-<p>But why does the exponential distribution model the time between events in the first place? In a rigorous sense, the exponential distribution is the most natural choice for this. First of all, it produces values between 0 and <script type='math/tex'>\infty</script> (in the parlance, it has &#8220;support&#8221; <script type='math/tex'>[0, \infty)</script>), which makes sense for modeling timings between events. And second, of all the distributions with support <script type='math/tex'>[0, \infty)</script>, the exponential distribution is the one that makes the fewest additional assumptions — that is, it contains the least extra information, which is the same as saying that it has the highest <a href='http://en.wikipedia.org/wiki/Maximum_entropy_probability_distribution'>entropy</a>.</p>
+<p>But why does the exponential distribution model the time between events in the first place? In a rigorous sense, the exponential distribution is the most natural choice. First of all, it produces values between 0 and <script type='math/tex'>\infty</script> (in the parlance, it has &#8220;support&#8221; <script type='math/tex'>[0, \infty)</script>), which makes sense for modeling timings between events. And second, of all the distributions with support <script type='math/tex'>[0, \infty)</script>, the exponential distribution is the one that makes the fewest additional assumptions — that is, it contains the least extra information, which is the same as saying that it has the highest <a href='http://en.wikipedia.org/wiki/Maximum_entropy_probability_distribution'>entropy</a>.</p>
 
 <p>Anyway, with a little rewriting, you can see how the negative binomial distribution is sort of the discrete counterpart to the Poisson distribution. Here is <code>negativeBinomial</code> rewritten to show the similarity:</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>negativeBinomial</span><span class='o'>(</span><span class='n'>p</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>,</span> <span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Int</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
@@ -425,7 +433,7 @@ f(k) = {n \choose k}p^k(1-p)^{n-k}
 
 <h3 id='conclusion'>Conclusion</h3>
 
-<p>I hope this was a little bit illuminating about how various probability distributions arise and how they are related to one another. Obviously there is a lot more to say, but this should give you a taste for how code can shed light on some of the more esoteric concepts in mathematics.</p>
+<p>I hope this was a little bit illuminating about how various probability distributions arise and how they are related to one another. Obviously there is a lot more to say about each of these distributions, but this should give you a taste for how code can shed light on some of the more esoteric concepts in mathematics.</p>
 
 <p>In the next post I&#8217;ll look at the Central Limit Theorem, which sounds scary but I promise you is not.</p>
 
@@ -464,7 +472,6 @@ f(k) = {n \choose k}p^k(1-p)^{n-k}
 
   <div id="disqus_thread"></div>
 <script type="text/javascript">
-    var disqus_developer = 1;
     var disqus_shortname = 'jliszka'; // required: replace example with your forum shortname
     
     /* * * DON'T EDIT BELOW THIS LINE * * */
@@ -496,6 +503,22 @@ f(k) = {n \choose k}p^k(1-p)^{n-k}
     </div>
 
     
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-42567355-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
   </body>
 </html>
 
