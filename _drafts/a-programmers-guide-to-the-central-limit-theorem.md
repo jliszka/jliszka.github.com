@@ -15,7 +15,7 @@ In this post I'm going to look at the Central Limit Theorem.
 ### Sample means
 
 Suppose I have a random variable whose underlying distribution is unknown to me. I take sample of a reasonable size (say 100)
-and find the mean of the sample. What can I say about the sample mean?
+and find the mean of the sample. What can I say about the relationship between the true mean and the sample mean?
 
 The most comprehensive answer to this is to look at the distribution of the sample mean.
 
@@ -53,7 +53,7 @@ Let's try it on some of the distributions we've [created]({{ page.previous.url }
     0.59  0.07% 
     0.60  0.06% 
 
-Not surprising. All the sample means are clustered around the actual mean (0.5).
+Not surprising. All the sample means are clustered around the true mean (0.5).
 
 Let's try a couple more.
 
@@ -249,7 +249,7 @@ doesn't work with the Pareto distribution. This is due to one sneaky fact — sa
 underlying distribution _if it exists_. The Pareto distribution doesn't have a mean (actually its mean is infinite, but 
 that's basically saying the same thing).
 
-The sample means are not normally distributed:
+The means of samples drawn from the Pareto distribution are not normally distributed:
 
     scala> sampleMean(pareto(1)).bucketedHist(0, 20, 20)
      0.0  0.00% 
@@ -301,7 +301,7 @@ null hypothesis if you can show that there is less than, say, a 5% chance of los
 You can model the distribution of outcomes for a single round of the game as follows:
 
 {% highlight scala %}
-val d = geometric(0.5).map(_.toDouble - 1.0)
+val d = geometric(0.5).map(_ - 1.0)
 {% endhighlight %}
 
 ```geometric(0.5)``` models your winnings and ```- 1.0``` represents the cost to play the round. The expected value

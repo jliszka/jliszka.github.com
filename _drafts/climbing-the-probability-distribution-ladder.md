@@ -8,7 +8,8 @@ tags: [ "probability" ]
 {% include JB/setup %}
 
 
-In my [last post]({{ page.previous.url }}) I created a tool for constructing probability distributions. I started with
+In my [last post]({{ page.previous.url }}) I created a simple library for constructing probability distributions, based on the
+[Monte Carlo method](http://en.wikipedia.org/wiki/Monte_Carlo_method). I started with
 the uniform distribution and derived the Bernoulli and normal distributions from it.
 
 In this post I'll construct some more common distributions in the same manner.
@@ -53,6 +54,9 @@ to do with this particular technique of constructing distributions. I'm describi
 (here, by taking the log of each sample) rather than describing how much probability mass lives at each value of {%m%}x{%em%}
 (for the exponential distribution, {%m%}\lambda e^{-\lambda x}{%em%} lives at {%m%}x{%em%}, so from that definition it's
 clear why it's called the exponential distribution).
+
+This distribution is the continuous analog of the geometric distribution, and plays an interesting role on the construction
+of the Poisson distribution, both of which I'll get to in a minute.
 
 ### The Pareto distribution
 
@@ -141,6 +145,9 @@ f_\lambda(x) = \lambda e^{-\lambda x}
 
 Hm.
 
+Anyway, this distribution shows up a lot in "rich get richer" scenarios — distribution of income, the population of cities,
+file sizes on your computer, etc. But I don't have a good explanation as to why.
+
 ### The chi-squared distribution
 
 A [chi-squared distribution](http://en.wikipedia.org/wiki/Chi-squared_distribution)
@@ -195,20 +202,26 @@ OK here's what it looks like for different degrees of freedom:
     14.0  0.59% 
     15.0  0.00% 
 
+This distribution is useful in [analyzing](http://en.wikipedia.org/wiki/Pearson%27s_chi-squared_test)
+whether an observed sample is likely to have been drawn from a given theoretical
+distribution, where you construct a "test statistic" by summing the squares of the deviations of the observed values
+from their theoretical values. It's this sum of squared differences that makes the chi-squared distribution an appropriate
+tool here. Why the chi-squared distribution is the sum of squared *normal* distributions is a topic for another post.
+
 ### Student's _t_-distribution
 
 If {%m%}Z{%em%} is a normally distributed random variable and {%m%}V{%em%} is a chi-squared random variable with
-{%m%}k{%em%} degrees of freedom, then {%m%}Z * \sqrt{k/V}{%em%} is a random variable distributed according to the
+{%m%}k{%em%} degrees of freedom, then {%m%}Z / \sqrt{V/k}{%em%} is a random variable distributed according to the
 [Student's _t_-distribution](http://en.wikipedia.org/wiki/Student's_t-distribution).
 
 Here's the code:
 
 {% highlight scala %}
-def students_t(df: Int): Distribution[Double] = {
+def students_t(k: Int): Distribution[Double] = {
   for {
     z <- normal
-    v <- chi2(df)
-  } yield z * math.sqrt(df / v)
+    v <- chi2(k)
+  } yield z / math.sqrt(v / k)
 }
 {% endhighlight %}
 
@@ -236,6 +249,14 @@ The closed-form probability density function is too gross to even consider. Here
      4.0  0.49% 
      4.5  0.26% 
      5.0  0.14% 
+
+This distribution arises by modeling the location of the true mean of a distribution with unknown mean and unknown
+standard deviation, when all you have is a small sample from the distribution. {%m%}k{%em%} represents the sample size.
+{%m%}Z{%em%} represents the distribution of the sample mean around the true mean (why it's a normal distribution is a
+subject for another post). {%m%}V/k{%em%} represents the variance of the sample — as the sum of squared differences of samples
+from the sample mean, it is naturally modeled as a chi-squared distribution. Its square root represents the standard
+deviation of the sample. So basically we're scaling a normal distribution (representing the sample mean) by the
+standard deviation of the sample.
 
 It looks a lot like the normal distribution, and in fact as the degrees of freedom goes up, it becomes a better and
 better approximation to it. At smaller degrees of freedom, though, there is more probability mass in the tails (it has
@@ -381,14 +402,13 @@ def poisson(lambda: Double): Distribution[Int] = {
 }
 {% endhighlight %}
 
-Now this is what the Poisson distribution is really about. The time between events in a Poisson process follows
+Now this is what the Poisson distribution is really about. Why? The time between events in a Poisson process follows
 the exponential distribution. So if you wanted to know how many events will happen in, say {%m%}\lambda{%em%} seconds,
-you could add up inter-event timings drawn from the exponential distribution until you get to {%m%}\lambda{%em%}.
+you could add up inter-event timings drawn from the exponential distribution (which has mean 1) until you get to {%m%}\lambda{%em%}.
 That's exactly what the code above does.
-The exponential distribution has mean 1, so you would expect to get {%m%}\lambda{%em%} events on average.
 
 But why does the exponential distribution model the time between events in the first place?
-In a rigorous sense, the exponential distribution is the most natural choice for this.
+In a rigorous sense, the exponential distribution is the most natural choice.
 First of all, it produces values between 0 and {%m%}\infty{%em%} (in the parlance, it has "support" {%m%}[0, \infty){%em%}),
 which makes sense for modeling timings between events. And second, of all the distributions with support
 {%m%}[0, \infty){%em%}, the exponential distribution is the one that makes the fewest additional assumptions —
@@ -411,8 +431,8 @@ If you squint, sorta? If you squint even harder, or you are drunk, you can proba
 ### Conclusion
 
 I hope this was a little bit illuminating about how various probability distributions arise and how they are related to
-one another. Obviously there is a lot more to say, but this should give you a taste for how code can shed light on
-some of the more esoteric concepts in mathematics.
+one another. Obviously there is a lot more to say about each of these distributions, but this should give you a taste for
+how code can shed light on some of the more esoteric concepts in mathematics.
 
 In the next post I'll look at the Central Limit Theorem, which sounds scary but I promise you is not.
 
