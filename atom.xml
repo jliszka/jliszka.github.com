@@ -4,7 +4,7 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-08-19T10:55:56-04:00</updated>
+ <updated>2013-08-19T11:48:53-04:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
@@ -17,7 +17,7 @@
    <link href="http://jliszka.github.io/2013/08/19/climbing-the-probability-distribution-ladder.html"/>
    <updated>2013-08-19T00:00:00-04:00</updated>
    <id>http://jliszka.github.io/2013/08/19/climbing-the-probability-distribution-ladder</id>
-   <content type="html">&lt;p&gt;In my &lt;a href='/2013/08/12/a-frequentist-approach-to-probability.html'&gt;last post&lt;/a&gt; I created a simple library for constructing probability distributions, based on the &lt;a href='http://en.wikipedia.org/wiki/Monte_Carlo_method'&gt;Monte Carlo method&lt;/a&gt;. I started with the uniform distribution and derived the Bernoulli and normal distributions from it.&lt;/p&gt;
+   <content type="html">&lt;p&gt;In the &lt;a href='/2013/08/12/a-frequentist-approach-to-probability.html'&gt;last post&lt;/a&gt; I created a simple library for constructing probability distributions, based on the &lt;a href='http://en.wikipedia.org/wiki/Monte_Carlo_method'&gt;Monte Carlo method&lt;/a&gt;. I started with the uniform distribution and derived the Bernoulli and normal distributions from it.&lt;/p&gt;
 
 &lt;p&gt;In this post I&amp;#8217;ll construct some more common distributions in the same manner.&lt;/p&gt;
 
@@ -333,11 +333,11 @@ f(k) = {n \choose k}p^k(1-p)^{n-k}
 
 &lt;h3 id='conclusion'&gt;Conclusion&lt;/h3&gt;
 
-&lt;p&gt;I hope this was a little bit illuminating about how various probability distributions arise and how they are related to one another. Obviously there is a lot more to say about each of these distributions, but this should give you a taste for how code can shed light on some of the more esoteric concepts in mathematics.&lt;/p&gt;
+&lt;p&gt;Obviously there is a lot more to say about each of these distributions, but I hope this has removed some of the mystery around how various probability distributions arise and how they are related to one another.&lt;/p&gt;
 
-&lt;p&gt;In the next post I&amp;#8217;ll look at the Central Limit Theorem, which sounds scary but I promise you is not.&lt;/p&gt;
+&lt;p&gt;All of this is going somewhere, I promise! In the next post I&amp;#8217;ll take a look at the Central Limit Theorem, which sounds scary but I promise you is not.&lt;/p&gt;
 
-&lt;p&gt;All of the code in this post is available on &lt;a href='http://github.com/jliszka/probability-monad'&gt;github&lt;/a&gt;.&lt;/p&gt;</content>
+&lt;p&gt;The code in this post is available on &lt;a href='http://github.com/jliszka/probability-monad'&gt;github&lt;/a&gt;.&lt;/p&gt;</content>
  </entry>
  
  <entry>
