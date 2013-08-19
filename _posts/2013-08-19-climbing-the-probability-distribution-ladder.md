@@ -143,7 +143,7 @@ Exponential:
 f_\lambda(x) = \lambda e^{-\lambda x}
 {% endmath%}
 
-Hm.
+Hm, interesting!
 
 Anyway, this distribution shows up a lot in "rich get richer" scenarios — distribution of income, the population of cities,
 file sizes on your computer, etc. But I don't have a good explanation as to why.
@@ -410,7 +410,10 @@ That's exactly what the code above does.
 But why does the exponential distribution model the time between events in the first place?
 In a rigorous sense, the exponential distribution is the most natural choice.
 First of all, it produces values between 0 and {%m%}\infty{%em%} (in the parlance, it has "support" {%m%}[0, \infty){%em%}),
-which makes sense for modeling timings between events. And second, of all the distributions with support
+which makes sense for modeling timings between events — you don't want any negative values, but otherwise there is no limit
+to the amount of time that could elapse between events.
+
+And second, of all the distributions with support
 {%m%}[0, \infty){%em%}, the exponential distribution is the one that makes the fewest additional assumptions —
 that is, it contains the least extra information, which is the same as saying that it has the highest
 [entropy](http://en.wikipedia.org/wiki/Maximum_entropy_probability_distribution).
