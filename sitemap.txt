@@ -1,2 +1,3 @@
 
+http://jliszka.github.io/2013/08/19/climbing-the-probability-distribution-ladder.html
 http://jliszka.github.io/2013/08/12/a-frequentist-approach-to-probability.html

@@ -91,10 +91,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -114,10 +110,10 @@
 <div class="row-fluid post-full">
   <div class="span12">
     <div class="date">
-      <span>12 August 2013</span>
+      <span>19 August 2013</span>
     </div>
     <div class="content">
-      <p>In my <a href=''>last post</a> I created a simple library for constructing probability distributions, based on the <a href='http://en.wikipedia.org/wiki/Monte_Carlo_method'>Monte Carlo method</a>. I started with the uniform distribution and derived the Bernoulli and normal distributions from it.</p>
+      <p>In my <a href='/2013/08/12/a-frequentist-approach-to-probability.html'>last post</a> I created a simple library for constructing probability distributions, based on the <a href='http://en.wikipedia.org/wiki/Monte_Carlo_method'>Monte Carlo method</a>. I started with the uniform distribution and derived the Bernoulli and normal distributions from it.</p>
 
 <p>In this post I&#8217;ll construct some more common distributions in the same manner.</p>
 
@@ -320,7 +316,7 @@ scala&gt; chi2(5).bucketedHist(0, 15, 15, roundDown = true)
 
 <h3 id='the_geometric_distribution'>The geometric distribution</h3>
 
-<p>The <a href='http://en.wikipedia.org/wiki/Geometric_distribution'>geometric distribution</a> is a discrete distribution that can be constructed from the Bernoulli distribution (a biased coin flip). Although recall that the Bernoulli distribution itself can be <a href=''>constructed from the uniform distribution</a> pretty easily.</p>
+<p>The <a href='http://en.wikipedia.org/wiki/Geometric_distribution'>geometric distribution</a> is a discrete distribution that can be constructed from the Bernoulli distribution (a biased coin flip). Although recall that the Bernoulli distribution itself can be <a href='/2013/08/12/a-frequentist-approach-to-probability.html'>constructed from the uniform distribution</a> pretty easily.</p>
 
 <p>The geometric distribution describes the number of failures you will see before seeing your first success in repeated Bernoulli trials with bias <code>p</code>. In other words, if I flip a coin repeatedly, how many tails will I see before get my first head?</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>geometric</span><span class='o'>(</span><span class='n'>p</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Int</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
@@ -451,7 +447,7 @@ f(k) = {n \choose k}p^k(1-p)^{n-k}
 
   
      
-    	<li><a href="/tags.html#probability-ref">probability <span>1</span></a></li>
+    	<li><a href="/tags.html#probability-ref">probability <span>2</span></a></li>
     
   
 
@@ -462,6 +458,8 @@ f(k) = {n \choose k}p^k(1-p)^{n-k}
 
     <hr>
     <div class="navigation">
+    
+      <span class="prev"><a href="/2013/08/12/a-frequentist-approach-to-probability.html" title="A Frequentist Approach to Probability">&larr; A Frequentist Approach to Probability</a></span>
     
     
       <div style="clear: both"></div>
