@@ -8,7 +8,7 @@ tags: [ "probability" ]
 {% include JB/setup %}
 
 
-In my [last post]({{ page.previous.url }}) I created a simple library for constructing probability distributions, based on the
+In the [last post]({{ page.previous.url }}) I created a simple library for constructing probability distributions, based on the
 [Monte Carlo method](http://en.wikipedia.org/wiki/Monte_Carlo_method). I started with
 the uniform distribution and derived the Bernoulli and normal distributions from it.
 
@@ -430,12 +430,13 @@ If you squint, sorta? If you squint even harder, or you are drunk, you can proba
 
 ### Conclusion
 
-I hope this was a little bit illuminating about how various probability distributions arise and how they are related to
-one another. Obviously there is a lot more to say about each of these distributions, but this should give you a taste for
-how code can shed light on some of the more esoteric concepts in mathematics.
+Obviously there is a lot more to say about each of these distributions, but I hope this has removed
+some of the mystery around how various probability distributions arise and how they are related to
+one another.
 
-In the next post I'll look at the Central Limit Theorem, which sounds scary but I promise you is not.
+All of this is going somewhere, I promise!
+In the next post I'll take a look at the Central Limit Theorem, which sounds scary but I promise you is not.
 
-All of the code in this post is available on [github](http://github.com/jliszka/probability-monad).
+The code in this post is available on [github](http://github.com/jliszka/probability-monad).
 
 
