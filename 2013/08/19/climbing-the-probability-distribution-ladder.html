@@ -221,7 +221,7 @@ f_\alpha(x) = \frac{\alpha}{x^{\alpha+1}}
 <script type='math/tex; mode=display'>
 f_\lambda(x) = \lambda e^{-\lambda x}
 </script>
-<p>Hm.</p>
+<p>Hm, interesting!</p>
 
 <p>Anyway, this distribution shows up a lot in &#8220;rich get richer&#8221; scenarios — distribution of income, the population of cities, file sizes on your computer, etc. But I don&#8217;t have a good explanation as to why.</p>
 
@@ -417,7 +417,9 @@ f(k) = {n \choose k}p^k(1-p)^{n-k}
 </code></pre></div>
 <p>Now this is what the Poisson distribution is really about. Why? The time between events in a Poisson process follows the exponential distribution. So if you wanted to know how many events will happen in, say <script type='math/tex'>\lambda</script> seconds, you could add up inter-event timings drawn from the exponential distribution (which has mean 1) until you get to <script type='math/tex'>\lambda</script>. That&#8217;s exactly what the code above does.</p>
 
-<p>But why does the exponential distribution model the time between events in the first place? In a rigorous sense, the exponential distribution is the most natural choice. First of all, it produces values between 0 and <script type='math/tex'>\infty</script> (in the parlance, it has &#8220;support&#8221; <script type='math/tex'>[0, \infty)</script>), which makes sense for modeling timings between events. And second, of all the distributions with support <script type='math/tex'>[0, \infty)</script>, the exponential distribution is the one that makes the fewest additional assumptions — that is, it contains the least extra information, which is the same as saying that it has the highest <a href='http://en.wikipedia.org/wiki/Maximum_entropy_probability_distribution'>entropy</a>.</p>
+<p>But why does the exponential distribution model the time between events in the first place? In a rigorous sense, the exponential distribution is the most natural choice. First of all, it produces values between 0 and <script type='math/tex'>\infty</script> (in the parlance, it has &#8220;support&#8221; <script type='math/tex'>[0, \infty)</script>), which makes sense for modeling timings between events — you don&#8217;t want any negative values, but otherwise there is no limit to the amount of time that could elapse between events.</p>
+
+<p>And second, of all the distributions with support <script type='math/tex'>[0, \infty)</script>, the exponential distribution is the one that makes the fewest additional assumptions — that is, it contains the least extra information, which is the same as saying that it has the highest <a href='http://en.wikipedia.org/wiki/Maximum_entropy_probability_distribution'>entropy</a>.</p>
 
 <p>Anyway, with a little rewriting, you can see how the negative binomial distribution is sort of the discrete counterpart to the Poisson distribution. Here is <code>negativeBinomial</code> rewritten to show the similarity:</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>negativeBinomial</span><span class='o'>(</span><span class='n'>p</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>,</span> <span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Int</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>

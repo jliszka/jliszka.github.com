@@ -5,8 +5,8 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-08-19T11:48:53-04:00</lastBuildDate>
-        <pubDate>2013-08-19T11:48:53-04:00</pubDate>
+        <lastBuildDate>2013-08-19T12:17:58-04:00</lastBuildDate>
+        <pubDate>2013-08-19T12:17:58-04:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -120,7 +120,7 @@ f_\alpha(x) = \frac{\alpha}{x^{\alpha+1}}
 &lt;script type='math/tex; mode=display'&gt;
 f_\lambda(x) = \lambda e^{-\lambda x}
 &lt;/script&gt;
-&lt;p&gt;Hm.&lt;/p&gt;
+&lt;p&gt;Hm, interesting!&lt;/p&gt;
 
 &lt;p&gt;Anyway, this distribution shows up a lot in &amp;#8220;rich get richer&amp;#8221; scenarios — distribution of income, the population of cities, file sizes on your computer, etc. But I don&amp;#8217;t have a good explanation as to why.&lt;/p&gt;
 
@@ -316,7 +316,9 @@ f(k) = {n \choose k}p^k(1-p)^{n-k}
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Now this is what the Poisson distribution is really about. Why? The time between events in a Poisson process follows the exponential distribution. So if you wanted to know how many events will happen in, say &lt;script type='math/tex'&gt;\lambda&lt;/script&gt; seconds, you could add up inter-event timings drawn from the exponential distribution (which has mean 1) until you get to &lt;script type='math/tex'&gt;\lambda&lt;/script&gt;. That&amp;#8217;s exactly what the code above does.&lt;/p&gt;
 
-&lt;p&gt;But why does the exponential distribution model the time between events in the first place? In a rigorous sense, the exponential distribution is the most natural choice. First of all, it produces values between 0 and &lt;script type='math/tex'&gt;\infty&lt;/script&gt; (in the parlance, it has &amp;#8220;support&amp;#8221; &lt;script type='math/tex'&gt;[0, \infty)&lt;/script&gt;), which makes sense for modeling timings between events. And second, of all the distributions with support &lt;script type='math/tex'&gt;[0, \infty)&lt;/script&gt;, the exponential distribution is the one that makes the fewest additional assumptions — that is, it contains the least extra information, which is the same as saying that it has the highest &lt;a href='http://en.wikipedia.org/wiki/Maximum_entropy_probability_distribution'&gt;entropy&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;But why does the exponential distribution model the time between events in the first place? In a rigorous sense, the exponential distribution is the most natural choice. First of all, it produces values between 0 and &lt;script type='math/tex'&gt;\infty&lt;/script&gt; (in the parlance, it has &amp;#8220;support&amp;#8221; &lt;script type='math/tex'&gt;[0, \infty)&lt;/script&gt;), which makes sense for modeling timings between events — you don&amp;#8217;t want any negative values, but otherwise there is no limit to the amount of time that could elapse between events.&lt;/p&gt;
+
+&lt;p&gt;And second, of all the distributions with support &lt;script type='math/tex'&gt;[0, \infty)&lt;/script&gt;, the exponential distribution is the one that makes the fewest additional assumptions — that is, it contains the least extra information, which is the same as saying that it has the highest &lt;a href='http://en.wikipedia.org/wiki/Maximum_entropy_probability_distribution'&gt;entropy&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;Anyway, with a little rewriting, you can see how the negative binomial distribution is sort of the discrete counterpart to the Poisson distribution. Here is &lt;code&gt;negativeBinomial&lt;/code&gt; rewritten to show the similarity:&lt;/p&gt;
 &lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;negativeBinomial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;p&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
