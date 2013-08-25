@@ -7,6 +7,9 @@ module Jekyll
     def uses_relative_permalinks
       return false
     end
+    def template
+      "drafts/:title.html"
+    end
   end
 
   class DraftGenerator < Generator
