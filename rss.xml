@@ -5,10 +5,427 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-08-25T16:46:54-04:00</lastBuildDate>
-        <pubDate>2013-08-25T16:46:54-04:00</pubDate>
+        <lastBuildDate>2013-08-26T11:50:30-04:00</lastBuildDate>
+        <pubDate>2013-08-26T11:50:30-04:00</pubDate>
         <ttl>1800</ttl>
 
+
+        <item>
+                <title>A Programmer's Guide to the Central Limit Theorem</title>
+                <description>&lt;p&gt;This post is a continuation of a series of posts about exploring probability distributions through code. The first post is &lt;a href='/2013/08/12/a-frequentist-approach-to-probability.html'&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In this post I&amp;#8217;m going to look at the Central Limit Theorem.&lt;/p&gt;
+
+&lt;h3 id='sample_means'&gt;Sample means&lt;/h3&gt;
+
+&lt;p&gt;Suppose I have a random variable whose underlying distribution is unknown to me. I take sample of a reasonable size (say 100) and find the mean of the sample. What can I say about the relationship between the true mean and the mean of the sample?&lt;/p&gt;
+
+&lt;p&gt;The most comprehensive answer to this is to look at the distribution of the sample mean.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;sampleMean&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;d&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;],&lt;/span&gt; &lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt; &lt;span class='o'&gt;=&lt;/span&gt; &lt;span class='mi'&gt;100&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;d&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;repeat&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;sum&lt;/span&gt; &lt;span class='o'&gt;/&lt;/span&gt; &lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This method takes a probability distribution and returns the distribution of means of samples from that distribution. You can specify the sample size, but by default we&amp;#8217;ll use 100.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;#8217;s try it on some of the distributions we&amp;#8217;ve &lt;a href='/2013/08/19/climbing-the-probability-distribution-ladder.html'&gt;created&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(uniform).hist
+0.40  0.01% 
+0.41  0.06% 
+0.42  0.36% 
+0.43  0.79% 
+0.44  1.63% #
+0.45  2.95% ##
+0.46  5.18% #####
+0.47  8.33% ########
+0.48 11.43% ###########
+0.49 12.80% ############
+0.50 14.22% ##############
+0.51 12.47% ############
+0.52 10.74% ##########
+0.53  8.00% ########
+0.54  5.47% #####
+0.55  2.78% ##
+0.56  1.60% #
+0.57  0.70% 
+0.58  0.32% 
+0.59  0.07% 
+0.60  0.06% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Not surprising. All the sample means are clustered around the true mean (0.5).&lt;/p&gt;
+
+&lt;p&gt;Let&amp;#8217;s try a couple more.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(exponential(1)).hist
+0.60  0.00% 
+0.65  0.02% 
+0.70  0.16% 
+0.75  0.69% 
+0.80  2.38% ##
+0.85  6.68% ######
+0.90 13.12% #############
+0.95 17.93% #################
+1.00 19.21% ###################
+1.05 17.27% #################
+1.10 11.26% ###########
+1.15  6.53% ######
+1.20  3.01% ###
+1.25  1.28% #
+1.30  0.36% 
+1.35  0.07% 
+1.40  0.02% 
+1.45  0.00% 
+1.50  0.01% 
+
+scala&amp;gt; sampleMean(chi2(5)).hist
+3.90  0.02% 
+4.00  0.08% 
+4.10  0.14% 
+4.20  0.40% 
+4.30  0.95% 
+4.40  1.89% #
+4.50  3.63% ###
+4.60  5.68% #####
+4.70  8.52% ########
+4.80 10.25% ##########
+4.90 12.23% ############
+5.00 13.18% #############
+5.10 11.19% ###########
+5.20 10.37% ##########
+5.30  7.61% #######
+5.40  5.84% #####
+5.50  3.67% ###
+5.60  2.04% ##
+5.70  1.23% #
+5.80  0.64% 
+5.90  0.29% 
+6.00  0.10% 
+6.10  0.03% 
+6.20  0.02% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;OK, starting to see a pattern here. Let&amp;#8217;s look at some discrete distributions.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(bernoulli(0.8).map(b =&amp;gt; if (b) 1.0 else 0.0)).hist
+0.68  0.33% 
+0.70  0.85% 
+0.72  2.14% ##
+0.74  5.29% #####
+0.76  9.96% #########
+0.78 15.81% ###############
+0.80 19.27% ###################
+0.82 18.74% ##################
+0.84 14.75% ##############
+0.86  8.14% ########
+0.88  3.32% ###
+0.90  1.10% #
+0.92  0.21% 
+0.94  0.03% 
+
+scala&amp;gt; sampleMean(binomial(0.2, 10).map(_.toDouble)).hist
+1.50  0.00% 
+1.55  0.03% 
+1.60  0.08% 
+1.65  0.32% 
+1.70  1.00% #
+1.75  2.35% ##
+1.80  4.61% ####
+1.85  7.88% #######
+1.90 11.20% ###########
+1.95 14.62% ##############
+2.00 16.07% ################
+2.05 14.82% ##############
+2.10 11.42% ###########
+2.15  7.43% #######
+2.20  4.60% ####
+2.25  2.15% ##
+2.30  0.97% 
+2.35  0.34% 
+2.40  0.09% 
+2.45  0.02% 
+2.50  0.00% 
+
+scala&amp;gt; sampleMean(geometric(0.2).map(_.toDouble)).hist
+2.40  0.01% 
+2.60  0.09% 
+2.80  0.29% 
+3.00  1.14% #
+3.20  3.59% ###
+3.40  7.31% #######
+3.60 12.92% ############
+3.80 16.75% ################
+4.00 17.69% #################
+4.20 15.31% ###############
+4.40 11.16% ###########
+4.60  7.03% #######
+4.80  3.84% ###
+5.00  1.70% #
+5.20  0.79% 
+5.40  0.29% 
+5.60  0.08% 
+5.80  0.00% 
+6.00  0.01% 
+
+scala&amp;gt; sampleMean(poisson(5).map(_.toDouble)).hist
+4.30  0.15% 
+4.40  0.43% 
+4.50  1.34% #
+4.60  3.42% ###
+4.70  7.19% #######
+4.80 12.04% ############
+4.90 15.49% ###############
+5.00 18.02% ##################
+5.10 15.82% ###############
+5.20 11.99% ###########
+5.30  7.37% #######
+5.40  4.03% ####
+5.50  1.81% #
+5.60  0.64% 
+5.70  0.16% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;All of these distributions look vaguely normal and they&amp;#8217;re all clustered around the mean of the underlying distribution.&lt;/p&gt;
+
+&lt;h3 id='the_central_limit_theorem'&gt;The Central Limit Theorem&lt;/h3&gt;
+
+&lt;p&gt;Surprise! That little observation was basically a statement of the Central Limit Theorem — means samples of a reasonable size drawn from any probability distribution will be normally distributed around the mean of the distribution. The Central Limit Theorem even tells you how to compute the standard deviation of this distribution: it&amp;#8217;s just the standard deviation of the underlying distribution divided by the square root of the sample size.&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+\bar{\sigma} = \frac{\sigma}{\sqrt{n}}
+&lt;/script&gt;
+&lt;p&gt;This quantity, the standard deviation of the distribution of sample means, is also known as the &lt;a href='http://en.wikipedia.org/wiki/Standard_error'&gt;standard error&lt;/a&gt;. It&amp;#8217;s not a terribly suggestive name, but it might help to think of the &amp;#8220;error&amp;#8221; as the difference between the sample mean and the true mean.&lt;/p&gt;
+
+&lt;p&gt;Terminology aside, the most remarkable fact is that this works no matter what distribution you try it on.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;#8217;s revisit each of the examples above and see if it pans out.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; uniform.ev
+res0: Double = 0.49596431533522234
+
+scala&amp;gt; uniform.stdev
+res1: Double = 0.290545289200811&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;So the Central Limit Theorem would predict that &lt;code&gt;sampleMean(uniform)&lt;/code&gt; will have mean 0.5 and stdev &lt;script type='math/tex'&gt;0.29 / \sqrt{100} = 0.029&lt;/script&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(uniform).ev
+res2: Double = 0.49968258747065275
+
+scala&amp;gt; sampleMean(uniform).stdev
+res3: Double = 0.028763987024078164&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Wow, OK! Let&amp;#8217;s keep going. (I&amp;#8217;m going to omit the mean calculations because it seems like an obvious fact. So I&amp;#8217;m just looking to see that the standard error is 1/10th the standard deviation of the underlying distribution.)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; exponential(1).stdev
+res0: Double = 0.9971584111946743
+
+scala&amp;gt; sampleMean(exponential(1)).stdev
+res2: Double = 0.09987372019328666
+
+scala&amp;gt; chi2(5).stdev
+res3: Double = 3.1542391941582766
+
+scala&amp;gt; sampleMean(chi2(5)).stdev
+res4: Double = 0.3180622311083607
+
+scala&amp;gt; binomial(0.2, 10).map(_.toDouble).stdev
+res5: Double = 1.2733502267640227
+
+scala&amp;gt; sampleMean(binomial(0.2, 10).map(_.toDouble)).stdev
+res6: Double = 0.12688793641635224
+
+scala&amp;gt; poisson(5).map(_.toDouble).stdev
+res7: Double = 2.2423514867210077
+
+scala&amp;gt; sampleMean(poisson(5).map(_.toDouble)).stdev
+res8: Double = 0.2251131007715896
+
+scala&amp;gt; geometric(0.2).map(_.toDouble).stdev
+res9: Double = 4.439230239579939
+
+scala&amp;gt; sampleMean(geometric(0.2).map(_.toDouble)).stdev
+res10: Double = 0.4428929231078312&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And one more with a different sample size:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(geometric(0.2).map(_.toDouble), n = 625).stdev
+res11: Double = 0.17952533894556522
+
+scala&amp;gt; geometric(0.2).stdev / 25
+res12: Double = 0.17756920958319758&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Crazy! OK that&amp;#8217;s enough experimental proof for me.&lt;/p&gt;
+
+&lt;h3 id='so_what'&gt;So what?&lt;/h3&gt;
+
+&lt;p&gt;Experimental analysis leans heavily on the Central Limit Theorem. A common question in experimental analysis is whether a sample is likely to have been drawn from a particular probability distribution. Since you can always treat sample means as normally distributed, you don&amp;#8217;t need to perform a different analysis for every type of distribution you might encounter. All you need to know is how to work with the normal distribution.&lt;/p&gt;
+
+&lt;p&gt;You&amp;#8217;ve probably seen &lt;a href='http://en.wikipedia.org/wiki/Standard_deviation'&gt;this diagram&lt;/a&gt; before:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' alt='the normal distribution' /&gt;&lt;/p&gt;
+
+&lt;p&gt;This is what we&amp;#8217;re working with. A value drawn from a normal distribution will be within 2 standard deviations of the mean 96% of the time. Since sample means are normally distributed around the true mean, sample means will be within 2 standard errors of the true mean 96% of the time. If a sample mean is more than 2 standard deviations away from the true mean, the sample is unlikely to have been drawn from that distribution.&lt;/p&gt;
+
+&lt;h3 id='an_example'&gt;An example&lt;/h3&gt;
+
+&lt;p&gt;Let&amp;#8217;s look at an example where we can put the Central Limit Theorem to good use. Suppose your friend tells you he has a fair coin and offers to play a game. You pay him $1 to play, and he flips his coin until it comes up heads. He gives you $1 for every time the coin comes up tails until that happens.&lt;/p&gt;
+
+&lt;p&gt;After 100 rounds of this, you notice that you&amp;#8217;ve lost $30. Did your friend cheat you?&lt;/p&gt;
+
+&lt;p&gt;In standard experimental analysis terms, the null hypothesis is that your friend has a fair coin. You can reject the null hypothesis if you can show that there is less than, say, a 5% chance of losing $30 after 100 rounds.&lt;/p&gt;
+
+&lt;p&gt;You can model the distribution of outcomes for a single round of the game as follows:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;d&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;geometric&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='mf'&gt;0.5&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='mf'&gt;1.0&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code&gt;geometric(0.5)&lt;/code&gt; models your winnings and &lt;code&gt;- 1.0&lt;/code&gt; represents the cost to play the round. The expected value and standard deviation of this distribution are:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; d.ev
+res102: Double = -0.0093
+
+scala&amp;gt; d.stdev
+res105: Double = 1.406354208583263&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We&amp;#8217;ll call that 0 and 1.4. You have a sample of 100 rounds and an average loss of $0.30 per round. What is the probability that 100 samples from &lt;code&gt;d&lt;/code&gt; would have a mean of -0.3? Well, the distribution of sample means has mean 0 and standard deviation &lt;script type='math/tex'&gt;1.4 / \sqrt{100} = 0.14&lt;/script&gt;. So your sample mean of -0.3 is more than 2 standard deviations away from the average sample mean, which we know will happen less than 5% of the time. So we can reject the null hypothesis.&lt;/p&gt;
+
+&lt;p&gt;We can also calculate the probability directly against the distribution of sample means.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(d, n = 100).pr(_ &amp;lt; -0.3)
+res0: Double = 0.0104&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It&amp;#8217;s worth pointing out that this is a one-tailed test (I&amp;#8217;m not considering the possibility that we&amp;#8217;d see a gain of $0.30 per round) because I have no reason to suspect that my friend has rigged the game in my favor.&lt;/p&gt;
+
+&lt;h3 id='another_example'&gt;Another example&lt;/h3&gt;
+
+&lt;p&gt;Let&amp;#8217;s say you have a website, and you want to know whether making your big green &amp;#8220;Sign Up!&amp;#8221; button red instead of green would increase the percent of people who click the button. Historically, you know that 5.8% of visitors to your site click the (green) button.&lt;/p&gt;
+
+&lt;p&gt;So one day you make the button red and keep track of the fraction of visitors who click on it. After some period of time you observe that 53 out of 810 visitors clicked the (red) button. That&amp;#8217;s 6.5%, a decent improvement! (Some would say it&amp;#8217;s a 12% improvement; others a 0.7% improvement. Potato, potato.) But is this difference something we&amp;#8217;re likely to observe just by chance, or was making the button red a meaningful change?&lt;/p&gt;
+
+&lt;p&gt;We can model the number of clicks as a Bernoulli distribution with a 5.8% success probability. In order to do this I&amp;#8217;ll have to translate &lt;code&gt;true&lt;/code&gt; to 1 click and &lt;code&gt;false&lt;/code&gt; to 0 clicks.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val d = bernoulli(0.058).map(b =&amp;gt; if (b) 1.0 else 0.0)
+d: Distribution[Double] = &amp;lt;distribution&amp;gt;
+
+scala&amp;gt; d.stdev
+res0: Double = 0.24062616233485523&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We want to know the probability of seeing a 6.5% success rate in a sample of 810 visitors. Since we know the standard deviation of &lt;code&gt;d&lt;/code&gt;, we can apply the Central Limit Theorem to find the standard error for a sample of size 810, just by dividing by &lt;script type='math/tex'&gt;\sqrt{810} = 28.5&lt;/script&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; d.stdev / math.sqrt(810)
+res2: Double = 0.008313053843054703&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Well, OK. Our difference of 0.7% is less than one standard deviation from the mean, which means it&amp;#8217;s pretty likely to happen just by chance. In other words, we can&amp;#8217;t reject the null hypothesis that making the button red did not change the rate at which people click on it.&lt;/p&gt;
+
+&lt;p&gt;To illustrate this further, here&amp;#8217;s what the distribution of sample means for samples of size 810 looks like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(d, 810).hist
+0.0350  0.15% 
+0.0375  0.41% 
+0.0400  1.20% #
+0.0425  2.01% ##
+0.0450  3.58% ###
+0.0475  5.96% #####
+0.0500  7.55% #######
+0.0525  9.62% #########
+0.0550 11.49% ###########
+0.0575 12.08% ############
+0.0600 11.23% ###########
+0.0625 10.42% ##########
+0.0650  8.32% ########
+0.0675  5.70% #####
+0.0700  3.97% ###
+0.0725  2.90% ##
+0.0750  1.56% #
+0.0775  0.84% 
+0.0800  0.47% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Seeing 6.5% as the mean of a sample of size 810 is totally within the fat part of the distribution. Let&amp;#8217;s see just how likely a difference of 0.7% really is:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(d, 810).pr(c =&amp;gt; c &amp;lt; 0.051 || c &amp;gt; 0.065)
+res3: Double = 0.4074&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Pretty likely! (A difference of -0.7% would be just as surprising, so we have to count that too.)&lt;/p&gt;
+
+&lt;p&gt;OK, let&amp;#8217;s say instead we had observed 530 clicks out of 8100 visitors &amp;#8211; it&amp;#8217;s the same 6.5% success rate, just with 10 times as many samples. What does that do to our analysis? Well, first of all, we can expect the standard error to be much smaller, since we&amp;#8217;re dividing by &lt;script type='math/tex'&gt;\sqrt{8100} = 90&lt;/script&gt; instead of &lt;script type='math/tex'&gt;\sqrt{810} = 28.5&lt;/script&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; d.stdev / 90
+res0: Double = 0.0026411931460171042&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The standard error is 0.26%, putting our 0.7% difference at more than 2.5 standard deviations from the mean, and so in this case we can reject the null hypothesis and conclude that making the button red was a meaningful change.&lt;/p&gt;
+
+&lt;p&gt;To further illustrate this, here is the distribution of sample means for samples of size 8100, on the same scale as before:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(d, 8100).bucketedHist(0.035, 0.08, 18)
+0.0350  0.00% 
+0.0375  0.00% 
+0.0400  0.00% 
+0.0425  0.00% 
+0.0450  0.00% 
+0.0475  0.01% 
+0.0500  0.44% 
+0.0525  4.50% ####
+0.0550 19.90% ###################
+0.0575 36.42% ####################################
+0.0600 28.55% ############################
+0.0625  8.70% ########
+0.0650  1.41% #
+0.0675  0.06% 
+0.0700  0.01% 
+0.0725  0.00% 
+0.0750  0.00% 
+0.0775  0.00% 
+0.0800  0.00% 
+
+scala&amp;gt; sampleMean(d, 8100).pr(p =&amp;gt; p &amp;lt; 0.051 || p &amp;gt; 0.065)
+res4: Double = 0.0062&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The range of the distribution of sample means is much narrower, so much so that a difference of 0.7% (in either direction) is expected to occur by chance less than 1% of the time.&lt;/p&gt;
+
+&lt;h3 id='one_important_exception'&gt;One important exception&lt;/h3&gt;
+
+&lt;p&gt;It turns out that the Central Limit Theorem doesn&amp;#8217;t work with every distribution. This is due to one sneaky fact — sample means are clustered around the mean of the underlying distribution &lt;em&gt;if it exists&lt;/em&gt;. But how can a distribution have no mean? Well, one common distribution that has no mean is the Pareto distribution. If you tried to calculate it using the usual methods, it would diverge to infinity.&lt;/p&gt;
+
+&lt;p&gt;The means of samples drawn from the Pareto distribution are not normally distributed:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(pareto(1)).bucketedHist(0, 20, 20)
+ 0.0  0.00% 
+ 1.0  0.00% 
+ 2.0  0.00% 
+ 3.0  3.04% ###
+ 4.0 16.03% ################
+ 5.0 20.08% ####################
+ 6.0 16.61% ################
+ 7.0 12.16% ############
+ 8.0  8.08% ########
+ 9.0  5.87% #####
+10.0  4.42% ####
+11.0  2.90% ##
+12.0  2.72% ##
+13.0  1.67% #
+14.0  1.51% #
+15.0  1.31% #
+16.0  1.14% #
+17.0  0.88% 
+18.0  0.83% 
+19.0  0.53% 
+20.0  0.22% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And the standard error is completely meaningless:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(pareto(1)).stdev
+res0: Double = 157.6098722134558
+
+scala&amp;gt; sampleMean(pareto(1)).stdev
+res1: Double = 477.9797744569662&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;So the Central Limit Theorem doesn&amp;#8217;t apply.&lt;/p&gt;
+
+&lt;h3 id='conclusion'&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;We were able to use the Central Limit Theorem to reason about a samples from various distributions, knowing that the mean of such a sample is expected to fall within a bell-shaped curve around the mean of the underlying distribution. This is great because we don&amp;#8217;t need special analysis tools for each kind of distribution we might come across. No matter what the underlying distribution is, you can always treat sample means as normally distributed.&lt;/p&gt;
+
+&lt;p&gt;&amp;#8230; unless the underlying distribution has no mean.&lt;/p&gt;
+
+&lt;p&gt;We actually run into this all the time at Foursquare. Certain things like, say, the distribution of the number of friends users have is Pareto-distributed (the vast majority of users have a small number of friends, but some users have thousands of friends). So if you&amp;#8217;re running an experiment that is intended to increase the average number of friends users have, you&amp;#8217;re going to run into trouble. You aren&amp;#8217;t going to be able to use standard statistical techniques to analyze the results of the experiment. Well, actually, you can try, and you&amp;#8217;ll get some convincing-looking numbers out, but those numbers will be completely meaningless!&lt;/p&gt;</description>
+                <link>http://jliszka.github.io/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html</link>
+                <guid>http://jliszka.github.io/2013/08/26/a-programmers-guide-to-the-central-limit-theorem</guid>
+                <pubDate>2013-08-26T00:00:00-04:00</pubDate>
+        </item>
 
         <item>
                 <title>Climbing the probability distribution ladder</title>

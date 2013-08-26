@@ -87,10 +87,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -110,10 +106,10 @@
 <div class="row-fluid post-full">
   <div class="span12">
     <div class="date">
-      <span>25 August 2013</span>
+      <span>26 August 2013</span>
     </div>
     <div class="content">
-      <p>This post is a continuation of a series of posts about exploring probability distributions through code. The first post is <a href=''>here</a>.</p>
+      <p>This post is a continuation of a series of posts about exploring probability distributions through code. The first post is <a href='/2013/08/12/a-frequentist-approach-to-probability.html'>here</a>.</p>
 
 <p>In this post I&#8217;m going to look at the Central Limit Theorem.</p>
 
@@ -128,7 +124,7 @@
 </code></pre></div>
 <p>This method takes a probability distribution and returns the distribution of means of samples from that distribution. You can specify the sample size, but by default we&#8217;ll use 100.</p>
 
-<p>Let&#8217;s try it on some of the distributions we&#8217;ve <a href=''>created</a>.</p>
+<p>Let&#8217;s try it on some of the distributions we&#8217;ve <a href='/2013/08/19/climbing-the-probability-distribution-ladder.html'>created</a>.</p>
 
 <pre><code>scala&gt; sampleMean(uniform).hist
 0.40  0.01% 
@@ -359,9 +355,9 @@ res12: Double = 0.17756920958319758</code></pre>
 
 <p>You&#8217;ve probably seen <a href='http://en.wikipedia.org/wiki/Standard_deviation'>this diagram</a> before:</p>
 
-<p><img alt='the normal distribution' src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' /></p>
+<p><img src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' alt='the normal distribution' /></p>
 
-<p>This is what we&#8217;re working with. A value drawn from a normal distribution will be within 2 standard deviations of the mean 96% of the time. Since sample means are normally distributed around the true mean, sample means will be within 2 standard errors of the true mean 96% of the time.</p>
+<p>This is what we&#8217;re working with. A value drawn from a normal distribution will be within 2 standard deviations of the mean 96% of the time. Since sample means are normally distributed around the true mean, sample means will be within 2 standard errors of the true mean 96% of the time. If a sample mean is more than 2 standard deviations away from the true mean, the sample is unlikely to have been drawn from that distribution.</p>
 
 <h3 id='an_example'>An example</h3>
 
@@ -531,6 +527,8 @@ res1: Double = 477.9797744569662</code></pre>
 
     <hr>
     <div class="navigation">
+    
+      <span class="prev"><a href="/2013/08/19/climbing-the-probability-distribution-ladder.html" title="Climbing the probability distribution ladder">&larr; Climbing the probability distribution ladder</a></span>
     
     
       <div style="clear: both"></div>
