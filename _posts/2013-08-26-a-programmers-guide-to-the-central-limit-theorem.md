@@ -276,7 +276,8 @@ You've probably seen [this diagram](http://en.wikipedia.org/wiki/Standard_deviat
 
 This is what we're working with. A value drawn from a normal distribution will be within 2 standard deviations of the
 mean 96% of the time. Since sample means are normally distributed around the true mean, sample means will be within 2
-standard errors of the true mean 96% of the time.
+standard errors of the true mean 96% of the time. If a sample mean is more than 2 standard deviations away from the true
+mean, the sample is unlikely to have been drawn from that distribution.
 
 ### An example
 
