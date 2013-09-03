@@ -3,7 +3,7 @@ layout: post
 title: "A Programmer's Guide to the Central Limit Theorem"
 description: ""
 category: 
-tags: []
+tags: [ "probability" ]
 ---
 {% include JB/setup %}
 
