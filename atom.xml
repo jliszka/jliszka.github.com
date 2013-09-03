@@ -4,7 +4,7 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-09-03T13:47:12-04:00</updated>
+ <updated>2013-09-03T15:00:55-04:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
@@ -140,7 +140,7 @@
   &lt;span class='o'&gt;}&lt;/span&gt;
 &lt;span class='o'&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The &lt;code&gt;posterior&lt;/code&gt; method treats &lt;code&gt;this&lt;/code&gt; as a prior and returns the posterior distribution after running an &lt;code&gt;experiment&lt;/code&gt; that depends on values sampled from &lt;code&gt;this&lt;/code&gt;. The function &lt;code&gt;observed&lt;/code&gt; indicates what outcomes were actually observed in the experiment and which were not.&lt;/p&gt;
+&lt;p&gt;The idea is that &lt;code&gt;posterior&lt;/code&gt; updates a prior distribution according to the outcome of some experiment. It returns the new posterior after running the provided &lt;code&gt;experiment&lt;/code&gt;, which depends on values sampled from the prior, and in which only certain outcomes are observed. The &lt;code&gt;observed&lt;/code&gt; parameter is a function that indicates what outcomes were actually observed in the experiment and which were not.&lt;/p&gt;
 
 &lt;p&gt;So now our first two experiments become:&lt;/p&gt;
 &lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;p1&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;uniform&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;posterior&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;binomial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='mi'&gt;10&lt;/span&gt;&lt;span class='o'&gt;))(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='mi'&gt;8&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
@@ -260,7 +260,7 @@ scala&amp;gt; p2.bucketedHist(0, 0.5, 20)
 
 &lt;p&gt;Hm, yeah, it sure looks like it worked! The most likely bias is 12.5%.&lt;/p&gt;
 
-&lt;p&gt;The reason this works is that &lt;code&gt;p1&lt;/code&gt; does encode how many flips went into it, in how spread out the distribution is. This is pretty easily illustrated: if instead we had done 20 flips and gotten 4 heads, or 40 flips and gotten 8 heads, the resulting posterior distributions would have looked different, even though these each encode the same 20% bias.&lt;/p&gt;
+&lt;p&gt;So how does this work? Well, &lt;code&gt;p1&lt;/code&gt; actually does encode how many flips went into it — more flips translates into a narrower distribution, and fewer flips will produce a distribution that is more spread out. This is pretty easily illustrated: if instead we had done 20 flips and gotten 4 heads, or 40 flips and gotten 8 heads, the resulting posterior distributions would have looked different, even though these each encode the same 20% bias.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;scala&amp;gt; uniform.posterior(bias =&amp;gt; binomial(bias, 20))(_ == 4).bucketedHist(0, 1, 20)
 0.00  0.00% 

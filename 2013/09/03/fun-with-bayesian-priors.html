@@ -228,7 +228,7 @@
   <span class='o'>}</span>
 <span class='o'>}</span>
 </code></pre></div>
-<p>The <code>posterior</code> method treats <code>this</code> as a prior and returns the posterior distribution after running an <code>experiment</code> that depends on values sampled from <code>this</code>. The function <code>observed</code> indicates what outcomes were actually observed in the experiment and which were not.</p>
+<p>The idea is that <code>posterior</code> updates a prior distribution according to the outcome of some experiment. It returns the new posterior after running the provided <code>experiment</code>, which depends on values sampled from the prior, and in which only certain outcomes are observed. The <code>observed</code> parameter is a function that indicates what outcomes were actually observed in the experiment and which were not.</p>
 
 <p>So now our first two experiments become:</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>val</span> <span class='n'>p1</span> <span class='k'>=</span> <span class='n'>uniform</span><span class='o'>.</span><span class='n'>posterior</span><span class='o'>(</span><span class='n'>bias</span> <span class='k'>=&gt;</span> <span class='n'>binomial</span><span class='o'>(</span><span class='n'>bias</span><span class='o'>,</span> <span class='mi'>10</span><span class='o'>))(</span><span class='k'>_</span> <span class='o'>==</span> <span class='mi'>8</span><span class='o'>)</span>
@@ -348,7 +348,7 @@ scala&gt; p2.bucketedHist(0, 0.5, 20)
 
 <p>Hm, yeah, it sure looks like it worked! The most likely bias is 12.5%.</p>
 
-<p>The reason this works is that <code>p1</code> does encode how many flips went into it, in how spread out the distribution is. This is pretty easily illustrated: if instead we had done 20 flips and gotten 4 heads, or 40 flips and gotten 8 heads, the resulting posterior distributions would have looked different, even though these each encode the same 20% bias.</p>
+<p>So how does this work? Well, <code>p1</code> actually does encode how many flips went into it — more flips translates into a narrower distribution, and fewer flips will produce a distribution that is more spread out. This is pretty easily illustrated: if instead we had done 20 flips and gotten 4 heads, or 40 flips and gotten 8 heads, the resulting posterior distributions would have looked different, even though these each encode the same 20% bias.</p>
 
 <pre><code>scala&gt; uniform.posterior(bias =&gt; binomial(bias, 20))(_ == 4).bucketedHist(0, 1, 20)
 0.00  0.00% 
