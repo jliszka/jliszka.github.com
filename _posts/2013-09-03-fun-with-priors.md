@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Bayesian Inference"
+title: "Fun with Priors"
 description: ""
 category: 
 tags: [ "probability" ]
