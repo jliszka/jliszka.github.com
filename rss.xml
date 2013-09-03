@@ -5,10 +5,432 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-08-26T11:50:30-04:00</lastBuildDate>
-        <pubDate>2013-08-26T11:50:30-04:00</pubDate>
+        <lastBuildDate>2013-09-03T11:35:05-04:00</lastBuildDate>
+        <pubDate>2013-09-03T11:35:05-04:00</pubDate>
         <ttl>1800</ttl>
 
+
+        <item>
+                <title>Fun with Priors</title>
+                <description>&lt;p&gt;Say you have a biased coin, but you don&amp;#8217;t know what the &amp;#8220;true&amp;#8221; bias is. You flip the coin 10 times and observe 8 heads. What can you say now about the true bias?&lt;/p&gt;
+
+&lt;p&gt;It&amp;#8217;s easy to say that the most likely bias is 0.8. That&amp;#8217;s accurate, but maybe you also want to know what other biases are likely. How likely is it that you have a fair coin? Can you rule out having a bias as low as 0.4?&lt;/p&gt;
+
+&lt;p&gt;This sounds like a classic problem in Bayesian inference, but I&amp;#8217;m going to take a different tack — simulation. To make this a little easier I&amp;#8217;ll use a &lt;a href='/2013/08/12/a-frequentist-approach-to-probability.html'&gt;Scala library based on the Monte Carlo method&lt;/a&gt; that I&amp;#8217;ve been working on as an exercise in trying to better understand &lt;a href='/2013/08/19/climbing-the-probability-distribution-ladder.html'&gt;some&lt;/a&gt; &lt;a href='/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html'&gt;ideas&lt;/a&gt; in probability and statistics.&lt;/p&gt;
+
+&lt;h3 id='the_simulation'&gt;The simulation&lt;/h3&gt;
+
+&lt;p&gt;A single trial in the simulation will look like this:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Choose a bias at random&lt;/li&gt;
+
+&lt;li&gt;Flip a coin with that bias 10 times&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;After, say, 10,000 trials, you look at all the times you got 8 heads, and see what the bias happened to be in each of those trials. The percent of the time each bias comes up in this subset of trials gives the probability (the &amp;#8220;posterior&amp;#8221; probability) that that bias is the &amp;#8220;true&amp;#8221; bias.&lt;/p&gt;
+
+&lt;p&gt;When you start to code this up, one question jumps out: In step 1, when you choose a bias &amp;#8220;at random,&amp;#8221; what distribution do you draw it from?&lt;/p&gt;
+
+&lt;p&gt;The simplest thing you could pick is the uniform distribution between 0 and 1. This makes sense if you want to assume no particular prior knowledge about what the true bias is — all biases are equally likely. Later on we&amp;#8217;ll see what happens to the posterior distribution when you start with different distributions representing prior knowledge about the bias (commonly just called the &amp;#8220;prior&amp;#8221;).&lt;/p&gt;
+
+&lt;p&gt;So first, we&amp;#8217;ll need a case class that represents the outcome of one trial:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='k'&gt;class&lt;/span&gt; &lt;span class='nc'&gt;Trial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;heads&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;And here&amp;#8217;s the simulation itself:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;experiment&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Trial&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;for&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='n'&gt;bias&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;uniform&lt;/span&gt;
+    &lt;span class='n'&gt;heads&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;binomial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='mi'&gt;10&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt; &lt;span class='k'&gt;yield&lt;/span&gt; &lt;span class='nc'&gt;Trial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;heads&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;(I recommend reading &lt;a href='/2013/08/12/a-frequentist-approach-to-probability.html'&gt;this writeup of the probability distribution monad&lt;/a&gt; if you haven&amp;#8217;t seen this before.)&lt;/p&gt;
+
+&lt;p&gt;The bias is drawn from the uniform distribution, and a &lt;a href='/2013/08/19/climbing-the-probability-distribution-ladder.html'&gt;binomial distribution&lt;/a&gt; represents the number of heads you will see in 10 coin flips when the probability of seeing a head on a single coin flip is determined by the value of &lt;code&gt;bias&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now let&amp;#8217;s analyze the experiment. Remember we only care about the trials that resulted in 8 heads.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;posterior&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;experiment&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;given&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;heads&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='mi'&gt;8&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Let&amp;#8217;s see what it looks like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; posterior.bucketedHist(0, 1, 20)
+0.00  0.00% 
+0.05  0.00% 
+0.10  0.00% 
+0.15  0.00% 
+0.20  0.01% 
+0.25  0.03% 
+0.30  0.09% 
+0.35  0.18% 
+0.40  0.63% 
+0.45  1.37% #
+0.50  2.32% ##
+0.55  3.85% ###
+0.60  6.69% ######
+0.65  9.35% #########
+0.70 12.73% ############
+0.75 15.49% ###############
+0.80 16.91% ################
+0.85 15.08% ###############
+0.90 10.60% ##########
+0.95  4.48% ####
+1.00  0.19% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That looks pretty good! It&amp;#8217;s clear that 0.8 is the most likely bias, as expected.&lt;/p&gt;
+
+&lt;h3 id='chaining_posteriors'&gt;Chaining posteriors&lt;/h3&gt;
+
+&lt;p&gt;Alright, now suppose I flip the same coin 10 more times and get only 6 heads this time. I should be able to model it the same way, only using &lt;code&gt;posterior&lt;/code&gt; as my new prior.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;experiment2&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;for&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='n'&gt;bias&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;posterior&lt;/span&gt;
+    &lt;span class='n'&gt;heads&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;binomial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='mi'&gt;10&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt; &lt;span class='k'&gt;yield&lt;/span&gt; &lt;span class='nc'&gt;Trial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;heads&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;posterior2&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;experiment2&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;given&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;heads&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='mi'&gt;6&lt;/span&gt;&lt;span class='o'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; posterior2.bucketedHist(0, 1, 20)
+0.00  0.00% 
+0.05  0.00% 
+0.10  0.00% 
+0.15  0.00% 
+0.20  0.00% 
+0.25  0.00% 
+0.30  0.00% 
+0.35  0.18% 
+0.40  0.55% 
+0.45  1.84% #
+0.50  4.25% ####
+0.55  7.79% #######
+0.60 12.91% ############
+0.65 17.86% #################
+0.70 19.41% ###################
+0.75 17.66% #################
+0.80 11.37% ###########
+0.85  4.98% ####
+0.90  1.14% #
+0.95  0.06% 
+1.00  0.00% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Great, exactly what you would expect. The distribution has shifted towards 0.7 (14/20) and has narrowed a bit.&lt;/p&gt;
+
+&lt;h3 id='i_cant_not_abstract_this_out_into_a_method'&gt;I can&amp;#8217;t not abstract this out into a method&lt;/h3&gt;
+
+&lt;p&gt;I&amp;#8217;ve written almost the exact same code twice, so I basically have to do this now. Here&amp;#8217;s my attempt, as an instance method of the &lt;code&gt;Distribution&lt;/code&gt; interface:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;trait&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='c1'&gt;// ...&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;posterior&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;B&lt;/span&gt;&lt;span class='o'&gt;](&lt;/span&gt;&lt;span class='n'&gt;experiment&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='o'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;B&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt;
+                   &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;observed&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;B&lt;/span&gt; &lt;span class='o'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='nc'&gt;Boolean&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='k'&gt;class&lt;/span&gt; &lt;span class='nc'&gt;Trial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;outcome&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;B&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+    &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;d&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;for&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+      &lt;span class='n'&gt;a&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='k'&gt;this&lt;/span&gt;
+      &lt;span class='n'&gt;e&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;experiment&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+    &lt;span class='o'&gt;}&lt;/span&gt; &lt;span class='k'&gt;yield&lt;/span&gt; &lt;span class='nc'&gt;Trial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;e&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+    &lt;span class='n'&gt;d&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;given&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;t&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;observed&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;t&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;outcome&lt;/span&gt;&lt;span class='o'&gt;)).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The &lt;code&gt;posterior&lt;/code&gt; method treats &lt;code&gt;this&lt;/code&gt; as a prior and returns the posterior distribution after running an &lt;code&gt;experiment&lt;/code&gt; that depends on values sampled from &lt;code&gt;this&lt;/code&gt;. The function &lt;code&gt;observed&lt;/code&gt; indicates what outcomes were actually observed in the experiment and which were not.&lt;/p&gt;
+
+&lt;p&gt;So now our first two experiments become:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;p1&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;uniform&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;posterior&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;binomial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='mi'&gt;10&lt;/span&gt;&lt;span class='o'&gt;))(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='mi'&gt;8&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;p2&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;p1&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;posterior&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;binomial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='mi'&gt;10&lt;/span&gt;&lt;span class='o'&gt;))(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='mi'&gt;6&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Pretty clean!&lt;/p&gt;
+
+&lt;p&gt;We can eyeball that &lt;code&gt;p2&lt;/code&gt; gives the same result as flipping a coin 20 times and observing 14 heads:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; uniform.posterior(bias =&amp;gt; binomial(bias, 20))(_ == 14).bucketedHist(0, 1, 20)
+0.00  0.00% 
+0.05  0.00% 
+0.10  0.00% 
+0.15  0.00% 
+0.20  0.00% 
+0.25  0.00% 
+0.30  0.06% 
+0.35  0.13% 
+0.40  0.53% 
+0.45  1.83% #
+0.50  3.88% ###
+0.55  8.20% ########
+0.60 13.40% #############
+0.65 17.61% #################
+0.70 19.28% ###################
+0.75 18.30% ##################
+0.80 11.33% ###########
+0.85  4.40% ####
+0.90  0.98% 
+0.95  0.07% 
+1.00  0.00% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And that more trials gives a narrower distribution:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; uniform.posterior(bias =&amp;gt; binomial(bias, 100))(_ == 72).bucketedHist(0, 1, 20)
+0.00  0.00% 
+0.05  0.00% 
+0.10  0.00% 
+0.15  0.00% 
+0.20  0.00% 
+0.25  0.00% 
+0.30  0.00% 
+0.35  0.00% 
+0.40  0.00% 
+0.45  0.00% 
+0.50  0.01% 
+0.55  0.14% 
+0.60  2.35% ##
+0.65 15.58% ###############
+0.70 39.42% #######################################
+0.75 33.53% #################################
+0.80  8.60% ########
+0.85  0.37% 
+0.90  0.00% 
+0.95  0.00% 
+1.00  0.00% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Neat!&lt;/p&gt;
+
+&lt;h3 id='does_the_posterior_distribution_have_a_memory'&gt;Does the posterior distribution have a memory?&lt;/h3&gt;
+
+&lt;p&gt;My intuition says that if I flip a coin 10 times and get 2 heads (20%), and then flip it 30 times and get 3 heads (10%), the combined posterior should say that the most likely bias is somewhere between 20% and 10%, but closer to 10% because the 30 flips should count more than the 10 flips. In fact it should be exactly 12.5% since we observed 5 total heads in 40 total flips.&lt;/p&gt;
+
+&lt;p&gt;But does this technique of chaining posteriors actually give that result? After I generate the first posterior distribution from the 10-flip experiment, isn&amp;#8217;t the information that I flipped it 10 times lost somehow? Let&amp;#8217;s see.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val p1 = uniform.posterior(bias =&amp;gt; binomial(bias, 10))(_ == 2)
+p1: Distribution[Double] = &amp;lt;distribution&amp;gt;
+
+scala&amp;gt; p1.bucketedHist(0, 1, 20)
+0.00  0.28% 
+0.05  4.14% ####
+0.10 10.45% ##########
+0.15 15.02% ###############
+0.20 16.38% ################
+0.25 15.37% ###############
+0.30 12.85% ############
+0.35  9.65% #########
+0.40  6.68% ######
+0.45  4.30% ####
+0.50  2.54% ##
+0.55  1.37% #
+0.60  0.58% 
+0.65  0.27% 
+0.70  0.10% 
+0.75  0.02% 
+0.80  0.00% 
+0.85  0.00% 
+0.90  0.00% 
+0.95  0.00% 
+1.00  0.00% 
+
+scala&amp;gt; val p2 = p1.posterior(bias =&amp;gt; binomial(bias, 30))(_ == 3)
+p2: Distribution[Double] = &amp;lt;distribution&amp;gt;
+
+scala&amp;gt; p2.bucketedHist(0, 0.5, 20)
+0.000  0.00% 
+0.025  0.41% 
+0.050  3.89% ###
+0.075 10.21% ##########
+0.100 16.69% ################
+0.125 18.80% ##################
+0.150 17.77% #################
+0.175 12.85% ############
+0.200  9.02% #########
+0.225  5.06% #####
+0.250  2.93% ##
+0.275  1.46% #
+0.300  0.44% 
+0.325  0.37% 
+0.350  0.04% 
+0.375  0.04% 
+0.400  0.02% 
+0.425  0.00% 
+0.450  0.00% 
+0.475  0.00% 
+0.500  0.00% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Hm, yeah, it sure looks like it worked! The most likely bias is 12.5%.&lt;/p&gt;
+
+&lt;p&gt;The reason this works is that &lt;code&gt;p1&lt;/code&gt; does encode how many flips went into it, in how spread out the distribution is. This is pretty easily illustrated: if instead we had done 20 flips and gotten 4 heads, or 40 flips and gotten 8 heads, the resulting posterior distributions would have looked different, even though these each encode the same 20% bias.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; uniform.posterior(bias =&amp;gt; binomial(bias, 20))(_ == 4).bucketedHist(0, 1, 20)
+0.00  0.00% 
+0.05  1.61% #
+0.10  9.57% #########
+0.15 18.74% ##################
+0.20 22.51% ######################
+0.25 19.40% ###################
+0.30 14.06% ##############
+0.35  8.03% ########
+0.40  3.84% ###
+0.45  1.57% #
+0.50  0.48% 
+0.55  0.13% 
+0.60  0.06% 
+0.65  0.00% 
+0.70  0.00% 
+0.75  0.00% 
+0.80  0.00% 
+0.85  0.00% 
+0.90  0.00% 
+0.95  0.00% 
+1.00  0.00% 
+
+scala&amp;gt; uniform.posterior(bias =&amp;gt; binomial(bias, 40))(_ == 8).bucketedHist(0, 1, 20)
+0.00  0.00% 
+0.05  0.39% 
+0.10  6.15% ######
+0.15 22.06% ######################
+0.20 30.70% ##############################
+0.25 23.72% #######################
+0.30 12.06% ############
+0.35  3.85% ###
+0.40  0.90% 
+0.45  0.16% 
+0.50  0.01% 
+0.55  0.00% 
+0.60  0.00% 
+0.65  0.00% 
+0.70  0.00% 
+0.75  0.00% 
+0.80  0.00% 
+0.85  0.00% 
+0.90  0.00% 
+0.95  0.00% 
+1.00  0.00% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The shape of the prior distribution naturally affects the posteriors that result from it.&lt;/p&gt;
+
+&lt;h3 id='fun_with_priors'&gt;Fun with priors&lt;/h3&gt;
+
+&lt;p&gt;Let&amp;#8217;s see exactly how that plays out by feeding in different priors and see what posterior distributions come out.&lt;/p&gt;
+
+&lt;p&gt;Suppose we start with some knowledge that coin favors tails over heads. So we know the bias is less than 0.5. We&amp;#8217;ll model this with a uniform distribution between 0 and 0.5.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val prior = uniform.given(_ &amp;lt; 0.5)
+prior: Distribution[Double] = &amp;lt;distribution&amp;gt;
+
+scala&amp;gt; prior.posterior(bias =&amp;gt; binomial(bias, 10))(_ == 8).bucketedHist(0, 1, 20, roundDown = true)
+0.00  0.00% 
+0.05  0.00% 
+0.10  0.00% 
+0.15  0.01% 
+0.20  0.33% 
+0.25  1.47% #
+0.30  4.42% ####
+0.35 11.61% ###########
+0.40 26.93% ##########################
+0.45 55.23% #######################################################
+0.50  0.00% 
+0.55  0.00% 
+0.60  0.00% 
+0.65  0.00% 
+0.70  0.00% 
+0.75  0.00% 
+0.80  0.00% 
+0.85  0.00% 
+0.90  0.00% 
+0.95  0.00% 
+1.00  0.00% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Makes sense, all the probabily mass crowds as close to 0.5 as it can.&lt;/p&gt;
+
+&lt;p&gt;Now let&amp;#8217;s try something a little silly — say someone tells us that they don&amp;#8217;t know what the bias is, but it is definitely &lt;em&gt;not&lt;/em&gt; between 0.7 and 0.8.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val prior = uniform.given(x =&amp;gt; x &amp;lt;= 0.7 || x &amp;gt;= 0.8)
+prior: Distribution[Double] = &amp;lt;distribution&amp;gt;
+
+scala&amp;gt; prior.posterior(bias =&amp;gt; binomial(bias, 10))(_ == 8).bucketedHist(0, 1, 20, roundDown = true)
+0.00  0.00% 
+0.05  0.00% 
+0.10  0.00% 
+0.15  0.00% 
+0.20  0.03% 
+0.25  0.02% 
+0.30  0.20% 
+0.35  0.39% 
+0.40  1.21% #
+0.45  2.79% ##
+0.50  4.67% ####
+0.55  7.52% #######
+0.60 11.68% ###########
+0.65 16.20% ################
+0.70  0.00% 
+0.75  0.00% 
+0.80 23.96% #######################
+0.85 18.53% ##################
+0.90 10.52% ##########
+0.95  2.28% ##
+1.00  0.00% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Fun! Makes perfect sense though, the prior distribution isn&amp;#8217;t generating any biases between 0.7 and 0.8, so it&amp;#8217;s not going to show up in the results.&lt;/p&gt;
+
+&lt;p&gt;Now let&amp;#8217;s say we know the bias is either 0.5 or 0.9 (we either have a perfectly fair coin or a very biased coin). Our prior is then:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val prior = discreteUniform(List(0.5, 0.9))
+prior: Distribution[Double] = &amp;lt;distribution&amp;gt;
+
+scala&amp;gt; prior.bucketedHist(0, 1, 10)
+0.0  0.00% 
+0.1  0.00% 
+0.2  0.00% 
+0.3  0.00% 
+0.4  0.00% 
+0.5 49.76% #################################################
+0.6  0.00% 
+0.7  0.00% 
+0.8  0.00% 
+0.9 50.24% ##################################################
+1.0  0.00% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now after flipping the coin 10 times and observing 8 heads, the posterior becomes:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; prior.posterior(bias =&amp;gt; binomial(bias, 10))(_ == 8).bucketedHist(0, 1, 10)
+0.0  0.00% 
+0.1  0.00% 
+0.2  0.00% 
+0.3  0.00% 
+0.4  0.00% 
+0.5 18.40% ##################
+0.6  0.00% 
+0.7  0.00% 
+0.8  0.00% 
+0.9 81.60% #################################################################################
+1.0  0.00% &lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id='bayes_theorem'&gt;Bayes&amp;#8217; theorem&lt;/h3&gt;
+
+&lt;p&gt;It&amp;#8217;s pretty easy to use Bayes&amp;#8217; theorem to analyze that last example, so let&amp;#8217;s walk through it and compare.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;#8217;s the formula applied to this example: &lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+\begin{align}
+  P(A|B) &amp;= \frac{P(B|A)P(A)}{P(B)}
+  \\ P(\text{fair coin}|\text{8 heads})
+     &amp;= \frac{P(\text{8 heads}|\text{fair coin})P(\text{fair coin})}{P(\text{8 heads})}
+  \\ &amp;= \frac{P(\text{8 heads}|\text{fair coin})P(\text{fair coin})}{P(\text{8 heads}|\text{fair coin})P(\text{fair coin}) + P(\text{8 heads}|\text{biased coin})P(\text{biased coin})}
+  \\ &amp;= \frac{ {10 \choose 8} (\frac{1}{2})^{10} \cdot \frac{1}{2}}
+          { {10 \choose 8} (\frac{1}{2})^{10} \cdot \frac{1}{2} + {10 \choose 8} (\frac{9}{10})^8 (\frac{1}{10})^2 \cdot \frac{1}{2}}
+  \\ &amp;= \frac{0.022}{0.022 + 0.097} = 0.18
+\end{align}
+%]]&gt;
+&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;So we got the same result. Written out, you can see the correspondence between Bayes&amp;#8217; Theorem and our simulation. &lt;script type='math/tex'&gt;P(\text{fair coin})&lt;/script&gt; and &lt;script type='math/tex'&gt;P(\text{biased coin})&lt;/script&gt; in the denominator play the same role as our prior in regulating how often we&amp;#8217;re using each bias. Then it becomes a simple fraction to determine the probability that the coin is fair — it&amp;#8217;s just the fraction of the number of times you observe 8 heads that are accounted for by using a fair coin. There&amp;#8217;s a slight mismatch here, in that this formula deals with probabilities, whereas I&amp;#8217;m talking about the number of times you observe certain outcomes. But this is easily enough explained — if you multiply the numerator and denominator by the number of trials you plan on running, you will have converted the probabilities into numbers of successes in that many trials, without changing the value of the fraction.&lt;/p&gt;
+
+&lt;h3 id='conclusion'&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;In Bayesian probability, the prior distribution reflects your degree of belief that an unknown quantity takes on particular values. It represents your uncertainty, rather than the relative frequencies of observing particular events, as is the case with the frequentist interpretation of probability.&lt;/p&gt;
+
+&lt;p&gt;However, we&amp;#8217;ve seen that the prior can acquiesce to a frequentist interpretation. We&amp;#8217;ve essentially turned the prior into a machine that regulates how often we&amp;#8217;re allowed to see certain values of an unknown quantity in our experiments, and the observed outcomes of experiments will be used to refine the output of the machine.&lt;/p&gt;</description>
+                <link>http://jliszka.github.io/2013/09/03/fun-with-priors.html</link>
+                <guid>http://jliszka.github.io/2013/09/03/fun-with-priors</guid>
+                <pubDate>2013-09-03T00:00:00-04:00</pubDate>
+        </item>
 
         <item>
                 <title>A Programmer's Guide to the Central Limit Theorem</title>
@@ -188,7 +610,9 @@ scala&amp;gt; sampleMean(poisson(5).map(_.toDouble)).hist
 
 &lt;p&gt;Surprise! That little observation was basically a statement of the Central Limit Theorem — means samples of a reasonable size drawn from any probability distribution will be normally distributed around the mean of the distribution. The Central Limit Theorem even tells you how to compute the standard deviation of this distribution: it&amp;#8217;s just the standard deviation of the underlying distribution divided by the square root of the sample size.&lt;/p&gt;
 &lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
 \bar{\sigma} = \frac{\sigma}{\sqrt{n}}
+%]]&gt;
 &lt;/script&gt;
 &lt;p&gt;This quantity, the standard deviation of the distribution of sample means, is also known as the &lt;a href='http://en.wikipedia.org/wiki/Standard_error'&gt;standard error&lt;/a&gt;. It&amp;#8217;s not a terribly suggestive name, but it might help to think of the &amp;#8220;error&amp;#8221; as the difference between the sample mean and the true mean.&lt;/p&gt;
 
@@ -258,7 +682,7 @@ res12: Double = 0.17756920958319758&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;You&amp;#8217;ve probably seen &lt;a href='http://en.wikipedia.org/wiki/Standard_deviation'&gt;this diagram&lt;/a&gt; before:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' alt='the normal distribution' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt='the normal distribution' src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' /&gt;&lt;/p&gt;
 
 &lt;p&gt;This is what we&amp;#8217;re working with. A value drawn from a normal distribution will be within 2 standard deviations of the mean 96% of the time. Since sample means are normally distributed around the true mean, sample means will be within 2 standard errors of the true mean 96% of the time. If a sample mean is more than 2 standard deviations away from the true mean, the sample is unlikely to have been drawn from that distribution.&lt;/p&gt;
 
@@ -531,11 +955,15 @@ res1: Double = 477.9797744569662&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Pareto:&lt;/p&gt;
 &lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
 f_\alpha(x) = \frac{\alpha}{x^{\alpha+1}}
+%]]&gt;
 &lt;/script&gt;
 &lt;p&gt;Exponential:&lt;/p&gt;
 &lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
 f_\lambda(x) = \lambda e^{-\lambda x}
+%]]&gt;
 &lt;/script&gt;
 &lt;p&gt;Hm, interesting!&lt;/p&gt;
 
@@ -550,7 +978,9 @@ f_\lambda(x) = \lambda e^{-\lambda x}
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Its probability density function is a lot easier to understand, though:&lt;/p&gt;
 &lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
 f_k(x) = \frac{x^{(k/2)-1}e^{-x/2}}{2^{k/2}\Gamma(\frac{k}{2})}
+%]]&gt;
 &lt;/script&gt;
 &lt;p&gt;Just kidding! This is gross. I&amp;#8217;m not going to even get into what &lt;script type='math/tex'&gt;\Gamma&lt;/script&gt; is.&lt;/p&gt;
 
@@ -690,7 +1120,9 @@ scala&amp;gt; chi2(5).bucketedHist(0, 15, 15, roundDown = true)
 
 &lt;p&gt;The probability density function involves some combinatorics, which is not entirely surprising.&lt;/p&gt;
 &lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
 f(k) = {n \choose k}p^k(1-p)^{n-k}
+%]]&gt;
 &lt;/script&gt;
 &lt;h3 id='the_negative_binomial_distribution'&gt;The negative binomial distribution&lt;/h3&gt;
 

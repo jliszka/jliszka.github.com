@@ -83,10 +83,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -211,11 +207,15 @@
 
 <p>Pareto:</p>
 <script type='math/tex; mode=display'>
+%<![CDATA[
 f_\alpha(x) = \frac{\alpha}{x^{\alpha+1}}
+%]]>
 </script>
 <p>Exponential:</p>
 <script type='math/tex; mode=display'>
+%<![CDATA[
 f_\lambda(x) = \lambda e^{-\lambda x}
+%]]>
 </script>
 <p>Hm, interesting!</p>
 
@@ -230,7 +230,9 @@ f_\lambda(x) = \lambda e^{-\lambda x}
 </code></pre></div>
 <p>Its probability density function is a lot easier to understand, though:</p>
 <script type='math/tex; mode=display'>
+%<![CDATA[
 f_k(x) = \frac{x^{(k/2)-1}e^{-x/2}}{2^{k/2}\Gamma(\frac{k}{2})}
+%]]>
 </script>
 <p>Just kidding! This is gross. I&#8217;m not going to even get into what <script type='math/tex'>\Gamma</script> is.</p>
 
@@ -370,7 +372,9 @@ scala&gt; chi2(5).bucketedHist(0, 15, 15, roundDown = true)
 
 <p>The probability density function involves some combinatorics, which is not entirely surprising.</p>
 <script type='math/tex; mode=display'>
+%<![CDATA[
 f(k) = {n \choose k}p^k(1-p)^{n-k}
+%]]>
 </script>
 <h3 id='the_negative_binomial_distribution'>The negative binomial distribution</h3>
 
@@ -445,7 +449,7 @@ f(k) = {n \choose k}p^k(1-p)^{n-k}
 
   
      
-    	<li><a href="/tags.html#probability-ref">probability <span>2</span></a></li>
+    	<li><a href="/tags.html#probability-ref">probability <span>3</span></a></li>
     
   
 
