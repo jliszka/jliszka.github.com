@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Fun with Priors"
+title: "Fun with Bayesian Priors"
 description: ""
 category: 
 tags: [ "probability" ]
@@ -32,7 +32,7 @@ trials. The percent of the time each bias comes up in this subset of trials give
 When you start to code this up, one question jumps out:
 In step 1, when you choose a bias "at random," what distribution do you draw it from?
 
-The simplest thing you could pick is the uniform distribution between 0 and 1. This makes sense if you want to
+The most reasonable choice is the uniform distribution between 0 and 1. This makes sense if you want to
 assume no particular prior knowledge about what the true bias is — all biases are equally likely.
 Later on we'll see what happens to the posterior distribution when you start with different distributions representing
 prior knowledge about the bias (commonly just called the "prior").
