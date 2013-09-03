@@ -5,8 +5,8 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-09-03T15:00:55-04:00</lastBuildDate>
-        <pubDate>2013-09-03T15:00:55-04:00</pubDate>
+        <lastBuildDate>2013-09-03T15:28:08-04:00</lastBuildDate>
+        <pubDate>2013-09-03T15:28:08-04:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -83,7 +83,7 @@
 
 &lt;h3 id='chaining_posteriors'&gt;Chaining posteriors&lt;/h3&gt;
 
-&lt;p&gt;Alright, now suppose I flip the same coin 10 more times and get only 6 heads this time. I should be able to model it the same way, only using &lt;code&gt;posterior&lt;/code&gt; as my new prior.&lt;/p&gt;
+&lt;p&gt;Alright, now suppose you flip the same coin 10 more times and get only 6 heads. This can be modeled the same way, only this time, instead of using &lt;code&gt;uniform&lt;/code&gt; as the prior distribution for the bias, you can use &lt;code&gt;posterior&lt;/code&gt;, essentially building on top of our new belief about what the bias is from the first experiment.&lt;/p&gt;
 &lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;experiment2&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
   &lt;span class='k'&gt;for&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
     &lt;span class='n'&gt;bias&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;posterior&lt;/span&gt;
@@ -682,7 +682,7 @@ res12: Double = 0.17756920958319758&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;You&amp;#8217;ve probably seen &lt;a href='http://en.wikipedia.org/wiki/Standard_deviation'&gt;this diagram&lt;/a&gt; before:&lt;/p&gt;
 
-&lt;p&gt;&lt;img alt='the normal distribution' src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' alt='the normal distribution' /&gt;&lt;/p&gt;
 
 &lt;p&gt;This is what we&amp;#8217;re working with. A value drawn from a normal distribution will be within 2 standard deviations of the mean 96% of the time. Since sample means are normally distributed around the true mean, sample means will be within 2 standard errors of the true mean 96% of the time. If a sample mean is more than 2 standard deviations away from the true mean, the sample is unlikely to have been drawn from that distribution.&lt;/p&gt;
 

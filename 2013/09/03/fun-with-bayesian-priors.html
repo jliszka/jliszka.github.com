@@ -176,7 +176,7 @@
 
 <h3 id='chaining_posteriors'>Chaining posteriors</h3>
 
-<p>Alright, now suppose I flip the same coin 10 more times and get only 6 heads this time. I should be able to model it the same way, only using <code>posterior</code> as my new prior.</p>
+<p>Alright, now suppose you flip the same coin 10 more times and get only 6 heads. This can be modeled the same way, only this time, instead of using <code>uniform</code> as the prior distribution for the bias, you can use <code>posterior</code>, essentially building on top of our new belief about what the bias is from the first experiment.</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>val</span> <span class='n'>experiment2</span> <span class='k'>=</span> <span class='o'>{</span>
   <span class='k'>for</span> <span class='o'>{</span>
     <span class='n'>bias</span> <span class='k'>&lt;-</span> <span class='n'>posterior</span>
