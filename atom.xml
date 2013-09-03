@@ -4,7 +4,7 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-09-03T11:35:05-04:00</updated>
+ <updated>2013-09-03T13:47:12-04:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
@@ -13,10 +13,10 @@
 
  
  <entry>
-   <title>Fun with Priors</title>
-   <link href="http://jliszka.github.io/2013/09/03/fun-with-priors.html"/>
+   <title>Fun with Bayesian Priors</title>
+   <link href="http://jliszka.github.io/2013/09/03/fun-with-bayesian-priors.html"/>
    <updated>2013-09-03T00:00:00-04:00</updated>
-   <id>http://jliszka.github.io/2013/09/03/fun-with-priors</id>
+   <id>http://jliszka.github.io/2013/09/03/fun-with-bayesian-priors</id>
    <content type="html">&lt;p&gt;Say you have a biased coin, but you don&amp;#8217;t know what the &amp;#8220;true&amp;#8221; bias is. You flip the coin 10 times and observe 8 heads. What can you say now about the true bias?&lt;/p&gt;
 
 &lt;p&gt;It&amp;#8217;s easy to say that the most likely bias is 0.8. That&amp;#8217;s accurate, but maybe you also want to know what other biases are likely. How likely is it that you have a fair coin? Can you rule out having a bias as low as 0.4?&lt;/p&gt;
@@ -37,7 +37,7 @@
 
 &lt;p&gt;When you start to code this up, one question jumps out: In step 1, when you choose a bias &amp;#8220;at random,&amp;#8221; what distribution do you draw it from?&lt;/p&gt;
 
-&lt;p&gt;The simplest thing you could pick is the uniform distribution between 0 and 1. This makes sense if you want to assume no particular prior knowledge about what the true bias is — all biases are equally likely. Later on we&amp;#8217;ll see what happens to the posterior distribution when you start with different distributions representing prior knowledge about the bias (commonly just called the &amp;#8220;prior&amp;#8221;).&lt;/p&gt;
+&lt;p&gt;The most reasonable choice is the uniform distribution between 0 and 1. This makes sense if you want to assume no particular prior knowledge about what the true bias is — all biases are equally likely. Later on we&amp;#8217;ll see what happens to the posterior distribution when you start with different distributions representing prior knowledge about the bias (commonly just called the &amp;#8220;prior&amp;#8221;).&lt;/p&gt;
 
 &lt;p&gt;So first, we&amp;#8217;ll need a case class that represents the outcome of one trial:&lt;/p&gt;
 &lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='k'&gt;class&lt;/span&gt; &lt;span class='nc'&gt;Trial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;heads&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;

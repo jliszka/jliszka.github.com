@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Fun with Priors</title>
+    <title>Fun with Bayesian Priors</title>
     <meta name="description" content="">
     <meta name="author" content="Jason Liszka">
 
@@ -96,7 +96,7 @@
       <div class="content">
         
 <div class="page-header">
-  <h1>Fun with Priors </h1>
+  <h1>Fun with Bayesian Priors </h1>
 </div>
 
 <div class="row-fluid post-full">
@@ -125,7 +125,7 @@
 
 <p>When you start to code this up, one question jumps out: In step 1, when you choose a bias &#8220;at random,&#8221; what distribution do you draw it from?</p>
 
-<p>The simplest thing you could pick is the uniform distribution between 0 and 1. This makes sense if you want to assume no particular prior knowledge about what the true bias is — all biases are equally likely. Later on we&#8217;ll see what happens to the posterior distribution when you start with different distributions representing prior knowledge about the bias (commonly just called the &#8220;prior&#8221;).</p>
+<p>The most reasonable choice is the uniform distribution between 0 and 1. This makes sense if you want to assume no particular prior knowledge about what the true bias is — all biases are equally likely. Later on we&#8217;ll see what happens to the posterior distribution when you start with different distributions representing prior knowledge about the bias (commonly just called the &#8220;prior&#8221;).</p>
 
 <p>So first, we&#8217;ll need a case class that represents the outcome of one trial:</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>case</span> <span class='k'>class</span> <span class='nc'>Trial</span><span class='o'>(</span><span class='n'>bias</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>,</span> <span class='n'>heads</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>)</span>

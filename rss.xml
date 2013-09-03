@@ -5,13 +5,13 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-09-03T11:35:05-04:00</lastBuildDate>
-        <pubDate>2013-09-03T11:35:05-04:00</pubDate>
+        <lastBuildDate>2013-09-03T13:47:12-04:00</lastBuildDate>
+        <pubDate>2013-09-03T13:47:12-04:00</pubDate>
         <ttl>1800</ttl>
 
 
         <item>
-                <title>Fun with Priors</title>
+                <title>Fun with Bayesian Priors</title>
                 <description>&lt;p&gt;Say you have a biased coin, but you don&amp;#8217;t know what the &amp;#8220;true&amp;#8221; bias is. You flip the coin 10 times and observe 8 heads. What can you say now about the true bias?&lt;/p&gt;
 
 &lt;p&gt;It&amp;#8217;s easy to say that the most likely bias is 0.8. That&amp;#8217;s accurate, but maybe you also want to know what other biases are likely. How likely is it that you have a fair coin? Can you rule out having a bias as low as 0.4?&lt;/p&gt;
@@ -32,7 +32,7 @@
 
 &lt;p&gt;When you start to code this up, one question jumps out: In step 1, when you choose a bias &amp;#8220;at random,&amp;#8221; what distribution do you draw it from?&lt;/p&gt;
 
-&lt;p&gt;The simplest thing you could pick is the uniform distribution between 0 and 1. This makes sense if you want to assume no particular prior knowledge about what the true bias is — all biases are equally likely. Later on we&amp;#8217;ll see what happens to the posterior distribution when you start with different distributions representing prior knowledge about the bias (commonly just called the &amp;#8220;prior&amp;#8221;).&lt;/p&gt;
+&lt;p&gt;The most reasonable choice is the uniform distribution between 0 and 1. This makes sense if you want to assume no particular prior knowledge about what the true bias is — all biases are equally likely. Later on we&amp;#8217;ll see what happens to the posterior distribution when you start with different distributions representing prior knowledge about the bias (commonly just called the &amp;#8220;prior&amp;#8221;).&lt;/p&gt;
 
 &lt;p&gt;So first, we&amp;#8217;ll need a case class that represents the outcome of one trial:&lt;/p&gt;
 &lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='k'&gt;class&lt;/span&gt; &lt;span class='nc'&gt;Trial&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;bias&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;heads&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
@@ -427,8 +427,8 @@ scala&amp;gt; prior.bucketedHist(0, 1, 10)
 &lt;p&gt;In Bayesian probability, the prior distribution reflects your degree of belief that an unknown quantity takes on particular values. It represents your uncertainty, rather than the relative frequencies of observing particular events, as is the case with the frequentist interpretation of probability.&lt;/p&gt;
 
 &lt;p&gt;However, we&amp;#8217;ve seen that the prior can acquiesce to a frequentist interpretation. We&amp;#8217;ve essentially turned the prior into a machine that regulates how often we&amp;#8217;re allowed to see certain values of an unknown quantity in our experiments, and the observed outcomes of experiments will be used to refine the output of the machine.&lt;/p&gt;</description>
-                <link>http://jliszka.github.io/2013/09/03/fun-with-priors.html</link>
-                <guid>http://jliszka.github.io/2013/09/03/fun-with-priors</guid>
+                <link>http://jliszka.github.io/2013/09/03/fun-with-bayesian-priors.html</link>
+                <guid>http://jliszka.github.io/2013/09/03/fun-with-bayesian-priors</guid>
                 <pubDate>2013-09-03T00:00:00-04:00</pubDate>
         </item>
 
