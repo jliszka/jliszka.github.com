@@ -97,8 +97,9 @@ That looks pretty good! It's clear that 0.8 is the most likely bias, as expected
 
 ### Chaining posteriors
 
-Alright, now suppose I flip the same coin 10 more times and get only 6 heads this time. I should be able to model
-it the same way, only using ```posterior``` as my new prior.
+Alright, now suppose you flip the same coin 10 more times and get only 6 heads. This can be modeled
+the same way, only this time, instead of using ```uniform``` as the prior distribution for the bias, you can use
+```posterior```, essentially building on top of our new belief about what the bias is from the first experiment.
 
 {% highlight scala %}
 val experiment2 = {
