@@ -157,8 +157,9 @@ trait Distribution[A] {
 }
 {% endhighlight %}
 
-The ```posterior``` method treats ```this``` as a prior and returns the posterior distribution after running an ```experiment``` that depends
-on values sampled from ```this```. The function ```observed``` indicates what outcomes were actually observed in the experiment
+The idea is that ```posterior``` updates a prior distribution according to the outcome of some experiment. It returns
+the new posterior after running the provided ```experiment```, which depends on values sampled from the prior, and in which only certain
+outcomes are observed. The ```observed``` parameter is a function that indicates what outcomes were actually observed in the experiment
 and which were not.
 
 So now our first two experiments become:
@@ -287,8 +288,9 @@ Let's see.
 
 Hm, yeah, it sure looks like it worked! The most likely bias is 12.5%.
 
-The reason this works is that ```p1``` does encode how many flips went into it, in how spread
-out the distribution is. This is pretty easily illustrated: if instead we had done 20 flips and gotten 4 heads, or 40 flips
+So how does this work? Well, ```p1``` actually does encode how many flips went into it — more flips translates into a narrower
+distribution, and fewer flips will produce a distribution that is more spread out.
+This is pretty easily illustrated: if instead we had done 20 flips and gotten 4 heads, or 40 flips
 and gotten 8 heads, the resulting posterior distributions would have looked different, even though these each encode the same
 20% bias.
 
