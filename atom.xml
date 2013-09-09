@@ -4,7 +4,7 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-09-09T11:14:20-04:00</updated>
+ <updated>2013-09-09T14:02:29-04:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
@@ -236,7 +236,7 @@ res3: Q[Basis.Std] = -1.0|0&amp;gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;scala&amp;gt; bell
 res4: W.Q[Basis.T[Basis.Std,Basis.Std]] = 0.707107|00&amp;gt; + 0.707107|11&amp;gt;&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;These qubits happen to be entangled, but that shouldn&amp;#8217;t affect with our application of &lt;code&gt;sqrtNot&lt;/code&gt; to the first qubit, should it?&lt;/p&gt;
+&lt;p&gt;These qubits happen to be entangled, but that shouldn&amp;#8217;t affect our application of &lt;code&gt;sqrtNot&lt;/code&gt; to the first qubit, should it?&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;scala&amp;gt; bell &amp;gt;&amp;gt;= lift1(sqrtNot)
 res5: Q[T[Basis.Std,Basis.Std]] = 0.5|00&amp;gt; + -0.5|01&amp;gt; + 0.|10&amp;gt; + 0.5|11&amp;gt;&lt;/code&gt;&lt;/pre&gt;
