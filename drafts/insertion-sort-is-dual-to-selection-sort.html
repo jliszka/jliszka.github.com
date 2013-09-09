@@ -1,0 +1,309 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Insertion Sort is dual to Selection Sort</title>
+    <meta name="description" content="">
+    <meta name="author" content="Jason Liszka">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/themes/twitter/bootstrap/css/bootstrap.2.2.2.min.css" rel="stylesheet">
+    <link href="/assets/themes/twitter/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/twitter/css/pygment.css" rel="stylesheet" type="text/css" media="all">
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+
+    <!-- atom & rss feed -->
+    <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-narrow">
+          <a class="brand" href="/">A Gentleman and a Scala</a>
+          <ul class="nav">
+            
+            
+            
+
+
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-narrow">
+
+      <div class="content">
+        
+<div class="page-header">
+  <h1>Insertion Sort is dual to Selection Sort </h1>
+</div>
+
+<div class="row-fluid post-full">
+  <div class="span12">
+    <div class="date">
+      <span>07 September 2013</span>
+    </div>
+    <div class="content">
+      <p>I happened to notice recently that <a href='http://en.wikipedia.org/wiki/Selection_sort'>selection sort</a> is <a href='http://en.wikipedia.org/wiki/insertion_sort'>insertion sort</a> backwards. Or inside out. Or something.</p>
+
+<p>Both algorithms can be expressed as a main function that calls a recursive helper. Let&#8217;s take a look at the main functions first.</p>
+
+<h3 id='the_main_functions'>The main functions</h3>
+
+<p><code>insertionSort</code> sorts a list by inserting the head of the list into the recursively sorted tail, in such a way that it remains sorted. <code>selectionSort</code> sorts a list by extracting the smallest element from the list and consing it onto the front of the recursively sorted tail.</p>
+
+<p>Here&#8217;s the code:</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>insertionSort</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='n'>xs</span> <span class='k'>match</span> <span class='o'>{</span>
+    <span class='k'>case</span> <span class='nc'>Nil</span> <span class='k'>=&gt;</span> <span class='nc'>Nil</span>
+    <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='o'>{</span>
+      <span class='k'>val</span> <span class='n'>s</span> <span class='k'>=</span> <span class='n'>insertionSort</span><span class='o'>(</span><span class='n'>t</span><span class='o'>)</span>
+      <span class='n'>insert</span><span class='o'>(</span><span class='n'>h</span><span class='o'>,</span> <span class='n'>s</span><span class='o'>)</span>
+    <span class='o'>}</span>
+  <span class='o'>}</span>
+<span class='o'>}</span>
+
+<span class='k'>def</span> <span class='n'>selectionSort</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='n'>xs</span> <span class='k'>match</span> <span class='o'>{</span>
+    <span class='k'>case</span> <span class='nc'>Nil</span> <span class='k'>=&gt;</span> <span class='nc'>Nil</span>
+    <span class='k'>case</span> <span class='n'>xs</span> <span class='k'>=&gt;</span> <span class='o'>{</span>
+      <span class='k'>val</span> <span class='o'>(</span><span class='n'>h</span><span class='o'>,</span> <span class='n'>t</span><span class='o'>)</span> <span class='k'>=</span> <span class='n'>select</span><span class='o'>(</span><span class='n'>xs</span><span class='o'>)</span>
+      <span class='k'>val</span> <span class='n'>s</span> <span class='k'>=</span> <span class='n'>selectionSort</span><span class='o'>(</span><span class='n'>t</span><span class='o'>)</span>
+      <span class='n'>h</span> <span class='o'>::</span> <span class='n'>s</span>
+    <span class='o'>}</span>
+  <span class='o'>}</span>  
+<span class='o'>}</span>
+</code></pre></div>
+<p>Now let me show you these exact same algorithms in the form of data flow diagrams. The boxes are functions, and the edges are data flow, labeled with the variable name that carries that piece of data.</p>
+
+<p><img alt='main function data flow' src='/assets/img/main.png' /></p>
+
+<p>They are exactly the same, except with the arrows going the other way! Of course you would also want each box to be the &#8220;backwards&#8221; version of its corresponding box in the other function. This is pretty obviously true for <code>cons</code> and <code>decons</code> — one constructs a list from a head and a tail, and the other deconstructs a list into a head and a tail. We can also invoke the induction hypothesis and claim that the recursive call to <code>selection sort</code> is the &#8220;backwards&#8221; version of the corresponding recursive call to <code>insertion sort</code>.</p>
+
+<p>All that&#8217;s left is to show that this is true for helper functions — that <code>select</code> is <code>insert</code> backwards. Let&#8217;s take a look.</p>
+
+<h3 id='the_helper_functions'>The helper functions</h3>
+
+<p><code>insert</code>&#8217;s job is to insert an item into an already-sorted list in such a way that the list remains sorted. <code>select</code>&#8217;s job is to pull the smallest item out of a list and return that item plus the rest of the list.</p>
+
+<p>Here&#8217;s the code:</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>insert</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>A</span><span class='o'>,</span> <span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='n'>xs</span> <span class='k'>match</span> <span class='o'>{</span>
+    <span class='k'>case</span> <span class='nc'>Nil</span> <span class='k'>=&gt;</span> <span class='n'>x</span> <span class='o'>::</span> <span class='nc'>Nil</span>
+    <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='o'>{</span>
+      <span class='k'>val</span> <span class='o'>(</span><span class='n'>a</span><span class='o'>,</span> <span class='n'>b</span><span class='o'>)</span> <span class='k'>=</span> <span class='n'>sort</span><span class='o'>(</span><span class='n'>x</span><span class='o'>,</span> <span class='n'>h</span><span class='o'>)</span>
+      <span class='k'>val</span> <span class='n'>r</span> <span class='k'>=</span> <span class='n'>insert</span><span class='o'>(</span><span class='n'>b</span><span class='o'>,</span> <span class='n'>t</span><span class='o'>)</span>
+      <span class='n'>a</span> <span class='o'>::</span> <span class='n'>r</span>
+    <span class='o'>}</span>
+  <span class='o'>}</span>
+<span class='o'>}</span>
+
+<span class='k'>def</span> <span class='n'>select</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span><span class='k'>:</span> <span class='o'>(</span><span class='kt'>A</span><span class='o'>,</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='n'>xs</span> <span class='k'>match</span> <span class='o'>{</span>
+    <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='o'>{</span>
+      <span class='k'>val</span> <span class='o'>(</span><span class='n'>x</span><span class='o'>,</span> <span class='n'>r</span><span class='o'>)</span> <span class='k'>=</span> <span class='n'>select</span><span class='o'>(</span><span class='n'>t</span><span class='o'>)</span>
+      <span class='k'>val</span> <span class='o'>(</span><span class='n'>a</span><span class='o'>,</span> <span class='n'>b</span><span class='o'>)</span> <span class='k'>=</span> <span class='n'>sort</span><span class='o'>(</span><span class='n'>x</span><span class='o'>,</span> <span class='n'>h</span><span class='o'>)</span>
+      <span class='o'>(</span><span class='n'>a</span><span class='o'>,</span> <span class='n'>b</span> <span class='o'>::</span> <span class='n'>r</span><span class='o'>)</span>
+    <span class='o'>}</span>
+  <span class='o'>}</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p>The data flow diagrams of these functions make it totally clear that they are the same function, only one has the arrows reversed and the boxes running backwards:</p>
+
+<p><img alt='helper function data flow' src='/assets/img/helper.png' /></p>
+
+<p>The only thing left is this <code>sort</code> method, which takes 2 arguments and returns them in sorted order. Which I guess is the same if you run it backwards?</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>sort</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>a</span><span class='k'>:</span> <span class='kt'>A</span><span class='o'>,</span> <span class='n'>b</span><span class='k'>:</span> <span class='kt'>A</span><span class='o'>)</span><span class='k'>:</span> <span class='o'>(</span><span class='kt'>A</span><span class='o'>,</span> <span class='kt'>A</span><span class='o'>)</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='k'>if</span> <span class='o'>(</span><span class='n'>a</span> <span class='o'>&lt;</span> <span class='n'>b</span><span class='o'>)</span> <span class='o'>(</span><span class='n'>a</span><span class='o'>,</span> <span class='n'>b</span><span class='o'>)</span> <span class='k'>else</span> <span class='o'>(</span><span class='n'>b</span><span class='o'>,</span> <span class='n'>a</span><span class='o'>)</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p>So, there you have it. Aside from the <code>Nil</code> cases and the question of <code>sort</code> being its own opposite, if you take a machine that does insertion sort and run it in reverse, you get a machine that does selection sort.</p>
+
+<p>I&#8217;m pretty sure this fits the categorical definition of a dual, but my Category theory isn&#8217;t strong enough to say for sure.</p>
+
+<h3 id='are_there_any_other_sorting_algorithms_that_are_duals'>Are there any other sorting algorithms that are duals?</h3>
+
+<p>Yes, I believe <a href='http://en.wikipedia.org/wiki/Merge_sort'>Merge sort</a> and <a href='http://en.wikipedia.org/wiki/Quicksort'>Quicksort</a> are dual to each other, but I haven&#8217;t been able to get it to work out.</p>
+
+<p>Merge sort looks like this:</p>
+
+<ol>
+<li>Split the list in half</li>
+
+<li>Recursively sort each half</li>
+
+<li>Merge the two halves back together</li>
+</ol>
+
+<p>And Quicksort looks like this:</p>
+
+<ol>
+<li>Partition the list into a list of smaller items and a list of larger items</li>
+
+<li>Recursively sort each list</li>
+
+<li>Concatenate them back together</li>
+</ol>
+
+<p>Clearly, the &#8220;split&#8221; and &#8220;concatenate&#8221; steps are dual, and the recursive calls are dual by assumption. The &#8220;merge&#8221; and &#8220;partition&#8221; steps also seem like they should be dual to each other — one interleaves 2 lists to form 1 list, and the other distributes the elements of 1 list into 2 other lists. But I haven&#8217;t been able to formulate them in such a way that they are really &#8220;backwards&#8221; versions of each other.</p>
+
+<p>It&#8217;s possible that &#8220;merge&#8221; is actually dual to a function that extracts an increasing subsequence from a list, as in <a href='http://en.wikipedia.org/wiki/Strand_sort'>strand sort</a>. If that turns out to be true, then strand sort is its own dual.</p>
+
+<h3 id='can_this_be_done_automatically'>Can this be done automatically?</h3>
+
+<p>Can you write a function that takes another function (or a suitable description thereof) as input and turns it inside out? Can we get new algorithms for free just by turning existing ones on their head? What happens if you run Dijkstra&#8217;s algorithm backwards?</p>
+
+<p>I don&#8217;t know! Good questions!</p>
+    </div>
+
+    
+
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-tags"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="/tags.html#code-ref">code <span></span></a></li>
+    
+  
+
+
+
+    </ul>
+    
+
+    <hr>
+    <div class="navigation">
+    
+    
+      <div style="clear: both"></div>
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'jliszka'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+</div>
+
+
+      </div>
+      <hr>
+      <footer>
+        <p>&copy; 2013 Jason Liszka
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </footer>
+
+    </div>
+
+    
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-42567355-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+  </body>
+</html>
+

@@ -75,3 +75,15 @@
 .navigation .next {
   float: right;
 }
+
+td {
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background: #eee;
+}
+
+table {
+  margin-bottom: 10px;
+}

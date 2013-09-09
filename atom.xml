@@ -4,13 +4,247 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-09-03T18:13:44-04:00</updated>
+ <updated>2013-09-09T11:14:20-04:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
    <email>jliszka@alumni.cmu.edu</email>
  </author>
 
+ 
+ <entry>
+   <title>The 3 Things You Should Understand about Quantum Computation</title>
+   <link href="http://jliszka.github.io/2013/09/09/the-3-things-you-should-understand-about-quantum-computing.html"/>
+   <updated>2013-09-09T00:00:00-04:00</updated>
+   <id>http://jliszka.github.io/2013/09/09/the-3-things-you-should-understand-about-quantum-computing</id>
+   <content type="html">&lt;p&gt;I&amp;#8217;m working on a post about probablistic graphical models, but it&amp;#8217;s not done yet, so in the meantime here&amp;#8217;s a post about quantum probability.&lt;/p&gt;
+
+&lt;h3 id='loaded_dice'&gt;Loaded dice&lt;/h3&gt;
+
+&lt;p&gt;Let&amp;#8217;s say you have a loaded die with the following probability distribution:&lt;/p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th /&gt;&lt;th /&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;1&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;10%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;2&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;20%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;3&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;30%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;4&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;10%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;5&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;20%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;6&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;10%&lt;/td&gt;
+&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;p&gt;How many pieces of information are encoded in a loaded die like this? It&amp;#8217;s weird to think of a probability distribution encoding information, but think of it this way: if you sent me this die in the mail, I could roll it a bunch of times to discover the probability for each face of the die. If you control how the die is weighted, you could send me a message that way.&lt;/p&gt;
+
+&lt;p&gt;Anyway, the answer is that there are 5 pieces of information encoded in this distribution. (If you&amp;#8217;re not sure why it isn&amp;#8217;t 6, notice that once you specify 5 of the entries in the table, the 6th one is completely determined, since they all have to add up to 100%. So you can really only send me 5 numbers of your choosing this way.)&lt;/p&gt;
+
+&lt;h3 id='joint_probability_distributions'&gt;Joint probability distributions&lt;/h3&gt;
+
+&lt;p&gt;How many pieces of information can you encode in 2 loaded dice? Obviously it&amp;#8217;s 10, you think, since each die can encode 5 pieces of information.&lt;/p&gt;
+
+&lt;p&gt;But here&amp;#8217;s a (wrong) argument that it&amp;#8217;s 35. Instead of rolling each die separately to discover the probability distribution of each one, suppose I roll them together to discover their joint probability distribution. I&amp;#8217;ll get something like this:&lt;/p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th /&gt;&lt;th /&gt;&lt;th /&gt;&lt;th /&gt;&lt;th /&gt;&lt;th /&gt;&lt;th /&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style='text-align: left;' /&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;1&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;2&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;3&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;4&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;5&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;6&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;1&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;5%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;2&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;10%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;3&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;3%&lt;/td&gt;&lt;td style='text-align: center;'&gt;3%&lt;/td&gt;&lt;td style='text-align: center;'&gt;3%&lt;/td&gt;&lt;td style='text-align: center;'&gt;3%&lt;/td&gt;&lt;td style='text-align: center;'&gt;3%&lt;/td&gt;&lt;td style='text-align: center;'&gt;15%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;4&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;5%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;5&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;10%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;6&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;5%&lt;/td&gt;
+&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;p&gt;Naïvely there are 35 pieces of information here (35 independent numbers that determine the 36th number, since they all add up to 100%). However, if you&amp;#8217;re clever enough you can &amp;#8220;factor&amp;#8221; this table and conclude that the first die has the distribution described above, and the second die has the following probabililty distribution:&lt;/p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th /&gt;&lt;th /&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;1&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;10%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;2&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;10%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;3&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;10%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;4&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;10%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;5&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;10%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;6&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;50%&lt;/td&gt;
+&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;p&gt;You can see that the 6 x 6 table above is the outer product of the two single-column tables. So there really are only 10 numbers that determine that entire table.&lt;/p&gt;
+
+&lt;p&gt;That&amp;#8217;s the nature of classical probability — joint probability distributions of independent events always &amp;#8220;factor&amp;#8221; into individual probability distributions for each event. You can&amp;#8217;t encode any 35 numbers you like into the joint probability distribution of two dice, because it might not factor.&lt;/p&gt;
+
+&lt;p&gt;&amp;#8230; unless your dice happen to be quantum dice.&lt;/p&gt;
+
+&lt;h3 id='quantum_dice'&gt;Quantum dice&lt;/h3&gt;
+
+&lt;p&gt;With quantum dice, you &lt;em&gt;can&lt;/em&gt; actually construct a joint probability distribution that doesn&amp;#8217;t factor. For example:&lt;/p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th /&gt;&lt;th /&gt;&lt;th /&gt;&lt;th /&gt;&lt;th /&gt;&lt;th /&gt;&lt;th /&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style='text-align: left;' /&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;1&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;2&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;3&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;4&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;5&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;6&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;1&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;5%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;2&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;10%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;3&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;3%&lt;/td&gt;&lt;td style='text-align: center;'&gt;3%&lt;/td&gt;&lt;td style='text-align: center;'&gt;5%&lt;/td&gt;&lt;td style='text-align: center;'&gt;3%&lt;/td&gt;&lt;td style='text-align: center;'&gt;3%&lt;/td&gt;&lt;td style='text-align: center;'&gt;15%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;4&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;5%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;5&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;2%&lt;/td&gt;&lt;td style='text-align: center;'&gt;10%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;6&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;1%&lt;/td&gt;&lt;td style='text-align: center;'&gt;5%&lt;/td&gt;
+&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;p&gt;Notice the 0% in the (2, 2) cell. This table won&amp;#8217;t factor because in order for that entry to be 0%, one of the dice has to have a 0% chance of landing on a 2, which means that entire row (or column) would be 0%.&lt;/p&gt;
+
+&lt;p&gt;But think of the implications of a distribution like this. It means if you roll a 2 with one of the dice, you are guaranteed not to roll a 2 with the other — no matter what order you roll them in, or even you fly one of the dice to the opposite side of the world and roll them at the same time.&lt;/p&gt;
+
+&lt;p&gt;It&amp;#8217;s almost as if there&amp;#8217;s a tiny mechanism inside each of the dice that detects when it has landed on a certain face, and transmits a message to the other die that causes it to adjust some tiny internal servos that change how it&amp;#8217;s weighted.&lt;/p&gt;
+
+&lt;p&gt;Except that it has been demonstrated in a lab that if that were the case, that message would have to travel faster than the speed of light. In quantum mechanical terms, the two dice are &amp;#8220;entangled.&amp;#8221;&lt;/p&gt;
+
+&lt;h3 id='3_things_that_make_quantum_computation_possible'&gt;3 things that make quantum computation possible&lt;/h3&gt;
+
+&lt;p&gt;It&amp;#8217;s kind of irrelevant to the field of quantum computation what mechanism produces this weird behavior. The important things are:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;1. You can encode 35 numbers in the joint probability distribution of two quantum dice.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;In reality, you deal with quantum bits (qubits), not quantum dice. A 10-qubit quantum computer has &lt;script type='math/tex'&gt;2^{10}-1&lt;/script&gt; slots to store values. (Think about the joint probability distribution table for 10 quantum bits — it has &lt;script type='math/tex'&gt;2^{10}&lt;/script&gt; entries, one for each possible outcome, the last one of which is constrained by all the others such that they add up to 100%.) Compare this with 10 classical bits, which provides only 10 slots to store either a 0 or a 1. This is where quantum computers get their reputation for the ability to store a huge amount of data.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;2. A quantum computer performs operations on the entire joint probability distribution at once.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;I don&amp;#8217;t really understand the mechanics of how this is actually done in a lab, but suffice it to say that in order to produce crazy non-factoring joint probabilty distributions like the one above, you essentially apply matrix operations called quantum gates on joint probability distribution tables. Each gate works in constant time, regardless of the size of the table. This is where quantum computers get their reputation for massively parallel processing.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;3. Quantum probabilities are not restricted to real numbers between 0 and 1.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Instead they are restricted to &lt;em&gt;complex&lt;/em&gt; numbers with modulus between 0 and 1. This allows interference effects to happen, which is what makes any interesting quantum algorithms possible. More on this later.&lt;/p&gt;
+
+&lt;h3 id='the_catch'&gt;The catch&lt;/h3&gt;
+
+&lt;p&gt;The annoying thing about quantum computers is that you can&amp;#8217;t actually &amp;#8220;roll the dice&amp;#8221; as many times as you want to discover what the entire joint probability distribution looks like. As soon as you roll them once (i.e., perform a measurement), the entire thing collapses into a single classical state — the dice show a 3 and a 4 (for example), and the entangled state you worked so hard to construct is gone. In its place you have this:&lt;/p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th /&gt;&lt;th /&gt;&lt;th /&gt;&lt;th /&gt;&lt;th /&gt;&lt;th /&gt;&lt;th /&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style='text-align: left;' /&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;1&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;2&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;3&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;4&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;5&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;6&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;1&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;2&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;3&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;4&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;100%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;5&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;&lt;strong&gt;6&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;
+&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;p&gt;So even though quantum computers can technically represent a huge amount of information in a tiny number of qubits, you can&amp;#8217;t get at most of it! The way some quantum algorithms work is by contriving a joint probability distribution where most of the probability is concentrated in the &amp;#8220;answer&amp;#8221; you want to get out. When you perform the measurement, you can then observe (with high likelihood) where all the probability ended up. In a 10 qubit computer, for example, that measurement gives you a single 10-bit result.&lt;/p&gt;
+
+&lt;h3 id='demo_time'&gt;Demo time&lt;/h3&gt;
+
+&lt;p&gt;I actually have some code for this. It&amp;#8217;s mostly cribbed from &lt;a href='http://sigfpe.wordpress.com/2007/03/04/monads-vector-spaces-and-quantum-mechanics-pt-ii/'&gt;sigfpe&amp;#8217;s vector space monad&lt;/a&gt;. I put it together while taking the &lt;a href='https://class.coursera.org/qcomp-2012-001/class/index'&gt;Quantum Computation Coursera&lt;/a&gt;, just so I wouldn&amp;#8217;t have to do all the math by hand. It turned out to be pretty useful! Here&amp;#8217;s a quick demo:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; s0
+res0: Q[Basis.Std] = 1.0|0&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is a very simple quantum state equivalent to the following probability distribution table:&lt;/p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th /&gt;&lt;th /&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;0&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;100%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;1&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;
+&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;script type='math/tex'&gt;\newcommand{\ket}[1]{\left| #1 \right&gt;}&lt;/script&gt;
+&lt;p&gt;State labels are written using &lt;em&gt;ket&lt;/em&gt; notaton. &lt;script type='math/tex'&gt;\ket{0}&lt;/script&gt; refers to the 0 row in the table above. The number in front of the label represents the probability for that row in the table — actually, it&amp;#8217;s a probability amplitude, which is a complex number whose squared absolute value gives the classical probability of that state. This will make more sense in a second.&lt;/p&gt;
+
+&lt;p&gt;But first, let&amp;#8217;s apply a quantum gate to this state:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; s0 &amp;gt;&amp;gt;= H
+res1: Q[Basis.Std] = 0.707107|0&amp;gt; + 0.707107|1&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is &lt;script type='math/tex'&gt;\frac{1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1}&lt;/script&gt;. It corresponds to the following (classical) probability distribution table:&lt;/p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th /&gt;&lt;th /&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;0&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;50%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;1&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;50%&lt;/td&gt;
+&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;p&gt;since &lt;script type='math/tex'&gt;|\frac{1}{\sqrt{2}}|^2 = \frac{1}{2}&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;Notice that &lt;script type='math/tex'&gt;\frac{1}{\sqrt{2}}\ket{0} - \frac{1}{\sqrt{2}}\ket{1}&lt;/script&gt; corresponds to the same table, and so does &lt;script type='math/tex'&gt;\frac{-i}{\sqrt{2}}\ket{0} - \frac{1}{\sqrt{2}}\ket{1}&lt;/script&gt;, since &lt;script type='math/tex'&gt;|\frac{-i}{\sqrt{2}}|^2 = |\frac{-1}{\sqrt{2}}|^2 = \frac{1}{2}&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;One qubit only gets you so far. So let&amp;#8217;s create a 2 qubit state.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; tensor(s0, s0)
+res2: Q[T[Basis.Std,Basis.Std]] = 1.0|00&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The state label now contains 2 bits. This state corresponds to this table:&lt;/p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th /&gt;&lt;th /&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;00&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;100%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;01&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;10&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;11&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;
+&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;p&gt;Now we&amp;#8217;ll apply the H gate to both qubits:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; tensor(s0, s0) &amp;gt;&amp;gt;= lift12(H, H)
+res3: Q[T[Basis.Std,Basis.Std]] = 0.5|00&amp;gt; + 0.5|01&amp;gt; + 0.5|10&amp;gt; + 0.5|11&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Or just to the first qubit:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; tensor(s0, s0) &amp;gt;&amp;gt;= lift1(H)
+res4: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&amp;gt; + 0.707107|10&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There are some gates that operate on two qubits at once. The CNOT gate, for example, flips the second qubit only if the first qubit is a 1.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val s = tensor(s0, s0) &amp;gt;&amp;gt;= lift1(H) &amp;gt;&amp;gt;= cnot
+s: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&amp;gt; + 0.707107|11&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That corresponds to this table:&lt;/p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th /&gt;&lt;th /&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;00&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;50%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;01&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;10&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;0%&lt;/td&gt;
+&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;11&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;50%&lt;/td&gt;
+&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;p&gt;There, wait! We now have a pair of entangled qubits. They&amp;#8217;re like 2 quantum coins that always land both heads or both tails, even if you flip them at the exact same time on opposite sides of the Earth. This is called the &lt;a href='http://en.wikipedia.org/wiki/Bell_state'&gt;Bell state&lt;/a&gt; and comes up all the time in quantum algorithms.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;#8217;s see what happens when we measure the first qubit:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val (m, s2) = s.measure(_._1)
+m: Basis.Std = |1&amp;gt;
+s2: Q[T[Basis.Std,Basis.Std]] = 1.0|11&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The result of the measurement is 2 things: the outcome of the measurement itself — &lt;code&gt;m&lt;/code&gt;, &lt;script type='math/tex'&gt;\ket{1}&lt;/script&gt; — and the new state of the system — &lt;code&gt;s2&lt;/code&gt;, &lt;script type='math/tex'&gt;1.0\ket{11}&lt;/script&gt;. The measurement gave us one of the possible states, at random, according to its probability amplitude. The act of measuring changes the state, eliminating all states that are inconsistent with that outcome. So now if we measure the second qubit, we are guaranteed to get &lt;script type='math/tex'&gt;\ket{1}&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;#8217;s another example of that.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val s = tensor(s0, s0) &amp;gt;&amp;gt;= lift12(H, H)
+s: Q[T[Basis.Std,Basis.Std]] = 0.5|00&amp;gt; + 0.5|01&amp;gt; + 0.5|10&amp;gt; + 0.5|11&amp;gt;
+
+scala&amp;gt; val (m, s2) = s.measure(_._2)
+m: Basis.Std = |0&amp;gt;
+s2: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&amp;gt; + 0.707107|10&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This time we measured the second qubit, getting &lt;script type='math/tex'&gt;\ket{0}&lt;/script&gt;, and you can see that the only states remaining are the ones where the second qubit is 0.&lt;/p&gt;
+
+&lt;h3 id='interference'&gt;Interference&lt;/h3&gt;
+
+&lt;p&gt;I&amp;#8217;m going to quickly show you how interference effects work. Suppose I have a quantum gate that performs the following transformation on states: &lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+\ket{0} \rightarrow \frac{1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1} \\
+\ket{1} \rightarrow \frac{-1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1} \\
+%]]&gt;
+&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;I&amp;#8217;m going to call this gate &lt;code&gt;sqrtNot&lt;/code&gt; for reasons that will soon become apparent. Let&amp;#8217;s see it in action.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; s0 &amp;gt;&amp;gt;= sqrtNot
+res0: Q[Basis.Std] = 0.707107|0&amp;gt; + 0.707107|1&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;OK, we&amp;#8217;ve turned a pure &lt;script type='math/tex'&gt;\ket{0}&lt;/script&gt; state into an even mix of &lt;script type='math/tex'&gt;\ket{0}&lt;/script&gt; and &lt;script type='math/tex'&gt;\ket{1}&lt;/script&gt;. In other words, we took a coin that always lands heads and &amp;#8220;randomized&amp;#8221; it into a completely fair coin.&lt;/p&gt;
+
+&lt;p&gt;Now let&amp;#8217;s run it through the &lt;code&gt;sqrtNot&lt;/code&gt; gate again and see what happens.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; s0 &amp;gt;&amp;gt;= sqrtNot &amp;gt;&amp;gt;= sqrtNot
+res1: Q[Basis.Std] = 1.0|1&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Weird! We now have a coin that always lands tails. (That&amp;#8217;s why it&amp;#8217;s called &lt;code&gt;sqrtNot&lt;/code&gt; — applying it twice inverts the state.) How does that work? Let&amp;#8217;s do the math.&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+\begin{align}
+    \text{sqrtNot}(\frac{1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1})
+    &amp;= \frac{1}{\sqrt{2}}(\frac{1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1}) + \frac{1}{\sqrt{2}}(\frac{-1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1})
+    \\ &amp;= \frac{1}{2}\ket{0} + \frac{1}{2}\ket{1} - \frac{1}{2}\ket{0} + \frac{1}{2}\ket{1}
+    \\ &amp;= 1\ket{1}
+\end{align}
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;The &lt;script type='math/tex'&gt;\ket{0}&lt;/script&gt; got cancelled out. That would never happen in classical probability!&lt;/p&gt;
+
+&lt;p&gt;Let&amp;#8217;s keep going:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; s0 &amp;gt;&amp;gt;= sqrtNot &amp;gt;&amp;gt;= sqrtNot &amp;gt;&amp;gt;= sqrtNot
+res2: Q[Basis.Std] = -0.707107|0&amp;gt; + 0.707107|1&amp;gt;
+
+scala&amp;gt; s0 &amp;gt;&amp;gt;= sqrtNot &amp;gt;&amp;gt;= sqrtNot &amp;gt;&amp;gt;= sqrtNot &amp;gt;&amp;gt;= sqrtNot
+res3: Q[Basis.Std] = -1.0|0&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And we&amp;#8217;re back to a coin that always lands heads. (We flipped the sign, but remember only the squared absolute value really matters.)&lt;/p&gt;
+
+&lt;p&gt;For kicks, let&amp;#8217;s see what happens when we introduce another qubit into the mix:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; bell
+res4: W.Q[Basis.T[Basis.Std,Basis.Std]] = 0.707107|00&amp;gt; + 0.707107|11&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;These qubits happen to be entangled, but that shouldn&amp;#8217;t affect with our application of &lt;code&gt;sqrtNot&lt;/code&gt; to the first qubit, should it?&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; bell &amp;gt;&amp;gt;= lift1(sqrtNot)
+res5: Q[T[Basis.Std,Basis.Std]] = 0.5|00&amp;gt; + -0.5|01&amp;gt; + 0.|10&amp;gt; + 0.5|11&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Oops! The interference effects disappeared. The first qubit now behaves like a classical fair coin — no matter what we do to it, we can&amp;#8217;t recover those interference effects and get things to cancel. I think this is called decoherence (although some sources I&amp;#8217;ve read says this is not the same as decoherence) and is what makes building actual quantum computers difficult — preventing stray particles from coming in, accidentally getting entangled with the qubits in your quantum computer, and flying off to Pluto where you can&amp;#8217;t do anything to unentangle it.&lt;/p&gt;
+
+&lt;p&gt;Anyway, this is kind of fun to play with! If you&amp;#8217;re interested in checking it out, the code is available &lt;a href='https://github.com/jliszka/quantum-probability-monad'&gt;on github&lt;/a&gt;.&lt;/p&gt;</content>
+ </entry>
  
  <entry>
    <title>Fun with Bayesian Priors</title>
@@ -687,7 +921,7 @@ res12: Double = 0.17756920958319758&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;You&amp;#8217;ve probably seen &lt;a href='http://en.wikipedia.org/wiki/Standard_deviation'&gt;this diagram&lt;/a&gt; before:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' alt='the normal distribution' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt='the normal distribution' src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' /&gt;&lt;/p&gt;
 
 &lt;p&gt;This is what we&amp;#8217;re working with. A value drawn from a normal distribution will be within 2 standard deviations of the mean 96% of the time. Since sample means are normally distributed around the true mean, sample means will be within 2 standard errors of the true mean 96% of the time. If a sample mean is more than 2 standard deviations away from the true mean, the sample is unlikely to have been drawn from that distribution.&lt;/p&gt;
 

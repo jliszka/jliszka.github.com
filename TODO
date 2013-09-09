@@ -9,5 +9,70 @@ markov chains
 k-s test
 alias method
 stochastic calculus, ito calculus
+entangled dice: the one thing you should understand about quantum mechanics
 
 inside-out functions (selection vs insertion, infer coefficients)
+
+
+
+
+def partition(xs: List[A]): (List[A], List[A]) = {
+  xs match {
+    case Nil => (Nil, Nil)
+    case h :: t => {
+      (a, b) = partition(t)
+      if (h < p) (h :: a, b) else (a, h :: b)
+    }
+  }
+}
+
+def merge(xs: List[A], ys: List[A]): List[A] = {
+  (xs, ys) match {
+    case ...
+    case (x :: xt, y :: yt) => {
+      val (a, at, b, bt) = sort2(x, xt, y, yt)
+      val bs = b :: bt
+      val abs = merge(at, bs)
+      a :: abs
+    }
+  }
+}
+
+def extract(xs: List[A]): (List[A], List[A]) = {
+  xs match {
+    case Nil => (Nil, Nil)
+    case h :: t => {
+      val (s, r) = extract(t)
+      s match {
+        case Nil => (h :: Nil, r)
+        case sh :: st => {
+          if (h < sh) (h :: sh :: st, r) else (sh :: st, h :: r)
+        }
+      }
+    }
+  }
+}
+
+def extract(xs: List[A]): (List[A], List[A]) = {
+  xs match {
+    case Nil => (Nil, Nil)
+    case a :: abs => {
+      val (bs, at) = extract(abs)
+      bs match {
+        case ... =>
+        case b :: bt => {
+          (x, xt, y, yt) = sort2(a, at, b, bt)
+          (x :: xt, y :: yt)
+        }
+      }
+    }
+  }
+}
+
+
+
+def strand(xs: List[A]): List[A] = {
+  val (s, r) = extract(xs)
+  merge(s, strand(r))
+}
+
