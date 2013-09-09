@@ -309,7 +309,7 @@ For kicks, let's see what happens when we introduce another qubit into the mix:
     scala> bell
     res4: W.Q[Basis.T[Basis.Std,Basis.Std]] = 0.707107|00> + 0.707107|11>
 
-These qubits happen to be entangled, but that shouldn't affect with our application of ```sqrtNot``` to the first
+These qubits happen to be entangled, but that shouldn't affect our application of ```sqrtNot``` to the first
 qubit, should it?
 
     scala> bell >>= lift1(sqrtNot)
