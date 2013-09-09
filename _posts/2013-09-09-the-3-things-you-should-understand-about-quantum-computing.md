@@ -307,7 +307,7 @@ And we're back to a coin that always lands heads. (We flipped the sign, but reme
 For kicks, let's see what happens when we introduce another qubit into the mix:
 
     scala> bell
-    res4: W.Q[Basis.T[Basis.Std,Basis.Std]] = 0.707107|00> + 0.707107|11>
+    res4: Q[T[Basis.Std,Basis.Std]] = 0.707107|00> + 0.707107|11>
 
 These qubits happen to be entangled, but that shouldn't affect our application of ```sqrtNot``` to the first
 qubit, should it?
