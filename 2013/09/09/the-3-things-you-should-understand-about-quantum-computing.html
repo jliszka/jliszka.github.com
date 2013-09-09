@@ -330,7 +330,7 @@ res3: Q[Basis.Std] = -1.0|0&gt;</code></pre>
 <p>For kicks, let&#8217;s see what happens when we introduce another qubit into the mix:</p>
 
 <pre><code>scala&gt; bell
-res4: W.Q[Basis.T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|11&gt;</code></pre>
+res4: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|11&gt;</code></pre>
 
 <p>These qubits happen to be entangled, but that shouldn&#8217;t affect our application of <code>sqrtNot</code> to the first qubit, should it?</p>
 
