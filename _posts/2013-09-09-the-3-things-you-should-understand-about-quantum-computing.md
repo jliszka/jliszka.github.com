@@ -313,7 +313,7 @@ These qubits happen to be entangled, but that shouldn't affect our application o
 qubit, should it?
 
     scala> bell >>= lift1(sqrtNot)
-    res5: Q[T[Basis.Std,Basis.Std]] = 0.5|00> + -0.5|01> + 0.|10> + 0.5|11>
+    res5: Q[T[Basis.Std,Basis.Std]] = 0.5|00> + -0.5|01> + 0.5|10> + 0.5|11>
 
 Oops! The interference effects disappeared. The first qubit now behaves like a classical fair coin — no matter what
 we do to it, we can't recover those interference effects and get things to cancel. I think this is called
