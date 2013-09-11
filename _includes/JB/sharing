@@ -1,8 +1,10 @@
-{% if site.safe and site.JB.sharing.provider and page.JB.sharing != false %}
+{% if site.JB.sharing.provider and page.JB.sharing != false %}
 
 {% case site.JB.sharing.provider %}
 {% when "custom" %}
   {% include custom/sharing %}
+{% when "twitter" %}
+  {% include JB/sharing-providers/twitter %}
 {% endcase %}
 
 {% endif %}
