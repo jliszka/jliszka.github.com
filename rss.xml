@@ -5,8 +5,8 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-09-09T15:40:45-04:00</lastBuildDate>
-        <pubDate>2013-09-09T15:40:45-04:00</pubDate>
+        <lastBuildDate>2013-09-11T10:42:07-04:00</lastBuildDate>
+        <pubDate>2013-09-11T10:42:07-04:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -916,7 +916,7 @@ res12: Double = 0.17756920958319758&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;You&amp;#8217;ve probably seen &lt;a href='http://en.wikipedia.org/wiki/Standard_deviation'&gt;this diagram&lt;/a&gt; before:&lt;/p&gt;
 
-&lt;p&gt;&lt;img alt='the normal distribution' src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' alt='the normal distribution' /&gt;&lt;/p&gt;
 
 &lt;p&gt;This is what we&amp;#8217;re working with. A value drawn from a normal distribution will be within 2 standard deviations of the mean 96% of the time. Since sample means are normally distributed around the true mean, sample means will be within 2 standard errors of the true mean 96% of the time. If a sample mean is more than 2 standard deviations away from the true mean, the sample is unlikely to have been drawn from that distribution.&lt;/p&gt;
 
