@@ -335,7 +335,7 @@ res4: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|11&gt;</code></pre>
 <p>These qubits happen to be entangled, but that shouldn&#8217;t affect our application of <code>sqrtNot</code> to the first qubit, should it?</p>
 
 <pre><code>scala&gt; bell &gt;&gt;= lift1(sqrtNot)
-res5: Q[T[Basis.Std,Basis.Std]] = 0.5|00&gt; + -0.5|01&gt; + 0.|10&gt; + 0.5|11&gt;</code></pre>
+res5: Q[T[Basis.Std,Basis.Std]] = 0.5|00&gt; + -0.5|01&gt; + 0.5|10&gt; + 0.5|11&gt;</code></pre>
 
 <p>Oops! The interference effects disappeared. The first qubit now behaves like a classical fair coin — no matter what we do to it, we can&#8217;t recover those interference effects and get things to cancel. I think this is called decoherence (although some sources I&#8217;ve read says this is not the same as decoherence) and is what makes building actual quantum computers difficult — preventing stray particles from coming in, accidentally getting entangled with the qubits in your quantum computer, and flying off to Pluto where you can&#8217;t do anything to unentangle it.</p>
 

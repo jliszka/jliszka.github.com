@@ -5,8 +5,8 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-09-11T10:42:07-04:00</lastBuildDate>
-        <pubDate>2013-09-11T10:42:07-04:00</pubDate>
+        <lastBuildDate>2013-09-11T14:25:49-04:00</lastBuildDate>
+        <pubDate>2013-09-11T14:25:49-04:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -234,7 +234,7 @@ res4: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&amp;gt; + 0.707107|11&amp;gt;&lt;/
 &lt;p&gt;These qubits happen to be entangled, but that shouldn&amp;#8217;t affect our application of &lt;code&gt;sqrtNot&lt;/code&gt; to the first qubit, should it?&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;scala&amp;gt; bell &amp;gt;&amp;gt;= lift1(sqrtNot)
-res5: Q[T[Basis.Std,Basis.Std]] = 0.5|00&amp;gt; + -0.5|01&amp;gt; + 0.|10&amp;gt; + 0.5|11&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+res5: Q[T[Basis.Std,Basis.Std]] = 0.5|00&amp;gt; + -0.5|01&amp;gt; + 0.5|10&amp;gt; + 0.5|11&amp;gt;&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Oops! The interference effects disappeared. The first qubit now behaves like a classical fair coin — no matter what we do to it, we can&amp;#8217;t recover those interference effects and get things to cancel. I think this is called decoherence (although some sources I&amp;#8217;ve read says this is not the same as decoherence) and is what makes building actual quantum computers difficult — preventing stray particles from coming in, accidentally getting entangled with the qubits in your quantum computer, and flying off to Pluto where you can&amp;#8217;t do anything to unentangle it.&lt;/p&gt;
 
