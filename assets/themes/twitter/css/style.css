@@ -78,6 +78,7 @@
 
 td {
   padding: 5px;
+  border: 1px solid #ccc;
 }
 
 tr:nth-child(even) {
