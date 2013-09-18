@@ -1,14 +1,14 @@
 ---
 layout: post
-title: "Insertion Sort is dual to Selection Sort"
+title: "Insertion Sort is dual to Bubble Sort"
 description: ""
 category: 
 tags: [ "code" ]
 ---
 {% include JB/setup %}
 
-I happened to notice recently that [selection sort](http://en.wikipedia.org/wiki/Selection_sort)
-is [insertion sort](http://en.wikipedia.org/wiki/insertion_sort) backwards. Or inside out. Or something.
+I happened to notice recently that [insertion sort](http://en.wikipedia.org/wiki/insertion_sort) is
+[bubble sort](http://en.wikipedia.org/wiki/Bubble_sort) backwards. Or inside out. Or something.
 
 Both algorithms can be expressed as a main function that calls a recursive helper. Let's
 take a look at the main functions first.
@@ -16,7 +16,7 @@ take a look at the main functions first.
 ### The main functions
 
 ```insertionSort``` sorts a list by inserting the head of the list into the recursively sorted tail, in such a way that it remains sorted.
-```selectionSort``` sorts a list by extracting the smallest element from the list and consing it onto the front of the recursively sorted tail.
+```bubbleSort``` sorts a list by bubbling the smallest element to the front of the list and recursively sorting the tail.
 
 Here's the code:
 
@@ -31,37 +31,37 @@ def insertionSort[A <: Ordered[A]](xs: List[A]): List[A] = {
   }
 }
 
-def selectionSort[A <: Ordered[A]](xs: List[A]): List[A] = {
+def bubbleSort[A <: Ordered[A]](xs: List[A]): List[A] = {
   xs match {
     case Nil => Nil
     case xs => {
-      val (h, t) = select(xs)
-      val s = selectionSort(t)
+      val (h, t) = bubble(xs)
+      val s = bubbleSort(t)
       h :: s
     }
   }  
 }
 {% endhighlight %}
 
-Now let me show you these exact same algorithms in the form of data flow diagrams.
+Now let me show you these algorithms in the form of data flow diagrams.
 The boxes are functions, and the edges are data flow, labeled with the variable name that carries that piece of data.
 
 ![main function data flow](/assets/img/main.png)
 
-They are exactly the same, except with the arrows going the other way!
+They are exactly the same, except with the arrows going the other way.
+
 Of course you would also want each box to be the "backwards" version of its corresponding box in the other function.
 This is pretty obviously true for ```cons``` and ```decons``` — one constructs a list from a head and a tail,
 and the other deconstructs a list into a head and a tail.
-We can also invoke the induction hypothesis and claim that the recursive call to
-```selection sort``` is the "backwards" version of the corresponding recursive call to ```insertion sort```.
+And we can ainvoke the induction hypothesis and claim that the recursive call to
+```bubble sort``` is the "backwards" version of the corresponding recursive call to ```insertion sort```.
 
-All that's left is to show that this is true for helper functions — that ```select``` is ```insert``` backwards.
-Let's take a look.
+All that's left is to show that this is true for helper functions — that ```bubble``` is ```insert``` backwards.
 
 ### The helper functions
 
 ```insert```'s job is to insert an item into an already-sorted list in such a way that the list remains sorted.
-```select```'s job is to pull the smallest item out of a list and return that item plus the rest of the list.
+```bubble```'s job is to bubble the smallest item up to the front of the list and return that item plus the rest of the list.
 
 Here's the code:
 
@@ -103,7 +103,7 @@ def sort[A <: Ordered[A]](a: A, b: A): (A, A) = {
 {% endhighlight %}
 
 So, there you have it. Aside from the ```Nil``` cases and the question of ```sort``` being its own opposite,
-if you take a machine that does insertion sort and run it in reverse, you get a machine that does selection sort.
+if you take a machine that does insertion sort and run it in reverse, you get a machine that does bubble sort.
 
 I'm pretty sure this fits the categorical definition of a dual, but my Category theory isn't strong enough to say for sure.
 
@@ -137,13 +137,3 @@ in [strand sort](http://en.wikipedia.org/wiki/Strand_sort). If that turns out to
 Can you write a function that takes another function (or a suitable description thereof) as input and turns it
 inside out? Can we get new algorithms for free just by turning existing ones on their head? What happens if you
 run Dijkstra's algorithm backwards?
-
-I don't know! Good questions!
-
-
-
-
-
-
-
-
