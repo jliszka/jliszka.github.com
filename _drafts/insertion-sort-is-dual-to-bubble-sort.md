@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Insertion Sort is dual to Bubble Sort"
+title: "Insertion sort is dual to bubble sort"
 description: ""
 category: 
 tags: [ "code" ]
@@ -15,9 +15,6 @@ take a look at the main functions first.
 
 ### The main functions
 
-```insertionSort``` sorts a list by inserting the head of the list into the recursively sorted tail, in such a way that it remains sorted.
-```bubbleSort``` sorts a list by bubbling the smallest element to the front of the list and recursively sorting the tail.
-
 Here's the code:
 
 {% highlight scala %}
@@ -30,7 +27,11 @@ def insertionSort[A <: Ordered[A]](xs: List[A]): List[A] = {
     }
   }
 }
+{% endhighlight %}
 
+```insertionSort``` sorts a list by inserting the head of the list into the recursively sorted tail, in such a way that it remains sorted.
+
+{% highlight scala %}
 def bubbleSort[A <: Ordered[A]](xs: List[A]): List[A] = {
   xs match {
     case Nil => Nil
@@ -43,8 +44,9 @@ def bubbleSort[A <: Ordered[A]](xs: List[A]): List[A] = {
 }
 {% endhighlight %}
 
-Now let me show you these algorithms in the form of data flow diagrams.
-The boxes are functions, and the edges are data flow, labeled with the variable name that carries that piece of data.
+```bubbleSort``` sorts a list by bubbling the smallest element to the front of the list and recursively sorting the tail.
+
+Now look at the data flow diagrams for these functions:
 
 ![main function data flow](/assets/img/main.png)
 
@@ -53,15 +55,12 @@ They are exactly the same, except with the arrows going the other way.
 Of course you would also want each box to be the "backwards" version of its corresponding box in the other function.
 This is pretty obviously true for ```cons``` and ```decons``` — one constructs a list from a head and a tail,
 and the other deconstructs a list into a head and a tail.
-And we can ainvoke the induction hypothesis and claim that the recursive call to
+And we can invoke the induction hypothesis and claim that the recursive call to
 ```bubble sort``` is the "backwards" version of the corresponding recursive call to ```insertion sort```.
 
 All that's left is to show that this is true for helper functions — that ```bubble``` is ```insert``` backwards.
 
 ### The helper functions
-
-```insert```'s job is to insert an item into an already-sorted list in such a way that the list remains sorted.
-```bubble```'s job is to bubble the smallest item up to the front of the list and return that item plus the rest of the list.
 
 Here's the code:
 
@@ -76,17 +75,23 @@ def insert[A <: Ordered[A]](x: A, xs: List[A]): List[A] = {
     }
   }
 }
+{% endhighlight %}
 
-def select[A <: Ordered[A]](xs: List[A]): (A, List[A]) = {
+```insert```'s job is to insert an item into an already-sorted list in such a way that the list remains sorted.
+
+{% highlight scala %}
+def bubble[A <: Ordered[A]](xs: List[A]): (A, List[A]) = {
   xs match {
     case h :: t => {
-      val (x, r) = select(t)
+      val (x, r) = bubble(t)
       val (a, b) = sort(x, h)
       (a, b :: r)
     }
   }
 }
 {% endhighlight %}
+
+```bubble```'s job is to bubble the smallest item up to the front of the list and return that item plus the rest of the list.
 
 The data flow diagrams of these functions make it totally clear that they are the same function, only one has the
 arrows reversed and the boxes running backwards:
@@ -131,9 +136,22 @@ But I haven't been able to formulate them in such a way that they are really "ba
 
 It's possible that "merge" is actually dual to a function that extracts an increasing subsequence from a list, as
 in [strand sort](http://en.wikipedia.org/wiki/Strand_sort). If that turns out to be true, then strand sort is its own dual.
+That would be interesting to investigate.
+
+### Shouldn't a backwards sort... unsort a list?
+
+Well yeah, it should, but it can't. Sorting a list destroys information. You can pinpoint where that happens:
+the ```sort``` function. If you give it ```(4, 3)``` it will output ```(3, 4)```, but if you run it backwards,
+it can't know whether to turn ```(3, 4)``` into ```(4, 3)``` or ```(3, 4)``` without some additional information.
+To think of it another way: a given list has only one sorted ordering but a very large number of unsorted orderings.
+One deterministic function can't turn a sorted list into the particular unsorted list you happened to start with.
+
+So these backwards functions are backwards in every respect except for the part that destroys information.
 
 ### Can this be done automatically?
 
 Can you write a function that takes another function (or a suitable description thereof) as input and turns it
 inside out? Can we get new algorithms for free just by turning existing ones on their head? What happens if you
-run Dijkstra's algorithm backwards?
+run Dijkstra's algorithm backwards? I don't know!
+
+
