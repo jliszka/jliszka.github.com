@@ -321,18 +321,18 @@ Now square each of these numbers and divide by the expected probability distribu
 The sum of these numbers, times the total number of observations, is the {%m%}\chi^2{%em%} statistic. The construction
 of this statistic is somewhat arbitrary, but it's done this way on purpose to make the analysis easier.
 
-x is normally distributed around 0 with stdev = sqrt(pq(1-pq)) / sqrt(n)
-x/sqrt(pq(1-pq)/n) is normally distributed
-nx^2/pq(1-pq) is a chi2 distribution with df=1
+    x is normally distributed around 0 with stdev = sqrt(pq(1-pq)) / sqrt(n)
+    x/sqrt(pq(1-pq)/n) is normally distributed
+    nx^2/pq(1-pq) is a chi2 distribution with df=1
 
-  nx^2[ 1/pq + 1/(1-p)q + 1/p(1-q) + 1/(1-p)(1-q) ]
-= nx^2[ (1-p)(1-q) + p(1-q) + (1-p)q + pq ] / pq(1-p)(1-q)
-= nx^2[ 1 - p - q + pq + p - pq + q - pq + pq ] / pq(1-p)(1-q)
-= nx^2 / pq(1-p)(1-q)
+      nx^2[ 1/pq + 1/(1-p)q + 1/p(1-q) + 1/(1-p)(1-q) ]
+    = nx^2[ (1-p)(1-q) + p(1-q) + (1-p)q + pq ] / pq(1-p)(1-q)
+    = nx^2[ 1 - p - q + pq + p - pq + q - pq + pq ] / pq(1-p)(1-q)
+    = nx^2 / pq(1-p)(1-q)
 
-= nx^2[ 1/pq + 1/(1-pq) ]
-= nx^2[ pq + (1-pq) ] / pq(1-pq)
-= nx^2 / pq(1-pq)
+    = nx^2[ 1/pq + 1/(1-pq) ]
+    = nx^2[ pq + (1-pq) ] / pq(1-pq)
+    = nx^2 / pq(1-pq)
 
 
 Given two events that are actually independent, by how much do we expect this statistic to vary? It's easy
