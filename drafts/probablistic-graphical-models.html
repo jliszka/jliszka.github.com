@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Probablistic Graphical Models</title>
+    <title>Probabilistic Graphical Models</title>
     <meta name="description" content="">
     <meta name="author" content="Jason Liszka">
 
@@ -104,16 +104,375 @@
       <div class="content">
         
 <div class="page-header">
-  <h1>Probablistic Graphical Models </h1>
+  <h1>Probabilistic Graphical Models </h1>
 </div>
 
 <div class="row-fluid post-full">
   <div class="span12">
     <div class="date">
-      <span>11 September 2013</span>
+      <span>18 September 2013</span>
     </div>
     <div class="content">
-      
+      <!--
+intro, link to LW
+example pgm a -> b -> c
+code
+conditioning
+code
+another example a -> b <- c
+code
+independence, chi2
+notice flow of influence
+causal fallacies
+
+where does a graph come from?
+testable predictions
+rules for reading independence relations off a graph
+
+do-notation
+-->
+<p>Correlation does not imply causality — you&#8217;ve heard it a thousand times. But causality does imply correlation. Being good Bayesians, we should know how to turn a statement like that around and find a way to infer causality from correlation.</p>
+
+<p>The tool we&#8217;re going to use to do this is called a probabilistic graphical model. It&#8217;s simply a graph that encodes the flow of influence between events — in other words, what events cause other events, or more generally, what events affect the probability that other events will occur?</p>
+
+<p><a href=''>Less Wrong</a> has a great introduction on the subject, which you should read. I&#8217;m going to give you just the highlights, along with some code (of course). In the end, we&#8217;ll unify causal fallacies and see what surprising things we can infer from mere correlations between events in observational data.</p>
+
+<h3 id='probabilistic_graphical_models'>Probabilistic graphical models</h3>
+
+<p>A PGM encodes the causal relationships between events. For example, you might construct this graph to model a chain of causes resulting in someone getting a college scholarship:</p>
+
+<p><img alt='A -&gt; B -&gt; C' src='/assets/img/pgm/sat.png' /></p>
+
+<p>Or the relationship between diseases and their symptoms:</p>
+
+<p><img alt='A &lt;- B -&gt; C' src='/assets/img/pgm/flu.png' /></p>
+
+<p>Or the events surrounding a traffic jam:</p>
+
+<p><img alt='A -&gt; B &lt;- C -&gt; D' src='/assets/img/pgm/trafficjam.png' /></p>
+
+<p>These are easy enough to translate into code. Let&#8217;s try the last one.</p>
+
+<p>First we&#8217;ll need to define the prior probability distributions for the nodes with no incoming arrows. (Here&#8217;s <a href=''>an introduction</a> to the toy Scala probability library I&#8217;m going to be using.)</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>val</span> <span class='n'>rushHour</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Boolean</span><span class='o'>]</span> <span class='k'>=</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.2</span><span class='o'>)</span>
+<span class='k'>val</span> <span class='n'>badWeather</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Boolean</span><span class='o'>]</span> <span class='k'>=</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.05</span><span class='o'>)</span>
+</code></pre></div>
+<p>In this hypothetical world, 20% of the time it&#8217;s rush hour, and 5% of the time there&#8217;s bad weather.</p>
+
+<p>Let&#8217;s look a node that is influenced by other nodes.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>accident</span><span class='o'>(</span><span class='n'>badWeather</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Boolean</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='n'>badWeather</span> <span class='k'>match</span> <span class='o'>{</span>
+    <span class='k'>case</span> <span class='kc'>true</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.3</span><span class='o'>)</span>
+    <span class='k'>case</span> <span class='kc'>false</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.1</span><span class='o'>)</span>
+  <span class='o'>}</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p>If the weather is bad, we&#8217;re 30% likely to see an accident, but otherwise accidents occur only 10% of the time.</p>
+
+<p>Let&#8217;s do <code>sirens</code>:</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>sirens</span><span class='o'>(</span><span class='n'>accident</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Boolean</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='n'>accident</span> <span class='k'>match</span> <span class='o'>{</span>
+    <span class='k'>case</span> <span class='kc'>true</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.9</span><span class='o'>)</span>
+    <span class='k'>case</span> <span class='kc'>false</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.2</span><span class='o'>)</span>
+  <span class='o'>}</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p>Straightforward enough.</p>
+
+<p>Now let&#8217;s tackle <code>trafficJam</code>. It&#8217;s going to have 3 <code>Boolean</code> inputs, and we&#8217;ll need to return a different probabilty distribution depending on which of the inputs are true. Let&#8217;s say that if any two of of the inputs are true, there&#8217;s a 95% chance of a traffic jam, and that traffic jams are less likely if only one of them is true, and somewhat unlikely if none are.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>trafficJam</span><span class='o'>(</span><span class='n'>rushHour</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='o'>,</span> <span class='n'>badWeather</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='o'>,</span> <span class='n'>accident</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Boolean</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='o'>(</span><span class='n'>rushHour</span><span class='o'>,</span> <span class='n'>badWeather</span><span class='o'>,</span> <span class='n'>accident</span><span class='o'>)</span> <span class='k'>match</span> <span class='o'>{</span>
+    <span class='k'>case</span> <span class='o'>(</span><span class='kc'>true</span><span class='o'>,</span> <span class='kc'>true</span><span class='o'>,</span> <span class='k'>_</span><span class='o'>)</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.95</span><span class='o'>)</span>
+    <span class='k'>case</span> <span class='o'>(</span><span class='kc'>true</span><span class='o'>,</span> <span class='k'>_</span><span class='o'>,</span> <span class='kc'>true</span><span class='o'>)</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.95</span><span class='o'>)</span>
+    <span class='k'>case</span> <span class='o'>(</span><span class='k'>_</span><span class='o'>,</span> <span class='kc'>true</span><span class='o'>,</span> <span class='kc'>true</span><span class='o'>)</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.95</span><span class='o'>)</span>
+    <span class='k'>case</span> <span class='o'>(</span><span class='kc'>true</span><span class='o'>,</span> <span class='kc'>false</span><span class='o'>,</span> <span class='kc'>false</span><span class='o'>)</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.5</span><span class='o'>)</span>
+    <span class='k'>case</span> <span class='o'>(</span><span class='kc'>false</span><span class='o'>,</span> <span class='kc'>true</span><span class='o'>,</span> <span class='kc'>false</span><span class='o'>)</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.3</span><span class='o'>)</span>
+    <span class='k'>case</span> <span class='o'>(</span><span class='kc'>false</span><span class='o'>,</span> <span class='kc'>false</span><span class='o'>,</span> <span class='kc'>true</span><span class='o'>)</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.6</span><span class='o'>)</span>
+    <span class='k'>case</span> <span class='o'>(</span><span class='kc'>false</span><span class='o'>,</span> <span class='kc'>false</span><span class='o'>,</span> <span class='kc'>false</span><span class='o'>)</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.1</span><span class='o'>)</span>
+  <span class='o'>}</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p>If you&#8217;ve done any Scala or Haskell programming, you&#8217;ve probably noticed that these are all functions of type <code>A =&gt; Distribution[B]</code> — and yeah, you better believe we&#8217;re gonna <code>flatMap</code> that shit.</p>
+
+<p>So let&#8217;s wire everything up and produce the joint probability distribution for all these events.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>case</span> <span class='k'>class</span> <span class='nc'>Traffic</span><span class='o'>(</span><span class='n'>rushHour</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='o'>,</span> <span class='n'>badWeather</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='o'>,</span> <span class='n'>accident</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='o'>,</span> <span class='n'>sirens</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='o'>,</span> <span class='n'>trafficJam</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='o'>)</span>
+
+<span class='k'>val</span> <span class='n'>traffic</span> <span class='k'>=</span> <span class='k'>for</span> <span class='o'>{</span>
+  <span class='n'>r</span> <span class='k'>&lt;-</span> <span class='n'>rushHour</span>
+  <span class='n'>w</span> <span class='k'>&lt;-</span> <span class='n'>badWeather</span>
+  <span class='n'>a</span> <span class='k'>&lt;-</span> <span class='n'>accident</span><span class='o'>(</span><span class='n'>w</span><span class='o'>)</span>
+  <span class='n'>s</span> <span class='k'>&lt;-</span> <span class='n'>sirens</span><span class='o'>(</span><span class='n'>a</span><span class='o'>)</span>
+  <span class='n'>t</span> <span class='k'>&lt;-</span> <span class='n'>trafficJam</span><span class='o'>(</span><span class='n'>r</span><span class='o'>,</span> <span class='n'>w</span><span class='o'>,</span> <span class='n'>a</span><span class='o'>)</span>
+<span class='o'>}</span> <span class='k'>yield</span> <span class='nc'>Traffic</span><span class='o'>(</span><span class='n'>r</span><span class='o'>,</span> <span class='n'>w</span><span class='o'>,</span> <span class='n'>a</span><span class='o'>,</span> <span class='n'>s</span><span class='o'>,</span> <span class='n'>t</span><span class='o'>)</span>
+</code></pre></div>
+<p>Now we can query this distribution to see what affects what.</p>
+
+<p>Say you&#8217;re about to head home from work and you notice it&#8217;s raining pretty hard. What&#8217;s the chance there&#8217;s a traffic jam? You fire up a REPL.</p>
+
+<pre><code>scala&gt; traffic.given(_.rushHour).pr(_.trafficJam)
+res0: Double = 0.5658</code></pre>
+
+<p>Then you hear sirens.</p>
+
+<pre><code>scala&gt; traffic.given(_.rushHour).given(_.sirens).pr(_.trafficJam)
+res1: Double = 0.6718</code></pre>
+
+<p>About what you&#8217;d expect. Sirens increases your belief that there&#8217;s an accident, which will in turn affect the traffic.</p>
+
+<p>Let&#8217;s look at things the other way around. Say you&#8217;re sitting in traffic and you want to know whether there&#8217;s an accident up ahead. Luckily your car has a heads-up display with a Scala REPL built in.</p>
+
+<pre><code>scala&gt; traffic.given(_.trafficJam).pr(_.accident)
+res2: Double = 0.3183</code></pre>
+
+<p>Also, it&#8217;s raining, so you decide to factor that in:</p>
+
+<pre><code>scala&gt; traffic.given(_.trafficJam).given(_.badWeather).pr(_.accident)
+res3: Double = 0.4912</code></pre>
+
+<p>Makes sense, bad weather increases the chance of an accident.</p>
+
+<p>Suppose instead the weather is fine, but it is rush hour:</p>
+
+<pre><code>scala&gt; traffic.given(_.trafficJam).given(_.rushHour).pr(_.accident)
+res4: Double = 0.1807</code></pre>
+
+<p>That&#8217;s interesting, adding the knowledge that it&#8217;s rush hour made the likelihood that there&#8217;s an accident go down. But there&#8217;s no direct causal link in our model between rush hour and accidents. What&#8217;s going on?</p>
+
+<h3 id='the_flow_of_influence'>The flow of influence</h3>
+
+<p>The neat thing about probabilistic graphical models is that they completely explain which nodes can be correlated and which can be independent. By following a few simple rules, you can read this information right off the graph.</p>
+
+<p><strong>Rule 1.</strong> In the graph below, A and B can be correlated:</p>
+
+<p><img alt='A -&gt; C -&gt; B' src='/assets/img/pgm/linear.png' /></p>
+
+<p>Knowing the value of A will change your belief about the value of B. However, knowing the value of B will also change your belief about the value of A. This makes some intuitive sense; if someone got a scholarship, that raises your belief about whether they studied for their SATs.</p>
+
+<p>So it seems like influence can flow through arrows in either direction.</p>
+
+<p><strong>Rule 2.</strong> In the graph below, A and B can be correlated:</p>
+
+<p><img alt='A &lt;- C -&gt; B' src='/assets/img/pgm/fork.png' /></p>
+
+<p>Knowing the value of A influences your belief about the value of C, which directly affects the value of B. For example, knowing that someone has a fever increases the likelihood that they have the flu, which in turn increases the likelihood that they have a sore throat.</p>
+
+<p>So what&#8217;s the point of arrows if influence can flow in either direction? Glad you asked.</p>
+
+<p><strong>Rule 3.</strong> In the graph below, A and B must be independent:</p>
+
+<p><img alt='A -&gt; C &lt;- B' src='/assets/img/pgm/join.png' /></p>
+
+<p>To give you the intuition, whether the weather is bad should have no influence over whether it&#8217;s currently rush hour, even though they both cause traffic jams.</p>
+
+<p>So we have two cases where influence can flow through a node, and one case where it can&#8217;t. But something interesting happens when the value of the middle node (C in these 3 cases) is known — the situation completely reverses. We get alternative forms of the above rules when C is known.</p>
+
+<p><strong>Rule 1a.</strong> If C is known, A and B must be independent.</p>
+
+<p>Knowing C &#8220;blocks&#8221; influence from flowing from A to B. If you know that someone got a high SAT score, whether they studied for their SATs doesn&#8217;t tell you anything new about whether they got a scholarship. In the reverse case, if you know that someone got a high SAT score, then knowing whether or not they got a scholarship should not change your belief about whether or not they studied.</p>
+
+<p><strong>Rule 2a.</strong> If C is known, A and B must be independent.</p>
+
+<p>If you know someone has the flu, knowing that they have a sore throat does not affect your belief that they have a fever; knowing that they have the flu tells you everything you need to know about their body temperature.</p>
+
+<p><strong>Rule 3a.</strong> If C is known, A and B can be correlated.</p>
+
+<p>This case is interesting — if I already know that there&#8217;s a traffic jam, then knowing that it&#8217;s rush hour should decrease the likelihood that the weather is bad. Rush hour &#8220;explains away&#8221; the traffic jam and reduces the need for another explanation. So knowing C allows influence to flow between A and B in this case.</p>
+
+<h3 id='an_empirical_test_for_independence'>An empirical test for independence</h3>
+
+<p>So that&#8217;s it! These rules make intuitive sense, but I think it would be fun to put them to an empirical test of some sort. Since the rules make assertions about the independence of two events, we should find a test that determines independence in a joint probability distribution.</p>
+
+<p>A good test to use is the <a href='http://en.wikipedia.org/wiki/G-test'>G-test</a>. This test evaluates joint probability distribution of two events by comparing it to a joint probability distribution of independent events. The difference between these two distributions is a score that represents the likelihood that the two events in question are independent.</p>
+
+<p>Let&#8217;s first see what a joint probability distribution of two independent events looks like.</p>
+
+<p>Here&#8217;s event A:</p>
+<table><thead><tr><th /><th /></tr></thead><tbody><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'>20%</td>
+</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;'>80%</td>
+</tr></tbody></table>
+<p>Here&#8217;s event B:</p>
+<table><thead><tr><th /><th /></tr></thead><tbody><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'>60%</td>
+</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;'>40%</td>
+</tr></tbody></table>
+<p>And here&#8217;s their joint probability distribution. The row labels are for event A and the column labels are for event B.</p>
+<table><thead><tr><th /><th /><th /><th /></tr></thead><tbody><tr><td style='text-align: left;' /><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;' />
+</tr><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'>12%</td><td style='text-align: left;'>8%</td><td style='text-align: left;'>20%</td>
+</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;'>48%</td><td style='text-align: left;'>32%</td><td style='text-align: left;'>80%</td>
+</tr><tr><td style='text-align: left;' /><td style='text-align: left;'>60%</td><td style='text-align: left;'>40%</td>
+</tr></tbody></table>
+<p>You can see that this table is just the outer product of the individual probability distributions for A and B.</p>
+
+<p>Suppose we observe a joint probability distribution that looks like this:</p>
+<table><thead><tr><th /><th /><th /></tr></thead><tbody><tr><td style='text-align: left;' /><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'><strong>F</strong></td>
+</tr><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'>20%</td><td style='text-align: left;'>30%</td>
+</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;'>40%</td><td style='text-align: left;'>10%</td>
+</tr></tbody></table>
+<p>The goal now is to reverse the process — we need to find a way to &#8220;factor&#8221; this joint probability distribution into two individual probability distributions. It&#8217;s impossible to do this exactly, but we can find something that&#8217;s close.</p>
+
+<p>Let&#8217;s start by looking at the row and column totals.</p>
+<table><thead><tr><th /><th /><th /><th /></tr></thead><tbody><tr><td style='text-align: left;' /><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;' />
+</tr><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'>20%</td><td style='text-align: left;'>30%</td><td style='text-align: left;'>50%</td>
+</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;'>40%</td><td style='text-align: left;'>10%</td><td style='text-align: left;'>50%</td>
+</tr><tr><td style='text-align: left;' /><td style='text-align: left;'>60%</td><td style='text-align: left;'>40%</td>
+</tr></tbody></table>
+<p>Now erase the inside of the table</p>
+<table><thead><tr><th /><th /><th /><th /></tr></thead><tbody><tr><td style='text-align: left;' /><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;' />
+</tr><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;' /><td style='text-align: left;' /><td style='text-align: left;'>50%</td>
+</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;' /><td style='text-align: left;' /><td style='text-align: left;'>50%</td>
+</tr><tr><td style='text-align: left;' /><td style='text-align: left;'>60%</td><td style='text-align: left;'>40%</td>
+</tr></tbody></table>
+<p>and multiply to figure out what the value is in each cell.</p>
+<table><thead><tr><th /><th /><th /><th /></tr></thead><tbody><tr><td style='text-align: left;' /><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;' />
+</tr><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'>30%</td><td style='text-align: left;'>20%</td><td style='text-align: left;'>50%</td>
+</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;'>30%</td><td style='text-align: left;'>20%</td><td style='text-align: left;'>50%</td>
+</tr><tr><td style='text-align: left;' /><td style='text-align: left;'>60%</td><td style='text-align: left;'>40%</td>
+</tr></tbody></table>
+<p>This is the &#8220;expected&#8221; probability distribution. Now we find the difference between the expected probability distribution and the actual probability distribution we observed.</p>
+<table><thead><tr><th /><th /><th /></tr></thead><tbody><tr><td style='text-align: left;' /><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'><strong>F</strong></td>
+</tr><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'>-10%</td><td style='text-align: left;'>10%</td>
+</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;'>10%</td><td style='text-align: left;'>-10%</td>
+</tr></tbody></table>
+<p>It might seem like a coincidence, but these numbers must have the same absolute value — the columns and rows must still add up to the same thing as they did before, so altering the (T, T) cell in the expected distribution by some amount will alter the (T, F) and (F, T) cells by the same amount (in the opposite direction), which in turn force the (F, F) cell to change by the same amount as well.</p>
+
+<p>Now square each of these numbers and divide by the expected probability distribution.</p>
+<table><thead><tr><th /><th /><th /></tr></thead><tbody><tr><td style='text-align: left;' /><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'><strong>F</strong></td>
+</tr><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'>1%/30%</td><td style='text-align: left;'>1%/20%</td>
+</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;'>1%/30%</td><td style='text-align: left;'>1%/20%</td>
+</tr></tbody></table>
+<p>The sum of these numbers, times the total number of observations, is the <script type='math/tex'>\chi^2</script> statistic. The construction of this statistic is somewhat arbitrary, but it&#8217;s done this way on purpose to make the analysis easier.</p>
+
+<pre><code>x is normally distributed around 0 with stdev = sqrt(pq(1-pq)) / sqrt(n)
+x/sqrt(pq(1-pq)/n) is normally distributed
+nx^2/pq(1-pq) is a chi2 distribution with df=1
+
+  nx^2[ 1/pq + 1/(1-p)q + 1/p(1-q) + 1/(1-p)(1-q) ]
+= nx^2[ (1-p)(1-q) + p(1-q) + (1-p)q + pq ] / pq(1-p)(1-q)
+= nx^2[ 1 - p - q + pq + p - pq + q - pq + pq ] / pq(1-p)(1-q)
+= nx^2 / pq(1-p)(1-q)
+
+= nx^2[ 1/pq + 1/(1-pq) ]
+= nx^2[ pq + (1-pq) ] / pq(1-pq)
+= nx^2 / pq(1-pq)</code></pre>
+
+<p>Given two events that are actually independent, by how much do we expect this statistic to vary? It&#8217;s easy to model:</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>chi2dist</span><span class='o'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>,</span> <span class='n'>p</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>,</span> <span class='n'>q</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>)</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='k'>val</span> <span class='n'>d</span> <span class='k'>=</span> <span class='k'>for</span> <span class='o'>{</span>
+    <span class='n'>a</span> <span class='k'>&lt;-</span> <span class='n'>tf</span><span class='o'>(</span><span class='n'>p</span><span class='o'>)</span>
+    <span class='n'>b</span> <span class='k'>&lt;-</span> <span class='n'>tf</span><span class='o'>(</span><span class='n'>q</span><span class='o'>)</span>
+  <span class='o'>}</span> <span class='k'>yield</span> <span class='n'>a</span> <span class='o'>&amp;&amp;</span> <span class='n'>b</span>
+  <span class='n'>d</span><span class='o'>.</span><span class='n'>repeat</span><span class='o'>(</span><span class='n'>n</span><span class='o'>).</span><span class='n'>map</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>count</span><span class='o'>(</span><span class='k'>_</span> <span class='o'>==</span> <span class='kc'>true</span><span class='o'>).</span><span class='n'>toDouble</span> <span class='o'>/</span> <span class='n'>n</span> <span class='o'>-</span> <span class='n'>p</span><span class='o'>*</span><span class='n'>q</span><span class='o'>).</span><span class='n'>map</span><span class='o'>(</span><span class='n'>x</span> <span class='k'>=&gt;</span> <span class='n'>x</span> <span class='o'>/</span> <span class='n'>math</span><span class='o'>.</span><span class='n'>sqrt</span><span class='o'>(</span><span class='n'>p</span> <span class='o'>*</span> <span class='n'>q</span> <span class='o'>*</span> <span class='o'>(</span><span class='mi'>1</span> <span class='o'>-</span> <span class='n'>p</span> <span class='o'>*</span> <span class='n'>q</span><span class='o'>)</span> <span class='o'>/</span> <span class='n'>n</span><span class='o'>))</span>
+<span class='o'>}</span>
+
+<span class='k'>def</span> <span class='n'>chi2dist2</span><span class='o'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>,</span> <span class='n'>p</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>,</span> <span class='n'>q</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>)</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='k'>val</span> <span class='n'>d</span> <span class='k'>=</span> <span class='k'>for</span> <span class='o'>{</span>
+    <span class='n'>a</span> <span class='k'>&lt;-</span> <span class='n'>tf</span><span class='o'>(</span><span class='n'>p</span><span class='o'>)</span>
+    <span class='n'>b</span> <span class='k'>&lt;-</span> <span class='n'>tf</span><span class='o'>(</span><span class='n'>q</span><span class='o'>)</span>
+  <span class='o'>}</span> <span class='k'>yield</span> <span class='n'>a</span> <span class='o'>&amp;&amp;</span> <span class='n'>b</span>
+  <span class='n'>d</span><span class='o'>.</span><span class='n'>repeat</span><span class='o'>(</span><span class='n'>n</span><span class='o'>).</span><span class='n'>map</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>count</span><span class='o'>(</span><span class='k'>_</span> <span class='o'>==</span> <span class='kc'>true</span><span class='o'>).</span><span class='n'>toDouble</span> <span class='o'>/</span> <span class='n'>n</span> <span class='o'>-</span> <span class='n'>p</span><span class='o'>*</span><span class='n'>q</span><span class='o'>).</span><span class='n'>map</span><span class='o'>(</span><span class='n'>x</span> <span class='k'>=&gt;</span> <span class='n'>x</span> <span class='o'>/</span> <span class='n'>math</span><span class='o'>.</span><span class='n'>sqrt</span><span class='o'>(</span><span class='n'>p</span> <span class='o'>*</span> <span class='n'>q</span> <span class='o'>*</span> <span class='o'>(</span><span class='mi'>1</span> <span class='o'>-</span> <span class='n'>p</span><span class='o'>)</span> <span class='o'>*</span> <span class='o'>(</span><span class='mi'>1</span> <span class='o'>-</span> <span class='n'>q</span><span class='o'>)</span> <span class='o'>/</span> <span class='n'>n</span><span class='o'>))</span>
+<span class='o'>}</span>
+
+<span class='k'>def</span> <span class='n'>chi2test</span><span class='o'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>,</span> <span class='n'>k</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>,</span> <span class='n'>p</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>,</span> <span class='n'>q</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>)</span> <span class='k'>=</span> <span class='o'>{</span>
+
+<span class='o'>}</span>
+
+<span class='k'>def</span> <span class='n'>chi2test</span><span class='o'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>,</span> <span class='n'>a</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>,</span> <span class='n'>b</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>)</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='k'>val</span> <span class='n'>d</span> <span class='k'>=</span> <span class='k'>for</span> <span class='o'>{</span>
+    <span class='n'>p</span> <span class='k'>&lt;-</span> <span class='n'>uniform</span>
+    <span class='n'>q</span> <span class='k'>&lt;-</span> <span class='n'>uniform</span>
+    <span class='o'>(</span><span class='n'>aa</span><span class='o'>,</span> <span class='n'>bb</span><span class='o'>,</span> <span class='n'>cc</span><span class='o'>)</span> <span class='k'>&lt;-</span> <span class='o'>(</span><span class='n'>tf</span><span class='o'>(</span><span class='n'>p</span><span class='o'>)</span> <span class='n'>zip</span> <span class='n'>tf</span><span class='o'>(</span><span class='n'>q</span><span class='o'>)).</span><span class='n'>repeat</span><span class='o'>(</span><span class='n'>n</span><span class='o'>).</span><span class='n'>map</span><span class='o'>(</span><span class='n'>abs</span> <span class='k'>=&gt;</span> <span class='o'>(</span><span class='n'>abs</span><span class='o'>.</span><span class='n'>count</span><span class='o'>(</span><span class='k'>_</span> <span class='o'>==</span> <span class='o'>(</span><span class='kc'>true</span><span class='o'>,</span> <span class='kc'>true</span><span class='o'>)),</span> <span class='n'>abs</span><span class='o'>.</span><span class='n'>count</span><span class='o'>(</span><span class='k'>_</span> <span class='o'>==</span> <span class='o'>(</span><span class='kc'>true</span><span class='o'>,</span> <span class='kc'>false</span><span class='o'>)),</span> <span class='n'>abs</span><span class='o'>.</span><span class='n'>count</span><span class='o'>(</span><span class='k'>_</span> <span class='o'>==</span> <span class='o'>(</span><span class='kc'>false</span><span class='o'>,</span> <span class='kc'>true</span><span class='o'>))))</span>
+  <span class='o'>}</span> <span class='k'>yield</span> <span class='o'>(</span><span class='n'>aa</span><span class='o'>,</span> <span class='n'>bb</span><span class='o'>,</span> <span class='n'>cc</span><span class='o'>,</span> <span class='n'>p</span><span class='o'>,</span> <span class='n'>q</span><span class='o'>)</span>
+  <span class='n'>d</span><span class='o'>.</span><span class='n'>filter</span><span class='o'>(</span><span class='n'>x</span> <span class='k'>=&gt;</span> <span class='n'>x</span><span class='o'>.</span><span class='n'>_1</span> <span class='o'>==</span> <span class='n'>a</span> <span class='o'>&amp;&amp;</span> <span class='n'>x</span><span class='o'>.</span><span class='n'>_2</span> <span class='o'>==</span> <span class='n'>b</span> <span class='o'>&amp;&amp;</span> <span class='n'>x</span><span class='o'>.</span><span class='n'>_3</span> <span class='o'>==</span> <span class='n'>c</span><span class='o'>).</span><span class='n'>map</span><span class='o'>(</span><span class='n'>x</span> <span class='k'>=&gt;</span> <span class='o'>(</span><span class='n'>x</span><span class='o'>.</span><span class='n'>_4</span><span class='o'>,</span> <span class='n'>x</span><span class='o'>.</span><span class='n'>_5</span><span class='o'>))</span>
+<span class='o'>}</span>
+</code></pre></div>
+<h3 id='determining_the_pgm'>Determining the PGM</h3>
+
+<p>This is all great, but how do you know what the correct probabilistic graphical model is to begin with? One way to approach it is to consider all possible graphs and see which ones you can eliminate based on observational data and common sense. You can eliminate a graph if</p>
+
+<ol>
+<li>it implies independence relations that are not supported by the data, or</li>
+
+<li>it proposes an implausible causal connection (e.g., the sidewalk being wet causes it to rain).</li>
+</ol>
+
+<p>To illustrate this, the graph</p>
+
+<p>X -&gt; Z &lt;- Y</p>
+
+<p>makes the following predictions:</p>
+
+<ol>
+<li>X and Z are dependent</li>
+
+<li>Y and Z are dependent</li>
+
+<li>X and Y are independent</li>
+
+<li>If Z is known, X and Y are dependent</li>
+</ol>
+
+<p>If our observational data indicate that, say, <script type='math/tex'>P(X=\text{true}|Y=\text{true}) > P(X=\text{true})</script> then we can rule out that graph because from the data we know that X and Y are not independent.</p>
+
+<p>Usually we can narrow down the set of possible graphs to a handful of possibilities, but not always. With only 2 events to observe, there&#8217;s no way to distinguish A -&gt; B and A &lt;- B just from the data. With 3 events that are all dependent, you can&#8217;t distinguish between A -&gt; B -&gt; C and A &lt;- B &lt;- C and A &lt;- B -&gt; C. However, you can distinguish A -&gt; B -&gt; C from B -&gt; A -&gt; C, since in the first case, A and C are independent if B is known.</p>
+
+<h3 id='correlation_does_not_imply_causation'>Correlation does not imply causation</h3>
+
+<p>If you observe that two events are correlated, you cannot determine the direction of causality from observational data on these two events alone. Any of</p>
+
+<p>A -&gt; B</p>
+
+<p>or</p>
+
+<p>B -&gt; A</p>
+
+<p>or</p>
+
+<p>A &lt;- C -&gt; B</p>
+
+<p>could explain the observed correlation. But there&#8217;s also this possibility:</p>
+
+<p>A -&gt; C &lt;- B</p>
+
+<p>where C is known. This is certainly nothing new (it&#8217;s just called a biased sample), but it&#8217;s neat that graphical models unify causal fallacies.</p>
+
+<p>To go further we could come up with crazy causal graphs that predict a correlation between A and B, but where the causal link between A and B is non-trivial.</p>
+
+<p>A &lt;- X &lt;- Y -&gt; Z &lt;- B</p>
+
+<p>where Z is known.</p>
+
+<h3 id='controlled_experiments'>Controlled experiments</h3>
+
+<h3 id='independence_relations'>Independence relations</h3>
+
+<p>What does it mean for two events to be independent? If any of the following equivalent statements hold:</p>
+
+<ol>
+<li>The joint probability distribution of A and B factors into two individual probability distributions: P(A, B) = P(A)P(B)</li>
+
+<li>The probability that A takes on a given value is the same regardless of the value of B: P(A|B) = P(A)</li>
+
+<li>A and B are completely uncorrelated (their correlation coefficient is 0)</li>
+</ol>
+
+<h3 id='controlled_experiments'>Controlled experiments</h3>
+<div class='highlight'><pre><code class='scala'><span class='k'>val</span> <span class='n'>smart</span> <span class='k'>=</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.7</span><span class='o'>)</span>
+
+<span class='k'>val</span> <span class='n'>sporty</span> <span class='k'>=</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.4</span><span class='o'>)</span>
+
+<span class='k'>def</span> <span class='n'>college</span><span class='o'>(</span><span class='n'>smart</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='o'>,</span> <span class='n'>sporty</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='o'>)</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='o'>(</span><span class='n'>smart</span><span class='o'>,</span> <span class='n'>sporty</span><span class='o'>)</span> <span class='k'>match</span> <span class='o'>{</span>
+    <span class='k'>case</span> <span class='o'>(</span><span class='kc'>true</span><span class='o'>,</span> <span class='k'>_</span><span class='o'>)</span> <span class='k'>=&gt;</span> <span class='n'>always</span><span class='o'>(</span><span class='kc'>true</span><span class='o'>)</span>
+    <span class='k'>case</span> <span class='o'>(</span><span class='kc'>false</span><span class='o'>,</span> <span class='kc'>true</span><span class='o'>)</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.7</span><span class='o'>)</span>
+    <span class='k'>case</span> <span class='o'>(</span><span class='kc'>false</span><span class='o'>,</span> <span class='kc'>false</span><span class='o'>)</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.3</span><span class='o'>)</span>
+  <span class='o'>}</span>
+<span class='o'>}</span>
+</code></pre></div><div class='highlight'><pre><code class='scala'><span class='k'>case</span> <span class='k'>class</span> <span class='nc'>Outcome</span><span class='o'>(</span><span class='n'>smart</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='o'>,</span> <span class='n'>sporty</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='o'>,</span> <span class='n'>college</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='o'>)</span>
+<span class='k'>val</span> <span class='n'>pgm</span> <span class='k'>=</span> <span class='k'>for</span> <span class='o'>{</span>
+  <span class='n'>sm</span> <span class='k'>&lt;-</span> <span class='n'>smart</span>
+  <span class='n'>sp</span> <span class='k'>&lt;-</span> <span class='n'>sporty</span>
+  <span class='n'>co</span> <span class='k'>&lt;-</span> <span class='n'>college</span><span class='o'>(</span><span class='n'>sm</span><span class='o'>,</span> <span class='n'>sp</span><span class='o'>)</span>
+<span class='o'>}</span> <span class='k'>yield</span> <span class='nc'>Outcome</span><span class='o'>(</span><span class='n'>sm</span><span class='o'>,</span> <span class='n'>sp</span><span class='o'>,</span> <span class='n'>co</span><span class='o'>)</span>
+</code></pre></div>
     </div>
 
     
@@ -122,7 +481,7 @@
 
 
   <div style="float: right; margin-top: 5px">
-  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/probablistic-graphical-models.html" data-text="Probablistic Graphical Models" data-via="jliszka">Tweet</a>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/probablistic-graphical-models.html" data-text="Probabilistic Graphical Models" data-via="jliszka">Tweet</a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 

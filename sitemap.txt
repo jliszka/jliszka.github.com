@@ -1,4 +1,5 @@
 
+http://jliszka.github.io/2013/09/18/insertion-sort-is-dual-to-bubble-sort.html
 http://jliszka.github.io/2013/09/09/the-3-things-you-should-understand-about-quantum-computing.html
 http://jliszka.github.io/2013/09/03/fun-with-bayesian-priors.html
 http://jliszka.github.io/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html

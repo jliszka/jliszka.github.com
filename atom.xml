@@ -4,13 +4,138 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-09-11T14:25:49-04:00</updated>
+ <updated>2013-09-18T22:11:53-04:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
    <email>jliszka@alumni.cmu.edu</email>
  </author>
 
+ 
+ <entry>
+   <title>Insertion sort is dual to bubble sort</title>
+   <link href="http://jliszka.github.io/2013/09/18/insertion-sort-is-dual-to-bubble-sort.html"/>
+   <updated>2013-09-18T00:00:00-04:00</updated>
+   <id>http://jliszka.github.io/2013/09/18/insertion-sort-is-dual-to-bubble-sort</id>
+   <content type="html">&lt;p&gt;I noticed recently that &lt;a href='http://en.wikipedia.org/wiki/insertion_sort'&gt;insertion sort&lt;/a&gt; is &lt;a href='http://en.wikipedia.org/wiki/Bubble_sort'&gt;bubble sort&lt;/a&gt; backwards. Or inside out. Or something.&lt;/p&gt;
+
+&lt;p&gt;Both algorithms can be expressed as a main function that calls a recursive helper. Let&amp;#8217;s take a look at the main functions first.&lt;/p&gt;
+
+&lt;h3 id='the_main_functions'&gt;The main functions&lt;/h3&gt;
+
+&lt;p&gt;Here&amp;#8217;s the code:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;insertionSort&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;:&lt;/span&gt; &lt;span class='kt'&gt;Ordered&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]](&lt;/span&gt;&lt;span class='n'&gt;xs&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;xs&lt;/span&gt; &lt;span class='k'&gt;match&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='nc'&gt;Nil&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='nc'&gt;Nil&lt;/span&gt;
+    &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='n'&gt;h&lt;/span&gt; &lt;span class='o'&gt;::&lt;/span&gt; &lt;span class='n'&gt;t&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+      &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;s&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;insertionSort&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;t&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+      &lt;span class='n'&gt;insert&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;h&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;s&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+    &lt;span class='o'&gt;}&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code&gt;insertionSort&lt;/code&gt; sorts a list by inserting the head of the list into the recursively sorted tail, in such a way that it remains sorted.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;bubbleSort&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;:&lt;/span&gt; &lt;span class='kt'&gt;Ordered&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]](&lt;/span&gt;&lt;span class='n'&gt;xs&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;xs&lt;/span&gt; &lt;span class='k'&gt;match&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='nc'&gt;Nil&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='nc'&gt;Nil&lt;/span&gt;
+    &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='n'&gt;xs&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+      &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;h&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;t&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;bubble&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;xs&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+      &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;s&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;bubbleSort&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;t&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+      &lt;span class='n'&gt;h&lt;/span&gt; &lt;span class='o'&gt;::&lt;/span&gt; &lt;span class='n'&gt;s&lt;/span&gt;
+    &lt;span class='o'&gt;}&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;  
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code&gt;bubbleSort&lt;/code&gt; sorts a list by bubbling the smallest element to the front of the list and recursively sorting the tail.&lt;/p&gt;
+
+&lt;p&gt;It&amp;#8217;s not obvious from the code that these functions are backwards versions of each other, but look at their data flow diagrams:&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt='main function data flow' src='/assets/img/main.png' /&gt;&lt;/p&gt;
+
+&lt;p&gt;They are exactly the same, except with the arrows going the other way.&lt;/p&gt;
+
+&lt;p&gt;Of course you would also want each box to be the &amp;#8220;backwards&amp;#8221; version of its corresponding box in the other function. This is pretty obviously true for &lt;code&gt;cons&lt;/code&gt; and &lt;code&gt;decons&lt;/code&gt; — one constructs a list from a head and a tail, and the other deconstructs a list into a head and a tail. And by assumption, the recursive call to &lt;code&gt;bubble sort&lt;/code&gt; is the &amp;#8220;backwards&amp;#8221; version of the corresponding recursive call to &lt;code&gt;insertion sort&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;All that&amp;#8217;s left is to show that this is true for helper functions — that &lt;code&gt;bubble&lt;/code&gt; is &lt;code&gt;insert&lt;/code&gt; backwards.&lt;/p&gt;
+
+&lt;h3 id='the_helper_functions'&gt;The helper functions&lt;/h3&gt;
+
+&lt;p&gt;Here&amp;#8217;s the code:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;insert&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;:&lt;/span&gt; &lt;span class='kt'&gt;Ordered&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]](&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;xs&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;xs&lt;/span&gt; &lt;span class='k'&gt;match&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='nc'&gt;Nil&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;x&lt;/span&gt; &lt;span class='o'&gt;::&lt;/span&gt; &lt;span class='nc'&gt;Nil&lt;/span&gt;
+    &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='n'&gt;h&lt;/span&gt; &lt;span class='o'&gt;::&lt;/span&gt; &lt;span class='n'&gt;t&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+      &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;b&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;sort&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;h&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+      &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;r&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;insert&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;b&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;t&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+      &lt;span class='n'&gt;a&lt;/span&gt; &lt;span class='o'&gt;::&lt;/span&gt; &lt;span class='n'&gt;r&lt;/span&gt;
+    &lt;span class='o'&gt;}&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code&gt;insert&lt;/code&gt;&amp;#8217;s job is to insert an item into an already-sorted list in such a way that the list remains sorted.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;bubble&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;:&lt;/span&gt; &lt;span class='kt'&gt;Ordered&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]](&lt;/span&gt;&lt;span class='n'&gt;xs&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;xs&lt;/span&gt; &lt;span class='k'&gt;match&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='n'&gt;h&lt;/span&gt; &lt;span class='o'&gt;::&lt;/span&gt; &lt;span class='n'&gt;t&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+      &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;bubble&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;t&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+      &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;b&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;sort&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;h&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+      &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;b&lt;/span&gt; &lt;span class='o'&gt;::&lt;/span&gt; &lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+    &lt;span class='o'&gt;}&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code&gt;bubble&lt;/code&gt;&amp;#8217;s job is to bubble the smallest item up to the front of the list and return that item plus the rest of the list.&lt;/p&gt;
+
+&lt;p&gt;The data flow diagrams of these functions make it totally clear that they are the same function, only one has the arrows reversed and the boxes running backwards:&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt='helper function data flow' src='/assets/img/helper.png' /&gt;&lt;/p&gt;
+
+&lt;p&gt;The only thing left is this &lt;code&gt;sort&lt;/code&gt; method, which takes 2 arguments and returns them in sorted order. Which I guess is the same if you run it backwards?&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;sort&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;:&lt;/span&gt; &lt;span class='kt'&gt;Ordered&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]](&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;b&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;if&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt; &lt;span class='o'&gt;&amp;lt;&lt;/span&gt; &lt;span class='n'&gt;b&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;b&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='k'&gt;else&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;b&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;So, there you have it. Aside from the &lt;code&gt;Nil&lt;/code&gt; cases and the question of &lt;code&gt;sort&lt;/code&gt; being its own opposite, if you take a machine that does insertion sort and run it in reverse, you get a machine that does bubble sort.&lt;/p&gt;
+
+&lt;p&gt;I&amp;#8217;m pretty sure this fits the categorical definition of a dual, but my Category theory isn&amp;#8217;t strong enough to say for sure.&lt;/p&gt;
+
+&lt;h3 id='are_there_any_other_sorting_algorithms_that_are_duals'&gt;Are there any other sorting algorithms that are duals?&lt;/h3&gt;
+
+&lt;p&gt;Yes, I believe &lt;a href='http://en.wikipedia.org/wiki/Merge_sort'&gt;Merge sort&lt;/a&gt; and &lt;a href='http://en.wikipedia.org/wiki/Quicksort'&gt;Quicksort&lt;/a&gt; are duals, but I haven&amp;#8217;t been able to get it to work out.&lt;/p&gt;
+
+&lt;p&gt;Merge sort looks like this:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Split the list in half&lt;/li&gt;
+
+&lt;li&gt;Recursively sort each half&lt;/li&gt;
+
+&lt;li&gt;Merge the two halves back together&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;And Quicksort looks like this:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Partition the list into a list of smaller items and a list of larger items&lt;/li&gt;
+
+&lt;li&gt;Recursively sort each list&lt;/li&gt;
+
+&lt;li&gt;Concatenate them back together&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Clearly, the &amp;#8220;split&amp;#8221; and &amp;#8220;concatenate&amp;#8221; steps are dual, and the recursive calls are dual by assumption. The &amp;#8220;merge&amp;#8221; and &amp;#8220;partition&amp;#8221; steps also seem like they should be dual to each other — one interleaves 2 lists to form 1 list, and the other distributes the elements of 1 list into 2 other lists. But I haven&amp;#8217;t been able to formulate them in such a way that they are really &amp;#8220;backwards&amp;#8221; versions of each other.&lt;/p&gt;
+
+&lt;p&gt;It&amp;#8217;s possible that &amp;#8220;merge&amp;#8221; is actually dual to a function that extracts an increasing subsequence from a list, as in &lt;a href='http://en.wikipedia.org/wiki/Strand_sort'&gt;strand sort&lt;/a&gt;. If that turns out to be true, then strand sort is its own dual. That would be interesting to investigate.&lt;/p&gt;
+
+&lt;h3 id='shouldnt_a_backwards_sort_unsort_a_list'&gt;Shouldn&amp;#8217;t a backwards sort&amp;#8230; unsort a list?&lt;/h3&gt;
+
+&lt;p&gt;Well yeah, it should, but it can&amp;#8217;t. Sorting a list destroys information. You can pinpoint where that happens: the &lt;code&gt;sort&lt;/code&gt; function. If you give it &lt;code&gt;(4, 3)&lt;/code&gt; it will output &lt;code&gt;(3, 4)&lt;/code&gt;, but if you run it backwards, it can&amp;#8217;t know whether to turn &lt;code&gt;(3, 4)&lt;/code&gt; into &lt;code&gt;(4, 3)&lt;/code&gt; or &lt;code&gt;(3, 4)&lt;/code&gt; without some additional information. To think of it another way: a given list has only one sorted ordering but a very large number of unsorted orderings. One deterministic function can&amp;#8217;t turn a sorted list into each of the unsorted lists you could have started with.&lt;/p&gt;
+
+&lt;p&gt;So these backwards functions are backwards in every respect except for the part that destroys information.&lt;/p&gt;
+
+&lt;h3 id='can_this_be_done_automatically'&gt;Can this be done automatically?&lt;/h3&gt;
+
+&lt;p&gt;Can you write a function that takes another function (or a suitable description thereof) as input and turns it inside out? Can we get new algorithms for free just by turning existing ones on their head? What happens if you run Dijkstra&amp;#8217;s algorithm backwards? I don&amp;#8217;t know!&lt;/p&gt;</content>
+ </entry>
  
  <entry>
    <title>The 3 Things You Should Understand about Quantum Computation</title>
@@ -921,7 +1046,7 @@ res12: Double = 0.17756920958319758&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;You&amp;#8217;ve probably seen &lt;a href='http://en.wikipedia.org/wiki/Standard_deviation'&gt;this diagram&lt;/a&gt; before:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' alt='the normal distribution' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt='the normal distribution' src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' /&gt;&lt;/p&gt;
 
 &lt;p&gt;This is what we&amp;#8217;re working with. A value drawn from a normal distribution will be within 2 standard deviations of the mean 96% of the time. Since sample means are normally distributed around the true mean, sample means will be within 2 standard errors of the true mean 96% of the time. If a sample mean is more than 2 standard deviations away from the true mean, the sample is unlikely to have been drawn from that distribution.&lt;/p&gt;
 

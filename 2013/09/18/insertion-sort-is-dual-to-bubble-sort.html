@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Insertion Sort is dual to Selection Sort</title>
+    <title>Insertion sort is dual to bubble sort</title>
     <meta name="description" content="">
     <meta name="author" content="Jason Liszka">
 
@@ -104,22 +104,20 @@
       <div class="content">
         
 <div class="page-header">
-  <h1>Insertion Sort is dual to Selection Sort </h1>
+  <h1>Insertion sort is dual to bubble sort </h1>
 </div>
 
 <div class="row-fluid post-full">
   <div class="span12">
     <div class="date">
-      <span>11 September 2013</span>
+      <span>18 September 2013</span>
     </div>
     <div class="content">
-      <p>I happened to notice recently that <a href='http://en.wikipedia.org/wiki/Selection_sort'>selection sort</a> is <a href='http://en.wikipedia.org/wiki/insertion_sort'>insertion sort</a> backwards. Or inside out. Or something.</p>
+      <p>I noticed recently that <a href='http://en.wikipedia.org/wiki/insertion_sort'>insertion sort</a> is <a href='http://en.wikipedia.org/wiki/Bubble_sort'>bubble sort</a> backwards. Or inside out. Or something.</p>
 
 <p>Both algorithms can be expressed as a main function that calls a recursive helper. Let&#8217;s take a look at the main functions first.</p>
 
 <h3 id='the_main_functions'>The main functions</h3>
-
-<p><code>insertionSort</code> sorts a list by inserting the head of the list into the recursively sorted tail, in such a way that it remains sorted. <code>selectionSort</code> sorts a list by extracting the smallest element from the list and consing it onto the front of the recursively sorted tail.</p>
 
 <p>Here&#8217;s the code:</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>insertionSort</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
@@ -131,29 +129,32 @@
     <span class='o'>}</span>
   <span class='o'>}</span>
 <span class='o'>}</span>
-
-<span class='k'>def</span> <span class='n'>selectionSort</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+</code></pre></div>
+<p><code>insertionSort</code> sorts a list by inserting the head of the list into the recursively sorted tail, in such a way that it remains sorted.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>bubbleSort</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
   <span class='n'>xs</span> <span class='k'>match</span> <span class='o'>{</span>
     <span class='k'>case</span> <span class='nc'>Nil</span> <span class='k'>=&gt;</span> <span class='nc'>Nil</span>
     <span class='k'>case</span> <span class='n'>xs</span> <span class='k'>=&gt;</span> <span class='o'>{</span>
-      <span class='k'>val</span> <span class='o'>(</span><span class='n'>h</span><span class='o'>,</span> <span class='n'>t</span><span class='o'>)</span> <span class='k'>=</span> <span class='n'>select</span><span class='o'>(</span><span class='n'>xs</span><span class='o'>)</span>
-      <span class='k'>val</span> <span class='n'>s</span> <span class='k'>=</span> <span class='n'>selectionSort</span><span class='o'>(</span><span class='n'>t</span><span class='o'>)</span>
+      <span class='k'>val</span> <span class='o'>(</span><span class='n'>h</span><span class='o'>,</span> <span class='n'>t</span><span class='o'>)</span> <span class='k'>=</span> <span class='n'>bubble</span><span class='o'>(</span><span class='n'>xs</span><span class='o'>)</span>
+      <span class='k'>val</span> <span class='n'>s</span> <span class='k'>=</span> <span class='n'>bubbleSort</span><span class='o'>(</span><span class='n'>t</span><span class='o'>)</span>
       <span class='n'>h</span> <span class='o'>::</span> <span class='n'>s</span>
     <span class='o'>}</span>
   <span class='o'>}</span>  
 <span class='o'>}</span>
 </code></pre></div>
-<p>Now let me show you these exact same algorithms in the form of data flow diagrams. The boxes are functions, and the edges are data flow, labeled with the variable name that carries that piece of data.</p>
+<p><code>bubbleSort</code> sorts a list by bubbling the smallest element to the front of the list and recursively sorting the tail.</p>
 
-<p><img src='/assets/img/main.png' alt='main function data flow' /></p>
+<p>It&#8217;s not obvious from the code that these functions are backwards versions of each other, but look at their data flow diagrams:</p>
 
-<p>They are exactly the same, except with the arrows going the other way! Of course you would also want each box to be the &#8220;backwards&#8221; version of its corresponding box in the other function. This is pretty obviously true for <code>cons</code> and <code>decons</code> — one constructs a list from a head and a tail, and the other deconstructs a list into a head and a tail. We can also invoke the induction hypothesis and claim that the recursive call to <code>selection sort</code> is the &#8220;backwards&#8221; version of the corresponding recursive call to <code>insertion sort</code>.</p>
+<p><img alt='main function data flow' src='/assets/img/main.png' /></p>
 
-<p>All that&#8217;s left is to show that this is true for helper functions — that <code>select</code> is <code>insert</code> backwards. Let&#8217;s take a look.</p>
+<p>They are exactly the same, except with the arrows going the other way.</p>
+
+<p>Of course you would also want each box to be the &#8220;backwards&#8221; version of its corresponding box in the other function. This is pretty obviously true for <code>cons</code> and <code>decons</code> — one constructs a list from a head and a tail, and the other deconstructs a list into a head and a tail. And by assumption, the recursive call to <code>bubble sort</code> is the &#8220;backwards&#8221; version of the corresponding recursive call to <code>insertion sort</code>.</p>
+
+<p>All that&#8217;s left is to show that this is true for helper functions — that <code>bubble</code> is <code>insert</code> backwards.</p>
 
 <h3 id='the_helper_functions'>The helper functions</h3>
-
-<p><code>insert</code>&#8217;s job is to insert an item into an already-sorted list in such a way that the list remains sorted. <code>select</code>&#8217;s job is to pull the smallest item out of a list and return that item plus the rest of the list.</p>
 
 <p>Here&#8217;s the code:</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>insert</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>A</span><span class='o'>,</span> <span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
@@ -166,33 +167,36 @@
     <span class='o'>}</span>
   <span class='o'>}</span>
 <span class='o'>}</span>
-
-<span class='k'>def</span> <span class='n'>select</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span><span class='k'>:</span> <span class='o'>(</span><span class='kt'>A</span><span class='o'>,</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span> <span class='k'>=</span> <span class='o'>{</span>
+</code></pre></div>
+<p><code>insert</code>&#8217;s job is to insert an item into an already-sorted list in such a way that the list remains sorted.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>bubble</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span><span class='k'>:</span> <span class='o'>(</span><span class='kt'>A</span><span class='o'>,</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span> <span class='k'>=</span> <span class='o'>{</span>
   <span class='n'>xs</span> <span class='k'>match</span> <span class='o'>{</span>
     <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='o'>{</span>
-      <span class='k'>val</span> <span class='o'>(</span><span class='n'>x</span><span class='o'>,</span> <span class='n'>r</span><span class='o'>)</span> <span class='k'>=</span> <span class='n'>select</span><span class='o'>(</span><span class='n'>t</span><span class='o'>)</span>
+      <span class='k'>val</span> <span class='o'>(</span><span class='n'>x</span><span class='o'>,</span> <span class='n'>r</span><span class='o'>)</span> <span class='k'>=</span> <span class='n'>bubble</span><span class='o'>(</span><span class='n'>t</span><span class='o'>)</span>
       <span class='k'>val</span> <span class='o'>(</span><span class='n'>a</span><span class='o'>,</span> <span class='n'>b</span><span class='o'>)</span> <span class='k'>=</span> <span class='n'>sort</span><span class='o'>(</span><span class='n'>x</span><span class='o'>,</span> <span class='n'>h</span><span class='o'>)</span>
       <span class='o'>(</span><span class='n'>a</span><span class='o'>,</span> <span class='n'>b</span> <span class='o'>::</span> <span class='n'>r</span><span class='o'>)</span>
     <span class='o'>}</span>
   <span class='o'>}</span>
 <span class='o'>}</span>
 </code></pre></div>
+<p><code>bubble</code>&#8217;s job is to bubble the smallest item up to the front of the list and return that item plus the rest of the list.</p>
+
 <p>The data flow diagrams of these functions make it totally clear that they are the same function, only one has the arrows reversed and the boxes running backwards:</p>
 
-<p><img src='/assets/img/helper.png' alt='helper function data flow' /></p>
+<p><img alt='helper function data flow' src='/assets/img/helper.png' /></p>
 
 <p>The only thing left is this <code>sort</code> method, which takes 2 arguments and returns them in sorted order. Which I guess is the same if you run it backwards?</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>sort</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>a</span><span class='k'>:</span> <span class='kt'>A</span><span class='o'>,</span> <span class='n'>b</span><span class='k'>:</span> <span class='kt'>A</span><span class='o'>)</span><span class='k'>:</span> <span class='o'>(</span><span class='kt'>A</span><span class='o'>,</span> <span class='kt'>A</span><span class='o'>)</span> <span class='k'>=</span> <span class='o'>{</span>
   <span class='k'>if</span> <span class='o'>(</span><span class='n'>a</span> <span class='o'>&lt;</span> <span class='n'>b</span><span class='o'>)</span> <span class='o'>(</span><span class='n'>a</span><span class='o'>,</span> <span class='n'>b</span><span class='o'>)</span> <span class='k'>else</span> <span class='o'>(</span><span class='n'>b</span><span class='o'>,</span> <span class='n'>a</span><span class='o'>)</span>
 <span class='o'>}</span>
 </code></pre></div>
-<p>So, there you have it. Aside from the <code>Nil</code> cases and the question of <code>sort</code> being its own opposite, if you take a machine that does insertion sort and run it in reverse, you get a machine that does selection sort.</p>
+<p>So, there you have it. Aside from the <code>Nil</code> cases and the question of <code>sort</code> being its own opposite, if you take a machine that does insertion sort and run it in reverse, you get a machine that does bubble sort.</p>
 
 <p>I&#8217;m pretty sure this fits the categorical definition of a dual, but my Category theory isn&#8217;t strong enough to say for sure.</p>
 
 <h3 id='are_there_any_other_sorting_algorithms_that_are_duals'>Are there any other sorting algorithms that are duals?</h3>
 
-<p>Yes, I believe <a href='http://en.wikipedia.org/wiki/Merge_sort'>Merge sort</a> and <a href='http://en.wikipedia.org/wiki/Quicksort'>Quicksort</a> are dual to each other, but I haven&#8217;t been able to get it to work out.</p>
+<p>Yes, I believe <a href='http://en.wikipedia.org/wiki/Merge_sort'>Merge sort</a> and <a href='http://en.wikipedia.org/wiki/Quicksort'>Quicksort</a> are duals, but I haven&#8217;t been able to get it to work out.</p>
 
 <p>Merge sort looks like this:</p>
 
@@ -216,13 +220,17 @@
 
 <p>Clearly, the &#8220;split&#8221; and &#8220;concatenate&#8221; steps are dual, and the recursive calls are dual by assumption. The &#8220;merge&#8221; and &#8220;partition&#8221; steps also seem like they should be dual to each other — one interleaves 2 lists to form 1 list, and the other distributes the elements of 1 list into 2 other lists. But I haven&#8217;t been able to formulate them in such a way that they are really &#8220;backwards&#8221; versions of each other.</p>
 
-<p>It&#8217;s possible that &#8220;merge&#8221; is actually dual to a function that extracts an increasing subsequence from a list, as in <a href='http://en.wikipedia.org/wiki/Strand_sort'>strand sort</a>. If that turns out to be true, then strand sort is its own dual.</p>
+<p>It&#8217;s possible that &#8220;merge&#8221; is actually dual to a function that extracts an increasing subsequence from a list, as in <a href='http://en.wikipedia.org/wiki/Strand_sort'>strand sort</a>. If that turns out to be true, then strand sort is its own dual. That would be interesting to investigate.</p>
+
+<h3 id='shouldnt_a_backwards_sort_unsort_a_list'>Shouldn&#8217;t a backwards sort&#8230; unsort a list?</h3>
+
+<p>Well yeah, it should, but it can&#8217;t. Sorting a list destroys information. You can pinpoint where that happens: the <code>sort</code> function. If you give it <code>(4, 3)</code> it will output <code>(3, 4)</code>, but if you run it backwards, it can&#8217;t know whether to turn <code>(3, 4)</code> into <code>(4, 3)</code> or <code>(3, 4)</code> without some additional information. To think of it another way: a given list has only one sorted ordering but a very large number of unsorted orderings. One deterministic function can&#8217;t turn a sorted list into each of the unsorted lists you could have started with.</p>
+
+<p>So these backwards functions are backwards in every respect except for the part that destroys information.</p>
 
 <h3 id='can_this_be_done_automatically'>Can this be done automatically?</h3>
 
-<p>Can you write a function that takes another function (or a suitable description thereof) as input and turns it inside out? Can we get new algorithms for free just by turning existing ones on their head? What happens if you run Dijkstra&#8217;s algorithm backwards?</p>
-
-<p>I don&#8217;t know! Good questions!</p>
+<p>Can you write a function that takes another function (or a suitable description thereof) as input and turns it inside out? Can we get new algorithms for free just by turning existing ones on their head? What happens if you run Dijkstra&#8217;s algorithm backwards? I don&#8217;t know!</p>
     </div>
 
     
@@ -231,7 +239,7 @@
 
 
   <div style="float: right; margin-top: 5px">
-  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/insertion-sort-is-dual-to-selection-sort.html" data-text="Insertion Sort is dual to Selection Sort" data-via="jliszka">Tweet</a>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/2013/09/18/insertion-sort-is-dual-to-bubble-sort.html" data-text="Insertion sort is dual to bubble sort" data-via="jliszka">Tweet</a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
@@ -248,7 +256,7 @@
 
   
      
-    	<li><a href="/tags.html#code-ref">code <span></span></a></li>
+    	<li><a href="/tags.html#code-ref">code <span>1</span></a></li>
     
   
 
@@ -259,6 +267,8 @@
 
     <hr>
     <div class="navigation">
+    
+      <span class="prev"><a href="/2013/09/09/the-3-things-you-should-understand-about-quantum-computing.html" title="The 3 Things You Should Understand about Quantum Computation">&larr; The 3 Things You Should Understand about Quantum Computation</a></span>
     
     
       <div style="clear: both"></div>
