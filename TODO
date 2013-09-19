@@ -11,9 +11,54 @@ alias method
 stochastic calculus, ito calculus
 
 inside-out functions (selection vs insertion, infer coefficients)
+not a monad tutorial
 
 
 
+def polyFromCoeffs(coeffs: List[Int]): Int => Int = {
+  (x: Int) => {
+    def calc(cs: List[Int]): Int = {
+      cs match {
+        case Nil => 0
+        case h :: t => h + x * calc(t)
+      }
+    }
+    calc(coeffs)
+  }
+}
+
+def coeffsFromPoly(p: Int => Int): List[Int] = {
+  val x = p(1)
+  def uncalc(n: Int): List[Int] = {
+    n match {
+      case 0 => Nil
+      case n => (n % x) :: uncalc(n / x)
+    }
+  }
+  uncalc(p(x))
+}
+
+
+
+def evalPoly(x: Int, coeffs: List[Int]): (Int, Int) = {
+  def calc(cs: List[Int]): Int = {
+    cs match {
+      case Nil => 0
+      case h :: t => h + x * calc(t)
+    }
+  }
+  (x, calc(coeffs))
+}
+
+def unevalPoly(x: Int, y: Int): (Int, List[Int]) = {
+  def uncalc(n: Int): List[Int] = {
+    n match {
+      case 0 => Nil
+      case n => (n % x) :: uncalc(n / x)
+    }
+  }
+  (x, uncalc(y))
+}
 
 def partition(xs: List[A]): (List[A], List[A]) = {
   xs match {
