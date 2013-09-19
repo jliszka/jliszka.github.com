@@ -7,7 +7,7 @@ tags: [ "code" ]
 ---
 {% include JB/setup %}
 
-I happened to notice recently that [insertion sort](http://en.wikipedia.org/wiki/insertion_sort) is
+I noticed recently that [insertion sort](http://en.wikipedia.org/wiki/insertion_sort) is
 [bubble sort](http://en.wikipedia.org/wiki/Bubble_sort) backwards. Or inside out. Or something.
 
 Both algorithms can be expressed as a main function that calls a recursive helper. Let's
@@ -46,7 +46,8 @@ def bubbleSort[A <: Ordered[A]](xs: List[A]): List[A] = {
 
 ```bubbleSort``` sorts a list by bubbling the smallest element to the front of the list and recursively sorting the tail.
 
-Now look at the data flow diagrams for these functions:
+It's not obvious from the code that these functions are backwards versions of each other,
+but look at their data flow diagrams:
 
 ![main function data flow](/assets/img/main.png)
 
@@ -55,7 +56,7 @@ They are exactly the same, except with the arrows going the other way.
 Of course you would also want each box to be the "backwards" version of its corresponding box in the other function.
 This is pretty obviously true for ```cons``` and ```decons``` — one constructs a list from a head and a tail,
 and the other deconstructs a list into a head and a tail.
-And we can invoke the induction hypothesis and claim that the recursive call to
+And by assumption, the recursive call to
 ```bubble sort``` is the "backwards" version of the corresponding recursive call to ```insertion sort```.
 
 All that's left is to show that this is true for helper functions — that ```bubble``` is ```insert``` backwards.
@@ -115,7 +116,7 @@ I'm pretty sure this fits the categorical definition of a dual, but my Category 
 ### Are there any other sorting algorithms that are duals?
 
 Yes, I believe [Merge sort](http://en.wikipedia.org/wiki/Merge_sort) and 
-[Quicksort](http://en.wikipedia.org/wiki/Quicksort) are dual to each other, but I haven't been able to get it to work out.
+[Quicksort](http://en.wikipedia.org/wiki/Quicksort) are duals, but I haven't been able to get it to work out.
 
 Merge sort looks like this:
 
@@ -144,7 +145,7 @@ Well yeah, it should, but it can't. Sorting a list destroys information. You can
 the ```sort``` function. If you give it ```(4, 3)``` it will output ```(3, 4)```, but if you run it backwards,
 it can't know whether to turn ```(3, 4)``` into ```(4, 3)``` or ```(3, 4)``` without some additional information.
 To think of it another way: a given list has only one sorted ordering but a very large number of unsorted orderings.
-One deterministic function can't turn a sorted list into the particular unsorted list you happened to start with.
+One deterministic function can't turn a sorted list into each of the unsorted lists you could have started with.
 
 So these backwards functions are backwards in every respect except for the part that destroys information.
 
