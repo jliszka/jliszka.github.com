@@ -35,7 +35,7 @@ you do.
 
 Let's take a look at merging. Say there are some cars that are trying to merge into your lane a mile or so in front of you.
 Every time a car merges in, that adds 2 seconds to your trip. If one car merges in every 2 seconds, your trip gets
-longer by 2 seconds every 2 seconds. Which means you are not moving (or will soon not be moving).
+longer by 2 seconds every 2 seconds, which means you are not moving (or will soon not be moving).
 
 Leaving space in front of your car for people who are trying to merge won't solve anything. Let's say you slow down to leave
 some room for an upcoming merge. Now you are 4 seconds behind the car in front of you instead of 2. You've just added
@@ -51,7 +51,7 @@ Some common advice is to use both lanes up to the point of the bottleneck. That'
 anyone home faster. Remember only so many cars are going to clear the bottleneck per second, no matter what happens upstream.
 The only thing this does is shorten the length of the backup on the highway — it's a 2 mile backup instead of a 4 mile backup.
 This is good because it is less likely to affect other traffic by spilling out onto onramps and surface roads. Also
-maybe there's someone who's 4 miles from the bottleneck and is planning to exit the highway 3 miles from the bottleneck.
+maybe there's someone on the highway who's planning to exit 3 miles before the bottleneck.
 If the backup is 2 miles instead of 4 miles, that person doesn't have to wait in traffic.
 
 As an aside, whenever I see a line of cars on the highway (or any line anywhere for that matter), I make sure I know what it's for
@@ -66,7 +66,7 @@ and kept the speed of the right lane, blocking me from passing. I was pissed!
 It's worth noting that the 2 second following time is measured front bumper to front bumper — if you were sitting by the side of the
 highway, that's how you'd count the time between cars going by. But drivers generally like to keep a 2 second following time between
 their front bumper and the _rear_ bumper of the car in front of them. The difference between these is negligible at high
-speeds, but at low speeds, it becomes impossible to maintain a 2 second following distance from the
+speeds, but at a low enough speed, it becomes impossible to maintain a 2 second following distance from the
 _front_ bumper of the car in front of you without impinging on the _rear_ bumper of the car in front of you, especially if
 said car is more than 0 feet long. So under these circumstances the flow rate of the highway decreases below 1 car every
 2 seconds — maybe to 1 car every 4 seconds. So now you have to wait 4 seconds for every car in front of you in line.
@@ -88,7 +88,7 @@ you're still not getting to the front of the line before the car in front of you
 in front of you for other people to merge in, making your commute longer. Yes you eat up the traffic wave, and
 that will allow the flow rate to increase, eventually, but that is long after you and most of the people stuck behind you get
 home (later than necessary, I must add). It's not obvious to me that the tradeoff is worth it. It's not like traffic
-waves last for _days_. Rush hour is over in a couple hours no matter what.
+waves are standing waves that last for days. Rush hour is over in a couple hours no matter what.
 
 ### Conclusion
 
