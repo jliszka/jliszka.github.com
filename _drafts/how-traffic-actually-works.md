@@ -8,7 +8,7 @@ tags: []
 {% include JB/setup %}
 
 Every so often [this article](http://www.smartmotorist.com/traffic-and-safety-guideline/traffic-jams.html) makes the rounds and it annoys me.
-That isn't how traffic works and it doesn't solve anything.
+That isn't how traffic works and the proposed solutions won't solve anything.
 Maybe you can eliminate the annoying stop-and-go, but no one gets home sooner. In fact you can prove that you and
 everyone behind you gets home strictly later than if you had just gone along with the stop-and-go traffic.
 
