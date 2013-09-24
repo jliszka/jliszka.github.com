@@ -15,10 +15,11 @@ everyone behind you gets home strictly later than if you had just gone along wit
 ### The facts
 
 Here's how traffic works. First, we know from [empirical studies](http://www.fhwa.dot.gov/publications/research/operations/tft/chap2.pdf)
-that drivers tend to maintain a minimum following distance, measured in seconds. This happens to be about 2 seconds, although
-under ideal conditions it can be a bit less. This works out to a flow rate of about 1,800 vehicles per lane per hour
-passing by a given point on the highway. Studies have measured flow rates as high as 2,100 vehicles per lane per hour,
-but not much more than that.
+that drivers tend to maintain a minimum following distance, measured in seconds. It varies per driver, but on average it's somewhere
+between 1.5 and 2 seconds. This works out to a flow rate of between 1,800 and 2,400 vehicles per lane per hour
+passing by a given point on the highway. Studies of actual highway traffic have measured flow rates as high as 2,000 vehicles
+per lane per hour, which works out to an effective following distance of 1.8 seconds. (I'm just going to call it 2 seconds
+for the sake of round numbers.)
 
 ![speed vs flow](/assets/img/traffic/speed_vs_flow.png)
 
@@ -63,13 +64,13 @@ and kept the speed of the right lane, blocking me from passing. I was pissed!
 
 ### Catastrophe
 
-It's worth noting that the 2 second following time is measured front bumper to front bumper — if you were sitting by the side of the
-highway, that's how you'd count the time between cars going by. But drivers generally like to keep a 2 second following time between
+It's worth noting that the 2 second following distance is measured front bumper to front bumper — if you were sitting by the side of the
+highway, that's how you'd count the time between cars going by. But drivers generally like to keep a 2 second following distance between
 their front bumper and the _rear_ bumper of the car in front of them. The difference between these is negligible at high
-speeds, but at a low enough speed, it becomes impossible to maintain a 2 second following distance from the
+speeds, but at a low enough speed, it becomes difficult to maintain a 2 second following distance from the
 _front_ bumper of the car in front of you without impinging on the _rear_ bumper of the car in front of you, especially if
 said car is more than 0 feet long. So under these circumstances the flow rate of the highway decreases below 1 car every
-2 seconds — maybe to 1 car every 4 seconds. So now you have to wait 4 seconds for every car in front of you in line.
+2 seconds — maybe to 1 car every 5 seconds. So now you have to wait 5 seconds for every car in front of you in line.
 
 The situation is modeled pretty well by [catastrophe theory](http://en.wikipedia.org/wiki/Catastrophe_theory),
 something I never thought would be useful.
@@ -81,7 +82,35 @@ somewhat due to everyone trying to maintain following distance. At a certain poi
 speed dips low enough to where drivers are unable to maintain their minimum following distance, and — catastrophe! — flow decreases
 dramatically.
 
-In this case I can see how trying to maintain a constant speed in the midst of stop-and-go traffic could be benefical.
+### Some code
+
+Let's see how well this model predicts reality. I have this code:
+
+{% highlight scala %}
+def traffic(carsPerKm: Double, carLength: Double = 5.0, secondsBetweenCars: Double = 1.8) = {
+  val metersBetweenCars = 1000.0 / carsPerKm - carLength
+  val metersPerSecondToKmPerHour = 3600.0 / 1000.0
+  val maxSpeed = min(120, (metersBetweenCars / secondsBetweenCars) * metersPerSecondToKmPerHour)
+  val carsPerHour = carsPerKm * maxSpeed
+  (maxSpeed, carsPerHour)
+}
+{% endhighlight %}
+
+Evaluating ```traffic``` with values of ```carsPerKm``` between 1 and 200 produces the following output:
+
+![model graph](/assets/img/traffic/model.png)
+
+Each dot represents a different value of ```carsPerKm``` and is plotted as the maximum speed and flow rate it implies.
+Below an occupancy of 16 cars per km, the maximum speed
+that still allows everyone to keep a 1.8 second following distance is well above a reasonable speed limit, so I just capped
+it at 120 kph. Obviously real highway traffic is going to behave in more subtle ways than that. But it doesn't matter 
+because the congested part is all I care about, and it matches observed really pretty well. I mean look:
+
+![speed vs flow](/assets/img/traffic/speed_vs_flow.png)
+
+### Anti-traffic
+
+Since occupancy affects flow rates, I can see how trying to maintain a constant speed in the midst of stop-and-go traffic could be benefical.
 Stop-and-go traffic consists of alternating regions of congested and uncongested operation, to use the terminology from
 the diagram. Keeping a constant speed gets you back in the uncongested operation zone, but if you're leading the charge,
 you're still not getting to the front of the line before the car in front of you. In fact you're leaving a ton of room

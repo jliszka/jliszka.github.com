@@ -10,62 +10,14 @@ k-s test
 alias method
 stochastic calculus, ito calculus
 
-inside-out functions (selection vs insertion, infer coefficients)
 not a monad tutorial
 
-
-def traffic(carsPerKm: Double, carLength: Double = 10.0): (Double, Double) = {
+def traffic(carsPerKm: Double, carLength: Double = 5.0, secondsBetweenCars: Double = 2.0): (Double, Double) = {
   val metersBetweenCars = 1000.0 / carsPerKm - carLength
-  val secondsBetweenCars = 2.0
   val metersPerSecondToKmPerHour = 3600.0 / 1000.0
   val maxSpeed = math.min(120 - carsPerKm, (metersBetweenCars / secondsBetweenCars) * metersPerSecondToKmPerHour)
   val carsPerHour = carsPerKm * maxSpeed
   (maxSpeed, carsPerHour)
-}
-
-def polyFromCoeffs(coeffs: List[Int]): Int => Int = {
-  (x: Int) => {
-    def eval(cs: List[Int]): Int = {
-      cs match {
-        case Nil => 0
-        case h :: t => h + x * eval(t)
-      }
-    }
-    eval(coeffs)
-  }
-}
-
-def coeffsFromPoly(p: Int => Int): List[Int] = {
-  val x = p(1)
-  def uneval(n: Int): List[Int] = {
-    n match {
-      case 0 => Nil
-      case n => (n % x) :: uneval(n / x)
-    }
-  }
-  uneval(p(x))
-}
-
-
-
-def evalPoly(x: Int, coeffs: List[Int]): (Int, Int) = {
-  def eval(cs: List[Int]): Int = {
-    cs match {
-      case Nil => 0
-      case h :: t => h + x * eval(t)
-    }
-  }
-  (x, eval(coeffs))
-}
-
-def unevalPoly(x: Int, y: Int): (Int, List[Int]) = {
-  def uneval(n: Int): List[Int] = {
-    n match {
-      case 0 => Nil
-      case n => (n % x) :: uneval(n / x)
-    }
-  }
-  (x, uneval(y))
 }
 
 
