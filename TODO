@@ -14,51 +14,60 @@ inside-out functions (selection vs insertion, infer coefficients)
 not a monad tutorial
 
 
+def traffic(carsPerKm: Double, carLength: Double = 10.0): (Double, Double) = {
+  val metersBetweenCars = 1000.0 / carsPerKm - carLength
+  val secondsBetweenCars = 2.0
+  val metersPerSecondToKmPerHour = 3600.0 / 1000.0
+  val maxSpeed = math.min(120 - carsPerKm, (metersBetweenCars / secondsBetweenCars) * metersPerSecondToKmPerHour)
+  val carsPerHour = carsPerKm * maxSpeed
+  (maxSpeed, carsPerHour)
+}
 
 def polyFromCoeffs(coeffs: List[Int]): Int => Int = {
   (x: Int) => {
-    def calc(cs: List[Int]): Int = {
+    def eval(cs: List[Int]): Int = {
       cs match {
         case Nil => 0
-        case h :: t => h + x * calc(t)
+        case h :: t => h + x * eval(t)
       }
     }
-    calc(coeffs)
+    eval(coeffs)
   }
 }
 
 def coeffsFromPoly(p: Int => Int): List[Int] = {
   val x = p(1)
-  def uncalc(n: Int): List[Int] = {
+  def uneval(n: Int): List[Int] = {
     n match {
       case 0 => Nil
-      case n => (n % x) :: uncalc(n / x)
+      case n => (n % x) :: uneval(n / x)
     }
   }
-  uncalc(p(x))
+  uneval(p(x))
 }
 
 
 
 def evalPoly(x: Int, coeffs: List[Int]): (Int, Int) = {
-  def calc(cs: List[Int]): Int = {
+  def eval(cs: List[Int]): Int = {
     cs match {
       case Nil => 0
-      case h :: t => h + x * calc(t)
+      case h :: t => h + x * eval(t)
     }
   }
-  (x, calc(coeffs))
+  (x, eval(coeffs))
 }
 
 def unevalPoly(x: Int, y: Int): (Int, List[Int]) = {
-  def uncalc(n: Int): List[Int] = {
+  def uneval(n: Int): List[Int] = {
     n match {
       case 0 => Nil
-      case n => (n % x) :: uncalc(n / x)
+      case n => (n % x) :: uneval(n / x)
     }
   }
-  (x, uncalc(y))
+  (x, uneval(y))
 }
+
 
 def partition(xs: List[A]): (List[A], List[A]) = {
   xs match {
