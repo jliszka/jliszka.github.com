@@ -4,13 +4,157 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-09-23T20:54:00-04:00</updated>
+ <updated>2013-09-24T10:34:44-04:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
    <email>jliszka@alumni.cmu.edu</email>
  </author>
 
+ 
+ <entry>
+   <title>More backwards functions: Unevaluating polynomials</title>
+   <link href="http://jliszka.github.io/2013/09/24/more-backwards-functions-unevaluating-polynomials.html"/>
+   <updated>2013-09-24T00:00:00-04:00</updated>
+   <id>http://jliszka.github.io/2013/09/24/more-backwards-functions-unevaluating-polynomials</id>
+   <content type="html">&lt;p&gt;I have a function that evaluates polynomials with integer coefficients. To evaluate &lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+f(x) = 6 + 5x + 2x^3
+%]]&gt;
+&lt;/script&gt; at &lt;script type='math/tex'&gt;f(8)&lt;/script&gt;, for example, you do this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; evalPoly(8, List(6, 5, 0, 2))
+res0: (Int, Int) = (8, 1070)&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For some reason it echoes the input back out to you. Here&amp;#8217;s the code you might write:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;evalPoly&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;coeffs&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;eval&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;cs&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt; &lt;span class='o'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='n'&gt;cs&lt;/span&gt; &lt;span class='k'&gt;match&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+      &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='nc'&gt;Nil&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='mi'&gt;0&lt;/span&gt;
+      &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='n'&gt;h&lt;/span&gt; &lt;span class='o'&gt;::&lt;/span&gt; &lt;span class='n'&gt;t&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;x&lt;/span&gt; &lt;span class='o'&gt;*&lt;/span&gt; &lt;span class='n'&gt;eval&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;t&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='o'&gt;+&lt;/span&gt; &lt;span class='n'&gt;h&lt;/span&gt;
+    &lt;span class='o'&gt;}&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+  &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;eval&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;coeffs&lt;/span&gt;&lt;span class='o'&gt;))&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This should not be surprising.&lt;/p&gt;
+
+&lt;p&gt;But I also have a function that un-evaluates polynomials. To un-evaluate &lt;script type='math/tex'&gt;f(8) = 1070&lt;/script&gt;, you do this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; unevalPoly(8, 1070)
+res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;and it echoes your input and gives you back the coefficients of the polynomial.&lt;/p&gt;
+
+&lt;p&gt;Wait, what? I thought you needed &lt;script type='math/tex'&gt;N+1&lt;/script&gt; points to determine an &lt;script type='math/tex'&gt;N&lt;/script&gt;-degree polynomial. Here I&amp;#8217;ve seemingly done it with just one point. To spoil the surprise a little, &lt;code&gt;unevalPoly&lt;/code&gt; doesn&amp;#8217;t always work. But how does it work even some of the time? How would you go about coding this up?&lt;/p&gt;
+
+&lt;p&gt;Having noticed that the input to &lt;code&gt;unevalPoly&lt;/code&gt; is the output of &lt;code&gt;evalPoly&lt;/code&gt;, and vice versa, one tack we can try is to write &lt;code&gt;evalPoly&lt;/code&gt; backwards. First let me rewrite it slightly:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;evalPoly&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;coeffs&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;eval&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;cs&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt; &lt;span class='o'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='n'&gt;cs&lt;/span&gt; &lt;span class='k'&gt;match&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+      &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='nc'&gt;Nil&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='mi'&gt;0&lt;/span&gt;
+      &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='n'&gt;h&lt;/span&gt; &lt;span class='o'&gt;::&lt;/span&gt; &lt;span class='n'&gt;t&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;plustimes&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;eval&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;t&lt;/span&gt;&lt;span class='o'&gt;),&lt;/span&gt; &lt;span class='n'&gt;h&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+    &lt;span class='o'&gt;}&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+  &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;eval&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;coeffs&lt;/span&gt;&lt;span class='o'&gt;))&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;I&amp;#8217;ve just replaced &lt;code&gt;x * eval(t) + h&lt;/code&gt; with a call to this function:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;plustimes&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;q&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;n&lt;/span&gt; &lt;span class='o'&gt;*&lt;/span&gt; &lt;span class='n'&gt;q&lt;/span&gt; &lt;span class='o'&gt;+&lt;/span&gt; &lt;span class='n'&gt;r&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now here&amp;#8217;s &lt;code&gt;eval&lt;/code&gt; as a data flow diagram. I&amp;#8217;ve threaded through &lt;code&gt;x&lt;/code&gt; as a &amp;#8220;context&amp;#8221; variable because it isn&amp;#8217;t an input to &lt;code&gt;eval&lt;/code&gt; per se.&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt='eval' src='/assets/img/poly/eval.png' /&gt;&lt;/p&gt;
+
+&lt;p&gt;Following the arrows backwards from the outputs to the inputs we can write the following code:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;unevalPoly&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;y&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;uneval&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;y&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+    &lt;span class='n'&gt;y&lt;/span&gt; &lt;span class='k'&gt;match&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+      &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='mi'&gt;0&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='nc'&gt;Nil&lt;/span&gt;
+      &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='n'&gt;y&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+        &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;q&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;unplustimes&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;y&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+        &lt;span class='n'&gt;r&lt;/span&gt; &lt;span class='o'&gt;::&lt;/span&gt; &lt;span class='n'&gt;uneval&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;q&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+      &lt;span class='o'&gt;}&lt;/span&gt;
+    &lt;span class='o'&gt;}&lt;/span&gt;
+  &lt;span class='o'&gt;}&lt;/span&gt;
+  &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;uneval&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;y&lt;/span&gt;&lt;span class='o'&gt;))&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now this should work as long as we can write &lt;code&gt;unplustimes&lt;/code&gt;, which is possible only when &lt;code&gt;plustimes&lt;/code&gt; doesn&amp;#8217;t destroy information. So given &lt;code&gt;m&lt;/code&gt; and &lt;code&gt;n&lt;/code&gt; and &lt;code&gt;m = n * q + r&lt;/code&gt;, when can we recover &lt;code&gt;q&lt;/code&gt; and &lt;code&gt;r&lt;/code&gt;?&lt;/p&gt;
+
+&lt;p&gt;Well, if &lt;code&gt;r&lt;/code&gt; happens to be less than &lt;code&gt;n&lt;/code&gt;, this is just like doing long division — &lt;code&gt;q&lt;/code&gt; and &lt;code&gt;r&lt;/code&gt; are the quotient and remainder when dividing &lt;code&gt;m&lt;/code&gt; by &lt;code&gt;n&lt;/code&gt;:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;unplustimes&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;m&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;q&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;m&lt;/span&gt; &lt;span class='o'&gt;/&lt;/span&gt; &lt;span class='n'&gt;n&lt;/span&gt;
+  &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;r&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;m&lt;/span&gt; &lt;span class='o'&gt;%&lt;/span&gt; &lt;span class='n'&gt;n&lt;/span&gt;
+  &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;q&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
+&lt;span class='o'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This works because for a given positive integer &lt;script type='math/tex'&gt;n&lt;/script&gt;, any integer &lt;script type='math/tex'&gt;m&lt;/script&gt; can be written uniquely as &lt;script type='math/tex'&gt;m = nq + r&lt;/script&gt;, where &lt;script type='math/tex'&gt;q&lt;/script&gt; and &lt;script type='math/tex'&gt;r&lt;/script&gt; are nonnegative integers and &lt;script type='math/tex'&gt;r \lt n&lt;/script&gt;. Since this formulation is unique, it&amp;#8217;s easy to reverse the process and recover &lt;script type='math/tex'&gt;q&lt;/script&gt; and &lt;script type='math/tex'&gt;r&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;So what does that mean for &lt;code&gt;unevalPoly&lt;/code&gt;? It will only work if&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;x&lt;/code&gt; is a positive integer, and&lt;/li&gt;
+
+&lt;li&gt;all of the coefficients are nonnegative integers less than &lt;code&gt;x&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Let&amp;#8217;s try it out. This works:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; evalPoly(8, List(1, 3))
+res0: (Int, Int) = (8, 25)
+
+scala&amp;gt; unevalPoly(8, 25)
+res1: (Int, List[Int]) = (8, List(1, 3))&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;But this doesn&amp;#8217;t, as expected:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; evalPoly(2, List(1, 4, 2))
+res2: (Int, Int) = (2, 17)
+
+scala&amp;gt; unevalPoly(2, 17)
+res3: (Int, List[Int]) = (2, List(1, 0, 0, 0, 1))&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And neither does this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; evalPoly(5, List(1, -2, 1))
+res4: (Int, Int) = (5, 16)
+
+scala&amp;gt; unevalPoly(5, 16)
+res5: (Int, List[Int]) = (5, List(1, 3))&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Neat though!&lt;/p&gt;
+
+&lt;h3 id='a_puzzle'&gt;A puzzle&lt;/h3&gt;
+
+&lt;p&gt;This all came to me through a puzzle I heard: Your friend has a secret polynomial, which you know has nonnegative integer coefficients. She challenges you to determine the coefficients of the polynomial, offering to evaluate the polynomial for you on any two numbers you choose.&lt;/p&gt;
+
+&lt;p&gt;From the above, you know need to evaluate the polynomial at a number that is larger than all of the coefficients. So all that&amp;#8217;s left to the solution is finding some number that satisfies that description.&lt;/p&gt;
+
+&lt;h3 id='whats_really_going_on'&gt;What&amp;#8217;s really going on&lt;/h3&gt;
+
+&lt;p&gt;You might have noticed that all &lt;code&gt;unevalPoly(n, m)&lt;/code&gt; is doing is converting &lt;code&gt;m&lt;/code&gt; to its representation in base &lt;code&gt;n&lt;/code&gt;. Here it is converting 42 to base 2:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; unevalPoly(2, 42)
+res6: (Int, List[Int]) = (2,List(0, 1, 0, 1, 0, 1))&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And oh, look:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; unevalPoly(10, 12345)
+res7: (Int, List[Int]) = (10, List(5, 4, 3, 2, 1))&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This all makes sense now. The polynomial&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+f(x) = ax^4 + bx^3 + cx^2 + dx + e
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;is what you mean when you write &lt;script type='math/tex'&gt;abcde_x&lt;/script&gt;, which is the unique representation of that number in base &lt;script type='math/tex'&gt;x&lt;/script&gt; provided that all of the coefficients are less than &lt;script type='math/tex'&gt;x&lt;/script&gt;. Recovering the coefficients of &lt;script type='math/tex'&gt;f(x) = y&lt;/script&gt; is the same as writing &lt;script type='math/tex'&gt;y&lt;/script&gt; in base &lt;script type='math/tex'&gt;x&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;So backwards programming is good for something! If this interests you, you should read my &lt;a href='/2013/09/18/insertion-sort-is-dual-to-bubble-sort.html'&gt;last post on backwards sorting algorithms&lt;/a&gt;.&lt;/p&gt;</content>
+ </entry>
  
  <entry>
    <title>Insertion sort is dual to bubble sort</title>

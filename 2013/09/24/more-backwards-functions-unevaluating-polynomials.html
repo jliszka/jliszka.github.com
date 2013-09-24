@@ -91,10 +91,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -114,12 +110,12 @@
 <div class="row-fluid post-full">
   <div class="span12">
     <div class="date">
-      <span>23 September 2013</span>
+      <span>24 September 2013</span>
     </div>
     <div class="content">
       <p>I have a function that evaluates polynomials with integer coefficients. To evaluate <script type='math/tex; mode=display'>
 %<![CDATA[
-f(x) = 2x^3 + 5x + 6
+f(x) = 6 + 5x + 2x^3
 %]]>
 </script> at <script type='math/tex'>f(8)</script>, for example, you do this:</p>
 
@@ -203,11 +199,11 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))</code></pre>
 
 <p>Let&#8217;s try it out. This works:</p>
 
-<pre><code>scala&gt; evalPoly(5, List(1, 4, 2))
-res0: (Int, Int) = (5, 71)
+<pre><code>scala&gt; evalPoly(8, List(1, 3))
+res0: (Int, Int) = (8, 25)
 
-scala&gt; unevalPoly(5, 71)
-res1: (Int, List[Int]) = (5, List(1, 4, 2))</code></pre>
+scala&gt; unevalPoly(8, 25)
+res1: (Int, List[Int]) = (8, List(1, 3))</code></pre>
 
 <p>But this doesn&#8217;t, as expected:</p>
 
@@ -227,11 +223,15 @@ res5: (Int, List[Int]) = (5, List(1, 3))</code></pre>
 
 <p>Neat though!</p>
 
+<h3 id='a_puzzle'>A puzzle</h3>
+
 <p>This all came to me through a puzzle I heard: Your friend has a secret polynomial, which you know has nonnegative integer coefficients. She challenges you to determine the coefficients of the polynomial, offering to evaluate the polynomial for you on any two numbers you choose.</p>
 
 <p>From the above, you know need to evaluate the polynomial at a number that is larger than all of the coefficients. So all that&#8217;s left to the solution is finding some number that satisfies that description.</p>
 
-<p>By the way, you might have noticed that all <code>unevalPoly(n, m)</code> is doing is converting <code>m</code> to its representation in base <code>n</code>. Here it is converting 42 to base 2:</p>
+<h3 id='whats_really_going_on'>What&#8217;s really going on</h3>
+
+<p>You might have noticed that all <code>unevalPoly(n, m)</code> is doing is converting <code>m</code> to its representation in base <code>n</code>. Here it is converting 42 to base 2:</p>
 
 <pre><code>scala&gt; unevalPoly(2, 42)
 res6: (Int, List[Int]) = (2,List(0, 1, 0, 1, 0, 1))</code></pre>
@@ -249,7 +249,7 @@ f(x) = ax^4 + bx^3 + cx^2 + dx + e
 </script>
 <p>is what you mean when you write <script type='math/tex'>abcde_x</script>, which is the unique representation of that number in base <script type='math/tex'>x</script> provided that all of the coefficients are less than <script type='math/tex'>x</script>. Recovering the coefficients of <script type='math/tex'>f(x) = y</script> is the same as writing <script type='math/tex'>y</script> in base <script type='math/tex'>x</script>.</p>
 
-<p>So backwards programming is good for something! If this interests you, you should read my <a href=''>last post on backwards sorting algorithms</a>.</p>
+<p>So backwards programming is good for something! If this interests you, you should read my <a href='/2013/09/18/insertion-sort-is-dual-to-bubble-sort.html'>last post on backwards sorting algorithms</a>.</p>
     </div>
 
     
@@ -258,7 +258,7 @@ f(x) = ax^4 + bx^3 + cx^2 + dx + e
 
 
   <div style="float: right; margin-top: 5px">
-  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/more-backwards-functions-unevaluating-polynomials.html" data-text="More backwards functions: Unevaluating polynomials" data-via="jliszka">Tweet</a>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/2013/09/24/more-backwards-functions-unevaluating-polynomials.html" data-text="More backwards functions: Unevaluating polynomials" data-via="jliszka">Tweet</a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
@@ -266,10 +266,30 @@ f(x) = ax^4 + bx^3 + cx^2 + dx + e
 
 
 
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-tags"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="/tags.html#code-ref">code <span>2</span></a></li>
+     
+    	<li><a href="/tags.html#backwards programming-ref">backwards programming <span>2</span></a></li>
+    
+  
+
+
+
+    </ul>
     
 
     <hr>
     <div class="navigation">
+    
+      <span class="prev"><a href="/2013/09/18/insertion-sort-is-dual-to-bubble-sort.html" title="Insertion sort is dual to bubble sort">&larr; Insertion sort is dual to bubble sort</a></span>
     
     
       <div style="clear: both"></div>
