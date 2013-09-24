@@ -3,7 +3,7 @@ layout: post
 title: "More backwards functions: Unevaluating polynomials"
 description: ""
 category: 
-tags: []
+tags: [ "code" , "backwards programming" ]
 ---
 {% include JB/setup %}
 

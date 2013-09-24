@@ -3,7 +3,7 @@ layout: post
 title: "Insertion sort is dual to bubble sort"
 description: ""
 category: 
-tags: [ "code" ]
+tags: [ "code" , "backwards programming" ]
 ---
 {% include JB/setup %}
 
