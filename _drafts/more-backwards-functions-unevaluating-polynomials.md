@@ -9,7 +9,7 @@ tags: [ "code" , "backwards programming" ]
 
 I have a function that evaluates polynomials with integer coefficients. To evaluate
 {% math %}
-f(x) = 2x^3 + 5x + 6
+f(x) = 6 + 5x + 2x^3
 {% endmath %}
 at {%m%}f(8){%em%}, for example, you do this:
 
@@ -113,11 +113,11 @@ So what does that mean for ```unevalPoly```? It will only work if
 
 Let's try it out. This works:
 
-    scala> evalPoly(5, List(1, 4, 2))
-    res0: (Int, Int) = (5, 71)
+    scala> evalPoly(8, List(1, 3))
+    res0: (Int, Int) = (8, 25)
 
-    scala> unevalPoly(5, 71)
-    res1: (Int, List[Int]) = (5, List(1, 4, 2))
+    scala> unevalPoly(8, 25)
+    res1: (Int, List[Int]) = (8, List(1, 3))
 
 But this doesn't, as expected:
 
@@ -137,6 +137,8 @@ And neither does this:
 
 Neat though!
 
+### A puzzle
+
 This all came to me through a puzzle I heard: Your friend has a secret polynomial, which you know has nonnegative integer coefficients.
 She challenges you to determine the coefficients of the polynomial, offering to evaluate the polynomial for you
 on any two numbers you choose.
@@ -144,7 +146,9 @@ on any two numbers you choose.
 From the above, you know need to evaluate the polynomial at a number that is larger than all of the coefficients.
 So all that's left to the solution is finding some number that satisfies that description.
 
-By the way, you might have noticed that all ```unevalPoly(n, m)``` is doing is converting ```m``` to its representation in base ```n```.
+### What's really going on
+
+You might have noticed that all ```unevalPoly(n, m)``` is doing is converting ```m``` to its representation in base ```n```.
 Here it is converting 42 to base 2:
 
     scala> unevalPoly(2, 42)

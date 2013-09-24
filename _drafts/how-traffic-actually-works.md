@@ -15,15 +15,16 @@ everyone behind you gets home strictly later than if you had just gone along wit
 ### The facts
 
 Here's how traffic works. First, we know from [empirical studies](http://www.fhwa.dot.gov/publications/research/operations/tft/chap2.pdf)
-that drivers tend to maintain a minimum following distance, measured in seconds. It varies per driver, but on average it's somewhere
-between 1.5 and 2 seconds. This works out to a flow rate of between 1,800 and 2,400 vehicles per lane per hour
+that drivers tend to maintain a minimum following distance, measured in seconds. It varies per driver, but typically it's somewhere
+between 1.5 and 2 seconds. This works out to a maximum flow rate of between 1,800 and 2,400 vehicles per lane per hour
 passing by a given point on the highway. Studies of actual highway traffic have measured flow rates as high as 2,000 vehicles
 per lane per hour, which works out to an effective following distance of 1.8 seconds. (I'm just going to call it 2 seconds
 for the sake of round numbers.)
 
 ![speed vs flow](/assets/img/traffic/speed_vs_flow.png)
 
-The important fact: **a given point on the highway can have no more than one car pass by it every 2 seconds, per lane**.
+The important fact: **there is a limit to the number of cars that can pass by a given point on the highway in a given amount of time,
+and that limit is one car every 2 seconds, per lane**.
 So imagine you are in slow-moving traffic during rush hour. There are a certain number of cars in line in front of you.
 Let's pick a  point on the road to call the front of the line — say, the point at which you plan to exit the highway.
 The line gets shorter by one car every 2 seconds. If there are 1,000 cars in front of you, it's going to take 2,000
