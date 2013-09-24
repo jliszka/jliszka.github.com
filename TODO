@@ -1,24 +1,60 @@
 TODO
 
 more fun examples
-do-notation
 more experiment analysis
 pgm
+do-notation
 beta distribution, entropy
 markov chains
 k-s test
 alias method
 stochastic calculus, ito calculus
 
+reversible computing
 not a monad tutorial
+dual numbers
+fib in log n (F(n) * F(n-1) is a known identity?)
+impossible functions: injection
 
-def traffic(carsPerKm: Double, carLength: Double = 5.0, secondsBetweenCars: Double = 2.0): (Double, Double) = {
-  val metersBetweenCars = 1000.0 / carsPerKm - carLength
-  val metersPerSecondToKmPerHour = 3600.0 / 1000.0
-  val maxSpeed = math.min(120 - carsPerKm, (metersBetweenCars / secondsBetweenCars) * metersPerSecondToKmPerHour)
-  val carsPerHour = carsPerKm * maxSpeed
-  (maxSpeed, carsPerHour)
+
+val rushHour: Distribution[Boolean] = tf(0.2)
+val badWeather: Distribution[Boolean] = tf(0.05)
+
+def accident(badWeather: Boolean): Distribution[Boolean] = {
+  badWeather match {
+    case true => tf(0.3)
+    case false => tf(0.1)
+  }
 }
+
+def sirens(accident: Boolean): Distribution[Boolean] = {
+  accident match {
+    case true => tf(0.9)
+    case false => tf(0.2)
+  }
+}
+
+def trafficJam(rushHour: Boolean, badWeather: Boolean, accident: Boolean): Distribution[Boolean] = {
+  (rushHour, badWeather, accident) match {
+    case (true, true, _) => tf(0.95)
+    case (true, _, true) => tf(0.95)
+    case (_, true, true) => tf(0.95)
+    case (true, false, false) => tf(0.5)
+    case (false, true, false) => tf(0.3)
+    case (false, false, true) => tf(0.6)
+    case (false, false, false) => tf(0.1)
+  }
+}
+case class Traffic(rushHour: Boolean, badWeather: Boolean, accident: Boolean, sirens: Boolean, trafficJam: Boolean)
+
+val traffic = for {
+  r <- rushHour
+  w <- badWeather
+  a <- accident(w)
+  s <- sirens(a)
+  t <- trafficJam(r, w, a)
+} yield Traffic(r, w, a, s, t)
+
 
 
 def partition(xs: List[A]): (List[A], List[A]) = {
