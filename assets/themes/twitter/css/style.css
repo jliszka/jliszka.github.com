@@ -88,3 +88,7 @@ tr:nth-child(even) {
 table {
   margin-bottom: 10px;
 }
+
+.spacer {
+  margin-bottom: 10px;
+}

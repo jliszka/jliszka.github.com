@@ -16,12 +16,10 @@ everyone behind you gets home strictly later than if you had just gone along wit
 
 Here's how traffic works. First, we know from [empirical studies](http://www.fhwa.dot.gov/publications/research/operations/tft/chap2.pdf)
 that drivers tend to maintain a minimum following distance, measured in seconds. It varies per driver, but typically it's somewhere
-between 1.5 and 2 seconds. This works out to a maximum flow rate of between 1,800 and 2,400 vehicles per lane per hour
+between 1.5 and 2 seconds. This works out to a maximum theoretical flow rate of between 1,800 and 2,400 vehicles per lane per hour
 passing by a given point on the highway. Studies of actual highway traffic have measured flow rates as high as 2,000 vehicles
 per lane per hour, which works out to an effective following distance of 1.8 seconds. (I'm just going to call it 2 seconds
 for the sake of round numbers.)
-
-![speed vs flow](/assets/img/traffic/speed_vs_flow.png)
 
 The important fact: **there is a limit to the number of cars that can pass by a given point on the highway in a given amount of time,
 and that limit is one car every 2 seconds, per lane**.
@@ -76,16 +74,16 @@ said car is more than 0 feet long. So under these circumstances the flow rate of
 The situation is modeled pretty well by [catastrophe theory](http://en.wikipedia.org/wiki/Catastrophe_theory),
 something I never thought would be useful.
 
-![catastrophe](/assets/img/traffic/catastrophe.png)
+<center><img class="spacer" src="/assets/img/traffic/catastrophe.png"/></center>
 
 At low occupancy (cars per mile), drivers can go as fast as they'd like. As occupancy increases, so does flow, even though speed decreases
 somewhat due to everyone trying to maintain following distance. At a certain point, when occupancy becomes high enough,
-speed dips low enough to where drivers are unable to maintain their minimum following distance, and — catastrophe! — flow decreases
-dramatically.
+speed dips low enough to where drivers are unable to maintain their minimum following distance, and — catastrophe! — the flow rate
+decreases dramatically.
 
 ### Some code
 
-Let's see how well this model predicts reality. I have this code:
+Let's see how well this model predicts reality. Here's some code:
 
 {% highlight scala %}
 def traffic(carsPerKm: Double, carLength: Double = 5.0, secondsBetweenCars: Double = 1.8) = {
@@ -99,15 +97,31 @@ def traffic(carsPerKm: Double, carLength: Double = 5.0, secondsBetweenCars: Doub
 
 Evaluating ```traffic``` with values of ```carsPerKm``` between 1 and 200 produces the following output:
 
-![model graph](/assets/img/traffic/model.png)
+<center><img class="spacer" src="/assets/img/traffic/model.png"/></center>
 
 Each dot represents a different value of ```carsPerKm``` and is plotted as the maximum speed and flow rate it implies.
 Below an occupancy of 16 cars per km, the maximum speed
 that still allows everyone to keep a 1.8 second following distance is well above a reasonable speed limit, so I just capped
-it at 120 kph. Obviously real highway traffic is going to behave in more subtle ways than that. But it doesn't matter 
-because the congested part is all I care about, and it matches observed really pretty well. I mean look:
+it at 120 kph. Obviously real highway traffic is going to
+[behave in more subtle ways than that](http://books.google.com/books?id=4g7f1h4BfYsC&printsec=frontcover#v=onepage&q&f=false).
+But it doesn't matter because the congested part is all I care about, and this model matches observed data pretty well.
+Here's some, from a meta-analysis by the [Federal Highway Administration](http://www.fhwa.dot.gov/publications/research/operations/tft/chap2.pdf):
 
-![speed vs flow](/assets/img/traffic/speed_vs_flow.png)
+<center><img class="spacer" src="/assets/img/traffic/speed_vs_flow.png"/></center>
+
+For another comparison, here's what the model predicts for occupancy vs. flow rate:
+
+<center><img class="spacer" src="/assets/img/traffic/inverted-v-model.png"/></center>
+
+And here's the data, from [Freeway Speed-Flow Concentration Relationships](http://trid.trb.org/view.aspx?id=308654):
+
+<center><img class="spacer" src="/assets/img/traffic/inverted-v-actual.png"/></center>
+
+And a quote from the same source:
+
+> "The inverted-V model implies that drivers maintain a roughly constant average time gap between their front bumper and the back
+> bumper of the vehicle in front of them, provided their speed is less than some critical value. Once their speed reaches
+> this critical value (which is as fast as they want to go), they cease to be sensitive to vehicle spacing."
 
 ### Anti-traffic
 
@@ -130,7 +144,3 @@ At the risk of being helpful, here are some things YOU can do that are actually 
 4. Move to New York. Seriously, no one owns a car here. It's great. I don't even know why I'm writing this.
 
 Bye!
-
-<span style="font-size: 8pt">
-  Image credits: <a href="http://www.fhwa.dot.gov/publications/research/operations/tft/chap2.pdf">Federal Highway Administration</a>
-</span>

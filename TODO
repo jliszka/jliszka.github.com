@@ -15,6 +15,41 @@ not a monad tutorial
 dual numbers
 fib in log n (F(n) * F(n-1) is a known identity?)
 impossible functions: injection
+computational algebra
+generating functions
+
+
+def evalMulti(x: Int, y: Int, coeffs: List[List[Int]]): Int = {
+  def eval(cs: List[Int]): Int = {
+    cs match {
+      case Nil => 0
+      case h :: t => x * eval(t) + h
+    }
+  }
+  def eval2(cs: List[List[Int]]): Int = {
+    cs match {
+      case Nil => 0
+      case h :: t => y * eval2(t) + eval(h)
+    }
+  }
+  eval2(coeffs)
+}
+
+def unevalMulti(x: Int, y: Int, z: Int): List[List[Int]] = {
+  def uneval(z: Int): List[Int] = {
+    z match {
+      case 0 => Nil
+      case z => (z % x) :: uneval(z / x)
+    }
+  }
+  def uneval2(z: Int): List[List[Int]] = {
+    z match {
+      case 0 => Nil
+      case z => uneval(z % y) :: uneval2(z / y)
+    }
+  }
+  uneval2(z)
+}
 
 
 val rushHour: Distribution[Boolean] = tf(0.2)
