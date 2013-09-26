@@ -113,11 +113,11 @@
 
 <p>I&#8217;m a big fan of Scala and Haskell so you&#8217;ll see a lot of code in those languages.</p>
 
-<p>You should probably <a href='http://twitter.com/jliszka'>follow me on twitter</a>. I promise I won&#8217;t spam your feed.</p>
+<p>You should <a href='http://twitter.com/jliszka'>follow me on twitter</a>. I promise I won&#8217;t spam your feed.</p>
 
 <p>I also make no claims about being a gentleman, title of this blog notwithstanding.</p>
 
-<h3 id='blog_archive'>Blog Archive</h3>
+<h2 id='archive'>Archive</h2>
 <ul class='posts'>
   
     <li><span>24 Sep 2013</span> &raquo; <a href='/2013/09/24/more-backwards-functions-unevaluating-polynomials.html'>More backwards functions: Unevaluating polynomials</a></li>
@@ -135,6 +135,224 @@
     <li><span>12 Aug 2013</span> &raquo; <a href='/2013/08/12/a-frequentist-approach-to-probability.html'>A Frequentist Approach to Probability</a></li>
   
 </ul>
+<h2 id='recent_posts'>Recent Posts</h2>
+<div class='post-content-truncate'>
+
+  
+    <h2 class='title'>More backwards functions: Unevaluating polynomials</h2>
+    <p>I have a function that evaluates polynomials with integer coefficients. To evaluate <script type='math/tex; mode=display'>
+%<![CDATA[
+f(x) = 6 + 5x + 2x^3
+%]]>
+</script> at <script type='math/tex'>f(8)</script>, for example, you do this:</p>
+
+<pre><code>scala&gt; evalPoly(8, List(6, 5, 0, 2))
+res0: (Int, Int) = (8, 1070)</code></pre>
+
+<p>For some reason it echoes the input back out to you. Here&#8217;s the code you might write:</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>evalPoly</span><span class='o'>(</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>,</span> <span class='n'>coeffs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>Int</span><span class='o'>])</span><span class='k'>:</span> <span class='o'>(</span><span class='kt'>Int</span><span class='o'>,</span> <span class='kt'>Int</span><span class='o'>)</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='k'>def</span> <span class='n'>eval</span><span class='o'>(</span><span class='n'>cs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>Int</span><span class='o'>])</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='o'>=</span> <span class='o'>{</span>
+    <span class='n'>cs</span> <span class='k'>match</span> <span class='o'>{</span>
+      <span class='k'>case</span> <span class='nc'>Nil</span> <span class='k'>=&gt;</span> <span class='mi'>0</span>
+      <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='n'>x</span> <span class='o'>*</span> <span class='n'>eval</span><span class='o'>(</span><span class='n'>t</span><span class='o'>)</span> <span class='o'>+</span> <span class='n'>h</span>
+    <span class='o'>}</span>
+  <span class='o'>}</span>
+  <span class='o'>(</span><span class='n'>x</span><span class='o'>,</span> <span class='n'>eval</span><span class='o'>(</span><span class='n'>coeffs</span><span class='o'>))</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p>This should not be surprising.</p>
+
+<p>But I also have a function that un-evaluates polynomials. To un-evaluate <script type='math/tex'>f(8) = 1070</script>, you do this:</p>
+
+<pre><code>scala&gt; unevalPoly(8, 1070)
+res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))</code></pre>
+
+<p>and it echoes your input and gives you back the coefficients of the polynomial.</p>
+
+    <a href='/2013/09/24/more-backwards-functions-unevaluating-polynomials.html'>Read more</a>
+  
+
+  
+    <h2 class='title'>Insertion sort is dual to bubble sort</h2>
+    <p>I noticed recently that <a href='http://en.wikipedia.org/wiki/insertion_sort'>insertion sort</a> is <a href='http://en.wikipedia.org/wiki/Bubble_sort'>bubble sort</a> backwards. Or inside out. Or something.</p>
+
+<p>Both algorithms can be expressed as a main function that calls a recursive helper. Let&#8217;s take a look at the main functions first.</p>
+
+<h3 id='the_main_functions'>The main functions</h3>
+
+<p>Here&#8217;s the code:</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>insertionSort</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='n'>xs</span> <span class='k'>match</span> <span class='o'>{</span>
+    <span class='k'>case</span> <span class='nc'>Nil</span> <span class='k'>=&gt;</span> <span class='nc'>Nil</span>
+    <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='o'>{</span>
+      <span class='k'>val</span> <span class='n'>s</span> <span class='k'>=</span> <span class='n'>insertionSort</span><span class='o'>(</span><span class='n'>t</span><span class='o'>)</span>
+      <span class='n'>insert</span><span class='o'>(</span><span class='n'>h</span><span class='o'>,</span> <span class='n'>s</span><span class='o'>)</span>
+    <span class='o'>}</span>
+  <span class='o'>}</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p><code>insertionSort</code> sorts a list by inserting the head of the list into the recursively sorted tail, in such a way that it remains sorted.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>bubbleSort</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='n'>xs</span> <span class='k'>match</span> <span class='o'>{</span>
+    <span class='k'>case</span> <span class='nc'>Nil</span> <span class='k'>=&gt;</span> <span class='nc'>Nil</span>
+    <span class='k'>case</span> <span class='n'>xs</span> <span class='k'>=&gt;</span> <span class='o'>{</span>
+      <span class='k'>val</span> <span class='o'>(</span><span class='n'>h</span><span class='o'>,</span> <span class='n'>t</span><span class='o'>)</span> <span class='k'>=</span> <span class='n'>bubble</span><span class='o'>(</span><span class='n'>xs</span><span class='o'>)</span>
+      <span class='k'>val</span> <span class='n'>s</span> <span class='k'>=</span> <span class='n'>bubbleSort</span><span class='o'>(</span><span class='n'>t</span><span class='o'>)</span>
+      <span class='n'>h</span> <span class='o'>::</span> <span class='n'>s</span>
+    <span class='o'>}</span>
+  <span class='o'>}</span>  
+<span class='o'>}</span>
+</code></pre></div>
+<p><code>bubbleSort</code> sorts a list by bubbling the smallest element to the front of the list and recursively sorting the tail.</p>
+
+<p>It&#8217;s not obvious from the code that these functions are backwards versions of each other, but look at their data flow diagrams:</p>
+
+    <a href='/2013/09/18/insertion-sort-is-dual-to-bubble-sort.html'>Read more</a>
+  
+
+  
+    <h2 class='title'>The 3 Things You Should Understand about Quantum Computation</h2>
+    <p>I&#8217;m working on a post about probablistic graphical models, but it&#8217;s not done yet, so in the meantime here&#8217;s a post about quantum probability.</p>
+
+<h3 id='loaded_dice'>Loaded dice</h3>
+
+<p>Let&#8217;s say you have a loaded die with the following probability distribution:</p>
+<table><thead><tr><th /><th /></tr></thead><tbody><tr><td style='text-align: center;'><strong>1</strong></td><td style='text-align: center;'>10%</td>
+</tr><tr><td style='text-align: center;'><strong>2</strong></td><td style='text-align: center;'>20%</td>
+</tr><tr><td style='text-align: center;'><strong>3</strong></td><td style='text-align: center;'>30%</td>
+</tr><tr><td style='text-align: center;'><strong>4</strong></td><td style='text-align: center;'>10%</td>
+</tr><tr><td style='text-align: center;'><strong>5</strong></td><td style='text-align: center;'>20%</td>
+</tr><tr><td style='text-align: center;'><strong>6</strong></td><td style='text-align: center;'>10%</td>
+</tr></tbody></table>
+<p>How many pieces of information are encoded in a loaded die like this? It&#8217;s weird to think of a probability distribution encoding information, but think of it this way: if you sent me this die in the mail, I could roll it a bunch of times to discover the probability for each face of the die. If you control how the die is weighted, you could send me a message that way.</p>
+
+<p>Anyway, the answer is that there are 5 pieces of information encoded in this distribution. (If you&#8217;re not sure why it isn&#8217;t 6, notice that once you specify 5 of the entries in the table, the 6th one is completely determined, since they all have to add up to 100%. So you can really only send me 5 numbers of your choosing this way.)</p>
+
+    <a href='/2013/09/09/the-3-things-you-should-understand-about-quantum-computing.html'>Read more</a>
+  
+
+  
+    <h2 class='title'>Fun with Bayesian Priors</h2>
+    <p>Say you have a biased coin, but you don&#8217;t know what the &#8220;true&#8221; bias is. You flip the coin 10 times and observe 8 heads. What can you say now about the true bias?</p>
+
+<p>It&#8217;s easy to say that the most likely bias is 0.8. That&#8217;s accurate, but maybe you also want to know what other biases are likely. How likely is it that you have a fair coin? Can you rule out having a bias as low as 0.4?</p>
+
+<p>This sounds like a classic problem in Bayesian inference, but I&#8217;m going to take a different tack — simulation. To make this a little easier I&#8217;ll use a <a href='/2013/08/12/a-frequentist-approach-to-probability.html'>Scala library based on the Monte Carlo method</a> that I&#8217;ve been working on as an exercise in trying to better understand <a href='/2013/08/19/climbing-the-probability-distribution-ladder.html'>some</a> <a href='/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html'>ideas</a> in probability and statistics.</p>
+
+<h3 id='the_simulation'>The simulation</h3>
+
+<p>A single trial in the simulation will look like this:</p>
+
+<ol>
+<li>Choose a bias at random</li>
+
+<li>Flip a coin with that bias 10 times</li>
+</ol>
+
+<p>After, say, 10,000 trials, you look at all the times you got 8 heads, and see what the bias happened to be in each of those trials. The percent of the time each bias comes up in this subset of trials gives the probability (the &#8220;posterior&#8221; probability) that that bias is the &#8220;true&#8221; bias.</p>
+
+<p>When you start to code this up, one question jumps out: In step 1, when you choose a bias &#8220;at random,&#8221; what distribution do you draw it from?</p>
+
+    <a href='/2013/09/03/fun-with-bayesian-priors.html'>Read more</a>
+  
+
+  
+    <h2 class='title'>A Programmer's Guide to the Central Limit Theorem</h2>
+    <p>This post is a continuation of a series of posts about exploring probability distributions through code. The first post is <a href='/2013/08/12/a-frequentist-approach-to-probability.html'>here</a>.</p>
+
+<p>In this post I&#8217;m going to look at the Central Limit Theorem.</p>
+
+<h3 id='sample_means'>Sample means</h3>
+
+<p>Suppose I have a random variable whose underlying distribution is unknown to me. I take sample of a reasonable size (say 100) and find the mean of the sample. What can I say about the relationship between the true mean and the mean of the sample?</p>
+
+<p>The most comprehensive answer to this is to look at the distribution of the sample mean.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>sampleMean</span><span class='o'>(</span><span class='n'>d</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Double</span><span class='o'>],</span> <span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='o'>=</span> <span class='mi'>100</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Double</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='n'>d</span><span class='o'>.</span><span class='n'>repeat</span><span class='o'>(</span><span class='n'>n</span><span class='o'>).</span><span class='n'>map</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>sum</span> <span class='o'>/</span> <span class='n'>n</span><span class='o'>)</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p>This method takes a probability distribution and returns the distribution of means of samples from that distribution. You can specify the sample size, but by default we&#8217;ll use 100.</p>
+
+<p>Let&#8217;s try it on some of the distributions we&#8217;ve <a href='/2013/08/19/climbing-the-probability-distribution-ladder.html'>created</a>.</p>
+
+    <a href='/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html'>Read more</a>
+  
+
+  
+    <h2 class='title'>Climbing the probability distribution ladder</h2>
+    <p>In the <a href='/2013/08/12/a-frequentist-approach-to-probability.html'>last post</a> I created a simple library for constructing probability distributions, based on the <a href='http://en.wikipedia.org/wiki/Monte_Carlo_method'>Monte Carlo method</a>. I started with the uniform distribution and derived the Bernoulli and normal distributions from it.</p>
+
+<p>In this post I&#8217;ll construct some more common distributions in the same manner.</p>
+
+<h3 id='the_exponential_distribution'>The exponential distribution</h3>
+
+<p>If <script type='math/tex'>X</script> is a uniformly distributed random variable, then <script type='math/tex'>-log(X)/\lambda</script> is distributed according to the <a href='http://en.wikipedia.org/wiki/Exponential_distribution'>exponential distribution</a>. The parameter <script type='math/tex'>\lambda</script> is just a scaling factor. In code:</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>exponential</span><span class='o'>(</span><span class='n'>l</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Double</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='k'>for</span> <span class='o'>{</span>
+    <span class='n'>x</span> <span class='k'>&lt;-</span> <span class='n'>uniform</span>
+  <span class='o'>}</span> <span class='k'>yield</span> <span class='n'>math</span><span class='o'>.</span><span class='n'>log</span><span class='o'>(</span><span class='n'>x</span><span class='o'>)</span> <span class='o'>*</span> <span class='o'>(-</span><span class='mi'>1</span><span class='o'>/</span><span class='n'>l</span><span class='o'>)</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p>It looks like this:</p>
+
+    <a href='/2013/08/19/climbing-the-probability-distribution-ladder.html'>Read more</a>
+  
+
+  
+    <h2 class='title'>A Frequentist Approach to Probability</h2>
+    <p>One thing that always confused me in my intro stats classes was the concept of a random variable. A random variable is not a variable like I&#8217;m used to thinking about, like a thing that has one value at a time. A random variable is instead an object that you can sample values from, and the values you get will be distributed according to some underlying probability distribution.</p>
+
+<p>In that way it sort of acts like a container, where the only operation is to sample a value from the container. In Scala it might look something like:</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>trait</span> <span class='nc'>Distribution</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='o'>{</span>
+  <span class='k'>def</span> <span class='n'>get</span><span class='k'>:</span> <span class='kt'>A</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p>The idea is that <code>get</code> returns a different value (of type <code>A</code>) from the distribution every time you call it.</p>
+
+<p>I&#8217;m going to add a <code>sample</code> method that lets me draw a sample of any size I want from the distribution.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>trait</span> <span class='nc'>Distribution</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='o'>{</span>
+  <span class='k'>def</span> <span class='n'>get</span><span class='k'>:</span> <span class='kt'>A</span>
+
+  <span class='k'>def</span> <span class='n'>sample</span><span class='o'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+    <span class='nc'>List</span><span class='o'>.</span><span class='n'>fill</span><span class='o'>(</span><span class='n'>n</span><span class='o'>)(</span><span class='k'>this</span><span class='o'>.</span><span class='n'>get</span><span class='o'>)</span>
+  <span class='o'>}</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p>Now to create a simple distribution. Here&#8217;s one whose samples are uniformly distributed between 0 and 1.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>val</span> <span class='n'>uniform</span> <span class='k'>=</span> <span class='k'>new</span> <span class='nc'>Distribution</span><span class='o'>[</span><span class='kt'>Double</span><span class='o'>]</span> <span class='o'>{</span>
+  <span class='k'>private</span> <span class='k'>val</span> <span class='n'>rand</span> <span class='k'>=</span> <span class='k'>new</span> <span class='n'>java</span><span class='o'>.</span><span class='n'>util</span><span class='o'>.</span><span class='nc'>Random</span><span class='o'>()</span>
+  <span class='k'>override</span> <span class='k'>def</span> <span class='n'>get</span> <span class='k'>=</span> <span class='n'>rand</span><span class='o'>.</span><span class='n'>nextDouble</span><span class='o'>()</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p>And sampling it gives</p>
+
+<pre><code>scala&gt; uniform.sample(10).foreach(println)
+0.15738645964157327
+0.7827120503875181
+0.8787176537434814
+0.38506604599728245
+0.9469681837641953
+0.20822217752687067
+0.8229649049912187
+0.7767540566158817
+0.4133782959276152
+0.8152378840945975</code></pre>
+
+<h3 id='transforming_distributions'>Transforming distributions</h3>
+
+<p>Every good container should have a <code>map</code> method. <code>map</code> will transform values produced by the distribution according to some function you pass it.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>trait</span> <span class='nc'>Distribution</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='o'>{</span>
+  <span class='n'>self</span> <span class='k'>=&gt;</span>
+  <span class='c1'>// ...</span>
+  <span class='k'>def</span> <span class='n'>map</span><span class='o'>[</span><span class='kt'>B</span><span class='o'>](</span><span class='n'>f</span><span class='k'>:</span> <span class='kt'>A</span> <span class='o'>=&gt;</span> <span class='n'>B</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>B</span><span class='o'>]</span> <span class='k'>=</span> <span class='k'>new</span> <span class='nc'>Distribution</span><span class='o'>[</span><span class='kt'>B</span><span class='o'>]</span> <span class='o'>{</span>
+    <span class='k'>override</span> <span class='k'>def</span> <span class='n'>get</span> <span class='k'>=</span> <span class='n'>f</span><span class='o'>(</span><span class='n'>self</span><span class='o'>.</span><span class='n'>get</span><span class='o'>)</span>
+  <span class='o'>}</span>
+<span class='o'>}</span>
+</code></pre></div>
+    <a href='/2013/08/12/a-frequentist-approach-to-probability.html'>Read more</a>
+  
+
+</div>
   </div>
 </div>
 

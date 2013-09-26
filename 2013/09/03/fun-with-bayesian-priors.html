@@ -132,7 +132,7 @@
 <p>After, say, 10,000 trials, you look at all the times you got 8 heads, and see what the bias happened to be in each of those trials. The percent of the time each bias comes up in this subset of trials gives the probability (the &#8220;posterior&#8221; probability) that that bias is the &#8220;true&#8221; bias.</p>
 
 <p>When you start to code this up, one question jumps out: In step 1, when you choose a bias &#8220;at random,&#8221; what distribution do you draw it from?</p>
-
+<!-- more -->
 <p>The most reasonable choice is the uniform distribution between 0 and 1. This makes sense if you want to assume no particular prior knowledge about what the true bias is — all biases are equally likely. Later on we&#8217;ll see what happens to the posterior distribution when you start with different distributions representing prior knowledge about the bias (commonly just called the &#8220;prior&#8221;).</p>
 
 <p>So first, we&#8217;ll need a case class that represents the outcome of one trial:</p>

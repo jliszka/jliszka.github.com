@@ -4,7 +4,7 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-09-24T10:34:44-04:00</updated>
+ <updated>2013-09-25T23:02:02-04:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
@@ -45,7 +45,7 @@ res0: (Int, Int) = (8, 1070)&lt;/code&gt;&lt;/pre&gt;
 res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;and it echoes your input and gives you back the coefficients of the polynomial.&lt;/p&gt;
-
+&lt;!-- more --&gt;
 &lt;p&gt;Wait, what? I thought you needed &lt;script type='math/tex'&gt;N+1&lt;/script&gt; points to determine an &lt;script type='math/tex'&gt;N&lt;/script&gt;-degree polynomial. Here I&amp;#8217;ve seemingly done it with just one point. To spoil the surprise a little, &lt;code&gt;unevalPoly&lt;/code&gt; doesn&amp;#8217;t always work. But how does it work even some of the time? How would you go about coding this up?&lt;/p&gt;
 
 &lt;p&gt;Having noticed that the input to &lt;code&gt;unevalPoly&lt;/code&gt; is the output of &lt;code&gt;evalPoly&lt;/code&gt;, and vice versa, one tack we can try is to write &lt;code&gt;evalPoly&lt;/code&gt; backwards. First let me rewrite it slightly:&lt;/p&gt;
@@ -66,7 +66,7 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Now here&amp;#8217;s &lt;code&gt;eval&lt;/code&gt; as a data flow diagram. I&amp;#8217;ve threaded through &lt;code&gt;x&lt;/code&gt; as a &amp;#8220;context&amp;#8221; variable because it isn&amp;#8217;t an input to &lt;code&gt;eval&lt;/code&gt; per se.&lt;/p&gt;
 
-&lt;p&gt;&lt;img alt='eval' src='/assets/img/poly/eval.png' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src='/assets/img/poly/eval.png' alt='eval' /&gt;&lt;/p&gt;
 
 &lt;p&gt;Following the arrows backwards from the outputs to the inputs we can write the following code:&lt;/p&gt;
 &lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;unevalPoly&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;y&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
@@ -193,8 +193,8 @@ f(x) = ax^4 + bx^3 + cx^2 + dx + e
 &lt;p&gt;&lt;code&gt;bubbleSort&lt;/code&gt; sorts a list by bubbling the smallest element to the front of the list and recursively sorting the tail.&lt;/p&gt;
 
 &lt;p&gt;It&amp;#8217;s not obvious from the code that these functions are backwards versions of each other, but look at their data flow diagrams:&lt;/p&gt;
-
-&lt;p&gt;&lt;img alt='main function data flow' src='/assets/img/main.png' /&gt;&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;p&gt;&lt;img src='/assets/img/main.png' alt='main function data flow' /&gt;&lt;/p&gt;
 
 &lt;p&gt;They are exactly the same, except with the arrows going the other way.&lt;/p&gt;
 
@@ -231,7 +231,7 @@ f(x) = ax^4 + bx^3 + cx^2 + dx + e
 
 &lt;p&gt;The data flow diagrams of these functions make it totally clear that they are the same function, only one has the arrows reversed and the boxes running backwards:&lt;/p&gt;
 
-&lt;p&gt;&lt;img alt='helper function data flow' src='/assets/img/helper.png' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src='/assets/img/helper.png' alt='helper function data flow' /&gt;&lt;/p&gt;
 
 &lt;p&gt;The only thing left is this &lt;code&gt;sort&lt;/code&gt; method, which takes 2 arguments and returns them in sorted order. Which I guess is the same if you run it backwards?&lt;/p&gt;
 &lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;sort&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;:&lt;/span&gt; &lt;span class='kt'&gt;Ordered&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]](&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;b&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
@@ -301,7 +301,7 @@ f(x) = ax^4 + bx^3 + cx^2 + dx + e
 &lt;p&gt;How many pieces of information are encoded in a loaded die like this? It&amp;#8217;s weird to think of a probability distribution encoding information, but think of it this way: if you sent me this die in the mail, I could roll it a bunch of times to discover the probability for each face of the die. If you control how the die is weighted, you could send me a message that way.&lt;/p&gt;
 
 &lt;p&gt;Anyway, the answer is that there are 5 pieces of information encoded in this distribution. (If you&amp;#8217;re not sure why it isn&amp;#8217;t 6, notice that once you specify 5 of the entries in the table, the 6th one is completely determined, since they all have to add up to 100%. So you can really only send me 5 numbers of your choosing this way.)&lt;/p&gt;
-
+&lt;!-- more --&gt;
 &lt;h3 id='joint_probability_distributions'&gt;Joint probability distributions&lt;/h3&gt;
 
 &lt;p&gt;How many pieces of information can you encode in 2 loaded dice? Obviously it&amp;#8217;s 10, you think, since each die can encode 5 pieces of information.&lt;/p&gt;
@@ -539,7 +539,7 @@ res5: Q[T[Basis.Std,Basis.Std]] = 0.5|00&amp;gt; + -0.5|01&amp;gt; + 0.5|10&amp;
 &lt;p&gt;After, say, 10,000 trials, you look at all the times you got 8 heads, and see what the bias happened to be in each of those trials. The percent of the time each bias comes up in this subset of trials gives the probability (the &amp;#8220;posterior&amp;#8221; probability) that that bias is the &amp;#8220;true&amp;#8221; bias.&lt;/p&gt;
 
 &lt;p&gt;When you start to code this up, one question jumps out: In step 1, when you choose a bias &amp;#8220;at random,&amp;#8221; what distribution do you draw it from?&lt;/p&gt;
-
+&lt;!-- more --&gt;
 &lt;p&gt;The most reasonable choice is the uniform distribution between 0 and 1. This makes sense if you want to assume no particular prior knowledge about what the true bias is — all biases are equally likely. Later on we&amp;#8217;ll see what happens to the posterior distribution when you start with different distributions representing prior knowledge about the bias (commonly just called the &amp;#8220;prior&amp;#8221;).&lt;/p&gt;
 
 &lt;p&gt;So first, we&amp;#8217;ll need a case class that represents the outcome of one trial:&lt;/p&gt;
@@ -958,7 +958,7 @@ scala&amp;gt; prior.bucketedHist(0, 1, 10)
 &lt;p&gt;This method takes a probability distribution and returns the distribution of means of samples from that distribution. You can specify the sample size, but by default we&amp;#8217;ll use 100.&lt;/p&gt;
 
 &lt;p&gt;Let&amp;#8217;s try it on some of the distributions we&amp;#8217;ve &lt;a href='/2013/08/19/climbing-the-probability-distribution-ladder.html'&gt;created&lt;/a&gt;.&lt;/p&gt;
-
+&lt;!-- more --&gt;
 &lt;pre&gt;&lt;code&gt;scala&amp;gt; sampleMean(uniform).hist
 0.40  0.01% 
 0.41  0.06% 
@@ -1190,7 +1190,7 @@ res12: Double = 0.17756920958319758&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;You&amp;#8217;ve probably seen &lt;a href='http://en.wikipedia.org/wiki/Standard_deviation'&gt;this diagram&lt;/a&gt; before:&lt;/p&gt;
 
-&lt;p&gt;&lt;img alt='the normal distribution' src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' alt='the normal distribution' /&gt;&lt;/p&gt;
 
 &lt;p&gt;This is what we&amp;#8217;re working with. A value drawn from a normal distribution will be within 2 standard deviations of the mean 96% of the time. Since sample means are normally distributed around the true mean, sample means will be within 2 standard errors of the true mean 96% of the time. If a sample mean is more than 2 standard deviations away from the true mean, the sample is unlikely to have been drawn from that distribution.&lt;/p&gt;
 
@@ -1375,7 +1375,7 @@ res1: Double = 477.9797744569662&lt;/code&gt;&lt;/pre&gt;
 &lt;span class='o'&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;It looks like this:&lt;/p&gt;
-
+&lt;!-- more --&gt;
 &lt;pre&gt;&lt;code&gt;scala&amp;gt; exponential(1).bucketedHist(0, 8, 16, roundDown = true)
  0.0 39.40% #######################################
  0.5 23.15% #######################
@@ -1747,7 +1747,7 @@ f(k) = {n \choose k}p^k(1-p)^{n-k}
     &lt;span class='k'&gt;override&lt;/span&gt; &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;get&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;f&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='o'&gt;.&lt;/span&gt;&lt;span class='n'&gt;get&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;
   &lt;span class='o'&gt;}&lt;/span&gt;
 &lt;span class='o'&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!-- more --&gt;
 &lt;p&gt;(Quick technical note: I added a self-type annotation that makes &lt;code&gt;self&lt;/code&gt; an alias for &lt;code&gt;this&lt;/code&gt; so that it&amp;#8217;s easier to refer to in anonymous inner classes.)&lt;/p&gt;
 
 &lt;p&gt;Now I can map &lt;code&gt;* 2&lt;/code&gt; over the uniform distribution, giving a uniform distribution between 0 and 2:&lt;/p&gt;
