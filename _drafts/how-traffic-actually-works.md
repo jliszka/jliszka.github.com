@@ -30,6 +30,8 @@ line. It doesn't matter whether people are kind and let cars merge in front of t
 much stop-and-go there is. The simple fact is that it takes 2 seconds per car for you to get to the front of the line,
 and there are some cars in front of you that have to get there before you do.
 
+<!-- more -->
+
 ### Merging
 
 Let's take a look at merging. Say there are some cars that are trying to merge into your lane a mile or so in front of

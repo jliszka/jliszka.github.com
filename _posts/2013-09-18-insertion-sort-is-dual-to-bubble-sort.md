@@ -49,6 +49,8 @@ def bubbleSort[A <: Ordered[A]](xs: List[A]): List[A] = {
 It's not obvious from the code that these functions are backwards versions of each other,
 but look at their data flow diagrams:
 
+<!-- more -->
+
 ![main function data flow](/assets/img/main.png)
 
 They are exactly the same, except with the arrows going the other way.

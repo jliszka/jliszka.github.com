@@ -32,6 +32,8 @@ Anyway, the answer is that there are 5 pieces of information encoded in this dis
 (If you're not sure why it isn't 6, notice that once you specify 5 of the entries in the table, the 6th one is completely
 determined, since they all have to add up to 100%. So you can really only send me 5 numbers of your choosing this way.)
 
+<!-- more -->
+
 ### Joint probability distributions
 
 How many pieces of information can you encode in 2 loaded dice? Obviously it's 10, you think, since each die can encode

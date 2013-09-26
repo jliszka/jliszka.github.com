@@ -39,6 +39,8 @@ But I also have a function that un-evaluates polynomials. To un-evaluate {%m%}f(
 
 and it echoes your input and gives you back the coefficients of the polynomial.
 
+<!-- more -->
+
 Wait, what? I thought you needed {%m%}N+1{%em%} points to determine an {%m%}N{%em%}-degree polynomial.
 Here I've seemingly done it with just one point. To spoil the surprise a little, ```unevalPoly``` doesn't
 always work. But how does it work even some of the time? How would you go about coding this up?

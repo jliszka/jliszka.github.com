@@ -73,6 +73,8 @@ trait Distribution[A] {
 }
 {% endhighlight %}
 
+<!-- more -->
+
 (Quick technical note: I added a self-type annotation that makes ```self``` an alias for ```this``` so that it's easier to refer to in anonymous inner classes.)
 
 Now I can map ```* 2``` over the uniform distribution, giving a uniform distribution between 0 and 2:

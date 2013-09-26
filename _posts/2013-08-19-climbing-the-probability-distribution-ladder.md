@@ -30,6 +30,8 @@ def exponential(l: Double): Distribution[Double] = {
 
 It looks like this:
 
+<!-- more -->
+
     scala> exponential(1).bucketedHist(0, 8, 16, roundDown = true)
      0.0 39.40% #######################################
      0.5 23.15% #######################

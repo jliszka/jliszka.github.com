@@ -30,6 +30,8 @@ specify the sample size, but by default we'll use 100.
 
 Let's try it on some of the distributions we've [created]({{ page.previous.url }}).
 
+<!-- more -->
+
     scala> sampleMean(uniform).hist
     0.40  0.01% 
     0.41  0.06% 
