@@ -45,7 +45,17 @@ end #JB
 # Usage: rake post title="A Title" [date="2012-02-09"] [tags=[tag1, tag2]]
 desc "Begin a new post in #{CONFIG['posts']}"
 task :post do
-  dir = (ENV["draft"] ? CONFIG['drafts'] : CONFIG['posts'])
+  newPost(false)
+end # task :post
+
+# Usage: rake draft title="A Title" [date="2012-02-09"] [tags=[tag1, tag2]]
+desc "Begin a new draft in #{CONFIG['posts']}"
+task :draft do
+  newPost(true)
+end # task :post
+
+def newPost(draft)
+  dir = (draft ? CONFIG['drafts'] : CONFIG['posts'])
   abort("rake aborted: '#{dir}' directory not found.") unless FileTest.directory?(dir)
   title = ENV["title"] || "new-post"
   tags = ENV["tags"] || "[]"
@@ -56,7 +66,7 @@ task :post do
     puts "Error - date format must be YYYY-MM-DD, please check you typed it correctly!"
     exit -1
   end
-  if ENV["draft"]
+  if draft
     filename = File.join(dir, "#{slug}.#{CONFIG['post_ext']}")
   else
     filename = File.join(dir, "#{date}-#{slug}.#{CONFIG['post_ext']}")
@@ -76,7 +86,7 @@ task :post do
     post.puts "---"
     post.puts "{% include JB/setup %}"
   end
-end # task :post
+end
 
 # Usage: rake page name="about.html"
 # You can also specify a sub-directory path.
