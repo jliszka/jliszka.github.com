@@ -1,0 +1,241 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Impossible functions</title>
+    <meta name="description" content="">
+    <meta name="author" content="Jason Liszka">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/themes/twitter/bootstrap/css/bootstrap.2.2.2.min.css" rel="stylesheet">
+    <link href="/assets/themes/twitter/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/twitter/css/pygment.css" rel="stylesheet" type="text/css" media="all">
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+
+    <!-- atom & rss feed -->
+    <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-narrow">
+          <a class="brand" href="/">A Gentleman and a Scala</a>
+          <ul class="nav">
+            
+            
+            
+
+
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-narrow">
+
+      <div class="content">
+        
+<div class="page-header">
+  <h1>Impossible functions </h1>
+</div>
+
+<div class="row-fluid post-full">
+  <div class="span12">
+    <div class="date">
+      <span>29 September 2013</span>
+    </div>
+    <div class="content">
+      <p>I claim to have a function <code>inj</code> that maps any integer-valued function you give it to a different integer. That is, if you call it on two functions that differ even at one point, it will return a different integer for each one.</p>
+
+<p>&#8220;Impossible!&#8221; you say. &#8220;There are way more functions than integers, there&#8217;s no way you found an injection.&#8221;</p>
+
+<p>&#8220;Prove it!&#8221; I say, with an unwarranted amount of confidence (I am, after all, wrong). &#8221;I&#8217;m going to give you an integer valued function, and you have to find a different function that <code>inj</code> thinks are the same.&#8221;</p>
+
+<p>In other words, your job is to write a function <code>proof</code> that takes a function <code>f: Int =&gt; Int</code> and returns a function <code>g: Int =&gt; Int</code> along with a point <code>x: Int</code> such that <code>f(x)</code> and <code>g(x)</code> are different but <code>inj(f)</code> is the same as <code>inj(g)</code>.</p>
+
+<p>Yikes, OK. You know <code>inj</code> is impossible, but <code>proof</code> seems impossibler.</p>
+<!-- more -->
+<p>Hm, so obviously we have to use the fact that <code>inj</code> is impossible to make writing <code>proof</code> easier. But first:</p>
+
+<p>&#8220;Can I assume that <code>inj</code> returns in a finite amount of time?&#8221;, you ask slyly.</p>
+
+<p>&#8220;Of course.&#8221; I respond, distractedly, and go back to reading Twitter.</p>
+
+<p>You don&#8217;t know how I implemented <code>inj</code>, but you are allowed to call it. Here&#8217;s the declaration:</p>
+<div class='highlight'><pre><code class='scala'><span class='cm'>/**</span>
+<span class='cm'> * Implements an injection from integer valued functions to integers, i.e.,</span>
+<span class='cm'> * inj(f) = inj(g) if and only if f = g.</span>
+<span class='cm'> */</span>
+<span class='k'>def</span> <span class='n'>inj</span><span class='o'>(</span><span class='n'>f</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='o'>=&gt;</span> <span class='nc'>Int</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Int</span>
+</code></pre></div>
+<p>Alright, so what could possibly be going on inside <code>inj</code>? All it has to work with is its argument, <code>f</code>. It has to be deterministic because you&#8217;d want <code>inj(f)</code> to be equal to <code>inj(f)</code>. You guess all it can do is call <code>f</code>. And since it has to return in a finite amount of time, it can only call <code>f</code> a finite number of times.</p>
+
+<p>Aha! All you need to do is find an integer that <code>inj</code> doesn&#8217;t call <code>f</code> on. Then you can construct <code>g</code> that is the same as <code>f</code> everywhere except that number.</p>
+    </div>
+
+    
+
+  
+
+
+  <div style="float: right; margin-top: 5px">
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/impossible-functions.html" data-text="Impossible functions" data-via="jliszka">Tweet</a>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+</div>
+
+
+
+
+
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-tags"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="/tags.html#code-ref">code <span>2</span></a></li>
+    
+  
+
+
+
+    </ul>
+    
+
+    <hr>
+    <div class="navigation">
+    
+    
+      <div style="clear: both"></div>
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'jliszka'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+</div>
+
+
+      </div>
+      <hr>
+      <footer>
+        <p>&copy; 2013 Jason Liszka
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </footer>
+
+    </div>
+
+    
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-42567355-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+  </body>
+</html>
+
