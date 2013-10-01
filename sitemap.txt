@@ -1,4 +1,5 @@
 
+http://jliszka.github.io/2013/10/01/how-traffic-actually-works.html
 http://jliszka.github.io/2013/09/24/more-backwards-functions-unevaluating-polynomials.html
 http://jliszka.github.io/2013/09/18/insertion-sort-is-dual-to-bubble-sort.html
 http://jliszka.github.io/2013/09/09/the-3-things-you-should-understand-about-quantum-computing.html
