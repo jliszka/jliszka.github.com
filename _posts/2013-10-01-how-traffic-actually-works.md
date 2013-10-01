@@ -22,7 +22,7 @@ rates as high as 2,000 vehicles per lane per hour, which works out to a followin
 going to call it 2 seconds for the sake of round numbers.)
 
 The important fact: **there is a limit to the number of cars that can pass by a given point on the highway in a given
-amount of time, and that limit is one car every 2 seconds, per lane**. So imagine you are in slow-moving traffic during
+amount of time, and that limit is one car every 2 seconds, per lane**. So imagine you are in heavy traffic during
 rush hour. There are a certain number of cars in line in front of you. Let's pick a  point on the road to call the front
 of the line — say, the point at which you plan to exit the highway. The line gets shorter by one car every 2 seconds. If
 there are 1,000 cars in front of you, it's going to take a minimum of 2,000 seconds for you to get to the front of the
@@ -40,14 +40,17 @@ seconds, which means you are not moving (or will soon not be moving).
 
 Leaving space in front of your car for people who are trying to merge won't solve anything. Let's say you slow down to
 leave some room for an upcoming merge. Now you are 4 seconds behind the car in front of you instead of 2. You've just
-added 2 seconds to the commute of everyone behind you in line. A car merges in front of you. At the next merge, you have
-to leave more space. That's another 2 seconds for everyone behind you. And everyone in front of you is doing the same
-thing. There's no fix for this!
+added 2 seconds to the commute of everyone behind you in line. Now a car merges in front of you. At the next merge, you
+have to leave more space. That's another 2 seconds for everyone behind you.
 
-If you still think that zipper-style merge can fix it, think about what's going to happen at the _next_ merge. Where
-is that extra space going to come from? Zipper merging is only beneficial insofar as it reduces confusion on the road,
-the way any convention does — like who gets to go next at a 4-way stop. Confusion leads to delay, delay leads to anger,
-etc., etc.
+To [anyone who tells you](http://www.smartmotorist.com/traffic-and-safety-guideline/traffic-jams.html) that if only
+everyone left space in front of them and took turns merging, traffic would flow smoothly, and it's only because of jerks
+that there are any traffic jams at all, just ask them what's going to happen at the _next_ merge. Where is that extra
+space going to come from? You cannot keep 2 seconds back from the car that has just merged in front of you without, um,
+_slowing down_. This is what causes traffic jams.
+
+Zipper merging is only beneficial insofar as it reduces confusion on the road, the way any convention does — like who
+gets to go next at a 4-way stop. Confusion leads to delay, delay leads to anger, etc., etc.
 
 ### Bottlenecks
 
@@ -63,9 +66,9 @@ the backup is 2 miles instead of 4 miles, that person doesn't have to wait in tr
 As an aside, whenever I see a line of cars on the highway (or, for that matter, any line of anythings anywhere), I make
 sure I know what it's for before I get in it. If you see a line of cars in the right lane, and the left lane is
 completely empty, what do you do? Maybe the left lane is closed up ahead, and everyone decided to merge early. Or maybe
-the people in the right lane are trying to exit, and there's a backup on the offramp, 2 miles ahead. I'm not getting in
+the people in the right lane are trying to exit, and there's a backup on the offramp, one mile ahead. I'm not getting in
 that line if that's the case! One time I was driving and happened upon just such a situation. So I stayed in the left
-lane. Someone ahead of me pulled out into the left lane and kept the speed of the right lane, blocking me from passing.
+lane. Someone ahead of me pulled out into the left lane and kept speed with the right lane, blocking me from passing.
 I was pissed!
 
 ### Catastrophe
@@ -92,7 +95,7 @@ distance, and — catastrophe! — the flow rate decreases dramatically.
 ### Some code
 
 Let's see how well this model predicts reality. Here's some code that determines the flow rate and the speed of traffic
-as a function of occupancy (cars per km), according to the following distance model:
+as a function of occupancy (cars per km), according to the following-distance model:
 
 {% highlight scala %}
 def traffic(carsPerKm: Double, carLength: Double = 5.0, secondsBetweenCars: Double = 1.8) = {
@@ -109,7 +112,7 @@ Evaluating ```traffic``` with values of ```carsPerKm``` between 1 and 200 produc
 <center><img class="spacer" src="/assets/img/traffic/model.png"/></center>
 
 Each dot represents a different value of ```carsPerKm``` and is plotted as the maximum speed and flow rate it implies.
-Below an occupancy of 16 cars per km, the maximum speed that still allows everyone to keep a 1.8 second following
+Below an occupancy of 16 cars per km, the maximum speed that still allows everyone to keep a 1.8-second following
 distance is well above a reasonable speed limit, so I just capped it at 120 kph. Obviously real highway traffic is going
 to [behave in more subtle ways than that](http://books.google.com/books?id=4g7f1h4BfYsC&printsec=frontcover#v=onepage&q&f=false).
 But it doesn't matter because the congested part is all I care about, and this model matches observed data pretty well.
@@ -135,12 +138,12 @@ And a quote from the same source:
 Parameter fitting aside, this simple model predicts actual traffic so well that any reasonable discussion of the physics
 of traffic jams has to take it into account.
 
-### Anti-traffic
+### "Anti-traffic"
 
 Since occupancy determines flow rate, there's not much benefit to trying to "cancel out" a traffic wave by leaving a ton
 of space in front of you. No matter what you do, you're not going to get to the front of the line before the car in
-front of you. Worse, by leaving extra space in front of you, you're artificially reducing the occupancy of the part of
-the road in front of you, but since you haven't changed the number of cars trying to use the road, _this comes at the
+front of you. Worse, by leaving space in front of you, you're artificially reducing the occupancy of that part of
+the road, but since you haven't changed the number of cars trying to use the road, _this comes at the
 expense of increased occupancy somewhere else_. Sure, there's a beautiful line of cars behind you driving at a constant
 35 mph, but behind _that_ there's a ridiculous traffic jam that didn't need to be there.
 
