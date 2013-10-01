@@ -139,6 +139,19 @@ And a quote from the same source:
 Parameter tuning aside, this simple model predicts actual traffic so well that any reasonable discussion of the physics
 of traffic jams has to take it into account.
 
+**Update**: Lots of great comments in the [hacker news thread](https://news.ycombinator.com/item?id=6476836). One thing
+one of the commenters rightly points out is that this model does not account for the variance in flow rates in congested
+traffic. I don't have any data to back this up, but it's possible that variance in car length (% of trucks on the road)
+might account for it. Here's the same model but with car length ranging between 5 and 8 meters:
+
+<center>
+  <img class="spacer" src="/assets/img/traffic/speed-vs-occupancy-2.png"/>
+  <img class="spacer" src="/assets/img/traffic/flow-vs-occupancy-2.png"/>
+</center>
+
+But it's also possible that driver behavior is responsible for it. Pathological driving could certainly create pockets
+of low-flow traffic, as human response times and vehicle acceleration times aren't instantaneous.
+
 ### "Anti-traffic"
 
 Since occupancy determines flow rate, there's not much benefit to trying to "cancel out" a traffic wave by leaving a ton
