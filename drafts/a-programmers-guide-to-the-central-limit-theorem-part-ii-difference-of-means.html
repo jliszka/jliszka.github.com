@@ -117,7 +117,19 @@
       <span>01 October 2013</span>
     </div>
     <div class="content">
-      <p>This is a continuation of <a href='/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html'>my previous post</a> on the Central Limit Theorem.</p>
+      <style type='text/css'>
+th {
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+tbody tr:nth-child(odd) {
+  background: #eee;
+}
+tbody tr:nth-child(even) {
+  background: #fff;
+}
+</style>
+<p>This is a continuation of <a href='/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html'>my previous post</a> on the Central Limit Theorem.</p>
 
 <h3 id='the_ab_test_a_case_study'>The A/B Test: A case study</h3>
 
@@ -127,6 +139,9 @@
 <table><thead><tr><th>Group</th><th>Shade of blue</th><th># of users</th><th>Average time on site</th></tr></thead><tbody><tr><td style='text-align: left;'>A</td><td style='text-align: left;'>this one</td><td style='text-align: left;'>10,281</td><td style='text-align: left;'>91.4 seconds</td>
 </tr><tr><td style='text-align: left;'>B</td><td style='text-align: left;'>this one</td><td style='text-align: left;'>10,154</td><td style='text-align: left;'>93.8 seconds</td>
 </tr></tbody></table>
+<p>Looks like group B did slightly better! But it&#8217;s a small difference, how can you be sure it&#8217;s significant? In other words, assuming that the shade of blue had no effect on the amount of time a user spends on the site, what is the probability that you would have observed a difference of 2.4 seconds just by chance? In other other words, given the distribution of the amount of time different users spend on the site,</p>
+
+<p>To answer this, you first have to look at the distribution of</p>
     </div>
 
     
