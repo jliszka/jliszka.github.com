@@ -176,6 +176,13 @@
 
 <p>Parameter tuning aside, this simple model predicts actual traffic so well that any reasonable discussion of the physics of traffic jams has to take it into account.</p>
 
+<p><strong>Update</strong>: Lots of great comments in the <a href='https://news.ycombinator.com/item?id=6476836'>hacker news thread</a>. One thing one of the commenters rightly points out is that this model does not account for the variance in flow rates in congested traffic. I don&#8217;t have any data to back this up, but it&#8217;s possible that variance in car length (% of trucks on the road) might account for it. Here&#8217;s the same model but with car length ranging between 5 and 8 meters:</p>
+<center>
+  <img class='spacer' src='/assets/img/traffic/speed-vs-occupancy-2.png' />
+  <img class='spacer' src='/assets/img/traffic/flow-vs-occupancy-2.png' />
+</center>
+<p>But it&#8217;s also possible that driver behavior is responsible for it. Pathological driving could certainly create pockets of low-flow traffic, as human response times and vehicle acceleration times aren&#8217;t instantaneous.</p>
+
 <h3 id='antitraffic'>&#8220;Anti-traffic&#8221;</h3>
 
 <p>Since occupancy determines flow rate, there&#8217;s not much benefit to trying to &#8220;cancel out&#8221; a traffic wave by leaving a ton of space in front of you. No matter what you do, you&#8217;re not going to get to the front of the line before the car in front of you. Worse, by leaving space in front of you, you&#8217;re artificially reducing the occupancy of that part of the road, but since you haven&#8217;t changed the number of cars trying to use the road, <em>this comes at the expense of increased occupancy somewhere else</em>. Sure, there&#8217;s a beautiful line of cars behind you driving at a constant 35 mph, but behind <em>that</em> there&#8217;s a ridiculous traffic jam that didn&#8217;t need to be there.</p>

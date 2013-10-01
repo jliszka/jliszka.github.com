@@ -5,8 +5,8 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-10-01T10:08:54-04:00</lastBuildDate>
-        <pubDate>2013-10-01T10:08:54-04:00</pubDate>
+        <lastBuildDate>2013-10-01T15:49:42-04:00</lastBuildDate>
+        <pubDate>2013-10-01T15:49:42-04:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -70,6 +70,13 @@
 &lt;/blockquote&gt;
 
 &lt;p&gt;Parameter tuning aside, this simple model predicts actual traffic so well that any reasonable discussion of the physics of traffic jams has to take it into account.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Update&lt;/strong&gt;: Lots of great comments in the &lt;a href='https://news.ycombinator.com/item?id=6476836'&gt;hacker news thread&lt;/a&gt;. One thing one of the commenters rightly points out is that this model does not account for the variance in flow rates in congested traffic. I don&amp;#8217;t have any data to back this up, but it&amp;#8217;s possible that variance in car length (% of trucks on the road) might account for it. Here&amp;#8217;s the same model but with car length ranging between 5 and 8 meters:&lt;/p&gt;
+&lt;center&gt;
+  &lt;img class='spacer' src='/assets/img/traffic/speed-vs-occupancy-2.png' /&gt;
+  &lt;img class='spacer' src='/assets/img/traffic/flow-vs-occupancy-2.png' /&gt;
+&lt;/center&gt;
+&lt;p&gt;But it&amp;#8217;s also possible that driver behavior is responsible for it. Pathological driving could certainly create pockets of low-flow traffic, as human response times and vehicle acceleration times aren&amp;#8217;t instantaneous.&lt;/p&gt;
 
 &lt;h3 id='antitraffic'&gt;&amp;#8220;Anti-traffic&amp;#8221;&lt;/h3&gt;
 
