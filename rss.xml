@@ -5,8 +5,8 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-10-01T00:14:23-04:00</lastBuildDate>
-        <pubDate>2013-10-01T00:14:23-04:00</pubDate>
+        <lastBuildDate>2013-10-01T00:44:58-04:00</lastBuildDate>
+        <pubDate>2013-10-01T00:44:58-04:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -18,33 +18,35 @@
 
 &lt;p&gt;Here&amp;#8217;s how traffic works. First, we know from &lt;a href='http://www.fhwa.dot.gov/publications/research/operations/tft/chap2.pdf'&gt;empirical studies&lt;/a&gt; that drivers tend to maintain a minimum following distance, measured in seconds. It varies per driver, but typically it&amp;#8217;s somewhere between 1.5 and 2 seconds. That works out to a maximum theoretical flow rate of between 1,800 and 2,400 vehicles per lane per hour passing by a given point on the highway. Studies of actual highway traffic have measured flow rates as high as 2,000 vehicles per lane per hour, which works out to a following distance of 1.8 seconds. (I&amp;#8217;m just going to call it 2 seconds for the sake of round numbers.)&lt;/p&gt;
 
-&lt;p&gt;The important fact: &lt;strong&gt;there is a limit to the number of cars that can pass by a given point on the highway in a given amount of time, and that limit is one car every 2 seconds, per lane&lt;/strong&gt;. So imagine you are in slow-moving traffic during rush hour. There are a certain number of cars in line in front of you. Let&amp;#8217;s pick a point on the road to call the front of the line — say, the point at which you plan to exit the highway. The line gets shorter by one car every 2 seconds. If there are 1,000 cars in front of you, it&amp;#8217;s going to take a minimum of 2,000 seconds for you to get to the front of the line. It doesn&amp;#8217;t matter whether people are kind and let cars merge in front of them, zipper-style. It doesn&amp;#8217;t matter how much stop-and-go there is. The simple fact is that it takes 2 seconds per car for you to get to the front of the line, and there are some cars in front of you that have to get there before you do.&lt;/p&gt;
+&lt;p&gt;The important fact: &lt;strong&gt;there is a limit to the number of cars that can pass by a given point on the highway in a given amount of time, and that limit is one car every 2 seconds, per lane&lt;/strong&gt;. So imagine you are in heavy traffic during rush hour. There are a certain number of cars in line in front of you. Let&amp;#8217;s pick a point on the road to call the front of the line — say, the point at which you plan to exit the highway. The line gets shorter by one car every 2 seconds. If there are 1,000 cars in front of you, it&amp;#8217;s going to take a minimum of 2,000 seconds for you to get to the front of the line. It doesn&amp;#8217;t matter whether people are kind and let cars merge in front of them, zipper-style. It doesn&amp;#8217;t matter how much stop-and-go there is. The simple fact is that it takes 2 seconds per car for you to get to the front of the line, and there are some cars in front of you that have to get there before you do.&lt;/p&gt;
 &lt;!-- more --&gt;
 &lt;h3 id='merging'&gt;Merging&lt;/h3&gt;
 
 &lt;p&gt;Say there are some cars that are trying to merge into your lane a mile or so in front of you. Every time a car merges in, that adds 2 seconds to your trip. If one car merges in every 2 seconds, your trip gets longer by 2 seconds every 2 seconds, which means you are not moving (or will soon not be moving).&lt;/p&gt;
 
-&lt;p&gt;Leaving space in front of your car for people who are trying to merge won&amp;#8217;t solve anything. Let&amp;#8217;s say you slow down to leave some room for an upcoming merge. Now you are 4 seconds behind the car in front of you instead of 2. You&amp;#8217;ve just added 2 seconds to the commute of everyone behind you in line. A car merges in front of you. At the next merge, you have to leave more space. That&amp;#8217;s another 2 seconds for everyone behind you. And everyone in front of you is doing the same thing. There&amp;#8217;s no fix for this!&lt;/p&gt;
+&lt;p&gt;Leaving space in front of your car for people who are trying to merge won&amp;#8217;t solve anything. Let&amp;#8217;s say you slow down to leave some room for an upcoming merge. Now you are 4 seconds behind the car in front of you instead of 2. You&amp;#8217;ve just added 2 seconds to the commute of everyone behind you in line. Now a car merges in front of you. At the next merge, you have to leave more space. That&amp;#8217;s another 2 seconds for everyone behind you.&lt;/p&gt;
 
-&lt;p&gt;If you still think that zipper-style merge can fix it, think about what&amp;#8217;s going to happen at the &lt;em&gt;next&lt;/em&gt; merge. Where is that extra space going to come from? Zipper merging is only beneficial insofar as it reduces confusion on the road, the way any convention does — like who gets to go next at a 4-way stop. Confusion leads to delay, delay leads to anger, etc., etc.&lt;/p&gt;
+&lt;p&gt;To &lt;a href='http://www.smartmotorist.com/traffic-and-safety-guideline/traffic-jams.html'&gt;anyone who tells you&lt;/a&gt; that if only everyone left space in front of them and took turns merging, traffic would flow smoothly, and it&amp;#8217;s only because of jerks that there are any traffic jams at all, just ask them what&amp;#8217;s going to happen at the &lt;em&gt;next&lt;/em&gt; merge. Where is that extra space going to come from? You cannot keep 2 seconds back from the car that has just merged in front of you without, um, &lt;em&gt;slowing down&lt;/em&gt;. This is what causes traffic jams.&lt;/p&gt;
+
+&lt;p&gt;Zipper merging is only beneficial insofar as it reduces confusion on the road, the way any convention does — like who gets to go next at a 4-way stop. Confusion leads to delay, delay leads to anger, etc., etc.&lt;/p&gt;
 
 &lt;h3 id='bottlenecks'&gt;Bottlenecks&lt;/h3&gt;
 
 &lt;p&gt;Suppose you&amp;#8217;re on a 2-lane (each way) highway and one lane is closed up ahead due to construction. Now the flow rate of your lane is cut in half, or there are twice as many cars in line in front of you, depending on how you want to look at it. Road signs commonly tell you to use both lanes up to the point of the bottleneck. That&amp;#8217;s reasonable advice, but it&amp;#8217;s not going to get anyone home faster. Remember only so many cars are going to clear the bottleneck per second, no matter what happens upstream. The only thing this does is shorten the length of the backup on the highway — it&amp;#8217;s a 2 mile backup instead of a 4 mile backup. This is good because it is less likely to affect other traffic by spilling out onto onramps and surface roads. Also maybe there&amp;#8217;s someone on the highway who&amp;#8217;s planning to exit 3 miles before the bottleneck. If the backup is 2 miles instead of 4 miles, that person doesn&amp;#8217;t have to wait in traffic.&lt;/p&gt;
 
-&lt;p&gt;As an aside, whenever I see a line of cars on the highway (or, for that matter, any line of anythings anywhere), I make sure I know what it&amp;#8217;s for before I get in it. If you see a line of cars in the right lane, and the left lane is completely empty, what do you do? Maybe the left lane is closed up ahead, and everyone decided to merge early. Or maybe the people in the right lane are trying to exit, and there&amp;#8217;s a backup on the offramp, 2 miles ahead. I&amp;#8217;m not getting in that line if that&amp;#8217;s the case! One time I was driving and happened upon just such a situation. So I stayed in the left lane. Someone ahead of me pulled out into the left lane and kept the speed of the right lane, blocking me from passing. I was pissed!&lt;/p&gt;
+&lt;p&gt;As an aside, whenever I see a line of cars on the highway (or, for that matter, any line of anythings anywhere), I make sure I know what it&amp;#8217;s for before I get in it. If you see a line of cars in the right lane, and the left lane is completely empty, what do you do? Maybe the left lane is closed up ahead, and everyone decided to merge early. Or maybe the people in the right lane are trying to exit, and there&amp;#8217;s a backup on the offramp, one mile ahead. I&amp;#8217;m not getting in that line if that&amp;#8217;s the case! One time I was driving and happened upon just such a situation. So I stayed in the left lane. Someone ahead of me pulled out into the left lane and kept speed with the right lane, blocking me from passing. I was pissed!&lt;/p&gt;
 
 &lt;h3 id='catastrophe'&gt;Catastrophe&lt;/h3&gt;
 
 &lt;p&gt;It&amp;#8217;s worth noting that the 2 second following distance is measured front bumper to front bumper — if you were sitting by the side of the highway, that&amp;#8217;s how you&amp;#8217;d count the time between cars going by. But drivers generally like to keep a 2 second following distance between their front bumper and the &lt;em&gt;rear&lt;/em&gt; bumper of the car in front of them. The difference between these is negligible at high speeds, but at a low enough speed, it becomes difficult to maintain a 2 second following distance from the &lt;em&gt;front&lt;/em&gt; bumper of the car in front of you without impinging on the &lt;em&gt;rear&lt;/em&gt; bumper of the car in front of you, especially if said car is more than 0 feet long. So under these circumstances the flow rate of the highway decreases below 1 car every 2 seconds — maybe to 1 car every 5 seconds. So now you have to wait 5 seconds for every car in front of you in line.&lt;/p&gt;
 
 &lt;p&gt;The situation is modeled pretty well by &lt;a href='http://en.wikipedia.org/wiki/Catastrophe_theory'&gt;catastrophe theory&lt;/a&gt;, something I never thought would be useful.&lt;/p&gt;
-&lt;center&gt;&lt;img src='/assets/img/traffic/catastrophe.png' class='spacer' /&gt;&lt;/center&gt;
+&lt;center&gt;&lt;img class='spacer' src='/assets/img/traffic/catastrophe.png' /&gt;&lt;/center&gt;
 &lt;p&gt;At low occupancy (cars per mile), drivers can go as fast as they&amp;#8217;d like. As occupancy increases, so does flow rate, even though speed decreases somewhat due to everyone trying to maintain following distance. At a certain point, when occupancy becomes high enough, speed dips low enough to where drivers are unable to maintain their minimum following distance, and — catastrophe! — the flow rate decreases dramatically.&lt;/p&gt;
 
 &lt;h3 id='some_code'&gt;Some code&lt;/h3&gt;
 
-&lt;p&gt;Let&amp;#8217;s see how well this model predicts reality. Here&amp;#8217;s some code that determines the flow rate and the speed of traffic as a function of occupancy (cars per km), according to the following distance model:&lt;/p&gt;
+&lt;p&gt;Let&amp;#8217;s see how well this model predicts reality. Here&amp;#8217;s some code that determines the flow rate and the speed of traffic as a function of occupancy (cars per km), according to the following-distance model:&lt;/p&gt;
 &lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;traffic&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;carsPerKm&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;carLength&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt; &lt;span class='o'&gt;=&lt;/span&gt; &lt;span class='mf'&gt;5.0&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;secondsBetweenCars&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt; &lt;span class='o'&gt;=&lt;/span&gt; &lt;span class='mf'&gt;1.8&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
   &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;metersBetweenCars&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='mf'&gt;1000.0&lt;/span&gt; &lt;span class='o'&gt;/&lt;/span&gt; &lt;span class='n'&gt;carsPerKm&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='n'&gt;carLength&lt;/span&gt;
   &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;metersPerSecondToKmPerHour&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='mf'&gt;3600.0&lt;/span&gt; &lt;span class='o'&gt;/&lt;/span&gt; &lt;span class='mf'&gt;1000.0&lt;/span&gt;
@@ -54,13 +56,13 @@
 &lt;span class='o'&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Evaluating &lt;code&gt;traffic&lt;/code&gt; with values of &lt;code&gt;carsPerKm&lt;/code&gt; between 1 and 200 produces the following output:&lt;/p&gt;
-&lt;center&gt;&lt;img src='/assets/img/traffic/model.png' class='spacer' /&gt;&lt;/center&gt;
-&lt;p&gt;Each dot represents a different value of &lt;code&gt;carsPerKm&lt;/code&gt; and is plotted as the maximum speed and flow rate it implies. Below an occupancy of 16 cars per km, the maximum speed that still allows everyone to keep a 1.8 second following distance is well above a reasonable speed limit, so I just capped it at 120 kph. Obviously real highway traffic is going to &lt;a href='http://books.google.com/books?id=4g7f1h4BfYsC&amp;amp;printsec=frontcover#v=onepage&amp;amp;q&amp;amp;f=false'&gt;behave in more subtle ways than that&lt;/a&gt;. But it doesn&amp;#8217;t matter because the congested part is all I care about, and this model matches observed data pretty well. Speaking of which, here&amp;#8217;s some data from a meta-analysis by the &lt;a href='http://www.fhwa.dot.gov/publications/research/operations/tft/chap2.pdf'&gt;Federal Highway Administration&lt;/a&gt;:&lt;/p&gt;
-&lt;center&gt;&lt;img src='/assets/img/traffic/speed_vs_flow.png' class='spacer' /&gt;&lt;/center&gt;
+&lt;center&gt;&lt;img class='spacer' src='/assets/img/traffic/model.png' /&gt;&lt;/center&gt;
+&lt;p&gt;Each dot represents a different value of &lt;code&gt;carsPerKm&lt;/code&gt; and is plotted as the maximum speed and flow rate it implies. Below an occupancy of 16 cars per km, the maximum speed that still allows everyone to keep a 1.8-second following distance is well above a reasonable speed limit, so I just capped it at 120 kph. Obviously real highway traffic is going to &lt;a href='http://books.google.com/books?id=4g7f1h4BfYsC&amp;amp;printsec=frontcover#v=onepage&amp;amp;q&amp;amp;f=false'&gt;behave in more subtle ways than that&lt;/a&gt;. But it doesn&amp;#8217;t matter because the congested part is all I care about, and this model matches observed data pretty well. Speaking of which, here&amp;#8217;s some data from a meta-analysis by the &lt;a href='http://www.fhwa.dot.gov/publications/research/operations/tft/chap2.pdf'&gt;Federal Highway Administration&lt;/a&gt;:&lt;/p&gt;
+&lt;center&gt;&lt;img class='spacer' src='/assets/img/traffic/speed_vs_flow.png' /&gt;&lt;/center&gt;
 &lt;p&gt;For another comparison, here&amp;#8217;s what the model predicts for flow rate vs. occupancy:&lt;/p&gt;
-&lt;center&gt;&lt;img src='/assets/img/traffic/inverted-v-model.png' class='spacer' /&gt;&lt;/center&gt;
+&lt;center&gt;&lt;img class='spacer' src='/assets/img/traffic/inverted-v-model.png' /&gt;&lt;/center&gt;
 &lt;p&gt;And here&amp;#8217;s the data, from &lt;a href='http://trid.trb.org/view.aspx?id=308654'&gt;Freeway Speed-Flow Concentration Relationships&lt;/a&gt;:&lt;/p&gt;
-&lt;center&gt;&lt;img src='/assets/img/traffic/inverted-v-actual.png' class='spacer' /&gt;&lt;/center&gt;
+&lt;center&gt;&lt;img class='spacer' src='/assets/img/traffic/inverted-v-actual.png' /&gt;&lt;/center&gt;
 &lt;p&gt;And a quote from the same source:&lt;/p&gt;
 
 &lt;blockquote&gt;
@@ -69,9 +71,9 @@
 
 &lt;p&gt;Parameter fitting aside, this simple model predicts actual traffic so well that any reasonable discussion of the physics of traffic jams has to take it into account.&lt;/p&gt;
 
-&lt;h3 id='antitraffic'&gt;Anti-traffic&lt;/h3&gt;
+&lt;h3 id='antitraffic'&gt;&amp;#8220;Anti-traffic&amp;#8221;&lt;/h3&gt;
 
-&lt;p&gt;Since occupancy determines flow rate, there&amp;#8217;s not much benefit to trying to &amp;#8220;cancel out&amp;#8221; a traffic wave by leaving a ton of space in front of you. No matter what you do, you&amp;#8217;re not going to get to the front of the line before the car in front of you. Worse, by leaving extra space in front of you, you&amp;#8217;re artificially reducing the occupancy of the part of the road in front of you, but since you haven&amp;#8217;t changed the number of cars trying to use the road, &lt;em&gt;this comes at the expense of increased occupancy somewhere else&lt;/em&gt;. Sure, there&amp;#8217;s a beautiful line of cars behind you driving at a constant 35 mph, but behind &lt;em&gt;that&lt;/em&gt; there&amp;#8217;s a ridiculous traffic jam that didn&amp;#8217;t need to be there.&lt;/p&gt;
+&lt;p&gt;Since occupancy determines flow rate, there&amp;#8217;s not much benefit to trying to &amp;#8220;cancel out&amp;#8221; a traffic wave by leaving a ton of space in front of you. No matter what you do, you&amp;#8217;re not going to get to the front of the line before the car in front of you. Worse, by leaving space in front of you, you&amp;#8217;re artificially reducing the occupancy of that part of the road, but since you haven&amp;#8217;t changed the number of cars trying to use the road, &lt;em&gt;this comes at the expense of increased occupancy somewhere else&lt;/em&gt;. Sure, there&amp;#8217;s a beautiful line of cars behind you driving at a constant 35 mph, but behind &lt;em&gt;that&lt;/em&gt; there&amp;#8217;s a ridiculous traffic jam that didn&amp;#8217;t need to be there.&lt;/p&gt;
 
 &lt;h3 id='conclusion'&gt;Conclusion&lt;/h3&gt;
 
@@ -144,7 +146,7 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Now here&amp;#8217;s &lt;code&gt;eval&lt;/code&gt; as a data flow diagram. I&amp;#8217;ve threaded through &lt;code&gt;x&lt;/code&gt; as a &amp;#8220;context&amp;#8221; variable because it isn&amp;#8217;t an input to &lt;code&gt;eval&lt;/code&gt; per se.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src='/assets/img/poly/eval.png' alt='eval' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt='eval' src='/assets/img/poly/eval.png' /&gt;&lt;/p&gt;
 
 &lt;p&gt;Following the arrows backwards from the outputs to the inputs we can write the following code:&lt;/p&gt;
 &lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;unevalPoly&lt;/span&gt;&lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;y&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='o'&gt;])&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
@@ -272,7 +274,7 @@ f(x) = ax^4 + bx^3 + cx^2 + dx + e
 
 &lt;p&gt;It&amp;#8217;s not obvious from the code that these functions are backwards versions of each other, but look at their data flow diagrams:&lt;/p&gt;
 &lt;!-- more --&gt;
-&lt;p&gt;&lt;img src='/assets/img/main.png' alt='main function data flow' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt='main function data flow' src='/assets/img/main.png' /&gt;&lt;/p&gt;
 
 &lt;p&gt;They are exactly the same, except with the arrows going the other way.&lt;/p&gt;
 
@@ -309,7 +311,7 @@ f(x) = ax^4 + bx^3 + cx^2 + dx + e
 
 &lt;p&gt;The data flow diagrams of these functions make it totally clear that they are the same function, only one has the arrows reversed and the boxes running backwards:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src='/assets/img/helper.png' alt='helper function data flow' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt='helper function data flow' src='/assets/img/helper.png' /&gt;&lt;/p&gt;
 
 &lt;p&gt;The only thing left is this &lt;code&gt;sort&lt;/code&gt; method, which takes 2 arguments and returns them in sorted order. Which I guess is the same if you run it backwards?&lt;/p&gt;
 &lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='n'&gt;sort&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;:&lt;/span&gt; &lt;span class='kt'&gt;Ordered&lt;/span&gt;&lt;span class='o'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;]](&lt;/span&gt;&lt;span class='n'&gt;a&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='n'&gt;b&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='o'&gt;(&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;,&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='o'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;{&lt;/span&gt;
@@ -1268,7 +1270,7 @@ res12: Double = 0.17756920958319758&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;You&amp;#8217;ve probably seen &lt;a href='http://en.wikipedia.org/wiki/Standard_deviation'&gt;this diagram&lt;/a&gt; before:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' alt='the normal distribution' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt='the normal distribution' src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' /&gt;&lt;/p&gt;
 
 &lt;p&gt;This is what we&amp;#8217;re working with. A value drawn from a normal distribution will be within 2 standard deviations of the mean 96% of the time. Since sample means are normally distributed around the true mean, sample means will be within 2 standard errors of the true mean 96% of the time. If a sample mean is more than 2 standard deviations away from the true mean, the sample is unlikely to have been drawn from that distribution.&lt;/p&gt;
 
