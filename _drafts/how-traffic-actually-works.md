@@ -15,11 +15,11 @@ gets home strictly later than if you had just gone along with the stop-and-go tr
 ### The facts
 
 Here's how traffic works. First, we know from [empirical studies](http://www.fhwa.dot.gov/publications/research/operations/tft/chap2.pdf)
-that drivers tend to maintain a minimum following distance, measured in seconds. It varies per driver, but typically it's somewhere
-between 1.5 and 2 seconds. That works out to a maximum theoretical flow rate of between 1,800 and 2,400 vehicles per lane per hour
-passing by a given point on the highway. Studies of actual highway traffic have measured flow rates as high as 2,000 vehicles
-per lane per hour, which works out to a following distance of 1.8 seconds. (I'm just going to call it 2 seconds
-for the sake of round numbers.)
+that drivers tend to maintain a minimum following distance, measured in seconds. It varies per driver, but typically
+it's somewhere between 1.5 and 2 seconds. That works out to a maximum theoretical flow rate of between 1,800 and 2,400
+vehicles per lane per hour passing by a given point on the highway. Studies of actual highway traffic have measured flow
+rates as high as 2,000 vehicles per lane per hour, which works out to a following distance of 1.8 seconds. (I'm just
+going to call it 2 seconds for the sake of round numbers.)
 
 The important fact: **there is a limit to the number of cars that can pass by a given point on the highway in a given
 amount of time, and that limit is one car every 2 seconds, per lane**. So imagine you are in slow-moving traffic during
@@ -34,9 +34,9 @@ and there are some cars in front of you that have to get there before you do.
 
 ### Merging
 
-Let's take a look at merging. Say there are some cars that are trying to merge into your lane a mile or so in front of
-you. Every time a car merges in, that adds 2 seconds to your trip. If one car merges in every 2 seconds, your trip gets
-longer by 2 seconds every 2 seconds, which means you are not moving (or will soon not be moving).
+Say there are some cars that are trying to merge into your lane a mile or so in front of you. Every time a car merges
+in, that adds 2 seconds to your trip. If one car merges in every 2 seconds, your trip gets longer by 2 seconds every 2
+seconds, which means you are not moving (or will soon not be moving).
 
 Leaving space in front of your car for people who are trying to merge won't solve anything. Let's say you slow down to
 leave some room for an upcoming merge. Now you are 4 seconds behind the car in front of you instead of 2. You've just
@@ -44,14 +44,16 @@ added 2 seconds to the commute of everyone behind you in line. A car merges in f
 to leave more space. That's another 2 seconds for everyone behind you. And everyone in front of you is doing the same
 thing. There's no fix for this!
 
-Zipper-style merging is only beneficial insofar as it reduces confusion on the road, the way any convention does — like
-who gets to go next at a 4-way stop. Confusion leads to delay, delay leads to anger, etc., etc.
+If you still think that zipper-style merge can fix it, think about what's going to happen at the _next_ merge. Where
+is that extra space going to come from? Zipper merging is only beneficial insofar as it reduces confusion on the road,
+the way any convention does — like who gets to go next at a 4-way stop. Confusion leads to delay, delay leads to anger,
+etc., etc.
 
 ### Bottlenecks
 
 Suppose you're on a 2-lane (each way) highway and one lane is closed up ahead due to construction. Now the flow rate of
 your lane is cut in half, or there are twice as many cars in line in front of you, depending on how you want to look at
-it. Some common advice is to use both lanes up to the point of the bottleneck. That's reasonable advice, but it's not
+it. Road signs commonly tell you to use both lanes up to the point of the bottleneck. That's reasonable advice, but it's not
 going to get anyone home faster. Remember only so many cars are going to clear the bottleneck per second, no matter what
 happens upstream. The only thing this does is shorten the length of the backup on the highway — it's a 2 mile backup
 instead of a 4 mile backup. This is good because it is less likely to affect other traffic by spilling out onto onramps
@@ -109,9 +111,10 @@ Evaluating ```traffic``` with values of ```carsPerKm``` between 1 and 200 produc
 Each dot represents a different value of ```carsPerKm``` and is plotted as the maximum speed and flow rate it implies.
 Below an occupancy of 16 cars per km, the maximum speed that still allows everyone to keep a 1.8 second following
 distance is well above a reasonable speed limit, so I just capped it at 120 kph. Obviously real highway traffic is going
-to [behave in more subtle ways than that](http://books.google.com/books?id=4g7f1h4BfYsC&printsec=frontcover#v=onepage&q&f=false). But it doesn't matter
-because the congested part is all I care about, and this model matches observed data pretty well. Speaking of which,
-here's some data from a meta-analysis by the [Federal Highway Administration](http://www.fhwa.dot.gov/publications/research/operations/tft/chap2.pdf):
+to [behave in more subtle ways than that](http://books.google.com/books?id=4g7f1h4BfYsC&printsec=frontcover#v=onepage&q&f=false).
+But it doesn't matter because the congested part is all I care about, and this model matches observed data pretty well.
+Speaking of which, here's some data from a meta-analysis by the
+[Federal Highway Administration](http://www.fhwa.dot.gov/publications/research/operations/tft/chap2.pdf):
 
 <center><img class="spacer" src="/assets/img/traffic/speed_vs_flow.png"/></center>
 
@@ -125,20 +128,21 @@ And here's the data, from [Freeway Speed-Flow Concentration Relationships](http:
 
 And a quote from the same source:
 
-> "The inverted-V model implies that drivers maintain a roughly constant average time gap between their front bumper and the back
-> bumper of the vehicle in front of them, provided their speed is less than some critical value. Once their speed reaches
-> this critical value (which is as fast as they want to go), they cease to be sensitive to vehicle spacing."
+> "The inverted-V model implies that drivers maintain a roughly constant average time gap between their front bumper and
+> the back bumper of the vehicle in front of them, provided their speed is less than some critical value. Once their
+> speed reaches this critical value (which is as fast as they want to go), they cease to be sensitive to vehicle spacing."
+
+Parameter fitting aside, this simple model predicts actual traffic so well that any reasonable discussion of the physics
+of traffic jams has to take it into account.
 
 ### Anti-traffic
 
-Since occupancy affects flow rates, I can see how trying to maintain a constant speed in the midst of stop-and-go
-traffic could be benefical. Stop-and-go traffic consists of alternating regions of congested and uncongested operation.
-Keeping a constant speed gets you back in the uncongested operation zone, but if you're leading the charge, you're still
-not getting to the front of the line before the car in front of you. In fact you're leaving a ton of room in front of
-you for other people to merge in, making your commute longer. Yes you eat up the traffic wave, and that will allow the
-flow rate to increase, eventually, but that is long after you and most of the people stuck behind you get home (later
-than necessary, I must add). It's not obvious to me that the tradeoff is worth it. It's not like traffic waves are
-standing waves that last for days. Rush hour is over in a couple hours no matter what.
+Since occupancy determines flow rate, there's not much benefit to trying to "cancel out" a traffic wave by leaving a ton
+of space in front of you. No matter what you do, you're not going to get to the front of the line before the car in
+front of you. Worse, by leaving extra space in front of you, you're artificially reducing the occupancy of the part of
+the road in front of you, but since you haven't changed the number of cars trying to use the road, _this comes at the
+expense of increased occupancy somewhere else_. Sure, there's a beautiful line of cars behind you driving at a constant
+35 mph, but behind _that_ there's a ridiculous traffic jam that didn't need to be there.
 
 ### Conclusion
 
