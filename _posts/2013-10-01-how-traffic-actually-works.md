@@ -8,9 +8,9 @@ tags: []
 {% include JB/setup %}
 
 Every so often [this article](http://www.smartmotorist.com/traffic-and-safety-guideline/traffic-jams.html) makes the
-rounds and it annoys me. That isn't how traffic works and the proposed solutions won't solve anything. Maybe you can
-eliminate the annoying stop-and-go, but no one gets home sooner. In fact you can prove that you and everyone behind you
-gets home strictly later than if you had just gone along with the stop-and-go traffic.
+rounds and it annoys me. That isn't how traffic works and the proposed solutions won't fix anything. Maybe you can
+eliminate the annoying stop-and-go, but no one gets home any faster. In fact you can prove that you and everyone behind you
+get home strictly later than if you had just gone along with the stop-and-go traffic.
 
 ### The facts
 
@@ -41,13 +41,14 @@ seconds, which means you are not moving (or will soon not be moving).
 Leaving space in front of your car for people who are trying to merge won't solve anything. Let's say you slow down to
 leave some room for an upcoming merge. Now you are 4 seconds behind the car in front of you instead of 2. You've just
 added 2 seconds to the commute of everyone behind you in line. Now a car merges in front of you. At the next merge, you
-have to leave more space. That's another 2 seconds for everyone behind you.
+have to leave more space. That's another 2 seconds for everyone behind you. There is no "simple cure" for this!
 
-To [anyone who tells you](http://www.smartmotorist.com/traffic-and-safety-guideline/traffic-jams.html) that if only
-everyone left space in front of them and took turns merging, traffic would flow smoothly, and it's only because of jerks
+If [anyone tries to tell you](http://www.smartmotorist.com/traffic-and-safety-guideline/traffic-jams.html) that if only
+drivers left space in front of them and took turns merging, traffic would flow smoothly, and it's only because of jerks
 that there are any traffic jams at all, just ask them what's going to happen at the _next_ merge. Where is that extra
 space going to come from? You cannot keep 2 seconds back from the car that has just merged in front of you without, um,
-_slowing down_. This is what causes traffic jams.
+_slowing down_. If the car in front of you is also slowing down for the same reason, you have to slow down even more.
+This is basically the definition of a traffic jam.
 
 Zipper merging is only beneficial insofar as it reduces confusion on the road, the way any convention does — like who
 gets to go next at a 4-way stop. Confusion leads to delay, delay leads to anger, etc., etc.
@@ -55,8 +56,8 @@ gets to go next at a 4-way stop. Confusion leads to delay, delay leads to anger,
 ### Bottlenecks
 
 Suppose you're on a 2-lane (each way) highway and one lane is closed up ahead due to construction. Now the flow rate of
-your lane is cut in half, or there are twice as many cars in line in front of you, depending on how you want to look at
-it. Road signs commonly tell you to use both lanes up to the point of the bottleneck. That's reasonable advice, but it's not
+your lane is cut in half (or there are twice as many cars in line in front of you, depending on how you want to look at
+it). Road signs commonly ask you to use both lanes up to the point of the bottleneck. That's reasonable advice, but it's not
 going to get anyone home faster. Remember only so many cars are going to clear the bottleneck per second, no matter what
 happens upstream. The only thing this does is shorten the length of the backup on the highway — it's a 2 mile backup
 instead of a 4 mile backup. This is good because it is less likely to affect other traffic by spilling out onto onramps
@@ -99,8 +100,8 @@ as a function of occupancy (cars per km), according to the following-distance mo
 
 {% highlight scala %}
 def traffic(carsPerKm: Double, carLength: Double = 5.0, secondsBetweenCars: Double = 1.8) = {
-  val metersBetweenCars = 1000.0 / carsPerKm - carLength
   val metersPerSecondToKmPerHour = 3600.0 / 1000.0
+  val metersBetweenCars = 1000.0 / carsPerKm - carLength
   val maxSpeed = min(120, (metersBetweenCars / secondsBetweenCars) * metersPerSecondToKmPerHour)
   val carsPerHour = carsPerKm * maxSpeed
   (maxSpeed, carsPerHour)
@@ -112,11 +113,11 @@ Evaluating ```traffic``` with values of ```carsPerKm``` between 1 and 200 produc
 <center><img class="spacer" src="/assets/img/traffic/model.png"/></center>
 
 Each dot represents a different value of ```carsPerKm``` and is plotted as the maximum speed and flow rate it implies.
-Below an occupancy of 16 cars per km, the maximum speed that still allows everyone to keep a 1.8-second following
+Below an occupancy of about 16 cars per km, the maximum speed that still allows everyone to keep a 1.8-second following
 distance is well above a reasonable speed limit, so I just capped it at 120 kph. Obviously real highway traffic is going
 to [behave in more subtle ways than that](http://books.google.com/books?id=4g7f1h4BfYsC&printsec=frontcover#v=onepage&q&f=false).
 But it doesn't matter because the congested part is all I care about, and this model matches observed data pretty well.
-Speaking of which, here's some data from a meta-analysis by the
+Here's some data from a meta-analysis by the
 [Federal Highway Administration](http://www.fhwa.dot.gov/publications/research/operations/tft/chap2.pdf):
 
 <center><img class="spacer" src="/assets/img/traffic/speed_vs_flow.png"/></center>
@@ -135,7 +136,7 @@ And a quote from the same source:
 > the back bumper of the vehicle in front of them, provided their speed is less than some critical value. Once their
 > speed reaches this critical value (which is as fast as they want to go), they cease to be sensitive to vehicle spacing."
 
-Parameter fitting aside, this simple model predicts actual traffic so well that any reasonable discussion of the physics
+Parameter tuning aside, this simple model predicts actual traffic so well that any reasonable discussion of the physics
 of traffic jams has to take it into account.
 
 ### "Anti-traffic"
