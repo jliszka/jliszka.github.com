@@ -5,8 +5,8 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-10-01T15:49:42-04:00</lastBuildDate>
-        <pubDate>2013-10-01T15:49:42-04:00</pubDate>
+        <lastBuildDate>2013-10-01T22:52:40-04:00</lastBuildDate>
+        <pubDate>2013-10-01T22:52:40-04:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -81,6 +81,8 @@
 &lt;h3 id='antitraffic'&gt;&amp;#8220;Anti-traffic&amp;#8221;&lt;/h3&gt;
 
 &lt;p&gt;Since occupancy determines flow rate, there&amp;#8217;s not much benefit to trying to &amp;#8220;cancel out&amp;#8221; a traffic wave by leaving a ton of space in front of you. No matter what you do, you&amp;#8217;re not going to get to the front of the line before the car in front of you. Worse, by leaving space in front of you, you&amp;#8217;re artificially reducing the occupancy of that part of the road, but since you haven&amp;#8217;t changed the number of cars trying to use the road, &lt;em&gt;this comes at the expense of increased occupancy somewhere else&lt;/em&gt;. Sure, there&amp;#8217;s a beautiful line of cars behind you driving at a constant 35 mph, but behind &lt;em&gt;that&lt;/em&gt; there&amp;#8217;s a ridiculous traffic jam that didn&amp;#8217;t need to be there.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Update #2&lt;/strong&gt;: Drew R. makes a great point in the comments that there doesn&amp;#8217;t always have to be a traffic jam at the back of that line of cars — specifically, when there is excess capacity in the road behind you, i.e., the flow rate is below the theoretical maximum and the occupancy is below the critical threshold where people start caring about following distance. You might know whether such a region exists behind you because you just drove through it. So in that situation, it is actually beneficial to try to smooth out the traffic wave by driving slower as you approach it.&lt;/p&gt;
 
 &lt;h3 id='conclusion'&gt;Conclusion&lt;/h3&gt;
 
