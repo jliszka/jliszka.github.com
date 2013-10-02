@@ -161,6 +161,12 @@ the road, but since you haven't changed the number of cars trying to use the roa
 expense of increased occupancy somewhere else_. Sure, there's a beautiful line of cars behind you driving at a constant
 35 mph, but behind _that_ there's a ridiculous traffic jam that didn't need to be there.
 
+**Update #2**: Drew R. makes a great point in the comments that there doesn't always have to be a traffic jam at the back
+of that line of cars — specifically, when there is excess capacity in the road behind you, i.e., the flow rate is below
+the theoretical maximum and the occupancy is below the critical threshold where people start caring about following
+distance. You might know whether such a region exists behind you because you just drove through it. So in that
+situation, it is actually beneficial to try to smooth out the traffic wave by driving slower as you approach it.
+
 ### Conclusion
 
 At the risk of being helpful, here are some things YOU can do that are actually guaranteed to improve commute times for
