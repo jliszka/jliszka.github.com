@@ -295,7 +295,8 @@ the explanation behind why this is correct, but there's no arguing with just try
 
 ### HTH vs HTT
 
-Another fun problem: if you flip a coin repeatedly, which pattern do you expect to see first, heads-tails-heads or heads-tails-tails?
+Another fun problem: if you flip a coin repeatedly, which pattern do you expect to see earlier,
+heads-tails-heads or heads-tails-tails?
 
 First I need the following method:
 
