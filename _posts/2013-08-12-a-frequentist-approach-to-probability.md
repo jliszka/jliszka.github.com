@@ -101,18 +101,27 @@ Now I can map ```* 2``` over the uniform distribution, giving a uniform distribu
 
 ```tf``` is a ```Distribution[Boolean]``` that should give ```true``` and ```false``` with equal probability.
 Actually, it would be a bit more useful to be able to create distributions giving ```true``` and ```false``` with arbitrary
-probabilities. This kind of distribution is called the Bernoulli distribution.
+probabilities.
 
 {% highlight scala %}
-def bernoulli(p: Double): Distribution[Boolean] = {
+def tf(p: Double): Distribution[Boolean] = {
   uniform.map(_ < p)
 }
 {% endhighlight %}
 
 Trying it out:
 
-    scala> bernoulli(0.8).sample(10)
+    scala> tf(0.8).sample(10)
     res0: List[Boolean] = List(true, false, true, true, true, true, true, true, true, true)
+
+A very closely related distribution is the Bernoulli distribution, which gives ```0``` or ```1``` with some
+probability instead of ```true``` and ```false```. This can be achieved with a simple ```map```:
+
+{% highlight scala %}
+def bernoulli(p: Double): Distribution[Int] = {
+  tf.map(b => if (b) 1 else 0)
+}
+{% endhighlight %}
 
 Cool. Now I want to measure the probability that a random variable will take on certain values.
 This is easy to do empirically by pulling 10,000 sample values and counting how many of the values
@@ -322,8 +331,8 @@ A single sample from the resulting distribution is a list that satisfies the pre
 Now I can do:
 
 {% highlight scala %}
-val hth = bernoulli(0.5).until(_.take(3) == List(true, false, true)).map(_.length)
-val htt = bernoulli(0.5).until(_.take(3) == List(false, false, true)).map(_.length)
+val hth = tf(0.5).until(_.take(3) == List(true, false, true)).map(_.length)
+val htt = tf(0.5).until(_.take(3) == List(false, false, true)).map(_.length)
 {% endhighlight %}
 
 Looking at the distributions:
@@ -382,7 +391,7 @@ trait Distribution[A] {
 {% endhighlight %}
 
 Hm, that ```.sum``` is not going to work for all ```A```s.
-I mean, ```A``` could certainly be ```Boolean```, as in the case of the ```bernoulli``` distribution (what is the expected value of a coin flip?).
+I mean, ```A``` could certainly be ```Boolean```, as in the case of the ```tf``` distribution (what is the expected value of a coin flip?).
 So I need to constrain ```A``` to ```Double``` for the purposes of this method.
 
 {% highlight scala %}

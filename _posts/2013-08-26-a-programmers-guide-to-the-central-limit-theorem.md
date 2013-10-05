@@ -108,7 +108,7 @@ Let's try a couple more.
 
 OK, starting to see a pattern here. Let's look at some discrete distributions.
 
-    scala> sampleMean(bernoulli(0.8).map(b => if (b) 1.0 else 0.0)).hist
+    scala> sampleMean(bernoulli(0.8).map(_.toDouble).hist
     0.68  0.33% 
     0.70  0.85% 
     0.72  2.14% ##
@@ -332,10 +332,9 @@ you observe that 53 out of 810 visitors clicked the (red) button. That's 6.5%, a
 improvement; others a 0.7% improvement. Potato, potato.) But is this difference something we're likely to observe just by
 chance, or was making the button red a meaningful change?
 
-We can model the number of clicks as a Bernoulli distribution with a 5.8% success probability. In order to do this I'll
-have to translate ```true``` to 1 click and ```false``` to 0 clicks.
+We can model the number of clicks as a Bernoulli distribution with a 5.8% success probability.
 
-    scala> val d = bernoulli(0.058).map(b => if (b) 1.0 else 0.0)
+    scala> val d = bernoulli(0.058).map(_.toDouble)
     d: Distribution[Double] = <distribution>
 
     scala> d.stdev

@@ -267,7 +267,7 @@ better approximation to it. At smaller degrees of freedom, though, there is more
 ### The geometric distribution
 
 The [geometric distribution](http://en.wikipedia.org/wiki/Geometric_distribution) is a discrete distribution
-that can be constructed from the Bernoulli distribution (a biased coin flip).
+that can be constructed from the Bernoulli distribution (essentially a biased coin flip).
 Although recall that the Bernoulli distribution itself can be [constructed from the uniform distribution]({{ page.previous.url }})
 pretty easily.
 
@@ -277,7 +277,7 @@ In other words, if I flip a coin repeatedly, how many tails will I see before ge
 
 {% highlight scala %}
 def geometric(p: Double): Distribution[Int] = {
-  bernoulli(p).until(_.headOption == Some(true)).map(_.size - 1)
+  bernoulli(p).until(_.headOption == Some(1)).map(_.size - 1)
 }
 {% endhighlight %}
 
@@ -310,7 +310,7 @@ For example: I flip a fair coin 20 times, how many times will it come up heads? 
 
 {% highlight scala %}
 def binomial(p: Double, n: Int): Distribution[Int] = {
-  bernoulli(p).repeat(n).map(_.count(_ == true))
+  tf(p).repeat(n).map(_.count(_ == true))
 }
 {% endhighlight %}
 
@@ -355,7 +355,7 @@ Here's the code:
 
 {% highlight scala %}
 def negativeBinomial(p: Double, r: Int): Distribution[Int] = {
-  bernoulli(p).until(_.count(_ == false) == r).map(_.size - r)
+  tf(p).until(_.count(_ == false) == r).map(_.size - r)
 }
 {% endhighlight %}
 
@@ -425,7 +425,7 @@ Poisson distribution. Here is ```negativeBinomial``` rewritten to show the simil
 
 {% highlight scala %}
 def negativeBinomial(p: Double, r: Int): Distribution[Int] = {
-  val d = bernoulli(p).map(b => if (b) 0 else 1)
+  val d = tf(p).map(b => if (b) 0 else 1)
   d.until(_.sum == r).map(_.size - r)
 }
 {% endhighlight %}
