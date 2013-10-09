@@ -46,5 +46,27 @@ And since it has to return in a finite amount of time, it can only call ```f``` 
 Aha! All you need to do is find an integer that ```inj``` doesn't call ```f``` on. Then you can construct ```g``` that
 is the same as ```f``` everywhere except that number.
 
+3 ways:
+- guessing
+- but you can only call inj once! secret f that records what it's called on
+- relies on continuity of inj! diagonalization
+
+inj: (Int => Int) => Int
+counter: (Int => Int) => (Int => Int, Int)
+
+f(n) = inj-1(n)(n) + 1 // well-defined provided inj is invertible
+inj(f) => k
+f(k) = inj-1(k)(k) + 1
+f(k) = f(k) + 1
+but really,
+f(k) = inj-1(k)(k) + 1 = g(k) + 1
+
+inj(g) = g(1) + g(2) = 1
+inj(h) = h(1) + h(2) = 2
+inj(f) = inj-1(1)(1) + 1 + inj-1(2)(2) + 1
+
+
+inj(id)
+inj(const(n))
 
 
