@@ -190,16 +190,21 @@ tf: Distribution[Boolean] = &lt;distribution&gt;
 scala&gt; tf.sample(10)
 res2: List[Boolean] = List(true, true, true, true, false, false, false, false, true, false)</code></pre>
 
-<p><code>tf</code> is a <code>Distribution[Boolean]</code> that should give <code>true</code> and <code>false</code> with equal probability. Actually, it would be a bit more useful to be able to create distributions giving <code>true</code> and <code>false</code> with arbitrary probabilities. This kind of distribution is called the Bernoulli distribution.</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>bernoulli</span><span class='o'>(</span><span class='n'>p</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Boolean</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+<p><code>tf</code> is a <code>Distribution[Boolean]</code> that should give <code>true</code> and <code>false</code> with equal probability. Actually, it would be a bit more useful to be able to create distributions giving <code>true</code> and <code>false</code> with arbitrary probabilities.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>tf</span><span class='o'>(</span><span class='n'>p</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Boolean</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
   <span class='n'>uniform</span><span class='o'>.</span><span class='n'>map</span><span class='o'>(</span><span class='k'>_</span> <span class='o'>&lt;</span> <span class='n'>p</span><span class='o'>)</span>
 <span class='o'>}</span>
 </code></pre></div>
 <p>Trying it out:</p>
 
-<pre><code>scala&gt; bernoulli(0.8).sample(10)
+<pre><code>scala&gt; tf(0.8).sample(10)
 res0: List[Boolean] = List(true, false, true, true, true, true, true, true, true, true)</code></pre>
 
+<p>A very closely related distribution is the Bernoulli distribution, which gives <code>0</code> or <code>1</code> with some probability instead of <code>true</code> and <code>false</code>. This can be achieved with a simple <code>map</code>:</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>bernoulli</span><span class='o'>(</span><span class='n'>p</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Int</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='n'>tf</span><span class='o'>.</span><span class='n'>map</span><span class='o'>(</span><span class='n'>b</span> <span class='k'>=&gt;</span> <span class='k'>if</span> <span class='o'>(</span><span class='n'>b</span><span class='o'>)</span> <span class='mi'>1</span> <span class='k'>else</span> <span class='mi'>0</span><span class='o'>)</span>
+<span class='o'>}</span>
+</code></pre></div>
 <p>Cool. Now I want to measure the probability that a random variable will take on certain values. This is easy to do empirically by pulling 10,000 sample values and counting how many of the values satisfy the given predicate.</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>trait</span> <span class='nc'>Distribution</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='o'>{</span>
   <span class='c1'>// ...</span>
@@ -372,8 +377,8 @@ res0: Double = 0.6671</code></pre>
 <p><code>until</code> samples from the distribution, adding the samples to the <em>front</em> of the list until the list satisfies some predicate. A single sample from the resulting distribution is a list that satisfies the predicate.</p>
 
 <p>Now I can do:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>val</span> <span class='n'>hth</span> <span class='k'>=</span> <span class='n'>bernoulli</span><span class='o'>(</span><span class='mf'>0.5</span><span class='o'>).</span><span class='n'>until</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>take</span><span class='o'>(</span><span class='mi'>3</span><span class='o'>)</span> <span class='o'>==</span> <span class='nc'>List</span><span class='o'>(</span><span class='kc'>true</span><span class='o'>,</span> <span class='kc'>false</span><span class='o'>,</span> <span class='kc'>true</span><span class='o'>)).</span><span class='n'>map</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>length</span><span class='o'>)</span>
-<span class='k'>val</span> <span class='n'>htt</span> <span class='k'>=</span> <span class='n'>bernoulli</span><span class='o'>(</span><span class='mf'>0.5</span><span class='o'>).</span><span class='n'>until</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>take</span><span class='o'>(</span><span class='mi'>3</span><span class='o'>)</span> <span class='o'>==</span> <span class='nc'>List</span><span class='o'>(</span><span class='kc'>false</span><span class='o'>,</span> <span class='kc'>false</span><span class='o'>,</span> <span class='kc'>true</span><span class='o'>)).</span><span class='n'>map</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>length</span><span class='o'>)</span>
+<div class='highlight'><pre><code class='scala'><span class='k'>val</span> <span class='n'>hth</span> <span class='k'>=</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.5</span><span class='o'>).</span><span class='n'>until</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>take</span><span class='o'>(</span><span class='mi'>3</span><span class='o'>)</span> <span class='o'>==</span> <span class='nc'>List</span><span class='o'>(</span><span class='kc'>true</span><span class='o'>,</span> <span class='kc'>false</span><span class='o'>,</span> <span class='kc'>true</span><span class='o'>)).</span><span class='n'>map</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>length</span><span class='o'>)</span>
+<span class='k'>val</span> <span class='n'>htt</span> <span class='k'>=</span> <span class='n'>tf</span><span class='o'>(</span><span class='mf'>0.5</span><span class='o'>).</span><span class='n'>until</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>take</span><span class='o'>(</span><span class='mi'>3</span><span class='o'>)</span> <span class='o'>==</span> <span class='nc'>List</span><span class='o'>(</span><span class='kc'>false</span><span class='o'>,</span> <span class='kc'>false</span><span class='o'>,</span> <span class='kc'>true</span><span class='o'>)).</span><span class='n'>map</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>length</span><span class='o'>)</span>
 </code></pre></div>
 <p>Looking at the distributions:</p>
 
@@ -425,7 +430,7 @@ scala&gt; htt.hist
   <span class='o'>}</span>
 <span class='o'>}</span>
 </code></pre></div>
-<p>Hm, that <code>.sum</code> is not going to work for all <code>A</code>s. I mean, <code>A</code> could certainly be <code>Boolean</code>, as in the case of the <code>bernoulli</code> distribution (what is the expected value of a coin flip?). So I need to constrain <code>A</code> to <code>Double</code> for the purposes of this method.</p>
+<p>Hm, that <code>.sum</code> is not going to work for all <code>A</code>s. I mean, <code>A</code> could certainly be <code>Boolean</code>, as in the case of the <code>tf</code> distribution (what is the expected value of a coin flip?). So I need to constrain <code>A</code> to <code>Double</code> for the purposes of this method.</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>trait</span> <span class='nc'>Distribution</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='o'>{</span>
   <span class='c1'>// ...</span>
   <span class='k'>def</span> <span class='n'>ev</span><span class='o'>(</span><span class='k'>implicit</span> <span class='n'>toDouble</span><span class='k'>:</span> <span class='kt'>A</span> <span class='k'>&lt;:</span><span class='kt'>&lt;</span> <span class='kt'>Double</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Double</span> <span class='o'>=</span> <span class='o'>{</span>

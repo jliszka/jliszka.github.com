@@ -1,0 +1,538 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Understanding A/B Test Analysis</title>
+    <meta name="description" content="">
+    <meta name="author" content="Jason Liszka">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/themes/twitter/bootstrap/css/bootstrap.2.2.2.min.css" rel="stylesheet">
+    <link href="/assets/themes/twitter/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/twitter/css/pygment.css" rel="stylesheet" type="text/css" media="all">
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+
+    <!-- atom & rss feed -->
+    <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-narrow">
+          <a class="brand" href="/">A Gentleman and a Scala</a>
+          <ul class="nav">
+            
+            
+            
+
+
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-narrow">
+
+      <div class="content">
+        
+<div class="page-header">
+  <h1>Understanding A/B Test Analysis </h1>
+</div>
+
+<div class="row-fluid post-full">
+  <div class="span12">
+    <div class="date">
+      <span>08 October 2013</span>
+    </div>
+    <div class="content">
+      <style type='text/css'>
+th {
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+tbody tr:nth-child(odd) {
+  background: #eee;
+}
+tbody tr:nth-child(even) {
+  background: #fff;
+}
+</style>
+<p>This is a continuation of my <a href='/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html'>previous post on the Central Limit Theorem</a>.</p>
+
+<h3 id='ab_test_analysis'>A/B test analysis</h3>
+
+<p>You&#8217;re designing a new feature for your website and you can&#8217;t decide which <a href=''>shade of blue</a> to use. So you let your users decide by trying both — some users see this shade and some users get this one. Whichever group of users spends more time on the site will determine which color you end up going with.</p>
+
+<p>You run your experiment for a day and collect the following data:</p>
+<table><thead><tr><th>Group</th><th>Shade of blue</th><th># of users</th><th>Average time on site</th></tr></thead><tbody><tr><td style='text-align: left;'>A</td><td style='text-align: left;'>this one</td><td style='text-align: left;'>1,028</td><td style='text-align: left;'>91.4 seconds</td>
+</tr><tr><td style='text-align: left;'>B</td><td style='text-align: left;'>this one</td><td style='text-align: left;'>1,015</td><td style='text-align: left;'>113.8 seconds</td>
+</tr></tbody></table>
+<p>Looks like group B did slightly better! But it&#8217;s a small difference, how can you be sure it&#8217;s significant? Assuming that the shade of blue had no effect on the amount of time a user spends on the site, what is the probability that you would have observed a difference of 21.4 seconds? In other other words, given the distribution of the amount of time different users spend on the site, if you draw 2 samples of 1,000 or so from this distribution, what is the probability that you would see a difference of 21.4 (or more) in the averages of the samples?</p>
+
+<p>Well, you would expect that that depends a lot on the distribution. Here is the distribution you observed:</p>
+
+<pre><code>  0.0 72.98% ########################################################################
+ 10.0 16.93% ################
+ 20.0  3.97% ###
+ 30.0  1.72% #
+ 40.0  1.04% #
+ 50.0  0.76% 
+ 60.0  0.45% 
+ 70.0  0.52% 
+ 80.0  0.35% 
+ 90.0  0.29% 
+100.0  0.22% 
+110.0  0.19% 
+120.0  0.13% 
+130.0  0.05% 
+140.0  0.08% 
+150.0  0.09% 
+160.0  0.09% 
+170.0  0.05% 
+180.0  0.06% 
+190.0  0.02% 
+200.0  0.01% 
+...</code></pre>
+
+<p>Hm, ok. Looks like the average time on the site is not same as the <em>typical</em> time on the site, and the average is being skewed by outliers. You might recognize this as a Pareto distribution, which <a href='/2013/08/19/climbing-the-probability-distribution-ladder.html#one_important_exception'>has no well-defined mean</a> and is not really suitable for this kind of analysis.</p>
+
+<p>So let&#8217;s pick a different metric. We could try the median time on the site, which is not sensitive to outliers like the mean is. Or we could look at the percentage of users who spent more than some amount of time (say 30 seconds) on the site. Let&#8217;s go with that.</p>
+<table><thead><tr><th>Group</th><th>Shade of blue</th><th># of users</th><th>% who spent more than 30 seconds on the site</th></tr></thead><tbody><tr><td style='text-align: left;'>A</td><td style='text-align: left;'>this one</td><td style='text-align: left;'>1,028</td><td style='text-align: left;'>5.1%</td>
+</tr><tr><td style='text-align: left;'>B</td><td style='text-align: left;'>this one</td><td style='text-align: left;'>1,015</td><td style='text-align: left;'>6.7%</td>
+</tr></tbody></table>
+<p>Alright, that&#8217;s better. Now we have to ask whether that 1.6% difference can be explained by randomness or whether it has to be due to one color being better than the other. The question is equivalent to, if I flip a biased coin (that comes up heads 5.9% of the time, the overall rate) 1,028 times and then 1,015 times, what is the probability that the two experiments will yield results as far apart as 1.6%?</p>
+
+<p>An easy way to answer that is just to <a href='/2013/08/12/a-frequentist-approach-to-probability.html'>simulate it</a>.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>differenceOfMeans</span><span class='o'>(</span><span class='n'>bias</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>,</span> <span class='n'>n1</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>,</span> <span class='n'>n2</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Double</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='k'>for</span> <span class='o'>{</span>
+    <span class='n'>mean1</span> <span class='k'>&lt;-</span> <span class='n'>bernoulli</span><span class='o'>(</span><span class='n'>bias</span><span class='o'>).</span><span class='n'>repeat</span><span class='o'>(</span><span class='n'>n1</span><span class='o'>).</span><span class='n'>map</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>sum</span><span class='o'>.</span><span class='n'>toDouble</span> <span class='o'>/</span> <span class='n'>n1</span><span class='o'>)</span>
+    <span class='n'>mean2</span> <span class='k'>&lt;-</span> <span class='n'>bernoulli</span><span class='o'>(</span><span class='n'>bias</span><span class='o'>).</span><span class='n'>repeat</span><span class='o'>(</span><span class='n'>n2</span><span class='o'>).</span><span class='n'>map</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>sum</span><span class='o'>.</span><span class='n'>toDouble</span> <span class='o'>/</span> <span class='n'>n2</span><span class='o'>)</span>
+  <span class='o'>}</span> <span class='k'>yield</span> <span class='n'>mean1</span> <span class='o'>-</span> <span class='n'>mean2</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p>Let&#8217;s take a look at this distribution:</p>
+
+<pre><code>scala&gt; differenceOfMeans(0.059, 1028, 1015).hist
+-0.035  0.08% 
+-0.030  0.31% 
+-0.025  1.15% #
+-0.020  3.38% ###
+-0.015  7.34% #######
+-0.010 13.36% #############
+-0.005 16.24% ################
+ 0.000 18.25% ##################
+ 0.005 16.52% ################
+ 0.010 12.19% ############
+ 0.015  6.56% ######
+ 0.020  3.03% ###
+ 0.025  1.11% #
+ 0.030  0.33% 
+ 0.035  0.08% </code></pre>
+
+<p>OK, that looks a lot like normal distribution. We&#8217;ll come back to that later. For now, here&#8217;s the question we&#8217;re after:</p>
+
+<pre><code>scala&gt; differenceOfMeans(0.059, 1028, 1015).pr(x =&gt; math.abs(x) &gt; 0.016)
+res0: Double = 0.1202</code></pre>
+
+<p>About 12%. Not enough by statistical standards to call that significant.</p>
+
+<p>This distribution actually tells us something a little more general: if the background rate is 6.9% and we have about 1,000 trails per group, we <em>can&#8217;t</em> measure a difference smaller than about 2% — it will just look like statistical noise. More on this later.</p>
+
+<p>So you decide to let the experiment run a litte longer to get more data. You end up with this:</p>
+<table><thead><tr><th>Group</th><th>Shade of blue</th><th># of users</th><th>% who spent more than 30 seconds on the site</th></tr></thead><tbody><tr><td style='text-align: left;'>A</td><td style='text-align: left;'>this one</td><td style='text-align: left;'>10,091</td><td style='text-align: left;'>5.4%</td>
+</tr><tr><td style='text-align: left;'>B</td><td style='text-align: left;'>this one</td><td style='text-align: left;'>10,112</td><td style='text-align: left;'>6.6%</td>
+</tr></tbody></table>
+<p>So we have more data, but the difference has narrowed slightly to 1.2%. Let&#8217;s see what <code>differenceOfMeans</code> has to say now:</p>
+
+<pre><code>scala&gt; differenceOfMeans(0.06, 10091, 10112).hist
+-0.012  0.05% 
+-0.010  0.27% 
+-0.008  1.41% #
+-0.006  4.79% ####
+-0.004 11.88% ###########
+-0.002 19.61% ###################
+ 0.000 22.81% ######################
+ 0.002 20.99% ####################
+ 0.004 11.79% ###########
+ 0.006  4.89% ####
+ 0.008  1.22% #
+ 0.010  0.26% 
+ 0.012  0.02% 
+
+scala&gt; differenceOfMeans(0.06, 10091, 10112).pr(x =&gt; math.abs(x) &gt; 0.012)
+res1: Double = 0.0003</code></pre>
+
+<p>It&#8217;s the same bell curve, just much narrower. Now a difference of 1.2% is well within the realm of statistical signficance, at 0.03%.</p>
+
+<h3 id='choosing_the_sample_size'>Choosing the sample size</h3>
+
+<p>Astute observers will point out that <a href='http://www.evanmiller.org/how-not-to-run-an-ab-test.html'>this is not a good way to run an A/B test</a>. Collecting data and &#8220;peeking in&#8221; periodically until you see a significant result introduces all sorts of biases into your results. Really, you should be deciding ahead of time how many trials you want to run, given the background rate and the size of the difference you&#8217;d like to measure.</p>
+
+<p>Thankfully, you already know how to do that! Basically, you just play around with <code>differenceOfMeans</code> until you find the number of trials that gives you the significance level you want. For instance, if you know the background rate is 12%, and you&#8217;d like to measure a difference of ±3% at a 5% significance level by running a 50/50 experiment, you could do this:</p>
+
+<pre><code>scala&gt; differenceOfMeans(0.12, 100, 100).pr(x =&gt; math.abs(x) &gt; 0.03)
+res0: Double = 0.4692
+
+scala&gt; differenceOfMeans(0.12, 1000, 1000).pr(x =&gt; math.abs(x) &gt; 0.03)
+res1: Double = 0.0383
+
+scala&gt; differenceOfMeans(0.12, 800, 800).pr(x =&gt; math.abs(x) &gt; 0.03)
+res2: Double = 0.0637
+
+scala&gt; differenceOfMeans(0.12, 900, 900).pr(x =&gt; math.abs(x) &gt; 0.03)
+res3: Double = 0.0501</code></pre>
+
+<p>Just guess around with different sample sizes until the probability of measuring a difference that small is about 5%. If the probability is less than 5%, you could get away with fewer trials. If it&#8217;s greater than 5%, you won&#8217;t be able to measure as small an effect as you&#8217;d like.</p>
+
+<p>This also works if you want to run a 90/10 experiment instead of a 50/50 experiment.</p>
+
+<pre><code>scala&gt; differenceOfMeans(0.12, 100, 900).pr(x =&gt; math.abs(x) &gt; 0.03)
+res0: Double = 0.3738
+
+scala&gt; differenceOfMeans(0.12, 200, 1800).pr(x =&gt; math.abs(x) &gt; 0.03)
+res1: Double = 0.2137
+
+scala&gt; differenceOfMeans(0.12, 400, 3600).pr(x =&gt; math.abs(x) &gt; 0.03)
+res2: Double = 0.0802
+
+scala&gt; differenceOfMeans(0.12, 500, 4500).pr(x =&gt; math.abs(x) &gt; 0.03)
+res3: Double = 0.0473</code></pre>
+
+<p>Notice that it matters how you divide up the trials. The more uneven the groups are, the more total trials you need in order to measure the same effect at the same significance level.</p>
+
+<h3 id='a_familiar_pattern'>A familiar pattern</h3>
+
+<p>Because I was born the way I was, I want to generalize <code>differenceOfMeans</code> to handle arbitrary probability distributions instead of just biased coin flips.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>differenceOfMeans2</span><span class='o'>(</span><span class='n'>d</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Double</span><span class='o'>],</span> <span class='n'>n1</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>,</span> <span class='n'>n2</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Double</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
+  <span class='k'>for</span> <span class='o'>{</span>
+    <span class='n'>mean1</span> <span class='k'>&lt;-</span> <span class='n'>d</span><span class='o'>.</span><span class='n'>repeat</span><span class='o'>(</span><span class='n'>n1</span><span class='o'>).</span><span class='n'>map</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>sum</span><span class='o'>.</span><span class='n'>toDouble</span> <span class='o'>/</span> <span class='n'>n1</span><span class='o'>)</span>
+    <span class='n'>mean2</span> <span class='k'>&lt;-</span> <span class='n'>d</span><span class='o'>.</span><span class='n'>repeat</span><span class='o'>(</span><span class='n'>n2</span><span class='o'>).</span><span class='n'>map</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>sum</span><span class='o'>.</span><span class='n'>toDouble</span> <span class='o'>/</span> <span class='n'>n2</span><span class='o'>)</span>
+  <span class='o'>}</span> <span class='k'>yield</span> <span class='n'>mean1</span> <span class='o'>-</span> <span class='n'>mean2</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p>OK, now let&#8217;s try it out on a bunch of distributions and see what we get.</p>
+
+<pre><code>scala&gt; differenceOfMeans2(exponential(1), 1000, 1000).hist
+-0.14  0.16% 
+-0.12  0.63% 
+-0.10  1.53% #
+-0.08  3.46% ###
+-0.06  7.22% #######
+-0.04 12.04% ############
+-0.02 16.26% ################
+ 0.00 17.58% #################
+ 0.02 15.93% ###############
+ 0.04 12.16% ############
+ 0.06  7.06% #######
+ 0.08  3.44% ###
+ 0.10  1.80% #
+ 0.12  0.52% 
+ 0.14  0.13% 
+
+scala&gt; differenceOfMeans2(chi2(5), 1000, 1000).hist
+-0.45  0.09% 
+-0.40  0.17% 
+-0.35  0.77% 
+-0.30  1.53% #
+-0.25  3.10% ###
+-0.20  5.23% #####
+-0.15  7.70% #######
+-0.10 10.76% ##########
+-0.05 13.33% #############
+ 0.00 14.21% ##############
+ 0.05 13.12% #############
+ 0.10 10.98% ##########
+ 0.15  8.21% ########
+ 0.20  5.42% #####
+ 0.25  3.01% ###
+ 0.30  1.36% #
+ 0.35  0.54% 
+ 0.40  0.34% 
+ 0.45  0.08% 
+
+scala&gt; differenceOfMeans2(poisson(3).map(_.toDouble), 1000, 1000).hist
+-0.250  0.08% 
+-0.225  0.17% 
+-0.200  0.61% 
+-0.175  1.18% #
+-0.150  1.82% #
+-0.125  3.72% ###
+-0.100  5.61% #####
+-0.075  8.30% ########
+-0.050 10.57% ##########
+-0.025 11.77% ###########
+ 0.000 12.81% ############
+ 0.025 11.99% ###########
+ 0.050 10.49% ##########
+ 0.075  8.03% ########
+ 0.100  5.40% #####
+ 0.125  3.62% ###
+ 0.150  1.84% #
+ 0.175  1.19% #
+ 0.200  0.48% 
+ 0.225  0.21% 
+ 0.250  0.06% </code></pre>
+
+<p>You see the pattern — these are all normal distributions. This is our old friend the <a href='/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html#the_central_limit_theorem'>Central Limit Theorem</a>, which in one formulation states that means of samples drawn from any distribution will be normally distributed around the mean of the distribution, with the standard deviation of this distribution equal to the standard deviation of the underlying distribution divided by the square root of the sample size.</p>
+
+<p>The Central Limit Theorem also applies to the distribution of the difference of means of two samples from the same distribution. This distribution will also be normal, but with mean 0 and the standard deviation given by</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+\bar{\sigma} = \sqrt{\frac{\sigma^2}{N_1} + \frac{\sigma^2}{N_2}}
+%]]>
+</script>
+<p>where <script type='math/tex'>N_1</script> and <script type='math/tex'>N_2</script> are the sizes of the samples and <script type='math/tex'>\sigma</script> is the standard deviation of the underlying distribution.</p>
+
+<p>Let&#8217;s code it up and try it out.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>differenceOfMeansStdev</span><span class='o'>(</span><span class='n'>d</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Double</span><span class='o'>],</span> <span class='n'>n1</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>,</span> <span class='n'>n2</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Double</span> <span class='o'>=</span> <span class='o'>{</span>
+  <span class='k'>val</span> <span class='n'>stdev</span> <span class='k'>=</span> <span class='n'>d</span><span class='o'>.</span><span class='n'>stdev</span>
+  <span class='k'>val</span> <span class='n'>variance</span> <span class='k'>=</span> <span class='n'>stdev</span> <span class='o'>*</span> <span class='n'>stdev</span>
+  <span class='n'>math</span><span class='o'>.</span><span class='n'>sqrt</span><span class='o'>(</span><span class='n'>variance</span> <span class='o'>/</span> <span class='n'>n1</span> <span class='o'>+</span> <span class='n'>variance</span> <span class='o'>/</span> <span class='n'>n2</span><span class='o'>)</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p>Now these should all be approximately the same:</p>
+
+<pre><code>scala&gt; differenceOfMeans2(bernoulli(0.12).map(_.toDouble), 1000, 1000).stdev
+res0: Double = 0.01448239649125764
+
+scala&gt; differenceOfMeansStdev(bernoulli(0.12).map(_.toDouble), 1000, 1000)
+res1: Double = 0.014506756356953443</code></pre>
+
+<p>Yep.</p>
+
+<pre><code>scala&gt; differenceOfMeans2(exponential(2), 100, 800).stdev
+res2: Double = 0.053271501413756576
+
+scala&gt; differenceOfMeansStdev(exponential(2), 100, 800)
+res3: Double = 0.05291488042083099</code></pre>
+
+<p>OK.</p>
+
+<pre><code>scala&gt; differenceOfMeans(chi2(5), 10, 10).stdev
+res4: Double = 1.3932655556719438
+
+scala&gt; differenceOfMeansStdev(chi2(5), 10, 10)
+res5: Double = 1.392402069551092</code></pre>
+
+<p>Got it.</p>
+
+<pre><code>scala&gt; differenceOfMeans2(poisson(3).map(_.toDouble), 100, 50).stdev
+res6: Double = 0.3043985821139812
+
+scala&gt; differenceOfMeansStdev(poisson(3).map(_.toDouble), 100, 50)
+res7: Double = 0.29911666001743664</code></pre>
+
+<p>I believe you.</p>
+
+<h3 id='choosing_the_sample_size_again'>Choosing the sample size, again</h3>
+
+<p>Now when you&#8217;re trying to decide how many trials to run, you can do a little better than guessing around until you hit on a number that gives you the level of significance you want. By renaming some variables in the above formula and rearranging some things a bit (I won&#8217;t bore you with the algebra — I mean, exercise for the reader!), you get a formula that will answer this question directly:</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+N = \frac{4\sigma^2}{\Delta^2q(1-q)}
+%]]>
+</script>
+<p>This gives <script type='math/tex'>N</script>, the total number of trials across all groups, in terms of <script type='math/tex'>q</script>, the fraction of trials that will go in group A (say, 50% or 90% or whatever), <script type='math/tex'>\Delta</script>, the effect size you want to be able to measure (±3% in our original example), and <script type='math/tex'>\sigma</script>, the standard deviation of the underlying distribution (which, if you&#8217;re dealing with a Bernoulli distribution, is just <script type='math/tex'>\sqrt{p(1-p)}</script> where the bias is <script type='math/tex'>p</script>), provided you want a 5% significance level (about <script type='math/tex'>2\bar{\sigma}</script>).</p>
+
+<p>Let&#8217;s see if it holds up.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>numberOfTrials</span><span class='o'>(</span><span class='n'>stdev</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>,</span> <span class='n'>delta</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>,</span> <span class='n'>q</span><span class='k'>:</span> <span class='kt'>Double</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='o'>=</span> <span class='o'>{</span>
+  <span class='o'>((</span><span class='mi'>4</span> <span class='o'>*</span> <span class='n'>stdev</span> <span class='o'>*</span> <span class='n'>stdev</span><span class='o'>)</span> <span class='o'>/</span> <span class='o'>(</span><span class='n'>delta</span> <span class='o'>*</span> <span class='n'>delta</span> <span class='o'>*</span> <span class='n'>q</span> <span class='o'>*</span> <span class='o'>(</span><span class='mi'>1</span> <span class='o'>-</span> <span class='n'>q</span><span class='o'>))).</span><span class='n'>toInt</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p>Recall that with a 12% background rate, looking for a 3% difference with a 50/50 experiment, we found that 1,800 trials was about what was needed:</p>
+
+<pre><code>scala&gt; differenceOfMeans(0.12, 900, 900).pr(x =&gt; math.abs(x) &gt; 0.03)
+res0: Double = 0.0501</code></pre>
+
+<p>Let&#8217;s try it the new fancy way:</p>
+
+<pre><code>scala&gt; numberOfTrials(math.sqrt(0.12*(1-0.12)), 0.03, 0.5)
+res1: Int = 1877</code></pre>
+
+<p>Ooh. Again. A 90/10 experiment this time. 5,000 total trials was what got us closest:</p>
+
+<pre><code>scala&gt; differenceOfMeans(0.12, 500, 4500).pr(x =&gt; math.abs(x) &gt; 0.03)
+res2: Double = 0.0473
+
+scala&gt; numberOfTrials(math.sqrt(0.12*(1-0.12)), 0.03, 0.1)
+res3: Int = 5214</code></pre>
+
+<p>Pretty close! One more time, the other way around. Say I have a background rate of 42% and I want to measure a 10% difference using, I don&#8217;t know, a 70/30 experiment.</p>
+
+<pre><code>scala&gt; numberOfTrials(math.sqrt(0.42*(1-0.42)), 0.1, 0.3)
+res4: Int = 464</code></pre>
+
+<p>464 total trials means 139 trials in group A and 325 trials in group B.</p>
+
+<pre><code>scala&gt; differenceOfMeans(0.42, 139, 325).pr(x =&gt; math.abs(x) &gt; 0.1)
+res5: Double = 0.0425</code></pre>
+
+<p>OK, stop! I believe you, Central Limit Theorem.</p>
+    </div>
+
+    
+
+  
+
+
+  <div style="float: right; margin-top: 5px">
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/understanding-a-b-test-analysis.html" data-text="Understanding A/B Test Analysis" data-via="jliszka">Tweet</a>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+</div>
+
+
+
+
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-tags"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="/tags.html#probability-ref">probability <span>5</span></a></li>
+    
+  
+
+
+
+    </ul>
+    
+    <div style="clear: both"></div>
+
+    <hr>
+    <div class="navigation">
+    
+    
+      <div style="clear: both"></div>
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'jliszka'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+</div>
+
+
+      </div>
+      <hr>
+      <footer>
+        <p>&copy; 2013 Jason Liszka
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </footer>
+
+    </div>
+
+    
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-42567355-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+  </body>
+</html>
+

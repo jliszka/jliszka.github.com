@@ -210,7 +210,7 @@ scala&gt; sampleMean(chi2(5)).hist
 
 <p>OK, starting to see a pattern here. Let&#8217;s look at some discrete distributions.</p>
 
-<pre><code>scala&gt; sampleMean(bernoulli(0.8).map(b =&gt; if (b) 1.0 else 0.0)).hist
+<pre><code>scala&gt; sampleMean(bernoulli(0.8).map(_.toDouble).hist
 0.68  0.33% 
 0.70  0.85% 
 0.72  2.14% ##
@@ -365,7 +365,7 @@ res12: Double = 0.17756920958319758</code></pre>
 
 <p>You&#8217;ve probably seen <a href='http://en.wikipedia.org/wiki/Standard_deviation'>this diagram</a> before:</p>
 
-<p><img alt='the normal distribution' src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' /></p>
+<p><img src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' alt='the normal distribution' /></p>
 
 <p>This is what we&#8217;re working with. A value drawn from a normal distribution will be within 2 standard deviations of the mean 96% of the time. Since sample means are normally distributed around the true mean, sample means will be within 2 standard errors of the true mean 96% of the time. If a sample mean is more than 2 standard deviations away from the true mean, the sample is unlikely to have been drawn from that distribution.</p>
 
@@ -403,9 +403,9 @@ res0: Double = 0.0104</code></pre>
 
 <p>So one day you make the button red and keep track of the fraction of visitors who click on it. After some period of time you observe that 53 out of 810 visitors clicked the (red) button. That&#8217;s 6.5%, a decent improvement! (Some would say it&#8217;s a 12% improvement; others a 0.7% improvement. Potato, potato.) But is this difference something we&#8217;re likely to observe just by chance, or was making the button red a meaningful change?</p>
 
-<p>We can model the number of clicks as a Bernoulli distribution with a 5.8% success probability. In order to do this I&#8217;ll have to translate <code>true</code> to 1 click and <code>false</code> to 0 clicks.</p>
+<p>We can model the number of clicks as a Bernoulli distribution with a 5.8% success probability.</p>
 
-<pre><code>scala&gt; val d = bernoulli(0.058).map(b =&gt; if (b) 1.0 else 0.0)
+<pre><code>scala&gt; val d = bernoulli(0.058).map(_.toDouble)
 d: Distribution[Double] = &lt;distribution&gt;
 
 scala&gt; d.stdev

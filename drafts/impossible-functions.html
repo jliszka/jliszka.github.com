@@ -114,7 +114,7 @@
 <div class="row-fluid post-full">
   <div class="span12">
     <div class="date">
-      <span>02 October 2013</span>
+      <span>08 October 2013</span>
     </div>
     <div class="content">
       <p>I claim to have a function <code>inj</code> that maps any integer-valued function you give it to a different integer. That is, if you call it on two functions that differ even at one point, it will return a different integer for each one.</p>
@@ -143,6 +143,24 @@
 <p>Alright, so what could possibly be going on inside <code>inj</code>? All it has to work with is its argument, <code>f</code>. It has to be deterministic because you&#8217;d want <code>inj(f)</code> to be equal to <code>inj(f)</code>. You guess all it can do is call <code>f</code>. And since it has to return in a finite amount of time, it can only call <code>f</code> a finite number of times.</p>
 
 <p>Aha! All you need to do is find an integer that <code>inj</code> doesn&#8217;t call <code>f</code> on. Then you can construct <code>g</code> that is the same as <code>f</code> everywhere except that number.</p>
+
+<p>3 ways:</p>
+
+<ul>
+<li>guessing</li>
+
+<li>but you can only call inj once! secret f that records what it&#8217;s called on</li>
+
+<li>relies on continuity of inj! diagonalization</li>
+</ul>
+
+<p>inj: (Int =&gt; Int) =&gt; Int counter: (Int =&gt; Int) =&gt; (Int =&gt; Int, Int)</p>
+
+<p>f(n) = inj-1(n)(n) + 1 // well-defined provided inj is invertible inj(f) =&gt; k f(k) = inj-1(k)(k) + 1 f(k) = f(k) + 1 but really, f(k) = inj-1(k)(k) + 1 = g(k) + 1</p>
+
+<p>inj(g) = g(1) + g(2) = 1 inj(h) = h(1) + h(2) = 2 inj(f) = inj-1(1)(1) + 1 + inj-1(2)(2) + 1</p>
+
+<p>inj(id) inj(const(n))</p>
     </div>
 
     
