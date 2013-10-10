@@ -122,6 +122,40 @@ task :publish do
   system "mv #{old_file} #{new_file}"
 end # task :publish
 
+desc "Select a draft to promote to a post."
+task :promote do
+  drafts_path = CONFIG['drafts']
+  posts_path = CONFIG['posts']
+  puts "Promote which draft?"
+  drafts = Dir.glob(File.join(drafts_path, "*.#{CONFIG['post_ext']}"))
+  drafts.each_with_index do |draft, index|
+    begin
+      content = File.read(draft)
+      if content =~ /\A(---\s*\n.*?\n?)^(---\s*$\n?)/m
+        data = YAML.load($1)
+      end
+    rescue => e
+      puts "Error reading file #{draft}: #{e.message}"
+    rescue SyntaxError => e
+      puts "YAML Exception reading #{draft}: #{e.message}"
+    end
+    puts "  [#{index}]  #{data['title']}"
+  end
+  print "> "
+  STDOUT.flush
+  answer = STDIN.gets.chomp
+  if /\d+/.match(answer) and not drafts[answer.to_i].nil?
+    source = drafts[answer.to_i]
+    filename = source.gsub(/#{drafts_path}\//, '')
+    dest = File.join(posts_path, "#{Time.now.strftime('%Y-%m-%d')}-#{filename}")
+    puts "Publishing post to: #{dest}"
+    FileUtils.mv(source, dest)
+  else
+    puts "Index not found!"
+  end
+end
+
+
 desc "Launch preview environment"
 task :preview do
   system "jekyll --auto --server"

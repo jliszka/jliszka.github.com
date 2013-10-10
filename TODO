@@ -9,7 +9,10 @@ markov chains
 k-s test
 alias method
 stochastic calculus, ito calculus
-difference of means
+
+3 ways your A/B test can go wrong
+- underlying distribution has no mean
+- independence assumption
 
 reversible computing
 not a monad tutorial
