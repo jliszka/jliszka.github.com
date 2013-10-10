@@ -30,21 +30,21 @@ This is a continuation of my [previous post on the Central Limit Theorem]({{ sit
 
 ### A/B test analysis
 
-Say you're designing a new feature for your website and you can't decide which [shade of blue]() to use. So you let your
+Say you're designing a new feature for your website and you can't decide which shade of blue to use. So you let your
 users decide by trying both — some users see <span class="blue1">this shade</span> and some users get
 <span class="blue2">this one</span>. Whichever group of users spends more time on the site will determine which color
 you end up going with.
 
-You run your experiment for a day and collect the following data:
+You run your experiment for a little while and collect the following data:
 
 | Group | Shade of blue | # of users | Average time on site |
 |-|-|-|-|
 | A | <span class="blue1">this one</span> | 1,028 |  91.4 seconds |
-| B | <span class="blue2">this one</span> | 1,015 | 113.8 seconds |
+| B | <span class="blue2">this one</span> | 1,015 | 103.8 seconds |
 
 Looks like group B did better! But it's a small difference, how can you be sure it's significant? In other words, assuming that
 the shade of blue had no effect on the amount of time a user spends on the site, what is the probability that you would
-have observed a difference of 21.4 seconds? In _other_ other words, given the distribution of the amount of
+have observed a difference of 11.4 seconds? In _other_ other words, given the distribution of the amount of
 time different users spend on the site, if you draw 2 samples of 1,000 or so from this distribution, what is the
 probability that you would see a difference of 21.4 (or more) in the averages of the samples?
 
@@ -128,9 +128,9 @@ OK, that looks a lot like normal distribution. We'll come back to that later. Fo
 
 About 12%. Not small enough to reject the idea that the two colors perform the same.
 
-This distribution actually tells you something important, though: if the overall rate is 5.9% and you have about
-1,000 trials per group, you _can't_ measure a difference smaller than about 2% — it will just look like statistical
-noise. More on this later.
+This distribution actually tells you something important, though: if the overall rate is 5.9% and you have about 1,000
+trials per group, you _can't_ measure a difference smaller than about 2%, even if it's real — it will just look like
+statistical noise. More on this later.
 
 So you decide to let the experiment run a litte longer to get more data. A while later you have this:
 
@@ -160,9 +160,8 @@ has to say about that:
     scala> differenceOfMeans(0.06, 10091, 10112).pr(x => math.abs(x) > 0.012)
     res1: Double = 0.0003
 
-It's the same shape, but much narrower. Now there's only a 0.03% chance that you'd observe a difference of 1.2%,
-assuming the colors perform the same. So you can reject that notion and conclude that one color almost definitely performs
-better than the other.
+Now there's only a 0.03% chance that you'd observe a difference of 1.2%, assuming the colors perform the same. So you
+can reject that notion and conclude that one color almost definitely performs better than the other.
 
 ### Choosing the sample size
 
@@ -222,7 +221,7 @@ def differenceOfMeans2(d: Distribution[Double], n1: Int, n2: Int): Distribution[
 }
 {% endhighlight %}
 
-OK, now let's try it out on a bunch of distributions and see what we get.
+OK, now let's try it out on [a few different distributions]({{ site.posts[-2].url }}) and see what we get.
 
     scala> differenceOfMeans2(exponential(1), 1000, 1000).hist
     -0.14  0.16% 
@@ -419,7 +418,7 @@ OK, stop! I believe you, Central Limit Theorem.
 ### Conclusion
 
 This is basically magic. I still haven't wrapped my head around what it is about randomly distributed numbers or the
-properties of the standard deviation that make the Central Limit Theorem true.
+properties of the standard deviation that makes the Central Limit Theorem true.
 
 What's more, the formula given above for the standard error of the difference of means of samples drawn from the same
 distribution is a special case of a slightly more general formula that applies to samples drawn from any two
