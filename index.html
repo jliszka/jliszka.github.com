@@ -91,10 +91,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -124,6 +120,8 @@
 <h2 id='archive'>Archive</h2>
 <ul class='posts'>
   
+    <li><span>10 Oct 2013</span> &raquo; <a href='/2013/10/10/understanding-a-b-test-analysis.html'>Understanding A/B Test Analysis</a></li>
+  
     <li><span>01 Oct 2013</span> &raquo; <a href='/2013/10/01/how-traffic-actually-works.html'>How traffic actually works</a></li>
   
     <li><span>24 Sep 2013</span> &raquo; <a href='/2013/09/24/more-backwards-functions-unevaluating-polynomials.html'>More backwards functions: Unevaluating polynomials</a></li>
@@ -143,6 +141,41 @@
 </ul>
 <h2 id='recent_posts'>Recent Posts</h2>
 <div class='post-content-truncate'>
+
+  
+    <h2 class='title'>Understanding A/B Test Analysis</h2>
+    <style type='text/css'>
+th {
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+tbody tr:nth-child(odd) {
+  background: #eee;
+}
+tbody tr:nth-child(even) {
+  background: #fff;
+}
+.blue1 {
+  color: #16f;
+}
+.blue2 {
+  color: #51f;
+}
+</style>
+<p>This is a continuation of my <a href='/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html'>previous post on the Central Limit Theorem</a>.</p>
+
+<p>Say you&#8217;re designing a new feature for your website and you can&#8217;t decide which shade of blue to use. So you let your users decide by trying both — some users see <span class='blue1'>this shade</span> and some users get <span class='blue2'>this one</span>. Whichever group of users spends more time on the site will determine which color you end up going with.</p>
+
+<p>You run your experiment for a little while and collect the following data:</p>
+<table><thead><tr><th>Group</th><th>Shade of blue</th><th># of users</th><th>Average time on site</th></tr></thead><tbody><tr><td style='text-align: left;'>A</td><td style='text-align: left;'><span class='blue1'>this one</span></td><td style='text-align: left;'>1,028</td><td style='text-align: left;'>91.4 seconds</td>
+</tr><tr><td style='text-align: left;'>B</td><td style='text-align: left;'><span class='blue2'>this one</span></td><td style='text-align: left;'>1,015</td><td style='text-align: left;'>103.8 seconds</td>
+</tr></tbody></table>
+<p>Looks like group B did better! But it&#8217;s a small difference, how can you be sure it&#8217;s significant? In other words, assuming that the shade of blue had no effect on the amount of time a user spends on the site, what is the probability that you would have observed a difference of 11.4 seconds? In <em>other</em> other words, given the distribution of the amount of time different users spend on the site, if you draw 2 samples of 1,000 or so from this distribution, what is the probability that you would see a difference of 21.4 (or more) in the averages of the samples?</p>
+
+<p>Well, you would expect that that depends a lot on the distribution. Here is the distribution you observed:</p>
+
+    <a href='/2013/10/10/understanding-a-b-test-analysis.html'>Read more</a>
+  
 
   
     <h2 class='title'>How traffic actually works</h2>
