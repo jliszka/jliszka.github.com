@@ -28,8 +28,6 @@ tbody tr:nth-child(even) {
 
 This is a continuation of my [previous post on the Central Limit Theorem]({{ site.posts[-3].url }}).
 
-### A/B test analysis
-
 Say you're designing a new feature for your website and you can't decide which shade of blue to use. So you let your
 users decide by trying both — some users see <span class="blue1">this shade</span> and some users get
 <span class="blue2">this one</span>. Whichever group of users spends more time on the site will determine which color
@@ -49,6 +47,8 @@ time different users spend on the site, if you draw 2 samples of 1,000 or so fro
 probability that you would see a difference of 21.4 (or more) in the averages of the samples?
 
 Well, you would expect that that depends a lot on the distribution. Here is the distribution you observed:
+
+<!-- more -->
 
       0.0 72.98% ########################################################################
      10.0 16.93% ################
@@ -77,8 +77,8 @@ Hm, OK. Looks like the average time on the site is not same as the _typical_ tim
 by outliers. You might recognize this as a Pareto distribution, which [has no well-defined mean]({{ site.posts[-2].url }}#one_important_exception)
 and is not really suitable for this kind of analysis.
 
-So let's pick a different metric. We could try the median time on the site, which is not sensitive to outliers like the
-mean is. Or we could look at the percentage of users who spent more than some amount of time (say 30 seconds) on the
+So let's pick a different metric. You could try the median time on the site, which is not sensitive to outliers like the
+mean is. Or you could look at the percentage of users who spent more than some amount of time (say 30 seconds) on the
 site. Let's go with that.
 
 | Group | Shade of blue | # of users | % who spent more than 30 seconds on the site |
@@ -86,8 +86,8 @@ site. Let's go with that.
 | A | <span class="blue1">this one</span> | 1,028 | 5.1% |
 | B | <span class="blue2">this one</span> | 1,015 | 6.7% |
 
-Now we have to ask whether this 1.6% difference can be explained by randomness or whether it has
-to be due to one color being better than the other. The question is equivalent to, if I flip a biased coin (that comes
+Now you have to ask whether this 1.6% difference can be explained by randomness or whether it has
+to be due to one color being better than the other. The question is equivalent to, if you flip a biased coin (that comes
 up heads 5.9% of the time, the overall rate) 1,028 times and then 1,015 times, and look at the number of heads in each
 group, what is the probability that the two groups will be as far apart as 1.6%?
 
@@ -383,7 +383,7 @@ def numberOfTrials(stdev: Double, delta: Double, q: Double): Int = {
 }
 {% endhighlight %}
 
-Recall that with a 12% overall rate, looking for a ±3% difference with a 50/50 experiment, we found
+Recall that with a 12% overall rate, looking for a ±3% difference with a 50/50 experiment, you found
 that 1,800 trials was about what was needed:
 
     scala> differenceOfMeans(0.12, 900, 900).pr(x => math.abs(x) > 0.03)
