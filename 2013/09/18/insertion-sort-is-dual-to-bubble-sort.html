@@ -120,27 +120,27 @@
 <h3 id='the_main_functions'>The main functions</h3>
 
 <p>Here&#8217;s the code:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>insertionSort</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
-  <span class='n'>xs</span> <span class='k'>match</span> <span class='o'>{</span>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>insertionSort</span><span class='p'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>])</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='n'>xs</span> <span class='k'>match</span> <span class='p'>{</span>
     <span class='k'>case</span> <span class='nc'>Nil</span> <span class='k'>=&gt;</span> <span class='nc'>Nil</span>
-    <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='o'>{</span>
-      <span class='k'>val</span> <span class='n'>s</span> <span class='k'>=</span> <span class='n'>insertionSort</span><span class='o'>(</span><span class='n'>t</span><span class='o'>)</span>
-      <span class='n'>insert</span><span class='o'>(</span><span class='n'>h</span><span class='o'>,</span> <span class='n'>s</span><span class='o'>)</span>
-    <span class='o'>}</span>
-  <span class='o'>}</span>
-<span class='o'>}</span>
+    <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='p'>{</span>
+      <span class='k'>val</span> <span class='n'>s</span> <span class='k'>=</span> <span class='n'>insertionSort</span><span class='p'>(</span><span class='n'>t</span><span class='p'>)</span>
+      <span class='n'>insert</span><span class='p'>(</span><span class='n'>h</span><span class='p'>,</span> <span class='n'>s</span><span class='p'>)</span>
+    <span class='p'>}</span>
+  <span class='p'>}</span>
+<span class='p'>}</span>
 </code></pre></div>
 <p><code>insertionSort</code> sorts a list by inserting the head of the list into the recursively sorted tail, in such a way that it remains sorted.</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>bubbleSort</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
-  <span class='n'>xs</span> <span class='k'>match</span> <span class='o'>{</span>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>bubbleSort</span><span class='p'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>])</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='n'>xs</span> <span class='k'>match</span> <span class='p'>{</span>
     <span class='k'>case</span> <span class='nc'>Nil</span> <span class='k'>=&gt;</span> <span class='nc'>Nil</span>
-    <span class='k'>case</span> <span class='n'>xs</span> <span class='k'>=&gt;</span> <span class='o'>{</span>
-      <span class='k'>val</span> <span class='o'>(</span><span class='n'>h</span><span class='o'>,</span> <span class='n'>t</span><span class='o'>)</span> <span class='k'>=</span> <span class='n'>bubble</span><span class='o'>(</span><span class='n'>xs</span><span class='o'>)</span>
-      <span class='k'>val</span> <span class='n'>s</span> <span class='k'>=</span> <span class='n'>bubbleSort</span><span class='o'>(</span><span class='n'>t</span><span class='o'>)</span>
+    <span class='k'>case</span> <span class='n'>xs</span> <span class='k'>=&gt;</span> <span class='p'>{</span>
+      <span class='k'>val</span> <span class='p'>(</span><span class='n'>h</span><span class='p'>,</span> <span class='n'>t</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>bubble</span><span class='p'>(</span><span class='n'>xs</span><span class='p'>)</span>
+      <span class='k'>val</span> <span class='n'>s</span> <span class='k'>=</span> <span class='n'>bubbleSort</span><span class='p'>(</span><span class='n'>t</span><span class='p'>)</span>
       <span class='n'>h</span> <span class='o'>::</span> <span class='n'>s</span>
-    <span class='o'>}</span>
-  <span class='o'>}</span>  
-<span class='o'>}</span>
+    <span class='p'>}</span>
+  <span class='p'>}</span>  
+<span class='p'>}</span>
 </code></pre></div>
 <p><code>bubbleSort</code> sorts a list by bubbling the smallest element to the front of the list and recursively sorting the tail.</p>
 
@@ -157,27 +157,27 @@
 <h3 id='the_helper_functions'>The helper functions</h3>
 
 <p>Here&#8217;s the code:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>insert</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>A</span><span class='o'>,</span> <span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
-  <span class='n'>xs</span> <span class='k'>match</span> <span class='o'>{</span>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>insert</span><span class='p'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]](</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>A</span><span class='p'>,</span> <span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>])</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='n'>xs</span> <span class='k'>match</span> <span class='p'>{</span>
     <span class='k'>case</span> <span class='nc'>Nil</span> <span class='k'>=&gt;</span> <span class='n'>x</span> <span class='o'>::</span> <span class='nc'>Nil</span>
-    <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='o'>{</span>
-      <span class='k'>val</span> <span class='o'>(</span><span class='n'>a</span><span class='o'>,</span> <span class='n'>b</span><span class='o'>)</span> <span class='k'>=</span> <span class='n'>sort</span><span class='o'>(</span><span class='n'>x</span><span class='o'>,</span> <span class='n'>h</span><span class='o'>)</span>
-      <span class='k'>val</span> <span class='n'>r</span> <span class='k'>=</span> <span class='n'>insert</span><span class='o'>(</span><span class='n'>b</span><span class='o'>,</span> <span class='n'>t</span><span class='o'>)</span>
+    <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='p'>{</span>
+      <span class='k'>val</span> <span class='p'>(</span><span class='n'>a</span><span class='p'>,</span> <span class='n'>b</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>sort</span><span class='p'>(</span><span class='n'>x</span><span class='p'>,</span> <span class='n'>h</span><span class='p'>)</span>
+      <span class='k'>val</span> <span class='n'>r</span> <span class='k'>=</span> <span class='n'>insert</span><span class='p'>(</span><span class='n'>b</span><span class='p'>,</span> <span class='n'>t</span><span class='p'>)</span>
       <span class='n'>a</span> <span class='o'>::</span> <span class='n'>r</span>
-    <span class='o'>}</span>
-  <span class='o'>}</span>
-<span class='o'>}</span>
+    <span class='p'>}</span>
+  <span class='p'>}</span>
+<span class='p'>}</span>
 </code></pre></div>
 <p><code>insert</code>&#8217;s job is to insert an item into an already-sorted list in such a way that the list remains sorted.</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>bubble</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span><span class='k'>:</span> <span class='o'>(</span><span class='kt'>A</span><span class='o'>,</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>])</span> <span class='k'>=</span> <span class='o'>{</span>
-  <span class='n'>xs</span> <span class='k'>match</span> <span class='o'>{</span>
-    <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='o'>{</span>
-      <span class='k'>val</span> <span class='o'>(</span><span class='n'>x</span><span class='o'>,</span> <span class='n'>r</span><span class='o'>)</span> <span class='k'>=</span> <span class='n'>bubble</span><span class='o'>(</span><span class='n'>t</span><span class='o'>)</span>
-      <span class='k'>val</span> <span class='o'>(</span><span class='n'>a</span><span class='o'>,</span> <span class='n'>b</span><span class='o'>)</span> <span class='k'>=</span> <span class='n'>sort</span><span class='o'>(</span><span class='n'>x</span><span class='o'>,</span> <span class='n'>h</span><span class='o'>)</span>
-      <span class='o'>(</span><span class='n'>a</span><span class='o'>,</span> <span class='n'>b</span> <span class='o'>::</span> <span class='n'>r</span><span class='o'>)</span>
-    <span class='o'>}</span>
-  <span class='o'>}</span>
-<span class='o'>}</span>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>bubble</span><span class='p'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>])</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>A</span><span class='p'>,</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>])</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='n'>xs</span> <span class='k'>match</span> <span class='p'>{</span>
+    <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='p'>{</span>
+      <span class='k'>val</span> <span class='p'>(</span><span class='n'>x</span><span class='p'>,</span> <span class='n'>r</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>bubble</span><span class='p'>(</span><span class='n'>t</span><span class='p'>)</span>
+      <span class='k'>val</span> <span class='p'>(</span><span class='n'>a</span><span class='p'>,</span> <span class='n'>b</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>sort</span><span class='p'>(</span><span class='n'>x</span><span class='p'>,</span> <span class='n'>h</span><span class='p'>)</span>
+      <span class='p'>(</span><span class='n'>a</span><span class='p'>,</span> <span class='n'>b</span> <span class='o'>::</span> <span class='n'>r</span><span class='p'>)</span>
+    <span class='p'>}</span>
+  <span class='p'>}</span>
+<span class='p'>}</span>
 </code></pre></div>
 <p><code>bubble</code>&#8217;s job is to bubble the smallest item up to the front of the list and return that item plus the rest of the list.</p>
 
@@ -186,9 +186,9 @@
 <p><img alt='helper function data flow' src='/assets/img/helper.png' /></p>
 
 <p>The only thing left is this <code>sort</code> method, which takes 2 arguments and returns them in sorted order. Which I guess is the same if you run it backwards?</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>sort</span><span class='o'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='o'>[</span><span class='kt'>A</span><span class='o'>]](</span><span class='n'>a</span><span class='k'>:</span> <span class='kt'>A</span><span class='o'>,</span> <span class='n'>b</span><span class='k'>:</span> <span class='kt'>A</span><span class='o'>)</span><span class='k'>:</span> <span class='o'>(</span><span class='kt'>A</span><span class='o'>,</span> <span class='kt'>A</span><span class='o'>)</span> <span class='k'>=</span> <span class='o'>{</span>
-  <span class='k'>if</span> <span class='o'>(</span><span class='n'>a</span> <span class='o'>&lt;</span> <span class='n'>b</span><span class='o'>)</span> <span class='o'>(</span><span class='n'>a</span><span class='o'>,</span> <span class='n'>b</span><span class='o'>)</span> <span class='k'>else</span> <span class='o'>(</span><span class='n'>b</span><span class='o'>,</span> <span class='n'>a</span><span class='o'>)</span>
-<span class='o'>}</span>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>sort</span><span class='p'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]](</span><span class='n'>a</span><span class='k'>:</span> <span class='kt'>A</span><span class='p'>,</span> <span class='n'>b</span><span class='k'>:</span> <span class='kt'>A</span><span class='p'>)</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>A</span><span class='p'>,</span> <span class='kt'>A</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='k'>if</span> <span class='p'>(</span><span class='n'>a</span> <span class='o'>&lt;</span> <span class='n'>b</span><span class='p'>)</span> <span class='p'>(</span><span class='n'>a</span><span class='p'>,</span> <span class='n'>b</span><span class='p'>)</span> <span class='k'>else</span> <span class='p'>(</span><span class='n'>b</span><span class='p'>,</span> <span class='n'>a</span><span class='p'>)</span>
+<span class='p'>}</span>
 </code></pre></div>
 <p>So, there you have it. Aside from the <code>Nil</code> cases and the question of <code>sort</code> being its own opposite, if you take a machine that does insertion sort and run it in reverse, you get a machine that does bubble sort.</p>
 

@@ -123,15 +123,15 @@ f(x) = 6 + 5x + 2x^3
 res0: (Int, Int) = (8, 1070)</code></pre>
 
 <p>For some reason it echoes the input back out to you. Here&#8217;s the code you might write:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>evalPoly</span><span class='o'>(</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>,</span> <span class='n'>coeffs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>Int</span><span class='o'>])</span><span class='k'>:</span> <span class='o'>(</span><span class='kt'>Int</span><span class='o'>,</span> <span class='kt'>Int</span><span class='o'>)</span> <span class='k'>=</span> <span class='o'>{</span>
-  <span class='k'>def</span> <span class='n'>eval</span><span class='o'>(</span><span class='n'>cs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>Int</span><span class='o'>])</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='o'>=</span> <span class='o'>{</span>
-    <span class='n'>cs</span> <span class='k'>match</span> <span class='o'>{</span>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>evalPoly</span><span class='p'>(</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>coeffs</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>Int</span><span class='p'>])</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>Int</span><span class='p'>,</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='k'>def</span> <span class='nf'>eval</span><span class='p'>(</span><span class='n'>cs</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>Int</span><span class='p'>])</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='p'>= {</span>
+    <span class='n'>cs</span> <span class='k'>match</span> <span class='p'>{</span>
       <span class='k'>case</span> <span class='nc'>Nil</span> <span class='k'>=&gt;</span> <span class='mi'>0</span>
-      <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='n'>x</span> <span class='o'>*</span> <span class='n'>eval</span><span class='o'>(</span><span class='n'>t</span><span class='o'>)</span> <span class='o'>+</span> <span class='n'>h</span>
-    <span class='o'>}</span>
-  <span class='o'>}</span>
-  <span class='o'>(</span><span class='n'>x</span><span class='o'>,</span> <span class='n'>eval</span><span class='o'>(</span><span class='n'>coeffs</span><span class='o'>))</span>
-<span class='o'>}</span>
+      <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='n'>x</span> <span class='o'>*</span> <span class='n'>eval</span><span class='p'>(</span><span class='n'>t</span><span class='p'>)</span> <span class='o'>+</span> <span class='n'>h</span>
+    <span class='p'>}</span>
+  <span class='p'>}</span>
+  <span class='p'>(</span><span class='n'>x</span><span class='p'>,</span> <span class='n'>eval</span><span class='p'>(</span><span class='n'>coeffs</span><span class='p'>))</span>
+<span class='p'>}</span>
 </code></pre></div>
 <p>This should not be surprising.</p>
 
@@ -145,47 +145,47 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))</code></pre>
 <p>Wait, what? I thought you needed <script type='math/tex'>N+1</script> points to determine an <script type='math/tex'>N</script>-degree polynomial. Here I&#8217;ve seemingly done it with just one point. To spoil the surprise a little, <code>unevalPoly</code> doesn&#8217;t always work. But how does it work even some of the time? How would you go about coding this up?</p>
 
 <p>Having noticed that the input to <code>unevalPoly</code> is the output of <code>evalPoly</code>, and vice versa, one tack we can try is to write <code>evalPoly</code> backwards. First let me rewrite it slightly:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>evalPoly</span><span class='o'>(</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>,</span> <span class='n'>coeffs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>Int</span><span class='o'>])</span><span class='k'>:</span> <span class='o'>(</span><span class='kt'>Int</span><span class='o'>,</span> <span class='kt'>Int</span><span class='o'>)</span> <span class='k'>=</span> <span class='o'>{</span>
-  <span class='k'>def</span> <span class='n'>eval</span><span class='o'>(</span><span class='n'>cs</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>Int</span><span class='o'>])</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='o'>=</span> <span class='o'>{</span>
-    <span class='n'>cs</span> <span class='k'>match</span> <span class='o'>{</span>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>evalPoly</span><span class='p'>(</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>coeffs</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>Int</span><span class='p'>])</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>Int</span><span class='p'>,</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='k'>def</span> <span class='nf'>eval</span><span class='p'>(</span><span class='n'>cs</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>Int</span><span class='p'>])</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='p'>= {</span>
+    <span class='n'>cs</span> <span class='k'>match</span> <span class='p'>{</span>
       <span class='k'>case</span> <span class='nc'>Nil</span> <span class='k'>=&gt;</span> <span class='mi'>0</span>
-      <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='n'>plustimes</span><span class='o'>(</span><span class='n'>x</span><span class='o'>,</span> <span class='n'>eval</span><span class='o'>(</span><span class='n'>t</span><span class='o'>),</span> <span class='n'>h</span><span class='o'>)</span>
-    <span class='o'>}</span>
-  <span class='o'>}</span>
-  <span class='o'>(</span><span class='n'>x</span><span class='o'>,</span> <span class='n'>eval</span><span class='o'>(</span><span class='n'>coeffs</span><span class='o'>))</span>
-<span class='o'>}</span>
+      <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='n'>plustimes</span><span class='p'>(</span><span class='n'>x</span><span class='p'>,</span> <span class='n'>eval</span><span class='p'>(</span><span class='n'>t</span><span class='p'>),</span> <span class='n'>h</span><span class='p'>)</span>
+    <span class='p'>}</span>
+  <span class='p'>}</span>
+  <span class='p'>(</span><span class='n'>x</span><span class='p'>,</span> <span class='n'>eval</span><span class='p'>(</span><span class='n'>coeffs</span><span class='p'>))</span>
+<span class='p'>}</span>
 </code></pre></div>
 <p>I&#8217;ve just replaced <code>x * eval(t) + h</code> with a call to this function:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>plustimes</span><span class='o'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>,</span> <span class='n'>q</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>,</span> <span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>)</span> <span class='k'>=</span> <span class='o'>{</span>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>plustimes</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>q</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
   <span class='n'>n</span> <span class='o'>*</span> <span class='n'>q</span> <span class='o'>+</span> <span class='n'>r</span>
-<span class='o'>}</span>
+<span class='p'>}</span>
 </code></pre></div>
 <p>Now here&#8217;s <code>eval</code> as a data flow diagram. I&#8217;ve threaded through <code>x</code> as a &#8220;context&#8221; variable because it isn&#8217;t an input to <code>eval</code> per se.</p>
 
 <p><img alt='eval' src='/assets/img/poly/eval.png' /></p>
 
 <p>Following the arrows backwards from the outputs to the inputs we can write the following code:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>unevalPoly</span><span class='o'>(</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>,</span> <span class='n'>y</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>)</span><span class='k'>:</span> <span class='o'>(</span><span class='kt'>Int</span><span class='o'>,</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>Int</span><span class='o'>])</span> <span class='k'>=</span> <span class='o'>{</span>
-  <span class='k'>def</span> <span class='n'>uneval</span><span class='o'>(</span><span class='n'>y</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>List</span><span class='o'>[</span><span class='kt'>Int</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
-    <span class='n'>y</span> <span class='k'>match</span> <span class='o'>{</span>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>unevalPoly</span><span class='p'>(</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>y</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>Int</span><span class='p'>,</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>Int</span><span class='p'>])</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='k'>def</span> <span class='nf'>uneval</span><span class='p'>(</span><span class='n'>y</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>Int</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
+    <span class='n'>y</span> <span class='k'>match</span> <span class='p'>{</span>
       <span class='k'>case</span> <span class='mi'>0</span> <span class='k'>=&gt;</span> <span class='nc'>Nil</span>
-      <span class='k'>case</span> <span class='n'>y</span> <span class='k'>=&gt;</span> <span class='o'>{</span>
-        <span class='k'>val</span> <span class='o'>(</span><span class='n'>q</span><span class='o'>,</span> <span class='n'>r</span><span class='o'>)</span> <span class='k'>=</span> <span class='n'>unplustimes</span><span class='o'>(</span><span class='n'>x</span><span class='o'>,</span> <span class='n'>y</span><span class='o'>)</span>
-        <span class='n'>r</span> <span class='o'>::</span> <span class='n'>uneval</span><span class='o'>(</span><span class='n'>q</span><span class='o'>)</span>
-      <span class='o'>}</span>
-    <span class='o'>}</span>
-  <span class='o'>}</span>
-  <span class='o'>(</span><span class='n'>x</span><span class='o'>,</span> <span class='n'>uneval</span><span class='o'>(</span><span class='n'>y</span><span class='o'>))</span>
-<span class='o'>}</span>
+      <span class='k'>case</span> <span class='n'>y</span> <span class='k'>=&gt;</span> <span class='p'>{</span>
+        <span class='k'>val</span> <span class='p'>(</span><span class='n'>q</span><span class='p'>,</span> <span class='n'>r</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>unplustimes</span><span class='p'>(</span><span class='n'>x</span><span class='p'>,</span> <span class='n'>y</span><span class='p'>)</span>
+        <span class='n'>r</span> <span class='o'>::</span> <span class='n'>uneval</span><span class='p'>(</span><span class='n'>q</span><span class='p'>)</span>
+      <span class='p'>}</span>
+    <span class='p'>}</span>
+  <span class='p'>}</span>
+  <span class='p'>(</span><span class='n'>x</span><span class='p'>,</span> <span class='n'>uneval</span><span class='p'>(</span><span class='n'>y</span><span class='p'>))</span>
+<span class='p'>}</span>
 </code></pre></div>
 <p>Now this should work as long as we can write <code>unplustimes</code>, which is possible only when <code>plustimes</code> doesn&#8217;t destroy information. So given <code>m</code> and <code>n</code> and <code>m = n * q + r</code>, when can we recover <code>q</code> and <code>r</code>?</p>
 
 <p>Well, if <code>r</code> happens to be less than <code>n</code>, this is just like doing long division — <code>q</code> and <code>r</code> are the quotient and remainder when dividing <code>m</code> by <code>n</code>:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>unplustimes</span><span class='o'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>,</span> <span class='n'>m</span><span class='k'>:</span> <span class='kt'>Int</span><span class='o'>)</span><span class='k'>:</span> <span class='o'>(</span><span class='kt'>Int</span><span class='o'>,</span> <span class='kt'>Int</span><span class='o'>)</span> <span class='k'>=</span> <span class='o'>{</span>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>unplustimes</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>m</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>Int</span><span class='p'>,</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
   <span class='k'>val</span> <span class='n'>q</span> <span class='k'>=</span> <span class='n'>m</span> <span class='o'>/</span> <span class='n'>n</span>
   <span class='k'>val</span> <span class='n'>r</span> <span class='k'>=</span> <span class='n'>m</span> <span class='o'>%</span> <span class='n'>n</span>
-  <span class='o'>(</span><span class='n'>q</span><span class='o'>,</span> <span class='n'>r</span><span class='o'>)</span>
-<span class='o'>}</span>
+  <span class='p'>(</span><span class='n'>q</span><span class='p'>,</span> <span class='n'>r</span><span class='p'>)</span>
+<span class='p'>}</span>
 </code></pre></div>
 <p>This works because for a given positive integer <script type='math/tex'>n</script>, any integer <script type='math/tex'>m</script> can be written uniquely as <script type='math/tex'>m = nq + r</script>, where <script type='math/tex'>q</script> and <script type='math/tex'>r</script> are nonnegative integers and <script type='math/tex'>r \lt n</script>. Since this formulation is unique, it&#8217;s easy to reverse the process and recover <script type='math/tex'>q</script> and <script type='math/tex'>r</script>.</p>
 

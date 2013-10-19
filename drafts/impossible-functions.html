@@ -110,53 +110,301 @@
 <div class="row-fluid post-full">
   <div class="span12">
     <div class="date">
-      <span>08 October 2013</span>
+      <span>19 October 2013</span>
     </div>
     <div class="content">
-      <p>I claim to have a function <code>inj</code> that maps any integer-valued function you give it to a different integer. That is, if you call it on two functions that differ even at one point, it will return a different integer for each one.</p>
+      <style type='text/css'>
+th {
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+tbody tr:nth-child(odd) {
+  background: #eee;
+}
+tbody tr:nth-child(even) {
+  background: #fff;
+}
+</style>
+<p>I claim to have a function <code>H</code> that maps any integer-valued function you give it to a different integer. That is, an injection from <code>Int =&gt; Int</code> to <code>Int</code> that returns a different <code>Int</code> for every function you give it.</p>
 
-<p>&#8220;Impossible!&#8221; you say. &#8220;There are way more functions than integers, there&#8217;s no way you found an injection.&#8221;</p>
+<p>This is clearly impossible, since there are way more functions from integers to integers than there are integers. But I demand proof in the form of witnesses <code>f: Int =&gt; Int</code>, <code>g: Int =&gt; Int</code> and <code>n: Int</code> such that <code>H(f) == H(g)</code> and <code>f(n) != g(n)</code>.</p>
 
-<p>&#8220;Prove it!&#8221; I say, with an unwarranted amount of confidence (I am, after all, wrong). &#8221;I&#8217;m going to give you an integer valued function, and you have to find a different function that <code>inj</code> thinks are the same.&#8221;</p>
+<p>Your job is to write a function <code>solve</code> that takes a single argument <code>H: (Int =&gt; Int) =&gt; Int</code> and returns <code>f</code>, <code>g</code> and <code>n</code> as described above.</p>
 
-<p>In other words, your job is to write a function <code>proof</code> that takes a function <code>f: Int =&gt; Int</code> and returns a function <code>g: Int =&gt; Int</code> along with a point <code>x: Int</code> such that <code>f(x)</code> and <code>g(x)</code> are different but <code>inj(f)</code> is the same as <code>inj(g)</code>.</p>
-
-<p>Yikes, OK. You know <code>inj</code> is impossible, but <code>proof</code> seems impossibler.</p>
+<p>One approach is to put together a mathematical proof that such an injection is impossible and try to extract a program from that proof à la the <a href='http://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence'>Curry-Howard isomorphism</a>.</p>
 <!-- more -->
-<p>Hm, so obviously we have to use the fact that <code>inj</code> is impossible to make writing <code>proof</code> easier. But first:</p>
+<h3 id='proof_'>Proof <script type='math/tex'>\newcommand{\N}{\mathbb{N}}</script></h3>
 
-<p>&#8220;Can I assume that <code>inj</code> returns in a finite amount of time?&#8221;, you ask slyly.</p>
+<p>The proof goes like this. Suppose <script type='math/tex'>H: (\N \rightarrow \N) \rightarrow \N</script> exists. Construct an inverse <script type='math/tex'>H^{-1}: \N \rightarrow (\N \rightarrow \N)</script>. One way to look at <script type='math/tex'>H^{-1}</script> is as an enumeration <script type='math/tex'>\{f_i\}</script> of functions of type <script type='math/tex'>\N \rightarrow \N</script>. So <script type='math/tex'>f_0 = H^{-1}(0)</script> is the first function in the list, <script type='math/tex'>f_1 = H^{-1}(1)</script> is the second function, etc., and in general <script type='math/tex'>f_i = H^{-1}(i)</script>. Also notice that <script type='math/tex'>H(f_i) = i</script>.</p>
 
-<p>&#8220;Of course.&#8221; I respond, distractedly, and go back to reading Twitter.</p>
+<p>This list of functions might look something like this:</p>
+<table><thead><tr><th><script type='math/tex'>f</script></th><th><script type='math/tex'>f(0)</script></th><th><script type='math/tex'>f(1)</script></th><th><script type='math/tex'>f(2)</script></th><th><script type='math/tex'>f(3)</script></th><th><script type='math/tex'>f(4)</script></th><th>&#8230;</th></tr></thead><tbody><tr><td style='text-align: center;'><script type='math/tex'>f_0</script></td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'><script type='math/tex'>f_1</script></td><td style='text-align: center;'>0</td><td style='text-align: center;'>1</td><td style='text-align: center;'>2</td><td style='text-align: center;'>3</td><td style='text-align: center;'>4</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'><script type='math/tex'>f_2</script></td><td style='text-align: center;'>1</td><td style='text-align: center;'>5</td><td style='text-align: center;'>2</td><td style='text-align: center;'>1</td><td style='text-align: center;'>3</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'><script type='math/tex'>f_3</script></td><td style='text-align: center;'>1</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>1</td><td style='text-align: center;'>2</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'><script type='math/tex'>f_4</script></td><td style='text-align: center;'>2</td><td style='text-align: center;'>7</td><td style='text-align: center;'>1</td><td style='text-align: center;'>8</td><td style='text-align: center;'>2</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td>
+</tr></tbody></table>
+<p>Now construct a new function <script type='math/tex'>d</script> from the diagonal of this table as follows:</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+d(n) = f_n(n) + 1
+%]]>
+</script>
+<p>For the table above, the diagonal would look like</p>
+<table><thead><tr><th><script type='math/tex'>f</script></th><th><script type='math/tex'>f(0)</script></th><th><script type='math/tex'>f(1)</script></th><th><script type='math/tex'>f(2)</script></th><th><script type='math/tex'>f(3)</script></th><th><script type='math/tex'>f(4)</script></th><th>&#8230;</th></tr></thead><tbody><tr><td style='text-align: center;'><script type='math/tex'>d</script></td><td style='text-align: center;'>1</td><td style='text-align: center;'>2</td><td style='text-align: center;'>3</td><td style='text-align: center;'>2</td><td style='text-align: center;'>3</td><td style='text-align: center;'>&#8230;</td>
+</tr></tbody></table>
+<p>It&#8217;s easy to see that <script type='math/tex'>d</script> is not any of the <script type='math/tex'>f_i</script>s, since <script type='math/tex'>f_i(i) \ne d(i)</script> by construction. But <script type='math/tex'>d</script> is still in the domain of <script type='math/tex'>H</script>. Let <script type='math/tex'>k = H(d)</script>. Now <script type='math/tex'>H(f_k) = k = H(d)</script> but <script type='math/tex'>f_k \ne d</script>.</p>
 
-<p>You don&#8217;t know how I implemented <code>inj</code>, but you are allowed to call it. Here&#8217;s the declaration:</p>
-<div class='highlight'><pre><code class='scala'><span class='cm'>/**</span>
-<span class='cm'> * Implements an injection from integer valued functions to integers, i.e.,</span>
-<span class='cm'> * inj(f) = inj(g) if and only if f = g.</span>
-<span class='cm'> */</span>
-<span class='k'>def</span> <span class='n'>inj</span><span class='o'>(</span><span class='n'>f</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='o'>=&gt;</span> <span class='nc'>Int</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Int</span>
+<p>So we&#8217;ve found two functions, <script type='math/tex'>d</script> and <script type='math/tex'>f_k</script>, that differ at <script type='math/tex'>k</script>, but <script type='math/tex'>H</script> maps them both to <script type='math/tex'>k</script>. This completes the proof. Now all that&#8217;s left is to translate it into code!</p>
+
+<h3 id='code'>Code</h3>
+
+<p>Let&#8217;s start with the easy parts. Here&#8217;s the function that constructs the diagonal <script type='math/tex'>d</script> from <script type='math/tex'>H^{-1}</script>.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>diag</span><span class='p'>(</span><span class='n'>hinv</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='p'>(</span><span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>))</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span> <span class='p'>= {</span>
+  <span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='n'>hinv</span><span class='p'>(</span><span class='n'>n</span><span class='p'>)(</span><span class='n'>n</span><span class='p'>)</span> <span class='o'>+</span> <span class='mi'>1</span>
+<span class='p'>}</span>
 </code></pre></div>
-<p>Alright, so what could possibly be going on inside <code>inj</code>? All it has to work with is its argument, <code>f</code>. It has to be deterministic because you&#8217;d want <code>inj(f)</code> to be equal to <code>inj(f)</code>. You guess all it can do is call <code>f</code>. And since it has to return in a finite amount of time, it can only call <code>f</code> a finite number of times.</p>
+<p>And here&#8217;s the overall solution. It mirrors the proof pretty directly, but it depends on <code>invert</code> which we have yet to write.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>solve</span><span class='p'>(</span><span class='n'>H</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='nc'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='k'>val</span> <span class='n'>hinv</span> <span class='k'>=</span> <span class='n'>invert</span><span class='p'>(</span><span class='n'>H</span><span class='p'>)</span>
+  <span class='k'>val</span> <span class='n'>d</span> <span class='k'>=</span> <span class='n'>diag</span><span class='p'>(</span><span class='n'>hinv</span><span class='p'>)</span>
+  <span class='k'>val</span> <span class='n'>k</span> <span class='k'>=</span> <span class='n'>H</span><span class='p'>(</span><span class='n'>d</span><span class='p'>)</span>
+  <span class='k'>val</span> <span class='n'>fk</span> <span class='k'>=</span> <span class='n'>hinv</span><span class='p'>(</span><span class='n'>k</span><span class='p'>)</span>
+  <span class='p'>(</span><span class='n'>d</span><span class='p'>,</span> <span class='n'>fk</span><span class='p'>,</span> <span class='n'>k</span><span class='p'>)</span>
+<span class='p'>}</span>
+</code></pre></div>
+<p>Now all we need to write is <code>invert</code>, which inverts <code>H</code>. Hm.</p>
 
-<p>Aha! All you need to do is find an integer that <code>inj</code> doesn&#8217;t call <code>f</code> on. Then you can construct <code>g</code> that is the same as <code>f</code> everywhere except that number.</p>
+<h3 id='constructing_the_inverse'>Constructing the inverse</h3>
 
-<p>3 ways:</p>
+<p>OK this is impossible. For one, <code>H</code> might not be an onto function. It could be something like</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>h1</span><span class='p'>(</span><span class='n'>f</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='p'>= </span><span class='n'>f</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>)</span> <span class='o'>*</span> <span class='mi'>2</span>
+</code></pre></div>
+<p>which only returns even numbers. So <code>invert(h1)</code> won&#8217;t be defined on odd numbers and we won&#8217;t have a complete table to diagonalize.</p>
 
-<ul>
-<li>guessing</li>
+<p>Maybe this is OK. I mean, all we need is one row from the table and a diagonal that maps to the same row. So we don&#8217;t need to construct the entire table. Maybe we can construct a partial approximation of the table by starting with a bad guess for the table, checking the diagonal to see if we found a hit, and iteratively refining the table with new functions we&#8217;ve found as we go along.</p>
 
-<li>but you can only call inj once! secret f that records what it&#8217;s called on</li>
+<p>So let&#8217;s start with the simplest possible thing, a table of constant 0 functions.</p>
+<table><thead><tr><th><script type='math/tex'>f</script></th><th><script type='math/tex'>f(0)</script></th><th><script type='math/tex'>f(1)</script></th><th><script type='math/tex'>f(2)</script></th><th><script type='math/tex'>f(3)</script></th><th><script type='math/tex'>f(4)</script></th><th>&#8230;</th></tr></thead><tbody><tr><td style='text-align: center;'><script type='math/tex'>f_0</script></td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'><script type='math/tex'>f_1</script></td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'><script type='math/tex'>f_2</script></td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'><script type='math/tex'>f_3</script></td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'><script type='math/tex'>f_4</script></td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td>
+</tr></tbody></table>
+<p>Now construct the diagonal as <script type='math/tex'>d_0(n) = f_n(n) + 1</script>.</p>
+<table><thead><tr><th><script type='math/tex'>f</script></th><th><script type='math/tex'>f(0)</script></th><th><script type='math/tex'>f(1)</script></th><th><script type='math/tex'>f(2)</script></th><th><script type='math/tex'>f(3)</script></th><th><script type='math/tex'>f(4)</script></th><th>&#8230;</th></tr></thead><tbody><tr><td style='text-align: center;'><script type='math/tex'>d_0</script></td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>&#8230;</td>
+</tr></tbody></table>
+<p>Now compute <script type='math/tex'>H(d_0)</script> and see if there&#8217;s already a &#8220;correct&#8221; entry in the table for that value. Suppose for example that <script type='math/tex'>H(d_0) = 3</script>, which means that <script type='math/tex'>d_0</script> should be at position 3 in the table. So we check whether our bad guess at <script type='math/tex'>f_3</script> was in fact a lucky guess. Let&#8217;s say we get <script type='math/tex'>H(f_3) = 1</script>. OK, it was a bad guess, so we replace <script type='math/tex'>f_3</script> with <script type='math/tex'>d_0</script> in the table and try again.</p>
 
-<li>relies on continuity of inj! diagonalization</li>
-</ul>
+<p>Here&#8217;s what the table looks like after the first iteration:</p>
+<table><thead><tr><th><script type='math/tex'>f</script></th><th><script type='math/tex'>f(0)</script></th><th><script type='math/tex'>f(1)</script></th><th><script type='math/tex'>f(2)</script></th><th><script type='math/tex'>f(3)</script></th><th><script type='math/tex'>f(4)</script></th><th>&#8230;</th></tr></thead><tbody><tr><td style='text-align: center;'><script type='math/tex'>f_0</script></td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'><script type='math/tex'>f_1</script></td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'><script type='math/tex'>f_2</script></td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'><script type='math/tex'>f_3</script></td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'><script type='math/tex'>f_4</script></td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td>
+</tr></tbody></table>
+<p>Now construct a new diagonal from the updated table. It looks like this:</p>
+<table><thead><tr><th><script type='math/tex'>f</script></th><th><script type='math/tex'>f(0)</script></th><th><script type='math/tex'>f(1)</script></th><th><script type='math/tex'>f(2)</script></th><th><script type='math/tex'>f(3)</script></th><th><script type='math/tex'>f(4)</script></th><th>&#8230;</th></tr></thead><tbody><tr><td style='text-align: center;'><script type='math/tex'>d_1</script></td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>2</td><td style='text-align: center;'>1</td><td style='text-align: center;'>&#8230;</td>
+</tr></tbody></table>
+<p>Compute <script type='math/tex'>H(d_1)</script> as before. Suppose we get <script type='math/tex'>H(d_1) = 4</script> this time. <script type='math/tex'>H(f_4) = 1</script> so we update the table and iterate again.</p>
+<table><thead><tr><th><script type='math/tex'>f</script></th><th><script type='math/tex'>f(0)</script></th><th><script type='math/tex'>f(1)</script></th><th><script type='math/tex'>f(2)</script></th><th><script type='math/tex'>f(3)</script></th><th><script type='math/tex'>f(4)</script></th><th>&#8230;</th></tr></thead><tbody><tr><td style='text-align: center;'><script type='math/tex'>f_0</script></td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'><script type='math/tex'>f_1</script></td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'><script type='math/tex'>f_2</script></td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>0</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'><script type='math/tex'>f_3</script></td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'><script type='math/tex'>f_4</script></td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>2</td><td style='text-align: center;'>1</td><td style='text-align: center;'>&#8230;</td>
+</tr><tr><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td><td style='text-align: center;'>&#8230;</td>
+</tr></tbody></table>
+<p>The new diagonal is</p>
+<table><thead><tr><th><script type='math/tex'>f</script></th><th><script type='math/tex'>f(0)</script></th><th><script type='math/tex'>f(1)</script></th><th><script type='math/tex'>f(2)</script></th><th><script type='math/tex'>f(3)</script></th><th><script type='math/tex'>f(4)</script></th><th>&#8230;</th></tr></thead><tbody><tr><td style='text-align: center;'><script type='math/tex'>d_2</script></td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>1</td><td style='text-align: center;'>2</td><td style='text-align: center;'>2</td><td style='text-align: center;'>&#8230;</td>
+</tr></tbody></table>
+<p>Suppose <script type='math/tex'>H(d_2) = 4</script>. Well we already have <script type='math/tex'>f_4</script> such that <script type='math/tex'>H(f_4) = 4</script>, but <script type='math/tex'>d_2 \ne f_4</script> by construction. So we&#8217;re done. We&#8217;ve constructed enough of <script type='math/tex'>H^{-1}</script> that the diagonal collides with a function already in the table.</p>
 
-<p>inj: (Int =&gt; Int) =&gt; Int counter: (Int =&gt; Int) =&gt; (Int =&gt; Int, Int)</p>
+<p>Here&#8217;s the algorithm in code:</p>
+<div class='highlight'><pre><code class='scala'><span class='c1'>// A table of constant 0 functions</span>
+<span class='k'>def</span> <span class='nf'>zeroes</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='p'>(</span><span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='p'>= (</span><span class='n'>n1</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='p'>(</span><span class='n'>n2</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='mi'>0</span>
 
-<p>f(n) = inj-1(n)(n) + 1 // well-defined provided inj is invertible inj(f) =&gt; k f(k) = inj-1(k)(k) + 1 f(k) = f(k) + 1 but really, f(k) = inj-1(k)(k) + 1 = g(k) + 1</p>
+<span class='c1'>// Update an entry in a function table with a new function at the given position.</span>
+<span class='k'>def</span> <span class='nf'>update</span><span class='p'>(</span><span class='n'>t</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='p'>(</span><span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>),</span> <span class='n'>k</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>f</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='p'>(</span><span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='p'>= {</span>
+  <span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='k'>if</span> <span class='p'>(</span><span class='n'>n</span> <span class='o'>==</span> <span class='n'>k</span><span class='p'>)</span> <span class='n'>f</span> <span class='k'>else</span> <span class='n'>t</span><span class='p'>(</span><span class='n'>n</span><span class='p'>)</span>
+<span class='p'>}</span>
 
-<p>inj(g) = g(1) + g(2) = 1 inj(h) = h(1) + h(2) = 2 inj(f) = inj-1(1)(1) + 1 + inj-1(2)(2) + 1</p>
+<span class='c1'>// Find an approximation of the inverse of H where the diagonal is not in the table.</span>
+<span class='k'>def</span> <span class='nf'>invert</span><span class='p'>(</span><span class='n'>H</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='p'>(</span><span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='p'>= {</span>
+  <span class='nd'>@tailrec</span>
+  <span class='k'>def</span> <span class='nf'>iter</span><span class='p'>(</span><span class='n'>hinv</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='p'>(</span><span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>))</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='p'>(</span><span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='p'>= {</span>
+    <span class='k'>val</span> <span class='n'>d</span> <span class='k'>=</span> <span class='n'>diag</span><span class='p'>(</span><span class='n'>hinv</span><span class='p'>)</span>
+    <span class='k'>val</span> <span class='n'>k</span> <span class='k'>=</span> <span class='n'>H</span><span class='p'>(</span><span class='n'>d</span><span class='p'>)</span>
+    <span class='k'>if</span> <span class='p'>(</span><span class='n'>H</span><span class='p'>(</span><span class='n'>hinv</span><span class='p'>(</span><span class='n'>k</span><span class='p'>))</span> <span class='o'>==</span> <span class='n'>k</span><span class='p'>)</span> <span class='p'>{</span>
+      <span class='c1'>// Found a collision!</span>
+      <span class='n'>hinv</span>
+    <span class='p'>}</span> <span class='k'>else</span> <span class='p'>{</span>
+      <span class='c1'>// The function at position k is incorrect, so update it and loop around.</span>
+      <span class='n'>iter</span><span class='p'>(</span><span class='n'>update</span><span class='p'>(</span><span class='n'>hinv</span><span class='p'>,</span> <span class='n'>k</span><span class='p'>,</span> <span class='n'>d</span><span class='p'>))</span>
+    <span class='p'>}</span>
+  <span class='p'>}</span>
+  <span class='n'>iter</span><span class='p'>(</span><span class='n'>zeroes</span><span class='p'>)</span>
+<span class='p'>}</span>
+</code></pre></div>
+<p>So does it work? Let&#8217;s try it out on some sample functions.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>h1</span><span class='p'>(</span><span class='n'>f</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='p'>= </span><span class='n'>f</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>)</span> <span class='o'>*</span> <span class='mi'>2</span>
 
-<p>inj(id) inj(const(n))</p>
+<span class='k'>def</span> <span class='nf'>h2</span><span class='p'>(</span><span class='n'>f</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='p'>= </span><span class='n'>f</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>)</span> <span class='o'>+</span> <span class='n'>f</span><span class='p'>(</span><span class='mi'>2</span><span class='p'>)</span>
+
+<span class='k'>def</span> <span class='nf'>h3</span><span class='p'>(</span><span class='n'>f</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='p'>= </span><span class='n'>f</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>)</span> <span class='o'>+</span> <span class='n'>f</span><span class='p'>(</span><span class='n'>f</span><span class='p'>(</span><span class='mi'>0</span><span class='p'>))</span>
+
+<span class='k'>def</span> <span class='nf'>h4</span><span class='p'>(</span><span class='n'>f</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='p'>= </span><span class='n'>f</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>)</span> <span class='o'>+</span> <span class='mi'>5</span>
+
+<span class='k'>def</span> <span class='nf'>h5</span><span class='p'>(</span><span class='n'>f</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='k'>def</span> <span class='nf'>pow</span><span class='p'>(</span><span class='n'>b</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>e</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>math</span><span class='p'>.</span><span class='n'>pow</span><span class='p'>(</span><span class='n'>b</span><span class='p'>,</span> <span class='n'>e</span><span class='p'>).</span><span class='n'>toInt</span>
+  <span class='n'>pow</span><span class='p'>(</span><span class='mi'>2</span><span class='p'>,</span> <span class='n'>f</span><span class='p'>(</span><span class='n'>f</span><span class='p'>(</span><span class='mi'>0</span><span class='p'>)))</span> <span class='o'>+</span> <span class='n'>pow</span><span class='p'>(</span><span class='mi'>3</span><span class='p'>,</span> <span class='n'>f</span><span class='p'>(</span><span class='n'>f</span><span class='p'>(</span><span class='n'>f</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>))))</span> <span class='o'>+</span> <span class='n'>pow</span><span class='p'>(</span><span class='mi'>5</span><span class='p'>,</span> <span class='n'>f</span><span class='p'>(</span><span class='mi'>2</span><span class='p'>))</span> <span class='o'>+</span> <span class='n'>pow</span><span class='p'>(</span><span class='mi'>7</span><span class='p'>,</span> <span class='n'>f</span><span class='p'>(</span><span class='mi'>3</span><span class='p'>))</span>
+<span class='p'>}</span>
+
+<span class='k'>def</span> <span class='nf'>h6</span><span class='p'>(</span><span class='n'>f</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='k'>def</span> <span class='nf'>rec</span><span class='p'>(</span><span class='n'>f</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>x</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='p'>= {</span>
+    <span class='k'>if</span> <span class='p'>(</span><span class='n'>n</span> <span class='o'>==</span> <span class='mi'>0</span><span class='p'>)</span> <span class='n'>x</span> <span class='k'>else</span> <span class='n'>f</span><span class='p'>(</span><span class='n'>rec</span><span class='p'>(</span><span class='n'>f</span><span class='p'>,</span> <span class='n'>x</span><span class='p'>,</span> <span class='n'>n</span><span class='o'>-</span><span class='mi'>1</span><span class='p'>))</span>
+  <span class='p'>}</span>
+  <span class='n'>rec</span><span class='p'>((</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='n'>f</span><span class='p'>(</span><span class='n'>x</span><span class='p'>)</span> <span class='o'>+</span> <span class='mi'>1</span><span class='p'>,</span> <span class='n'>f</span><span class='p'>(</span><span class='mi'>0</span><span class='p'>),</span> <span class='n'>f</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>))</span>
+<span class='p'>}</span>
+
+<span class='k'>def</span> <span class='nf'>test</span><span class='p'>(</span><span class='n'>H</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='k'>val</span> <span class='p'>(</span><span class='n'>f</span><span class='p'>,</span> <span class='n'>g</span><span class='p'>,</span> <span class='n'>k</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>solve</span><span class='p'>(</span><span class='n'>H</span><span class='p'>)</span>
+  <span class='n'>println</span><span class='p'>(</span><span class='s'>&quot;H(f) = %d&quot;</span><span class='p'>.</span><span class='n'>format</span><span class='p'>(</span><span class='n'>H</span><span class='p'>(</span><span class='n'>f</span><span class='p'>)))</span>
+  <span class='n'>println</span><span class='p'>(</span><span class='s'>&quot;H(g) = %d&quot;</span><span class='p'>.</span><span class='n'>format</span><span class='p'>(</span><span class='n'>H</span><span class='p'>(</span><span class='n'>g</span><span class='p'>)))</span>
+  <span class='n'>println</span><span class='p'>(</span><span class='s'>&quot;f(k) = %d&quot;</span><span class='p'>.</span><span class='n'>format</span><span class='p'>(</span><span class='n'>f</span><span class='p'>(</span><span class='n'>k</span><span class='p'>)))</span>
+  <span class='n'>println</span><span class='p'>(</span><span class='s'>&quot;g(k) = %d&quot;</span><span class='p'>.</span><span class='n'>format</span><span class='p'>(</span><span class='n'>g</span><span class='p'>(</span><span class='n'>k</span><span class='p'>)))</span>
+  <span class='p'>(</span><span class='n'>f</span><span class='p'>,</span> <span class='n'>g</span><span class='p'>,</span> <span class='n'>k</span><span class='p'>)</span>
+<span class='p'>}</span>
+</code></pre></div>
+<p>REPL time.</p>
+
+<pre><code>scala&gt; val (f, g, k) = test(h1)
+H(f) = 2
+H(g) = 2
+f(k) = 2
+g(k) = 1
+f: Int =&gt; Int = &lt;function1&gt;
+g: Int =&gt; Int = &lt;function1&gt;
+k: Int = 2
+
+scala&gt; val (f, g, k) = test(h2)
+H(f) = 3
+H(g) = 3
+f(k) = 2
+g(k) = 1
+f: Int =&gt; Int = &lt;function1&gt;
+g: Int =&gt; Int = &lt;function1&gt;
+k: Int = 3
+
+scala&gt; val (f, g, k) = test(h3)
+H(f) = 2
+H(g) = 2
+f(k) = 2
+g(k) = 1
+f: Int =&gt; Int = &lt;function1&gt;
+g: Int =&gt; Int = &lt;function1&gt;
+k: Int = 2
+
+scala&gt; val (f, g, k) = test(h4)
+H(f) = 6
+H(g) = 6
+f(k) = 2
+g(k) = 1
+f: Int =&gt; Int = &lt;function1&gt;
+g: Int =&gt; Int = &lt;function1&gt;
+k: Int = 6
+
+scala&gt; val (f, g, k) = test(h5)
+H(f) = 17
+H(g) = 17
+f(k) = 2
+g(k) = 1
+f: Int =&gt; Int = &lt;function1&gt;
+g: Int =&gt; Int = &lt;function1&gt;
+k: Int = 17
+
+scala&gt; val (f, g, k) = test(h6)
+H(f) = 2
+H(g) = 2
+f(k) = 2
+g(k) = 1
+f: Int =&gt; Int = &lt;function1&gt;
+g: Int =&gt; Int = &lt;function1&gt;
+k: Int = 2</code></pre>
+
+<p>OK!</p>
+
+<h3 id='termination'>Termination</h3>
+
+<p>A natural question to ask is whether this algorithm is guaranteed to terminate. Maybe if <script type='math/tex'>H</script> is constructed deviously enough, we will keep updating the table forever and never find a collision.</p>
+
+<p>Actually, it&#8217;s easy to show that it does terminate provided that <script type='math/tex'>H</script> terminates. Updating one row in the table changes the diagonal at only one point. In particular, <script type='math/tex'>d_i(k) = d_{i+1}(k)</script> for all <script type='math/tex'>k</script> except <script type='math/tex'>k = H(d_i)</script>. But since <script type='math/tex'>H</script> terminates, we know it can only examine a finite number of points of its argument. So we will eventually find a <script type='math/tex'>d_i</script> where <script type='math/tex'>k = H(d_i)</script> and <script type='math/tex'>H</script> never evaluates <script type='math/tex'>d_i(k)</script>. That means that <script type='math/tex'>H</script> cannot distinguish between <script type='math/tex'>d_i</script> and <script type='math/tex'>d_{i+1}</script>, and at that point the algorithm terminates.</p>
+
+<h3 id='a_simpler_approach'>A simpler approach</h3>
+
+<p>The key insight is that <script type='math/tex'>H(f)</script> only evaluates <script type='math/tex'>f</script> at a finite number of points. So wouldn&#8217;t it be more straightforward to scan through the integers until we find an <script type='math/tex'>i</script> such that <script type='math/tex'>H</script> does not evaluate <script type='math/tex'>f(i)</script>?</p>
+
+<p>We could do something like this:</p>
+<div class='highlight'><pre><code class='scala'><span class='c1'>// The constant 0 function</span>
+<span class='k'>def</span> <span class='nf'>g</span> <span class='k'>=</span> <span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='mi'>0</span>
+
+<span class='c1'>// f(i) is zero everywhere except at i.</span>
+<span class='k'>def</span> <span class='nf'>f</span><span class='p'>(</span><span class='n'>i</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='k'>if</span> <span class='p'>(</span><span class='n'>n</span> <span class='o'>==</span> <span class='n'>i</span><span class='p'>)</span> <span class='mi'>1</span> <span class='k'>else</span> <span class='mi'>0</span>
+
+<span class='k'>def</span> <span class='nf'>solve2</span><span class='p'>(</span><span class='n'>H</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='nc'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='nd'>@tailrec</span>
+  <span class='k'>def</span> <span class='nf'>search</span><span class='p'>(</span><span class='n'>i</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='p'>= {</span>
+    <span class='k'>if</span> <span class='p'>(</span><span class='n'>H</span><span class='p'>(</span><span class='n'>f</span><span class='p'>(</span><span class='n'>i</span><span class='p'>))</span> <span class='o'>==</span> <span class='n'>H</span><span class='p'>(</span><span class='n'>g</span><span class='p'>))</span> <span class='n'>i</span>
+    <span class='k'>else</span> <span class='n'>search</span><span class='p'>(</span><span class='n'>i</span><span class='o'>+</span><span class='mi'>1</span><span class='p'>)</span>
+  <span class='p'>}</span>
+  <span class='k'>val</span> <span class='n'>k</span> <span class='k'>=</span> <span class='n'>search</span><span class='p'>(</span><span class='mi'>0</span><span class='p'>)</span>
+  <span class='p'>(</span><span class='n'>f</span><span class='p'>(</span><span class='n'>k</span><span class='p'>),</span> <span class='n'>g</span><span class='p'>,</span> <span class='n'>k</span><span class='p'>)</span>
+<span class='p'>}</span>
+</code></pre></div>
+<p>Let&#8217;s try it:</p>
+
+<pre><code>scala&gt; val (f, g, k) = test2(h1)
+H(f) = 0
+H(g) = 0
+f(k) = 1
+g(k) = 0
+f: Int =&gt; Int = &lt;function1&gt;
+g: Int =&gt; Int = &lt;function1&gt;
+k: Int = 0
+
+scala&gt; val (f, g, k) = test2(h4)
+H(f) = 5
+H(g) = 5
+f(k) = 1
+g(k) = 0
+f: Int =&gt; Int = &lt;function1&gt;
+g: Int =&gt; Int = &lt;function1&gt;
+k: Int = 0
+
+scala&gt; val (f, g, k) = test2(h6)
+H(f) = 0
+H(g) = 0
+f(k) = 1
+g(k) = 0
+f: Int =&gt; Int = &lt;function1&gt;
+g: Int =&gt; Int = &lt;function1&gt;
+k: Int = 2</code></pre>
+
+<p>It works! And it&#8217;s guaranteed to terminate for the same reason.</p>
+
+<h3 id='bar_induction'>Bar induction</h3>
+
+<p>It seems like we didn&#8217;t extract a program directly from a proof when we found an approximation of <script type='math/tex'>H^{-1}</script>. But actually, the solution is a <a href='http://www.cs.swan.ac.uk/cie06/files/d20/swansea.pdf'>direct translation of a proof by Paulo Oliva</a> that uses a proof technique called <a href='http://en.wikipedia.org/wiki/Bar_induction'>bar induction</a>. My admittedly poor understanding of bar induction is that it is simply structural induction on infinitely branching (but not necessarily infinitely deep) trees with values at the leaves, except that the trees are disguised as functions of type <script type='math/tex'>(\N \rightarrow \N) \rightarrow \N</script>. The way to think about this is that the <script type='math/tex'>\N \rightarrow \N</script> argument tells you which branch to take at each level of the tree. Eventually you will get to a leaf, and the value in the leaf is the result of the function. So you can see an isomorphism between infinitely branching trees and functions of this type.</p>
+
+<p>So anyway, you use bar induction to prove that if such a tree has a finite depth, it must have 2 leaves with the same value. Then you extract a bar recursive program from this proof, and that gives you the first solution I presented above.</p>
+
+<p>Both the proof and the program are due to Paulo Oliva. Any errors or misinterpretations are mine.</p>
+
+<p>This all started when I ran across <a href='http://article.gmane.org/gmane.comp.lang.agda/2927'>this tantalizing programming challenge</a> put forth by Martín Escardó. I initially came up with a solution that looked a lot like <code>solve2</code> — actually, I constructed a function <code>f</code> that &#8220;cheats&#8221; by recording in a mutable set what points <code>H</code> evalutes it at, then picked a value not in that set as my <code>k</code> — and sent it to Martín. He said it appeared to be correct, but Paulo&#8217;s solution (the one he had in mind) was somewhat different.</p>
+
+<p>Intrigued, I eventually found <a href='http://www.eecs.qmul.ac.uk/~pbo/away-talks/2011_05_28Pittsburgh.pdf'>this presentation by Paulo Oliva</a> and <a href='http://www.cs.bham.ac.uk/~mhe/papers/selection-escardo-oliva.pdf'>this paper on bar recursion by Martín Escardó and Paulo Oliva</a>. The paper gave me some background understanding of the relevant topics and terminology, but most of it I cannot pretend to begin to understand. But it&#8217;s been fun trying!</p>
     </div>
 
     

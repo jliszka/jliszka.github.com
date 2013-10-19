@@ -122,9 +122,9 @@
 <p>Suppose I have a random variable whose underlying distribution is unknown to me. I take sample of a reasonable size (say 100) and find the mean of the sample. What can I say about the relationship between the true mean and the mean of the sample?</p>
 
 <p>The most comprehensive answer to this is to look at the distribution of the sample mean.</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='n'>sampleMean</span><span class='o'>(</span><span class='n'>d</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Double</span><span class='o'>],</span> <span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='o'>=</span> <span class='mi'>100</span><span class='o'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='o'>[</span><span class='kt'>Double</span><span class='o'>]</span> <span class='k'>=</span> <span class='o'>{</span>
-  <span class='n'>d</span><span class='o'>.</span><span class='n'>repeat</span><span class='o'>(</span><span class='n'>n</span><span class='o'>).</span><span class='n'>map</span><span class='o'>(</span><span class='k'>_</span><span class='o'>.</span><span class='n'>sum</span> <span class='o'>/</span> <span class='n'>n</span><span class='o'>)</span>
-<span class='o'>}</span>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>sampleMean</span><span class='p'>(</span><span class='n'>d</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Double</span><span class='p'>],</span> <span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='p'>= </span><span class='mi'>100</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Double</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='n'>d</span><span class='p'>.</span><span class='n'>repeat</span><span class='p'>(</span><span class='n'>n</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>sum</span> <span class='o'>/</span> <span class='n'>n</span><span class='p'>)</span>
+<span class='p'>}</span>
 </code></pre></div>
 <p>This method takes a probability distribution and returns the distribution of means of samples from that distribution. You can specify the sample size, but by default we&#8217;ll use 100.</p>
 
@@ -374,7 +374,7 @@ res12: Double = 0.17756920958319758</code></pre>
 <p>In standard experimental analysis terms, the null hypothesis is that your friend has a fair coin. You can reject the null hypothesis if you can show that there is less than, say, a 5% chance of losing $30 after 100 rounds.</p>
 
 <p>You can model the distribution of outcomes for a single round of the game as follows:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>val</span> <span class='n'>d</span> <span class='k'>=</span> <span class='n'>geometric</span><span class='o'>(</span><span class='mf'>0.5</span><span class='o'>).</span><span class='n'>map</span><span class='o'>(</span><span class='k'>_</span> <span class='o'>-</span> <span class='mf'>1.0</span><span class='o'>)</span>
+<div class='highlight'><pre><code class='scala'><span class='k'>val</span> <span class='n'>d</span> <span class='k'>=</span> <span class='n'>geometric</span><span class='p'>(</span><span class='mf'>0.5</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='k'>_</span> <span class='o'>-</span> <span class='mf'>1.0</span><span class='p'>)</span>
 </code></pre></div>
 <p><code>geometric(0.5)</code> models your winnings and <code>- 1.0</code> represents the cost to play the round. The expected value and standard deviation of this distribution are:</p>
 

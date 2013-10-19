@@ -22,6 +22,86 @@ impossible functions: injection
 computational algebra
 generating functions
 
+val harmonic: Stream[Double] = Stream.from(1).map(n => 1.0 / n)
+
+def kahan(xs: Seq[Double]): (Double, Double) = {
+  xs.foldLeft((0.0, 0.0)){ case ((sum, carry), x) => {
+    val x2 = x - carry
+    val newSum = sum + x2
+    (newSum, (newSum - sum) - x2)
+  }}
+}
+
+val rs: Stream[Rational] = Stream.from(1).map(n => Rational(1, n))
+
+def extend(s: List[Int => Int]): Int => (Int => Int) = {
+  (n: Int) => if (n < s.size) s(n) else zero
+}
+
+def invert(inj: (Int => Int) => Int): List[Int => Int] = {
+  def helper(s: List[Int => Int]): List[Int => Int] = {
+    if (H(diag(extend(s))) < s.size) {
+      s
+    } else {
+      val r = helper(s ++ List(zero))
+      val dr = diag(extend(r))
+      if (H(dr) != s.size) {
+        r
+      } else {
+        helper(s ++ List(dr))
+      }
+    }
+  }
+  helper(Nil)
+}
+
+def invert2(inj: (Int => Int) => Int): Int => (Int => Int) = {
+  def update(f: Int => (Int => Int), n: Int, g: Int => Int): Int => (Int => Int) = {
+    (a: Int) => if (a == n) g else f(a)
+  }
+  def iter(hinv: Int => (Int => Int)): Int => (Int => Int) = {
+    val f = diag(hinv)
+    val k = H(f)
+    if (H(hinv(k)) == k) {
+      hinv
+    } else {
+      iter(update(hinv, k, f))
+    }
+  }
+  iter((n: Int) => zero)
+}
+
+def h(ns: Int*) = (f: Int => Int) => ns.map(f).sum
+
+def p2(inj: (Int => Int) => Int) {
+  val hinv = invert2(inj)
+  val f = diag(hinv)
+  val n = H(f)
+  for (i <- 0 to n) {
+    val f = hinv(i)
+    println("%d: %s".format(H(f), (0 to n).map(f).mkString(" ")))
+  }
+  println("H(diag) = %d".format(H(f)))
+}
+
+
+def p(inj: (Int => Int) => Int) {
+  val s = invert(inj)
+  for (f <- s) {
+    println("%d: %s".format(H(f), (0 to s.size-1).map(f).mkString(" ")))
+  }
+  val hinv = extend(s)
+  val f = diag(hinv)
+  println("H(diag) = %d".format(H(f)))
+}
+
+def solve(inj: (Int => Int) => Int): (Int => Int, Int => Int, Int) = {
+  val hinv = extend(invert(inj))
+  val f = diag(hinv)
+  val n = H(f)
+  val g = hinv(n)
+  (f, g, n)
+}
 
 def evalMulti(x: Int, y: Int, coeffs: List[List[Int]]): Int = {
   def eval(cs: List[Int]): Int = {
