@@ -119,3 +119,7 @@ table {
 h2 {
   margin-top: 20px;
 }
+
+code {
+  color: #586e75;
+}
