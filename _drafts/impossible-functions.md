@@ -25,22 +25,23 @@ an injection from ```Int => Int``` to ```Int``` that returns a different ```Int`
 
 This is clearly impossible, since there are way more functions from integers to integers than there are integers. But I
 demand proof in the form of witnesses ```f: Int => Int```, ```g: Int => Int``` and ```n: Int``` such that
-```H(f) == H(g)``` but ```f(n) != g(n)```.
+```H(f) == H(g)``` and ```f(n) != g(n)```.
 
 Your job is to write a function ```solve``` that takes a single argument ```H: (Int => Int) => Int``` and returns
 ```f```, ```g``` and ```n``` as described above.
 
 One approach is to put together a mathematical proof that such an injection is impossible and try to extract a program
-from that proof a la the [Curry-Howard isomorphism](http://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence).
+from that proof à la the [Curry-Howard isomorphism](http://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence).
 
 <!-- more -->
 
 ### Proof {%m%}\newcommand{\N}{\mathbb{N}}{%em%}
 
 The proof goes like this. Suppose {%m%}H: (\N \rightarrow \N) \rightarrow \N{%em%} exists. Construct an inverse
-{%m%}H^{-1}: \N \rightarrow (\N \rightarrow \N){%em%} that maps integers to functions — in other words, it's an
-enumeration of all the functions, where every function {%m%}f{%em%} appears at position {%m%}H(f){%em%} in the list.
-Call the first function in the list {%m%}f_0{%em%}, and in general let {%m%}f_i = H^{-1}(i){%em%} so that {%m%}H(f_i) = i{%em%}.
+{%m%}H^{-1}: \N \rightarrow (\N \rightarrow \N){%em%}. One way to look at {%m%}H^{-1}{%em%} is as an enumeration
+{%m%}\{f_i\}{%em%} of functions of type {%m%}\N \rightarrow \N{%em%}. So
+{%m%}f_0 = H^{-1}(0){%em%} is the first function in the list, {%m%}f_1 = H^{-1}(1){%em%} is the second function,
+etc., and in general {%m%}f_i = H^{-1}(i){%em%}. Also notice that {%m%}H(f_i) = i{%em%}.
 
 This list of functions might look something like this:
 
@@ -70,7 +71,7 @@ But {%m%}d{%em%} is still in the domain of {%m%}H{%em%}. Let {%m%}k = H(d){%em%}
 {%m%}f_k \ne d{%em%}.
 
 So we've found two functions, {%m%}d{%em%} and {%m%}f_k{%em%}, that differ at {%m%}k{%em%}, but {%m%}H{%em%} maps
-them both to {%m%}k{%em%}. This completes the proof. Now all that's left is to translate it to code!
+them both to {%m%}k{%em%}. This completes the proof. Now all that's left is to translate it into code!
 
 ### Code
 
@@ -107,9 +108,10 @@ def h1(f: Int => Int): Int = f(1) * 2
 which only returns even numbers. So ```invert(h1)``` won't be defined on odd numbers and we won't have a complete
 table to diagonalize.
 
-Maybe this is OK. I mean, all we need is one row from the table and a diagonal that maps to the same row. Maybe we can
-start with a bad guess for the table, look at the diagonal to see if we found a hit, and update the table with new
-functions we've found as we go along.
+Maybe this is OK. I mean, all we need is one row from the table and a diagonal that maps to the same row. So we don't
+need to construct the entire table. Maybe we can construct a partial approximation of the table by
+starting with a bad guess for the table, checking the diagonal to see if we found a hit, and iteratively refining
+the table with new functions we've found as we go along.
 
 So let's start with the simplest possible thing, a table of constant 0 functions.
 
@@ -122,17 +124,18 @@ So let's start with the simplest possible thing, a table of constant 0 functions
 | {%m%}f_4{%em%} | 0 | 0 | 0 | 0 | 0 | ... |
 | ... | ... | ... | ... | ... | ... | ... |
 
-Now construct the diagonal as {%m%}d(n) = f_n(n) + 1{%em%}.
+Now construct the diagonal as {%m%}d_0(n) = f_n(n) + 1{%em%}.
 
 | {%m%}f{%em%} | {%m%}f(0){%em%} | {%m%}f(1){%em%} | {%m%}f(2){%em%} | {%m%}f(3){%em%} | {%m%}f(4){%em%} | ... |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 | {%m%}d_0{%em%} | 1 | 1 | 1 | 1 | 1 | ... |
 
-Now compute {%m%}H(d_0){%em%} and see if there's already a "correct" entry in the table for that value. Let's say
-{%m%}H(d_0) = 3{%em%}, which means {%m%}d_0{%em%} should be at position 3 in the table. So we check whether our bad guess
-at {%m%}f_3{%em%} was in fact a lucky guess. Suppose {%m%}H(f_3) = 1{%em%}. OK, it was a bad guess,
-so we replace {%m%}f_3{%em%} with {%m%}d_0{%em%} in the table and try again. Here's what the table looks like after
-the first iteration:
+Now compute {%m%}H(d_0){%em%} and see if there's already a "correct" entry in the table for that value. Suppose for example that
+{%m%}H(d_0) = 3{%em%}, which means that {%m%}d_0{%em%} should be at position 3 in the table. So we check whether our bad guess
+at {%m%}f_3{%em%} was in fact a lucky guess. Let's say we get {%m%}H(f_3) = 1{%em%}. OK, it was a bad guess,
+so we replace {%m%}f_3{%em%} with {%m%}d_0{%em%} in the table and try again.
+
+Here's what the table looks like after the first iteration:
 
 | {%m%}f{%em%} | {%m%}f(0){%em%} | {%m%}f(1){%em%} | {%m%}f(2){%em%} | {%m%}f(3){%em%} | {%m%}f(4){%em%} | ... |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|
@@ -143,13 +146,13 @@ the first iteration:
 | {%m%}f_4{%em%} | 0 | 0 | 0 | 0 | 0 | ... |
 | ... | ... | ... | ... | ... | ... | ... |
 
-Now construct the diagonal on the new table. It's just
+Now construct a new diagonal from the updated table. It looks like this:
 
 | {%m%}f{%em%} | {%m%}f(0){%em%} | {%m%}f(1){%em%} | {%m%}f(2){%em%} | {%m%}f(3){%em%} | {%m%}f(4){%em%} | ... |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 | {%m%}d_1{%em%} | 1 | 1 | 1 | 2 | 1 | ... |
 
-Compute {%m%}H(d_1){%em%} as before. Suppose we get 4 this time. {%m%}H(f_4) = 1{%em%} so we update the table and iterate again.
+Compute {%m%}H(d_1){%em%} as before. Suppose we get {%m%}H(d_1) = 4{%em%} this time. {%m%}H(f_4) = 1{%em%} so we update the table and iterate again.
 
 | {%m%}f{%em%} | {%m%}f(0){%em%} | {%m%}f(1){%em%} | {%m%}f(2){%em%} | {%m%}f(3){%em%} | {%m%}f(4){%em%} | ... |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|
@@ -185,14 +188,14 @@ def update(t: Int => (Int => Int), k: Int, f: Int => Int): Int => (Int => Int) =
 def invert(H: (Int => Int) => Int): Int => (Int => Int) = {
   @tailrec
   def iter(hinv: Int => (Int => Int)): Int => (Int => Int) = {
-    val f = diag(hinv)
-    val k = H(f)
+    val d = diag(hinv)
+    val k = H(d)
     if (H(hinv(k)) == k) {
       // Found a collision!
       hinv
     } else {
       // The function at position k is incorrect, so update it and loop around.
-      iter(update(hinv, k, f))
+      iter(update(hinv, k, d))
     }
   }
   iter(zeroes)
@@ -296,7 +299,7 @@ A natural question to ask is whether this algorithm is guaranteed to terminate. 
 deviously enough, we will keep updating the table forever and never find a collision.
 
 Actually, it's easy to show that it does terminate provided that {%m%}H{%em%} terminates. Updating one row in the table
-changes the diagonal at only one point. That is, {%m%}d_i(k) = d_{i+1}(k){%em%} for all {%m%}k{%em%} except {%m%}k = H(d_i){%em%}.
+changes the diagonal at only one point. In particular, {%m%}d_i(k) = d_{i+1}(k){%em%} for all {%m%}k{%em%} except {%m%}k = H(d_i){%em%}.
 But since {%m%}H{%em%} terminates, we know it can only examine a finite number of points of its argument.
 So we will eventually find a {%m%}d_i{%em%} where {%m%}k = H(d_i){%em%} and {%m%}H{%em%} never evaluates
 {%m%}d_i(k){%em%}. That means that {%m%}H{%em%} cannot distinguish between {%m%}d_i{%em%} and {%m%}d_{i+1}{%em%}, and at
@@ -304,7 +307,7 @@ that point the algorithm terminates.
 
 ### A simpler approach
 
-So what's really going on here? The key insight is that {%m%}H(f){%em%} only evaluates {%m%}f{%em%} at a finite number
+The key insight is that {%m%}H(f){%em%} only evaluates {%m%}f{%em%} at a finite number
 of points. So wouldn't it be more straightforward to scan through the integers until we find an {%m%}i{%em%} such that
 {%m%}H{%em%} does not evaluate {%m%}f(i){%em%}?
 
@@ -363,31 +366,28 @@ It works! And it's guaranteed to terminate for the same reason.
 
 It seems like we didn't extract a program directly from a proof when we found an approximation of {%m%}H^{-1}{%em%}.
 But actually, the solution is a [direct translation of a proof by Paulo Oliva](http://www.cs.swan.ac.uk/cie06/files/d20/swansea.pdf)
-that uses something called [bar induction](http://en.wikipedia.org/wiki/Bar_induction).
+that uses a proof technique called [bar induction](http://en.wikipedia.org/wiki/Bar_induction).
 My admittedly poor understanding of bar induction is that it is simply structural induction on infinitely branching
-(but not necessarily infinitely deep) trees with values at the leaves, except that the trees are presented as functions of type
+(but not necessarily infinitely deep) trees with values at the leaves, except that the trees are disguised as functions of type
 {%m%}(\N \rightarrow \N) \rightarrow \N{%em%}.
 The way to think about this is that the {%m%}\N \rightarrow \N{%em%} argument tells you which branch to take at each level
-of the tree, and at some point you hit a leaf, whose value is the result of the function. So you
+of the tree. Eventually you will get to a leaf, and the value in the leaf is the result of the function. So you
 can see an isomorphism between infinitely branching trees and functions of this type.
 
-So you use bar induction to prove the property you want, which is that if such a tree has a finite depth, it
-must have 2 leaves with the same value.
-Then you extract a bar recursive program from this proof, which is basically the algorithm I presented above.
+So anyway, you use bar induction to prove that if such a tree has a finite depth, it must have 2 leaves with the same value.
+Then you extract a bar recursive program from this proof, and that gives you the first solution I presented above.
 
 Both the proof and the program are due to Paulo Oliva. Any errors or misinterpretations are mine.
 
-### Conclusion
-
-A while ago I ran across [this tantalizing programming challenge](http://article.gmane.org/gmane.comp.lang.agda/2927)
-put forth by Martín Escardó. I initially came up with a solution that looks a lot like ```solve2``` — actually, I constructed
+This all started when I ran across [this tantalizing programming challenge](http://article.gmane.org/gmane.comp.lang.agda/2927)
+put forth by Martín Escardó. I initially came up with a solution that looked a lot like ```solve2``` — actually, I constructed
 a function ```f``` that "cheats" by recording in a mutable set what points ```H``` evalutes it at, then picked a value
 not in that set as my ```k``` — and sent it to Martín. He said it appeared to be correct, but Paulo's solution (the one he had in mind)
 was somewhat different.
 
-That led me to [this presentation by Paulo Oliva](http://www.eecs.qmul.ac.uk/~pbo/away-talks/2011_05_28Pittsburgh.pdf)
-and [this paper on bar recursion by Martín Escardó and Paulo Oliva](http://www.cs.bham.ac.uk/~mhe/papers/selection-escardo-oliva.pdf)
-for background understanding of the relevant topics and terminology, most of which I cannot pretend to begin to understand.
+Intrigued, I eventually found [this presentation by Paulo Oliva](http://www.eecs.qmul.ac.uk/~pbo/away-talks/2011_05_28Pittsburgh.pdf)
+and [this paper on bar recursion by Martín Escardó and Paulo Oliva](http://www.cs.bham.ac.uk/~mhe/papers/selection-escardo-oliva.pdf).
+The paper gave me some background understanding of the relevant topics and terminology, but most of it I cannot pretend to begin to understand.
 But it's been fun trying!
 
 
