@@ -4,13 +4,45 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-10-19T18:49:42-04:00</updated>
+ <updated>2013-10-19T20:58:54-04:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
    <email>jliszka@alumni.cmu.edu</email>
  </author>
 
+ 
+ <entry>
+   <title>Impossible functions</title>
+   <link href="http://jliszka.github.io/2013/10/19/impossible-functions.html"/>
+   <updated>2013-10-19T00:00:00-04:00</updated>
+   <id>http://jliszka.github.io/2013/10/19/impossible-functions</id>
+   <content type="html">
+    
+      &lt;style type='text/css'&gt;
+th {
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+tbody tr:nth-child(odd) {
+  background: #eee;
+}
+tbody tr:nth-child(even) {
+  background: #fff;
+}
+&lt;/style&gt;
+&lt;p&gt;I claim to have a function &lt;code&gt;H&lt;/code&gt; that maps any integer-valued function you give it to a different integer. That is, an injection from &lt;code&gt;Int =&amp;gt; Int&lt;/code&gt; to &lt;code&gt;Int&lt;/code&gt; that returns a different &lt;code&gt;Int&lt;/code&gt; for every function you give it.&lt;/p&gt;
+
+&lt;p&gt;This is clearly impossible, since there are way more functions from integers to integers than there are integers. But I demand proof in the form of witnesses &lt;code&gt;f: Int =&amp;gt; Int&lt;/code&gt;, &lt;code&gt;g: Int =&amp;gt; Int&lt;/code&gt; and &lt;code&gt;n: Int&lt;/code&gt; such that &lt;code&gt;H(f) == H(g)&lt;/code&gt; and &lt;code&gt;f(n) != g(n)&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Your job is to write a function &lt;code&gt;solve&lt;/code&gt; that takes a single argument &lt;code&gt;H: (Int =&amp;gt; Int) =&amp;gt; Int&lt;/code&gt; and returns &lt;code&gt;f&lt;/code&gt;, &lt;code&gt;g&lt;/code&gt; and &lt;code&gt;n&lt;/code&gt; as described above.&lt;/p&gt;
+
+&lt;p&gt;One approach is to put together a mathematical proof that such an injection is impossible and try to extract a program from that proof à la the &lt;a href='http://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence'&gt;Curry-Howard isomorphism&lt;/a&gt;.&lt;/p&gt;
+
+      &lt;a href="http://jliszka.github.io/2013/10/19/impossible-functions.html">Read more&lt;/a>
+    
+   </content>
+ </entry>
  
  <entry>
    <title>Understanding A/B Test Analysis</title>

@@ -1,4 +1,5 @@
 
+http://jliszka.github.io/2013/10/19/impossible-functions.html
 http://jliszka.github.io/2013/10/10/understanding-a-b-test-analysis.html
 http://jliszka.github.io/2013/10/01/how-traffic-actually-works.html
 http://jliszka.github.io/2013/09/24/more-backwards-functions-unevaluating-polynomials.html

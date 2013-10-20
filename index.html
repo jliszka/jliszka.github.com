@@ -87,10 +87,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -120,6 +116,8 @@
 <h2 id='archive'>Archive</h2>
 <ul class='posts'>
   
+    <li><span>19 Oct 2013</span> &raquo; <a href='/2013/10/19/impossible-functions.html'>Impossible functions</a></li>
+  
     <li><span>10 Oct 2013</span> &raquo; <a href='/2013/10/10/understanding-a-b-test-analysis.html'>Understanding A/B Test Analysis</a></li>
   
     <li><span>01 Oct 2013</span> &raquo; <a href='/2013/10/01/how-traffic-actually-works.html'>How traffic actually works</a></li>
@@ -141,6 +139,31 @@
 </ul>
 <h2 id='recent_posts'>Recent Posts</h2>
 <div class='post-content-truncate'>
+
+  
+    <h2 class='title'>Impossible functions</h2>
+    <style type='text/css'>
+th {
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+tbody tr:nth-child(odd) {
+  background: #eee;
+}
+tbody tr:nth-child(even) {
+  background: #fff;
+}
+</style>
+<p>I claim to have a function <code>H</code> that maps any integer-valued function you give it to a different integer. That is, an injection from <code>Int =&gt; Int</code> to <code>Int</code> that returns a different <code>Int</code> for every function you give it.</p>
+
+<p>This is clearly impossible, since there are way more functions from integers to integers than there are integers. But I demand proof in the form of witnesses <code>f: Int =&gt; Int</code>, <code>g: Int =&gt; Int</code> and <code>n: Int</code> such that <code>H(f) == H(g)</code> and <code>f(n) != g(n)</code>.</p>
+
+<p>Your job is to write a function <code>solve</code> that takes a single argument <code>H: (Int =&gt; Int) =&gt; Int</code> and returns <code>f</code>, <code>g</code> and <code>n</code> as described above.</p>
+
+<p>One approach is to put together a mathematical proof that such an injection is impossible and try to extract a program from that proof à la the <a href='http://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence'>Curry-Howard isomorphism</a>.</p>
+
+    <a href='/2013/10/19/impossible-functions.html'>Read more</a>
+  
 
   
     <h2 class='title'>Understanding A/B Test Analysis</h2>
