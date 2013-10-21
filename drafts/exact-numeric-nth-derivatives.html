@@ -114,7 +114,7 @@
 <div class="row-fluid post-full">
   <div class="span12">
     <div class="date">
-      <span>20 October 2013</span>
+      <span>21 October 2013</span>
     </div>
     <div class="content">
       <p>Automatic differentiation is a well-studied technique for computing exact numeric derivatives. Dan Piponi has a <a href='http://blog.sigfpe.com/2005/07/automatic-differentiation.html'>great introduction on the subject</a>, but to give you an overview, the idea is that you introduce an algebraic symbol <script type='math/tex'>d</script> such that <script type='math/tex'>d \ne 0</script> but <script type='math/tex'>d^2 = 0</script>. Formulas involving <script type='math/tex'>d</script> are called <a href='http://en.wikipedia.org/wiki/Dual_number'>dual numbers</a> (e.g., <script type='math/tex'>1 + d</script>, <script type='math/tex'>3 - 5d</script>) in much the same way as complex numbers are formulas involving the algebraic symbol <script type='math/tex'>i</script>, which has the property <script type='math/tex'>i^2 = -1</script>.</p>
@@ -172,7 +172,7 @@ a & b \\
 \end{pmatrix}
 %]]>
 </script>
-<p>Furthermore, they add, multiply and divide like dual numbers:</p>
+<p>Furthermore, they add, multiply and divide like dual numbers.</p>
 <script type='math/tex; mode=display'>
 %<![CDATA[
 \begin{pmatrix}
@@ -301,21 +301,22 @@ d^4 = \begin{pmatrix}
 
 <h3 id='code'>Code</h3>
 
-<p>OK, enough math, let&#8217;s code it up. The <code>Dual</code> class will represent a dual number. The underlying representation is a square <a href='http://en.wikipedia.org/wiki/Triangular_matrix'>upper triangular</a> <a href='http://en.wikipedia.org/wiki/Toeplitz_matrix'>diagonal- constant</a> matrix. Unlike typical matrix libraries, I&#8217;m not going to store the cell values as a <code>List[List[Double]]</code> or anything. Instead I&#8217;m just going to have a method <code>get(r: Int, c: Int): Double</code> that returns the value in the specified cell. Also I&#8217;ll memoize it, so yeah, I guess I am storing the cell values somewhere. But this technique makes all the matrix operations easier to write.</p>
+<p>OK, enough math, let&#8217;s code it up. The <code>Dual</code> class will represent a dual number. The underlying representation is a square <a href='http://en.wikipedia.org/wiki/Triangular_matrix'>upper triangular</a> <a href='http://en.wikipedia.org/wiki/Toeplitz_matrix'>diagonal-constant</a> matrix. Unlike typical matrix libraries, I&#8217;m not going to store the cell values as a <code>List[List[Double]]</code> or anything. Instead I&#8217;m just going to have a method <code>get(r: Int, c: Int): Double</code> that returns the value in the specified cell. Also I&#8217;ll memoize it, so yeah, I guess I am storing the cell values somewhere. But this technique makes all the matrix operations easier to write.</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>abstract</span> <span class='k'>class</span><span class='kd'> </span><span class='nc'>Dual</span><span class='p'>(</span><span class='k'>val</span> <span class='n'>rank</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='p'>{</span>
   <span class='n'>self</span> <span class='k'>=&gt;</span>
 
   <span class='c1'>// Cell value accessor</span>
   <span class='k'>protected</span> <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Double</span>
 
-  <span class='c1'>// Memoizing cell value accessor</span>
+  <span class='c1'>// Memoizing cell value accessor.</span>
+  <span class='c1'>// Since it&#39;s a diagonal-constant matrix, we can use r - c as the key.</span>
   <span class='k'>def</span> <span class='nf'>apply</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Double</span> <span class='p'>= </span><span class='n'>memo</span><span class='p'>.</span><span class='n'>getOrElseUpdate</span><span class='p'>(</span><span class='n'>r</span> <span class='o'>-</span> <span class='n'>c</span><span class='p'>,</span> <span class='n'>self</span><span class='p'>.</span><span class='n'>get</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>))</span>
 
   <span class='c1'>// The memo table</span>
   <span class='k'>private</span> <span class='k'>val</span> <span class='n'>memo</span> <span class='k'>=</span> <span class='n'>scala</span><span class='p'>.</span><span class='n'>collection</span><span class='p'>.</span><span class='n'>mutable</span><span class='p'>.</span><span class='nc'>HashMap</span><span class='p'>[</span><span class='kt'>Int</span>, <span class='kt'>Double</span><span class='p'>]()</span>
 <span class='p'>}</span>
 </code></pre></div>
-<p>Now some operations.</p>
+<p>Now the usual matrix operations.</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>abstract</span> <span class='k'>class</span><span class='kd'> </span><span class='nc'>Dual</span><span class='p'>(</span><span class='k'>val</span> <span class='n'>rank</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='p'>{</span>
   <span class='c1'>// ...</span>
 
@@ -349,8 +350,12 @@ D</script>, where <script type='math/tex'>D</script> is a nilpotent matrix, mean
 (I - N)^{-1} = I + N + N^2 + N^3 + \ldots + N^{n-1}
 %]]>
 </script>
-<p>à la the familiar algebraic identity <script type='math/tex'>(1-x)^{-1} = 1 + x + x^2 + x^3 + \ldots</script>.</p>
-
+<p>à la the familiar algebraic identity</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+(1-x)^{-1} = 1 + x + x^2 + x^3 + \ldots
+%]]>
+</script>
 <p>So now we can find the inverse as follows:</p>
 <script type='math/tex; mode=display'>
 %<![CDATA[
@@ -369,7 +374,6 @@ D</script>, where <script type='math/tex'>D</script> is a nilpotent matrix, mean
 
   <span class='k'>def</span> <span class='nf'>inv</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= {</span>
     <span class='k'>val</span> <span class='n'>a</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>)</span>
-    <span class='k'>val</span> <span class='n'>I</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>.</span><span class='n'>I</span>
     <span class='k'>val</span> <span class='n'>D</span> <span class='k'>=</span> <span class='n'>self</span> <span class='o'>-</span> <span class='n'>I</span> <span class='o'>*</span> <span class='n'>a</span>
     <span class='k'>val</span> <span class='n'>N</span> <span class='k'>=</span> <span class='o'>-</span><span class='n'>D</span> <span class='o'>/</span> <span class='n'>a</span>
     <span class='k'>val</span> <span class='nc'>Ns</span> <span class='k'>=</span> <span class='nc'>List</span><span class='p'>.</span><span class='n'>iterate</span><span class='p'>(</span><span class='n'>I</span><span class='p'>,</span> <span class='n'>rank</span><span class='p'>)(</span><span class='k'>_</span> <span class='o'>*</span> <span class='n'>N</span><span class='p'>)</span>
@@ -377,7 +381,7 @@ D</script>, where <script type='math/tex'>D</script> is a nilpotent matrix, mean
   <span class='p'>}</span>
 
   <span class='c1'>// An identity matrix of the same rank as this one</span>
-  <span class='k'>def</span> <span class='nf'>I</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
+  <span class='k'>val</span> <span class='n'>I</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
     <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='k'>if</span> <span class='p'>(</span><span class='n'>r</span> <span class='o'>==</span> <span class='n'>c</span><span class='p'>)</span> <span class='mi'>1</span> <span class='k'>else</span> <span class='mi'>0</span>
   <span class='p'>}</span>
 <span class='p'>}</span>
@@ -450,9 +454,11 @@ res1: Dual = -4.5 3.75 -2.75 1.875 -1.21875 0.765625 -0.46875 0.28125 -0.1660156
 
 <h3 id='conclusion'>Conclusion</h3>
 
-<p>This is a pretty amazing technique. Instead of computing a difference quotient with tiny values of <script type='math/tex'>h</script>, which is prone to all sorts of floating-point rounding errors, you get exact numerical derivatives. In fact you get as many higher-order derivatives as you want, simultaneously.</p>
+<p>This is a pretty amazing technique. Instead of computing a difference quotient with tiny values of <script type='math/tex'>h</script>, which is prone to all sorts of floating-point rounding errors, you get exact numerical derivatives. In fact you get as many higher-order derivatives as you want, simultaneously. You almost never need to do symbolic differentiation.</p>
 
-<p>Of course, for this to be really useful, I&#8217;d have to implement more than just the standard arithmetic operations on dual numbers. I&#8217;ll also want be able to compute <script type='math/tex'>e^{x+d}</script> or <script type='math/tex'>\sin(x+d)</script> or <script type='math/tex'>\sqrt[3]{x+d}</script>. There are ways to do this, but maybe it&#8217;s a topic for another post.</p>
+<p>Of course, for this to be really useful, I&#8217;d have to implement more than just the standard arithmetic operations on dual numbers. I&#8217;ll also want be able to compute <script type='math/tex'>e^{x+d}</script> or <script type='math/tex'>\sin(x+d)</script> or <script type='math/tex'>\sqrt[3]{x+d}</script>. There are certainly ways to do this, but maybe it&#8217;s a topic for another post.</p>
+
+<p>All of the code in this post is available in <a href=''>this gist</a></p>
     </div>
 
     

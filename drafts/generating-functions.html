@@ -114,90 +114,10 @@
 <div class="row-fluid post-full">
   <div class="span12">
     <div class="date">
-      <span>20 October 2013</span>
+      <span>21 October 2013</span>
     </div>
     <div class="content">
-      <div class='highlight'><pre><code class='scala'><span class='k'>abstract</span> <span class='k'>class</span><span class='kd'> </span><span class='nc'>Dual</span><span class='p'>(</span><span class='k'>val</span> <span class='n'>rank</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='p'>{</span>
-  <span class='n'>self</span> <span class='k'>=&gt;</span>
-
-  <span class='c1'>// Cell value accessor</span>
-  <span class='k'>protected</span> <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Double</span>
-
-  <span class='c1'>// Memoizing cell value accessor</span>
-  <span class='k'>def</span> <span class='nf'>apply</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Double</span> <span class='p'>= </span><span class='n'>memo</span><span class='p'>.</span><span class='n'>getOrElseUpdate</span><span class='p'>(</span><span class='n'>r</span> <span class='o'>-</span> <span class='n'>c</span><span class='p'>,</span> <span class='n'>self</span><span class='p'>.</span><span class='n'>get</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>))</span>
-
-  <span class='c1'>// Our memo table</span>
-  <span class='k'>private</span> <span class='k'>val</span> <span class='n'>memo</span> <span class='k'>=</span> <span class='n'>scala</span><span class='p'>.</span><span class='n'>collection</span><span class='p'>.</span><span class='n'>mutable</span><span class='p'>.</span><span class='nc'>HashMap</span><span class='p'>[</span><span class='kt'>Int</span>, <span class='kt'>Double</span><span class='p'>]()</span>
-
-  <span class='n'>def</span> <span class='o'>+</span><span class='p'>(</span><span class='n'>m</span><span class='k'>:</span> <span class='kt'>Dual</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
-    <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)</span> <span class='o'>+</span> <span class='n'>m</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)</span>
-  <span class='p'>}</span>
-
-  <span class='n'>def</span> <span class='o'>-</span><span class='p'>(</span><span class='n'>m</span><span class='k'>:</span> <span class='kt'>Dual</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
-    <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)</span> <span class='o'>-</span> <span class='n'>m</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)</span>
-  <span class='p'>}</span>
-
-  <span class='k'>def</span> <span class='nf'>unary_-</span><span class='p'>()</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
-    <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='o'>-</span><span class='n'>self</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)</span>
-  <span class='p'>}</span>
-
-  <span class='n'>def</span> <span class='o'>*</span><span class='p'>(</span><span class='n'>m</span><span class='k'>:</span> <span class='kt'>Dual</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
-    <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>(</span><span class='mi'>1</span> <span class='n'>to</span> <span class='n'>rank</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>i</span> <span class='k'>=&gt;</span> <span class='n'>self</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>i</span><span class='p'>)</span> <span class='o'>*</span> <span class='n'>m</span><span class='p'>(</span><span class='n'>i</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)).</span><span class='n'>sum</span>
-  <span class='p'>}</span>
-
-  <span class='n'>def</span> <span class='o'>*</span><span class='p'>(</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
-    <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)</span> <span class='o'>*</span> <span class='n'>x</span>
-  <span class='p'>}</span>
-
-  <span class='n'>def</span> <span class='o'>/</span><span class='p'>(</span><span class='n'>m</span><span class='k'>:</span> <span class='kt'>Dual</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='n'>self</span> <span class='o'>*</span> <span class='n'>m</span><span class='p'>.</span><span class='n'>inv</span>
-
-  <span class='n'>def</span> <span class='o'>/</span><span class='p'>(</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
-    <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)</span> <span class='o'>/</span> <span class='n'>x</span>
-  <span class='p'>}</span>
-
-  <span class='k'>def</span> <span class='nf'>inv</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= {</span>
-    <span class='k'>val</span> <span class='n'>a</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>)</span>
-    <span class='k'>val</span> <span class='n'>I</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>.</span><span class='n'>I</span>
-    <span class='k'>val</span> <span class='n'>D</span> <span class='k'>=</span> <span class='n'>self</span> <span class='o'>-</span> <span class='n'>I</span> <span class='o'>*</span> <span class='n'>a</span>
-    <span class='k'>val</span> <span class='n'>N</span> <span class='k'>=</span> <span class='o'>-</span><span class='n'>D</span> <span class='o'>/</span> <span class='n'>a</span>
-    <span class='k'>val</span> <span class='nc'>Ns</span> <span class='k'>=</span> <span class='nc'>List</span><span class='p'>.</span><span class='n'>iterate</span><span class='p'>(</span><span class='n'>I</span><span class='p'>,</span> <span class='n'>rank</span><span class='p'>)(</span><span class='k'>_</span> <span class='o'>*</span> <span class='n'>N</span><span class='p'>)</span>
-    <span class='nc'>Ns</span><span class='p'>.</span><span class='n'>reduce</span><span class='p'>(</span><span class='k'>_</span> <span class='o'>+</span> <span class='k'>_</span><span class='p'>)</span> <span class='o'>/</span> <span class='n'>a</span>
-  <span class='p'>}</span>
-
-  <span class='c1'>// An identity matrix of the same dimension as this one</span>
-  <span class='k'>def</span> <span class='nf'>I</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
-    <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='k'>if</span> <span class='p'>(</span><span class='n'>r</span> <span class='o'>==</span> <span class='n'>c</span><span class='p'>)</span> <span class='mi'>1</span> <span class='k'>else</span> <span class='mi'>0</span>
-  <span class='p'>}</span>
-
-  <span class='k'>def</span> <span class='nf'>pow</span><span class='p'>(</span><span class='n'>p</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= {</span>
-    <span class='k'>if</span> <span class='p'>(</span><span class='n'>p</span> <span class='o'>==</span> <span class='mi'>0</span><span class='p'>)</span> <span class='n'>self</span><span class='p'>.</span><span class='n'>I</span>
-    <span class='k'>else</span> <span class='n'>self</span> <span class='o'>*</span> <span class='n'>self</span><span class='p'>.</span><span class='n'>pow</span><span class='p'>(</span><span class='n'>p</span><span class='o'>-</span><span class='mi'>1</span><span class='p'>)</span>
-  <span class='p'>}</span>
-
-  <span class='k'>def</span> <span class='nf'>exp</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= {</span>
-    <span class='k'>val</span> <span class='n'>a</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>)</span>
-    <span class='k'>val</span> <span class='n'>I</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>.</span><span class='n'>I</span>
-    <span class='k'>val</span> <span class='n'>A</span> <span class='k'>=</span> <span class='n'>I</span> <span class='o'>*</span> <span class='n'>a</span>
-    <span class='k'>val</span> <span class='n'>N</span> <span class='k'>=</span> <span class='n'>self</span> <span class='o'>-</span> <span class='n'>A</span>
-    <span class='k'>val</span> <span class='n'>eA</span> <span class='k'>=</span> <span class='n'>I</span> <span class='o'>*</span> <span class='n'>math</span><span class='p'>.</span><span class='n'>exp</span><span class='p'>(</span><span class='n'>a</span><span class='p'>)</span>
-    <span class='k'>val</span> <span class='n'>eN</span> <span class='k'>=</span> <span class='nc'>List</span><span class='p'>.</span><span class='n'>iterate</span><span class='p'>((</span><span class='n'>I</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>),</span> <span class='n'>rank</span><span class='p'>){</span> <span class='k'>case</span> <span class='p'>(</span><span class='n'>m</span><span class='p'>,</span> <span class='n'>n</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='p'>(</span><span class='n'>m</span> <span class='o'>*</span> <span class='n'>N</span> <span class='o'>/</span> <span class='n'>n</span><span class='p'>,</span> <span class='n'>n</span><span class='o'>+</span><span class='mi'>1</span><span class='p'>)</span> <span class='p'>}.</span><span class='n'>map</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>_1</span><span class='p'>).</span><span class='n'>reduce</span><span class='p'>(</span><span class='k'>_</span> <span class='o'>+</span> <span class='k'>_</span><span class='p'>)</span>
-    <span class='n'>eA</span> <span class='o'>*</span> <span class='n'>eN</span>
-  <span class='p'>}</span>
-
-  <span class='k'>override</span> <span class='k'>def</span> <span class='nf'>toString</span> <span class='k'>=</span> <span class='p'>{</span>
-    <span class='p'>(</span><span class='mi'>1</span> <span class='n'>to</span> <span class='n'>rank</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>c</span> <span class='k'>=&gt;</span> <span class='n'>self</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)).</span><span class='n'>mkString</span><span class='p'>(</span><span class='s'>&quot; &quot;</span><span class='p'>)</span>
-  <span class='p'>}</span>
-<span class='p'>}</span>
-
-<span class='k'>class</span><span class='kd'> </span><span class='nc'>I</span><span class='p'>(</span><span class='k'>override</span> <span class='k'>val</span> <span class='n'>rank</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>extends</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
-  <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='k'>if</span> <span class='p'>(</span><span class='n'>r</span> <span class='o'>==</span> <span class='n'>c</span><span class='p'>)</span> <span class='mi'>1</span> <span class='k'>else</span> <span class='mi'>0</span>
-<span class='p'>}</span>
-
-<span class='k'>class</span><span class='kd'> </span><span class='nc'>D</span><span class='p'>(</span><span class='k'>override</span> <span class='k'>val</span> <span class='n'>rank</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>extends</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
-  <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='k'>if</span> <span class='p'>(</span><span class='n'>r</span> <span class='o'>+</span> <span class='mi'>1</span> <span class='o'>==</span> <span class='n'>c</span><span class='p'>)</span> <span class='mi'>1</span> <span class='k'>else</span> <span class='mi'>0</span>
-<span class='p'>}</span>
-
-<span class='k'>def</span> <span class='nf'>generate</span><span class='p'>(</span><span class='n'>f</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='kt'>=&gt;</span> <span class='kt'>Dual</span><span class='p'>,</span> <span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
+      <div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>generate</span><span class='p'>(</span><span class='n'>f</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='kt'>=&gt;</span> <span class='kt'>Dual</span><span class='p'>,</span> <span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
   <span class='n'>f</span><span class='p'>(</span><span class='k'>new</span> <span class='n'>D</span><span class='p'>(</span><span class='n'>n</span><span class='p'>))</span>
 <span class='p'>}</span>
 

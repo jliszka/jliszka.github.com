@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Impossible functions</title>
+    <title>Some impossible functions</title>
     <meta name="description" content="">
     <meta name="author" content="Jason Liszka">
 
@@ -108,7 +108,7 @@
       <div class="content">
         
 <div class="page-header">
-  <h1>Impossible functions </h1>
+  <h1>Some impossible functions </h1>
 </div>
 
 <div class="row-fluid post-full">
@@ -406,9 +406,11 @@ k: Int = 2</code></pre>
 
 <p>Both the proof and the program are due to Paulo Oliva. Any errors or misinterpretations are mine.</p>
 
-<p>This all started when I ran across <a href='http://article.gmane.org/gmane.comp.lang.agda/2927'>this tantalizing programming challenge</a> put forth by Martín Escardó. I initially came up with a solution that looked a lot like <code>solve2</code> — actually, I constructed a function <code>f</code> that &#8220;cheats&#8221; by recording in a mutable set what points <code>H</code> evalutes it at, then picked a value not in that set as my <code>k</code> — and sent it to Martín. He said it appeared to be correct, but Paulo&#8217;s solution (the one he had in mind) was somewhat different.</p>
+<p>This started for me when I came across <a href='http://article.gmane.org/gmane.comp.lang.agda/2927'>this tantalizing programming challenge</a> put forth by Martín Escardó. I initially came up with a solution that looked a lot like <code>solve2</code> — actually, I constructed a function <code>f</code> that &#8220;cheats&#8221; by recording in a mutable set what points <code>H</code> evalutes it at, then picked a value not in that set as my <code>k</code> — and sent it to Martín. He said it appeared to be correct, but Paulo&#8217;s solution (the one he had in mind) was somewhat different.</p>
 
 <p>Intrigued, I eventually found <a href='http://www.eecs.qmul.ac.uk/~pbo/away-talks/2011_05_28Pittsburgh.pdf'>this presentation by Paulo Oliva</a> and <a href='http://www.cs.bham.ac.uk/~mhe/papers/selection-escardo-oliva.pdf'>this paper on bar recursion by Martín Escardó and Paulo Oliva</a>. The paper gave me some background understanding of the relevant topics and terminology, but most of it I cannot pretend to begin to understand. But it&#8217;s been fun trying!</p>
+
+<p>All of the code in this post is available in <a href='https://gist.github.com/jliszka/7085114'>this gist</a>.</p>
     </div>
 
     
@@ -417,7 +419,7 @@ k: Int = 2</code></pre>
 
 
   <div style="float: right; margin-top: 5px">
-  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/2013/10/19/impossible-functions.html" data-text="Impossible functions" data-via="jliszka">Tweet</a>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/2013/10/19/impossible-functions.html" data-text="Some impossible functions" data-via="jliszka">Tweet</a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
