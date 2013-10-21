@@ -72,7 +72,7 @@ This encoding has the properties {%m%}d \ne 0{%em%} and {%m%}d^2 = 0{%em%}:
 \end{pmatrix}
 {% endmath %}
 
-Furthermore, they add, multiply and divide like dual numbers:
+Furthermore, they add, multiply and divide like dual numbers.
 
 {% math %}
 \begin{pmatrix}
@@ -208,7 +208,7 @@ You can extend this technique to any order derivative you want.
 
 OK, enough math, let's code it up. The ```Dual``` class will represent a dual number. The underlying representation is a
 square [upper triangular](http://en.wikipedia.org/wiki/Triangular_matrix)
-[diagonal- constant](http://en.wikipedia.org/wiki/Toeplitz_matrix) matrix. Unlike typical matrix libraries, I'm not
+[diagonal-constant](http://en.wikipedia.org/wiki/Toeplitz_matrix) matrix. Unlike typical matrix libraries, I'm not
 going to store the cell values as a ```List[List[Double]]``` or anything. Instead I'm just going to have a method
 ```get(r: Int, c: Int): Double``` that returns the value in the specified cell. Also I'll memoize it, so yeah, I guess I
 am storing the cell values somewhere. But this technique makes all the matrix operations easier to write.
@@ -220,7 +220,8 @@ abstract class Dual(val rank: Int) {
   // Cell value accessor
   protected def get(r: Int, c: Int): Double
 
-  // Memoizing cell value accessor
+  // Memoizing cell value accessor.
+  // Since it's a diagonal-constant matrix, we can use r - c as the key.
   def apply(r: Int, c: Int): Double = memo.getOrElseUpdate(r - c, self.get(r, c))
 
   // The memo table
@@ -228,7 +229,7 @@ abstract class Dual(val rank: Int) {
 }
 {% endhighlight %}
 
-Now some operations.
+Now the usual matrix operations.
 
 {% highlight scala %}
 abstract class Dual(val rank: Int) {
@@ -267,7 +268,11 @@ It turns out that for any nilpotent matrix {%m%}N{%em%},
 (I - N)^{-1} = I + N + N^2 + N^3 + \ldots + N^{n-1}
 {% endmath %}
 
-à la the familiar algebraic identity {%m%}(1-x)^{-1} = 1 + x + x^2 + x^3 + \ldots{%em%}.
+à la the familiar algebraic identity
+
+{% math %}
+(1-x)^{-1} = 1 + x + x^2 + x^3 + \ldots
+{% endmath %}
 
 So now we can find the inverse as follows:
 
@@ -289,7 +294,6 @@ abstract class Dual(val rank: Int) {
 
   def inv: Dual = {
     val a = self(1, 1)
-    val I = self.I
     val D = self - I * a
     val N = -D / a
     val Ns = List.iterate(I, rank)(_ * N)
@@ -297,7 +301,7 @@ abstract class Dual(val rank: Int) {
   }
 
   // An identity matrix of the same rank as this one
-  def I: Dual = new Dual(rank) {
+  val I: Dual = new Dual(rank) {
     def get(r: Int, c: Int) = if (r == c) 1 else 0
   }
 }
@@ -380,8 +384,10 @@ Neat!
 
 This is a pretty amazing technique. Instead of computing a difference quotient with tiny values of {%m%}h{%em%}, which
 is prone to all sorts of floating-point rounding errors, you get exact numerical derivatives. In fact you get as many
-higher-order derivatives as you want, simultaneously.
+higher-order derivatives as you want, simultaneously. You almost never need to do symbolic differentiation.
 
 Of course, for this to be really useful, I'd have to implement more than just the standard arithmetic operations on dual
 numbers. I'll also want be able to compute {%m%}e^{x+d}{%em%} or {%m%}\sin(x+d){%em%} or {%m%}\sqrt[3]{x+d}{%em%}. There
-are ways to do this, but maybe it's a topic for another post.
+are certainly ways to do this, but maybe it's a topic for another post.
+
+All of the code in this post is available in [this gist]()
