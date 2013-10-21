@@ -1,0 +1,551 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Exact numeric nth derivatives</title>
+    <meta name="description" content="">
+    <meta name="author" content="Jason Liszka">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/themes/twitter/bootstrap/css/bootstrap.2.2.2.min.css" rel="stylesheet">
+    <link href="/assets/themes/twitter/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/twitter/css/pygment.css" rel="stylesheet" type="text/css" media="all">
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+
+    <!-- atom & rss feed -->
+    <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-narrow">
+          <a class="brand" href="/">A Gentleman and a Scala</a>
+          <ul class="nav">
+            
+            
+            
+
+
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-narrow">
+
+      <div class="content">
+        
+<div class="page-header">
+  <h1>Exact numeric nth derivatives </h1>
+</div>
+
+<div class="row-fluid post-full">
+  <div class="span12">
+    <div class="date">
+      <span>20 October 2013</span>
+    </div>
+    <div class="content">
+      <p>Automatic differentiation is a well-studied technique for computing exact numeric derivatives. Dan Piponi has a <a href='http://blog.sigfpe.com/2005/07/automatic-differentiation.html'>great introduction on the subject</a>, but to give you an overview, the idea is that you introduce an algebraic symbol <script type='math/tex'>d</script> such that <script type='math/tex'>d \ne 0</script> but <script type='math/tex'>d^2 = 0</script>. Formulas involving <script type='math/tex'>d</script> are called <a href='http://en.wikipedia.org/wiki/Dual_number'>dual numbers</a> (e.g., <script type='math/tex'>1 + d</script>, <script type='math/tex'>3 - 5d</script>) in much the same way as complex numbers are formulas involving the algebraic symbol <script type='math/tex'>i</script>, which has the property <script type='math/tex'>i^2 = -1</script>.</p>
+
+<p>Then you teach the computer how to add, subtract, multiply and divide with dual numbers. So for example, <script type='math/tex'>(1 + d)(3 - 5d) = 3 + 3d - 5d - 5d^2 = 3 - 2d</script> (since <script type='math/tex'>d^2 = 0</script>). The computer keeps everything in &#8220;normal form,&#8221; i.e., <script type='math/tex'>a + bd</script>, as you go along.</p>
+
+<p>The kicker is when you consider the <a href='http://en.wikipedia.org/wiki/Taylor_series'>Taylor series</a> expansion of a function. The usual formula is:</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+f(x + p) = f(x) + f'(x)p + \frac{f''(x)p^2}{2!} + \frac{f^{(3)}(x)p^3}{3!} + \ldots
+%]]>
+</script>
+<p>So in order to find the derivative of some function <script type='math/tex'>f</script> at a point <script type='math/tex'>x</script>, all you have to do is compute <script type='math/tex'>f(x + d)</script>. The answer you get (in normal form) is</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+f(x + d) = f(x) + f'(x)d
+%]]>
+</script>
+<p>which is the Taylor series expansion of <script type='math/tex'>f</script> where all the higher-order terms have dropped out because <script type='math/tex'>d^2 = 0</script>.</p>
+
+<p>So for example, let <script type='math/tex'>f(x) = x^2</script> and let&#8217;s find <script type='math/tex'>f'(3)</script>. To do this, we compute <script type='math/tex'>f(3 + d)</script>:</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+\begin{align}
+f(3 + d) &= (3 + d)^2 \\
+ &= 9 + 6d + d^2 \\
+ &= 9 + 6d
+\end{align}
+%]]>
+</script>
+<p>We expected <script type='math/tex'>f(3 + d) = f(3) + f'(3)d</script>. Equating these two results, we can conclude that <script type='math/tex'>f(3) = 9</script> and <script type='math/tex'>f'(3) = 6</script>. Which is true!</p>
+
+<h3 id='implementation'>Implementation</h3>
+
+<p>One interesting way to implement dual numbers is with matrices. The number <script type='math/tex'>a + bd</script> can be encoded as</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+\begin{pmatrix}
+a & b \\
+0 & a
+\end{pmatrix}
+%]]>
+</script>
+<p>This encoding has the properties <script type='math/tex'>d \ne 0</script> and <script type='math/tex'>d^2 = 0</script>:</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+\begin{pmatrix}
+0 & 1 \\
+0 & 0
+\end{pmatrix}^2
+=
+\begin{pmatrix}
+0 & 0 \\
+0 & 0
+\end{pmatrix}
+%]]>
+</script>
+<p>Furthermore, they add, multiply and divide like dual numbers:</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+\begin{pmatrix}
+3 & 1 \\
+0 & 3
+\end{pmatrix}
+\begin{pmatrix}
+3 & 1 \\
+0 & 3
+\end{pmatrix}
+=
+\begin{pmatrix}
+9 & 6 \\
+0 & 9
+\end{pmatrix}
+%]]>
+</script>
+<p>This is nice because if you already have a library for doing matrix math, implementing automatic differentiation is trivial.</p>
+
+<h3 id='higherorder_derivatives'>Higher-order derivatives</h3>
+
+<p>Many of the papers on automatic differentiation point out that this technique generalizes to second derivatives or arbitrary nth derivatives, but I haven&#8217;t found a good explanation of how that works. So, here&#8217;s my attempt.</p>
+
+<p>To compute second derivatives, we need to carry out the Taylor series expansion one step further. So instead of <script type='math/tex'>d^2 = 0</script>, we need <script type='math/tex'>d^3 = 0</script> and <script type='math/tex'>d \ne d^2</script>. Then we get numbers of the form <script type='math/tex'>a + bd + cd^2</script>. When we want to find the first and second derivatives of some function <script type='math/tex'>f</script> at <script type='math/tex'>x</script>, we compute <script type='math/tex'>f(x + d)</script> as before, but now we get</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+f(x + d) = f(x) + f'(x)d + \frac{f''(x)d^2}{2!}
+%]]>
+</script>
+<p>since the <script type='math/tex'>d^3</script> and higher terms drop out.</p>
+
+<p>Now all we need to do is find a mathematical object that behaves this way. It turns out there&#8217;s a matrix for this too:</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+a + bd + cd^2 =
+\begin{pmatrix}
+a & b & c \\
+0 & a & b \\
+0 & 0 & a
+\end{pmatrix}
+%]]>
+</script>
+<p>It encodes the properties we want:</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+\begin{pmatrix}
+0 & 1 & 0 \\
+0 & 0 & 1 \\
+0 & 0 & 0
+\end{pmatrix}^2
+=
+\begin{pmatrix}
+0 & 0 & 1 \\
+0 & 0 & 0 \\
+0 & 0 & 0
+\end{pmatrix}
+
+\qquad
+
+\begin{pmatrix}
+0 & 0 & 1 \\
+0 & 0 & 0 \\
+0 & 0 & 0
+\end{pmatrix}^2
+=
+\begin{pmatrix}
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+0 & 0 & 0
+\end{pmatrix}
+%]]>
+</script>
+<p>Pretty neat!</p>
+
+<p>If you want 3rd derivatives, you need a 4 x 4 matrix:</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+a + bd + cd^2 + ed^3 =
+\begin{pmatrix}
+a & b & c & e \\
+0 & a & b & c \\
+0 & 0 & a & b \\
+0 & 0 & 0 & a
+\end{pmatrix}
+%]]>
+</script>
+<p>So we have</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+d = \begin{pmatrix}
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 0
+\end{pmatrix}
+
+\quad
+
+d^2 = \begin{pmatrix}
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0
+\end{pmatrix}
+
+\quad
+
+d^3 = \begin{pmatrix}
+0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0
+\end{pmatrix}
+
+\quad
+
+d^4 = \begin{pmatrix}
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0
+\end{pmatrix}
+%]]>
+</script>
+<p>You can extend this technique to any order derivative you want.</p>
+
+<h3 id='code'>Code</h3>
+
+<p>OK, enough math, let&#8217;s code it up. The <code>Dual</code> class will represent a dual number. The underlying representation is a square <a href='http://en.wikipedia.org/wiki/Triangular_matrix'>upper triangular</a> <a href='http://en.wikipedia.org/wiki/Toeplitz_matrix'>diagonal- constant</a> matrix. Unlike typical matrix libraries, I&#8217;m not going to store the cell values as a <code>List[List[Double]]</code> or anything. Instead I&#8217;m just going to have a method <code>get(r: Int, c: Int): Double</code> that returns the value in the specified cell. Also I&#8217;ll memoize it, so yeah, I guess I am storing the cell values somewhere. But this technique makes all the matrix operations easier to write.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>abstract</span> <span class='k'>class</span><span class='kd'> </span><span class='nc'>Dual</span><span class='p'>(</span><span class='k'>val</span> <span class='n'>rank</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='p'>{</span>
+  <span class='n'>self</span> <span class='k'>=&gt;</span>
+
+  <span class='c1'>// Cell value accessor</span>
+  <span class='k'>protected</span> <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Double</span>
+
+  <span class='c1'>// Memoizing cell value accessor</span>
+  <span class='k'>def</span> <span class='nf'>apply</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Double</span> <span class='p'>= </span><span class='n'>memo</span><span class='p'>.</span><span class='n'>getOrElseUpdate</span><span class='p'>(</span><span class='n'>r</span> <span class='o'>-</span> <span class='n'>c</span><span class='p'>,</span> <span class='n'>self</span><span class='p'>.</span><span class='n'>get</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>))</span>
+
+  <span class='c1'>// The memo table</span>
+  <span class='k'>private</span> <span class='k'>val</span> <span class='n'>memo</span> <span class='k'>=</span> <span class='n'>scala</span><span class='p'>.</span><span class='n'>collection</span><span class='p'>.</span><span class='n'>mutable</span><span class='p'>.</span><span class='nc'>HashMap</span><span class='p'>[</span><span class='kt'>Int</span>, <span class='kt'>Double</span><span class='p'>]()</span>
+<span class='p'>}</span>
+</code></pre></div>
+<p>Now some operations.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>abstract</span> <span class='k'>class</span><span class='kd'> </span><span class='nc'>Dual</span><span class='p'>(</span><span class='k'>val</span> <span class='n'>rank</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='p'>{</span>
+  <span class='c1'>// ...</span>
+
+  <span class='n'>def</span> <span class='o'>+</span><span class='p'>(</span><span class='n'>other</span><span class='k'>:</span> <span class='kt'>Dual</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
+    <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)</span> <span class='o'>+</span> <span class='n'>other</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)</span>
+  <span class='p'>}</span>
+
+  <span class='n'>def</span> <span class='o'>-</span><span class='p'>(</span><span class='n'>other</span><span class='k'>:</span> <span class='kt'>Dual</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
+    <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)</span> <span class='o'>-</span> <span class='n'>other</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)</span>
+  <span class='p'>}</span>
+
+  <span class='k'>def</span> <span class='nf'>unary_-</span><span class='p'>()</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
+    <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='o'>-</span><span class='n'>self</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)</span>
+  <span class='p'>}</span>
+
+  <span class='n'>def</span> <span class='o'>*</span><span class='p'>(</span><span class='n'>other</span><span class='k'>:</span> <span class='kt'>Dual</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
+    <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>(</span><span class='mi'>1</span> <span class='n'>to</span> <span class='n'>rank</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>i</span> <span class='k'>=&gt;</span> <span class='n'>self</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>i</span><span class='p'>)</span> <span class='o'>*</span> <span class='n'>other</span><span class='p'>(</span><span class='n'>i</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)).</span><span class='n'>sum</span>
+  <span class='p'>}</span>
+
+  <span class='n'>def</span> <span class='o'>*</span><span class='p'>(</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
+    <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)</span> <span class='o'>*</span> <span class='n'>x</span>
+  <span class='p'>}</span>
+<span class='p'>}</span>
+</code></pre></div>
+<p>Division is implemented as multiplication by the inverse: <script type='math/tex'>A/B = AB^{-1}</script>. Matrix inverses are annoying to find and may not exist in the general case, but thankfully all we&#8217;re dealing with are square upper triangular matrices, which are a lot easier to invert. Actually, we have something even better: all of our matrices are of the form <script type='math/tex'>aI +
+D</script>, where <script type='math/tex'>D</script> is a nilpotent matrix, meaning <script type='math/tex'>D^n = 0</script> for some <script type='math/tex'>n</script>.</p>
+
+<p>It turns out that for any nilpotent matrix <script type='math/tex'>N</script>,</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+(I - N)^{-1} = I + N + N^2 + N^3 + \ldots + N^{n-1}
+%]]>
+</script>
+<p>à la the familiar algebraic identity <script type='math/tex'>(1-x)^{-1} = 1 + x + x^2 + x^3 + \ldots</script>.</p>
+
+<p>So now we can find the inverse as follows:</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+(aI + D)^{-1} = \frac{1}{a}(I + N + N^2 + N^3 + \ldots + N^{n-1})
+%]]>
+</script>
+<p>where <script type='math/tex'>N = \frac{-1}{a}D</script>. Here&#8217;s the code:</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>abstract</span> <span class='k'>class</span><span class='kd'> </span><span class='nc'>Dual</span><span class='p'>(</span><span class='k'>val</span> <span class='n'>rank</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='p'>{</span>
+  <span class='c1'>// ...</span>
+
+  <span class='n'>def</span> <span class='o'>/</span><span class='p'>(</span><span class='n'>other</span><span class='k'>:</span> <span class='kt'>Dual</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='n'>self</span> <span class='o'>*</span> <span class='n'>other</span><span class='p'>.</span><span class='n'>inv</span>
+
+  <span class='n'>def</span> <span class='o'>/</span><span class='p'>(</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
+    <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>(</span><span class='n'>r</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)</span> <span class='o'>/</span> <span class='n'>x</span>
+  <span class='p'>}</span>
+
+  <span class='k'>def</span> <span class='nf'>inv</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= {</span>
+    <span class='k'>val</span> <span class='n'>a</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>)</span>
+    <span class='k'>val</span> <span class='n'>I</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>.</span><span class='n'>I</span>
+    <span class='k'>val</span> <span class='n'>D</span> <span class='k'>=</span> <span class='n'>self</span> <span class='o'>-</span> <span class='n'>I</span> <span class='o'>*</span> <span class='n'>a</span>
+    <span class='k'>val</span> <span class='n'>N</span> <span class='k'>=</span> <span class='o'>-</span><span class='n'>D</span> <span class='o'>/</span> <span class='n'>a</span>
+    <span class='k'>val</span> <span class='nc'>Ns</span> <span class='k'>=</span> <span class='nc'>List</span><span class='p'>.</span><span class='n'>iterate</span><span class='p'>(</span><span class='n'>I</span><span class='p'>,</span> <span class='n'>rank</span><span class='p'>)(</span><span class='k'>_</span> <span class='o'>*</span> <span class='n'>N</span><span class='p'>)</span>
+    <span class='nc'>Ns</span><span class='p'>.</span><span class='n'>reduce</span><span class='p'>(</span><span class='k'>_</span> <span class='o'>+</span> <span class='k'>_</span><span class='p'>)</span> <span class='o'>/</span> <span class='n'>a</span>
+  <span class='p'>}</span>
+
+  <span class='c1'>// An identity matrix of the same rank as this one</span>
+  <span class='k'>def</span> <span class='nf'>I</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
+    <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='k'>if</span> <span class='p'>(</span><span class='n'>r</span> <span class='o'>==</span> <span class='n'>c</span><span class='p'>)</span> <span class='mi'>1</span> <span class='k'>else</span> <span class='mi'>0</span>
+  <span class='p'>}</span>
+<span class='p'>}</span>
+</code></pre></div>
+<p>Finally, some utility methods:</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>abstract</span> <span class='k'>class</span><span class='kd'> </span><span class='nc'>Dual</span><span class='p'>(</span><span class='k'>val</span> <span class='n'>rank</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='p'>{</span>
+  <span class='c1'>// ...</span>
+
+  <span class='k'>def</span> <span class='nf'>pow</span><span class='p'>(</span><span class='n'>p</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= {</span>
+    <span class='k'>if</span> <span class='p'>(</span><span class='n'>p</span> <span class='o'>==</span> <span class='mi'>0</span><span class='p'>)</span> <span class='n'>self</span><span class='p'>.</span><span class='n'>I</span>
+    <span class='k'>else</span> <span class='n'>self</span> <span class='o'>*</span> <span class='n'>self</span><span class='p'>.</span><span class='n'>pow</span><span class='p'>(</span><span class='n'>p</span><span class='o'>-</span><span class='mi'>1</span><span class='p'>)</span>
+  <span class='p'>}</span>
+
+  <span class='k'>override</span> <span class='k'>def</span> <span class='nf'>toString</span> <span class='k'>=</span> <span class='p'>{</span>
+    <span class='p'>(</span><span class='mi'>1</span> <span class='n'>to</span> <span class='n'>rank</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>c</span> <span class='k'>=&gt;</span> <span class='n'>self</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)).</span><span class='n'>mkString</span><span class='p'>(</span><span class='s'>&quot; &quot;</span><span class='p'>)</span>
+  <span class='p'>}</span>
+<span class='p'>}</span>
+</code></pre></div>
+<p>Now we need concrete classes representing 1 and <script type='math/tex'>d</script>:</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>class</span><span class='kd'> </span><span class='nc'>I</span><span class='p'>(</span><span class='k'>override</span> <span class='k'>val</span> <span class='n'>rank</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>extends</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
+  <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='k'>if</span> <span class='p'>(</span><span class='n'>r</span> <span class='o'>==</span> <span class='n'>c</span><span class='p'>)</span> <span class='mi'>1</span> <span class='k'>else</span> <span class='mi'>0</span>
+<span class='p'>}</span>
+
+<span class='k'>class</span><span class='kd'> </span><span class='nc'>D</span><span class='p'>(</span><span class='k'>override</span> <span class='k'>val</span> <span class='n'>rank</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>extends</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
+  <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='k'>if</span> <span class='p'>(</span><span class='n'>r</span> <span class='o'>+</span> <span class='mi'>1</span> <span class='o'>==</span> <span class='n'>c</span><span class='p'>)</span> <span class='mi'>1</span> <span class='k'>else</span> <span class='mi'>0</span>
+<span class='p'>}</span>
+</code></pre></div>
+<p>Let&#8217;s try it out. Suppose we want to find the first 5 derivatives of <script type='math/tex'>f(x) = x^4</script> at <script type='math/tex'>f(2)</script>.</p>
+
+<pre><code>scala&gt; val i = new I(6)
+i: I = 1.0 0.0 0.0 0.0 0.0 0.0
+
+scala&gt; val d = new D(6)
+d: D = 0.0 1.0 0.0 0.0 0.0 0.0
+
+scala&gt; def f(x: Dual): Dual = x.pow(4)
+f: (x: Dual)Dual
+
+scala&gt; f(i*2 + d)
+res0: Dual = 16.0 32.0 24.0 8.0 1.0 0.0</code></pre>
+
+<p>This is <script type='math/tex'>16 + 32d + 24d^2 + 8d^3 + d^4</script>. The coefficient of <script type='math/tex'>d^n</script> will be <script type='math/tex'>f^{(n)}(x)/n!</script>. And it checks out:</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+\begin{array}{ r l r l}
+f(x) &= x^4 & f(2) &= 16 = 16 \cdot 0! \\
+f'(x) &= 4x^3 & f'(2) &= 32 = 32 \cdot 1! \\
+f''(x) &= 12x^2 & f''(2) &= 48 = 24 \cdot 2! \\
+f^{(3)}(x) &= 24x & f^{(3)}(2) &= 48 = 8 \cdot 3! \\
+f^{(4)}(x) &= 24 & f^{(4)}(2) &= 24 = 1 \cdot 4! \\
+f^{(5)}(x) &= 0 & f^{(5)}(2) &= 0 = 0 \cdot 5!
+\end{array}
+%]]>
+</script>
+<p>How about the first 8 derivatives of <script type='math/tex'>g(x) = \frac{4x^2}{(1 - x)^3}</script> at <script type='math/tex'>g(3)</script>?</p>
+
+<pre><code>scala&gt; val i = new I(9)
+i: I = 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+
+scala&gt; val d = new D(9)
+d: D = 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+
+scala&gt; def g(x: Dual): Dual = x.pow(2) * 4 / (i - x).pow(3)
+g: (x: Dual)Dual
+
+scala&gt; g(i*3 + d)
+res1: Dual = -4.5 3.75 -2.75 1.875 -1.21875 0.765625 -0.46875 0.28125 -0.166015625</code></pre>
+
+<p>Neat!</p>
+
+<h3 id='conclusion'>Conclusion</h3>
+
+<p>This is a pretty amazing technique. Instead of computing a difference quotient with tiny values of <script type='math/tex'>h</script>, which is prone to all sorts of floating-point rounding errors, you get exact numerical derivatives. In fact you get as many higher-order derivatives as you want, simultaneously.</p>
+
+<p>Of course, for this to be really useful, I&#8217;d have to implement more than just the standard arithmetic operations on dual numbers. I&#8217;ll also want be able to compute <script type='math/tex'>e^{x+d}</script> or <script type='math/tex'>\sin(x+d)</script> or <script type='math/tex'>\sqrt[3]{x+d}</script>. There are ways to do this, but maybe it&#8217;s a topic for another post.</p>
+    </div>
+
+    
+
+  
+
+
+  <div style="float: right; margin-top: 5px">
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/exact-numeric-nth-derivatives.html" data-text="Exact numeric nth derivatives" data-via="jliszka">Tweet</a>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+</div>
+
+
+
+
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-tags"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="/tags.html#automatic differentiation-ref">automatic differentiation <span></span></a></li>
+    
+  
+
+
+
+    </ul>
+    
+    <div style="clear: both"></div>
+
+    <hr>
+    <div class="navigation">
+    
+    
+      <div style="clear: both"></div>
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'jliszka'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+</div>
+
+
+      </div>
+      <hr>
+      <footer>
+        <p>&copy; 2013 Jason Liszka
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </footer>
+
+    </div>
+
+    
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-42567355-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+  </body>
+</html>
+
