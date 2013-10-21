@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Impossible functions"
+title: "Some impossible functions"
 description: ""
 category: 
 tags: [ "code" ]
@@ -379,7 +379,7 @@ Then you extract a bar recursive program from this proof, and that gives you the
 
 Both the proof and the program are due to Paulo Oliva. Any errors or misinterpretations are mine.
 
-This all started when I ran across [this tantalizing programming challenge](http://article.gmane.org/gmane.comp.lang.agda/2927)
+This started for me when I came across [this tantalizing programming challenge](http://article.gmane.org/gmane.comp.lang.agda/2927)
 put forth by Martín Escardó. I initially came up with a solution that looked a lot like ```solve2``` — actually, I constructed
 a function ```f``` that "cheats" by recording in a mutable set what points ```H``` evalutes it at, then picked a value
 not in that set as my ```k``` — and sent it to Martín. He said it appeared to be correct, but Paulo's solution (the one he had in mind)
@@ -389,6 +389,8 @@ Intrigued, I eventually found [this presentation by Paulo Oliva](http://www.eecs
 and [this paper on bar recursion by Martín Escardó and Paulo Oliva](http://www.cs.bham.ac.uk/~mhe/papers/selection-escardo-oliva.pdf).
 The paper gave me some background understanding of the relevant topics and terminology, but most of it I cannot pretend to begin to understand.
 But it's been fun trying!
+
+All of the code in this post is available in [this gist](https://gist.github.com/jliszka/7085114).
 
 
 
