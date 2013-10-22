@@ -376,12 +376,11 @@ D</script>, where <script type='math/tex'>D</script> is a nilpotent matrix, mean
     <span class='k'>val</span> <span class='n'>a</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>)</span>
     <span class='k'>val</span> <span class='n'>D</span> <span class='k'>=</span> <span class='n'>self</span> <span class='o'>-</span> <span class='n'>I</span> <span class='o'>*</span> <span class='n'>a</span>
     <span class='k'>val</span> <span class='n'>N</span> <span class='k'>=</span> <span class='o'>-</span><span class='n'>D</span> <span class='o'>/</span> <span class='n'>a</span>
-    <span class='k'>val</span> <span class='nc'>Ns</span> <span class='k'>=</span> <span class='nc'>List</span><span class='p'>.</span><span class='n'>iterate</span><span class='p'>(</span><span class='n'>I</span><span class='p'>,</span> <span class='n'>rank</span><span class='p'>)(</span><span class='k'>_</span> <span class='o'>*</span> <span class='n'>N</span><span class='p'>)</span>
-    <span class='nc'>Ns</span><span class='p'>.</span><span class='n'>reduce</span><span class='p'>(</span><span class='k'>_</span> <span class='o'>+</span> <span class='k'>_</span><span class='p'>)</span> <span class='o'>/</span> <span class='n'>a</span>
+    <span class='nc'>List</span><span class='p'>.</span><span class='n'>iterate</span><span class='p'>(</span><span class='n'>I</span><span class='p'>,</span> <span class='n'>rank</span><span class='p'>)(</span><span class='k'>_</span> <span class='o'>*</span> <span class='n'>N</span><span class='p'>).</span><span class='n'>reduce</span><span class='p'>(</span><span class='k'>_</span> <span class='o'>+</span> <span class='k'>_</span><span class='p'>)</span> <span class='o'>/</span> <span class='n'>a</span>
   <span class='p'>}</span>
 
   <span class='c1'>// An identity matrix of the same rank as this one</span>
-  <span class='k'>val</span> <span class='n'>I</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
+  <span class='k'>lazy</span> <span class='k'>val</span> <span class='n'>I</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Dual</span><span class='p'>(</span><span class='n'>rank</span><span class='p'>)</span> <span class='p'>{</span>
     <span class='k'>def</span> <span class='nf'>get</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='k'>if</span> <span class='p'>(</span><span class='n'>r</span> <span class='o'>==</span> <span class='n'>c</span><span class='p'>)</span> <span class='mi'>1</span> <span class='k'>else</span> <span class='mi'>0</span>
   <span class='p'>}</span>
 <span class='p'>}</span>
@@ -391,8 +390,11 @@ D</script>, where <script type='math/tex'>D</script> is a nilpotent matrix, mean
   <span class='c1'>// ...</span>
 
   <span class='k'>def</span> <span class='nf'>pow</span><span class='p'>(</span><span class='n'>p</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= {</span>
-    <span class='k'>if</span> <span class='p'>(</span><span class='n'>p</span> <span class='o'>==</span> <span class='mi'>0</span><span class='p'>)</span> <span class='n'>self</span><span class='p'>.</span><span class='n'>I</span>
-    <span class='k'>else</span> <span class='n'>self</span> <span class='o'>*</span> <span class='n'>self</span><span class='p'>.</span><span class='n'>pow</span><span class='p'>(</span><span class='n'>p</span><span class='o'>-</span><span class='mi'>1</span><span class='p'>)</span>
+    <span class='k'>def</span> <span class='nf'>helper</span><span class='p'>(</span><span class='n'>b</span><span class='k'>:</span> <span class='kt'>Dual</span><span class='p'>,</span> <span class='n'>e</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>acc</span><span class='k'>:</span> <span class='kt'>Dual</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= {</span>
+      <span class='k'>if</span> <span class='p'>(</span><span class='n'>e</span> <span class='o'>==</span> <span class='mi'>0</span><span class='p'>)</span> <span class='n'>acc</span>
+      <span class='k'>else</span> <span class='n'>helper</span><span class='p'>(</span><span class='n'>b</span> <span class='o'>*</span> <span class='n'>b</span><span class='p'>,</span> <span class='n'>e</span> <span class='o'>/</span> <span class='mi'>2</span><span class='p'>,</span> <span class='k'>if</span> <span class='p'>(</span><span class='n'>e</span> <span class='o'>%</span> <span class='mi'>2</span> <span class='o'>==</span> <span class='mi'>0</span><span class='p'>)</span> <span class='n'>acc</span> <span class='k'>else</span> <span class='n'>acc</span> <span class='o'>*</span> <span class='n'>b</span><span class='p'>)</span>
+    <span class='p'>}</span>
+    <span class='n'>helper</span><span class='p'>(</span><span class='n'>self</span><span class='p'>,</span> <span class='n'>p</span><span class='p'>,</span> <span class='n'>self</span><span class='p'>.</span><span class='n'>I</span><span class='p'>)</span>
   <span class='p'>}</span>
 
   <span class='k'>override</span> <span class='k'>def</span> <span class='nf'>toString</span> <span class='k'>=</span> <span class='p'>{</span>
@@ -458,7 +460,7 @@ res1: Dual = -4.5 3.75 -2.75 1.875 -1.21875 0.765625 -0.46875 0.28125 -0.1660156
 
 <p>Of course, for this to be really useful, I&#8217;d have to implement more than just the standard arithmetic operations on dual numbers. I&#8217;ll also want be able to compute <script type='math/tex'>e^{x+d}</script> or <script type='math/tex'>\sin(x+d)</script> or <script type='math/tex'>\sqrt[3]{x+d}</script>. There are certainly ways to do this, but maybe it&#8217;s a topic for another post.</p>
 
-<p>All of the code in this post is available in <a href=''>this gist</a></p>
+<p>All of the code in this post is available in <a href='https://gist.github.com/jliszka/7085427'>this gist</a>.</p>
     </div>
 
     
