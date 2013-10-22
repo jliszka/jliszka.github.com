@@ -296,12 +296,11 @@ abstract class Dual(val rank: Int) {
     val a = self(1, 1)
     val D = self - I * a
     val N = -D / a
-    val Ns = List.iterate(I, rank)(_ * N)
-    Ns.reduce(_ + _) / a
+    List.iterate(I, rank)(_ * N).reduce(_ + _) / a
   }
 
   // An identity matrix of the same rank as this one
-  val I: Dual = new Dual(rank) {
+  lazy val I: Dual = new Dual(rank) {
     def get(r: Int, c: Int) = if (r == c) 1 else 0
   }
 }
@@ -314,8 +313,11 @@ abstract class Dual(val rank: Int) {
   // ...
 
   def pow(p: Int): Dual = {
-    if (p == 0) self.I
-    else self * self.pow(p-1)
+    def helper(b: Dual, e: Int, acc: Dual): Dual = {
+      if (e == 0) acc
+      else helper(b * b, e / 2, if (e % 2 == 0) acc else acc * b)
+    }
+    helper(self, p, self.I)
   }
 
   override def toString = {
@@ -390,4 +392,4 @@ Of course, for this to be really useful, I'd have to implement more than just th
 numbers. I'll also want be able to compute {%m%}e^{x+d}{%em%} or {%m%}\sin(x+d){%em%} or {%m%}\sqrt[3]{x+d}{%em%}. There
 are certainly ways to do this, but maybe it's a topic for another post.
 
-All of the code in this post is available in [this gist]()
+All of the code in this post is available in [this gist](https://gist.github.com/jliszka/7085427).
