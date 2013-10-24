@@ -5,8 +5,8 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-10-24T14:29:23-04:00</lastBuildDate>
-        <pubDate>2013-10-24T14:29:23-04:00</pubDate>
+        <lastBuildDate>2013-10-24T16:22:51-04:00</lastBuildDate>
+        <pubDate>2013-10-24T16:22:51-04:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -132,10 +132,10 @@ a &amp; b &amp; c \\
 \qquad
 
 \begin{pmatrix}
+0 &amp; 1 &amp; 0 \\
 0 &amp; 0 &amp; 1 \\
-0 &amp; 0 &amp; 0 \\
 0 &amp; 0 &amp; 0
-\end{pmatrix}^2
+\end{pmatrix}^3
 =
 \begin{pmatrix}
 0 &amp; 0 &amp; 0 \\

@@ -4,7 +4,7 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-10-24T14:29:23-04:00</updated>
+ <updated>2013-10-24T16:22:51-04:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
@@ -137,10 +137,10 @@ a &amp; b &amp; c \\
 \qquad
 
 \begin{pmatrix}
+0 &amp; 1 &amp; 0 \\
 0 &amp; 0 &amp; 1 \\
-0 &amp; 0 &amp; 0 \\
 0 &amp; 0 &amp; 0
-\end{pmatrix}^2
+\end{pmatrix}^3
 =
 \begin{pmatrix}
 0 &amp; 0 &amp; 0 \\
