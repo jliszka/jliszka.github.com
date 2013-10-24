@@ -15,11 +15,11 @@ overview, the idea is that you introduce an algebraic symbol {%m%}\newcommand\e\
 symbol {%m%}i{%em%}, which has the property {%m%}i^2 = -1{%em%}.
 
 Then you teach the computer how to add, subtract, multiply and divide with dual numbers. So for example,
-{%m%}(1 + \e)(3 - 5\e) = 3 + 3\e - 5\e - 5\e^2 = 3 - 2\e{%em%} (since {%m%}\e^2 =
-0{%em%}). The computer keeps everything in "normal form," i.e., {%m%}a + b\e{%em%}, as you go along.
+{%m%}(1 + \e)(3 - 5\e) = 3 + 3\e - 5\e - 5\e^2 = 3 - 2\e{%em%} (since {%m%}\e^2 = 0{%em%}). The computer keeps
+everything in "normal form," i.e., {%m%}a + b\e{%em%}, as you go along.
 
 In order to find the derivative of some function {%m%}f{%em%} at a point {%m%}x{%em%}, all you have to do is
-compute {%m%}f(x + \e){%em%}. The answer you get (in normal form) is 
+compute {%m%}f(x + \e){%em%}. The answer you get (in normal form) is
 
 {% math %}
 f(x + \e) = f(x) + f'(x)\e
@@ -49,7 +49,7 @@ f(x + p) = f(x) + f'(x)p + \frac{f''(x)p^2}{2!} + \frac{f^{(3)}(x)p^3}{3!} + \ld
 {% endmath %}
 
 When you evaluate {%m%}f(x + \e){%em%}, all the higher-order terms drop out (because {%m%}\e^2 = 0{%em%})
-and you're left with {%m%}f(x) + f'(x)\e{%em%}.
+and all you're left with is {%m%}f(x) + f'(x)\e{%em%}.
 
 ### Implementing dual numbers
 
@@ -344,7 +344,7 @@ class E(override val rank: Int) extends Dual(rank) {
 
 Let's try it out. Suppose we want to find the first 5 derivatives of {%m%}f(x) = x^4{%em%} at {%m%}f(2){%em%}.
 
-    scala> val i = new I(6)
+    scala> val one = new I(6)
     i: I = 1.0 0.0 0.0 0.0 0.0 0.0
 
     scala> val e = new E(6)
@@ -353,7 +353,7 @@ Let's try it out. Suppose we want to find the first 5 derivatives of {%m%}f(x) =
     scala> def f(x: Dual): Dual = x.pow(4)
     f: (x: Dual)Dual
 
-    scala> f(i*2 + e)
+    scala> f(one*2 + e)
     res0: Dual = 16.0 32.0 24.0 8.0 1.0 0.0
 
 This is {%m%}16 + 32\e + 24\e^2 + 8\e^3 + \e^4{%em%}. The coefficient of {%m%}\e^n{%em%} will be {%m%}f^{(n)}(x)/n!{%em%}.
@@ -372,17 +372,28 @@ f^{(5)}(x) &= 0 & f^{(5)}(2) &= 0 = 0 \cdot 5!
 
 How about the first 8 derivatives of {%m%}g(x) = \frac{4x^2}{(1 - x)^3}{%em%} at {%m%}g(3){%em%}?
 
-    scala> val i = new I(9)
+    scala> val one = new I(9)
     i: I = 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
 
     scala> val e = new E(9)
     \e: D = 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
 
-    scala> def g(x: Dual): Dual = x.pow(2) * 4 / (i - x).pow(3)
+    scala> def g(x: Dual): Dual = x.pow(2) * 4 / (one - x).pow(3)
     g: (x: Dual)Dual
 
-    scala> g(i*3 + e)
+    scala> g(one*3 + e)
     res1: Dual = -4.5 3.75 -2.75 1.875 -1.21875 0.765625 -0.46875 0.28125 -0.166015625
+
+OK, let's just check {%m%}g^{(4)}(3){%em%}. I'm gonna use [Wolfram Alpha](http://www.wolframalpha.com/input/?i=4th+derivative+of+4x%5E2%2F%281-x%29%5E3)
+for this, because... yeah.
+
+{% math %}
+\begin{align}
+g^{(4)}(x) &= \frac{96(x^2 + 8x + 6)}{(1 - x)^7} \\
+g^{(4)}(3) &= -29.25 \\
+           &= -1.21875 * 4!
+\end{align}
+{% endmath %}
 
 Neat!
 
@@ -390,10 +401,10 @@ Neat!
 
 This is a pretty amazing technique. Instead of computing a difference quotient with tiny values of {%m%}h{%em%}, which
 is prone to all sorts of floating-point rounding errors, you get exact numerical derivatives. In fact you get as many
-higher-order derivatives as you want, simultaneously. You almost never need to do symbolic differentiation.
+higher-order derivatives as you want, simultaneously. So, you almost never need to do symbolic differentiation.
 
-Of course, for this to be really useful, I'\e have to implement more than just the standard arithmetic operations on dual
+Of course, for this to be really useful, I'd have to implement more than just the standard arithmetic operations on dual
 numbers. I'll also want be able to compute {%m%}e^{x+\e}{%em%} or {%m%}\sin(x+\e){%em%} or {%m%}\sqrt[3]{x+\e}{%em%}. There
-are certainly ways to do this, but maybe it's a topic for another post.
+are certainly ways to do this! But maybe it's a topic for another post.
 
 All of the code in this post is available in [this gist](https://gist.github.com/jliszka/7085427).
