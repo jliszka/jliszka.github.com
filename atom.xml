@@ -4,7 +4,7 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-10-24T16:22:51-04:00</updated>
+ <updated>2013-10-24T18:44:06-04:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
@@ -348,7 +348,7 @@ f^{(5)}(x) &amp;= 0 &amp; f^{(5)}(2) &amp;= 0 = 0 \cdot 5!
 i: I = 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
 
 scala&amp;gt; val e = new E(9)
-\e: D = 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+e: D = 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
 
 scala&amp;gt; def g(x: Dual): Dual = x.pow(2) * 4 / (one - x).pow(3)
 g: (x: Dual)Dual
