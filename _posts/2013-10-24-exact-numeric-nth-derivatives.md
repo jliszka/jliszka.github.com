@@ -142,10 +142,10 @@ It encodes the properties we want:
 \qquad
 
 \begin{pmatrix}
+0 & 1 & 0 \\
 0 & 0 & 1 \\
-0 & 0 & 0 \\
 0 & 0 & 0
-\end{pmatrix}^2
+\end{pmatrix}^3
 =
 \begin{pmatrix}
 0 & 0 & 0 \\
