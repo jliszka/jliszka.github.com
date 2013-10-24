@@ -53,7 +53,7 @@ and all you're left with is {%m%}f(x) + f'(x)\e{%em%}.
 
 ### Implementing dual numbers
 
-One interesting way to implement dual numbers is with matrices. The number {%m%}a + bd{%em%} can be encoded as
+One interesting way to implement dual numbers is with matrices. The number {%m%}a + b\e{%em%} can be encoded as
 
 {% math %}
 \begin{pmatrix}
