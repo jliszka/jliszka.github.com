@@ -37,7 +37,7 @@ x + 2x^2 + 3x^3 + 4x^4 + \ldots & = x\frac{d}{dx}(1 + x + x^2 + x^3 + \ldots) \\
 You can even find the generating the Fibonacci sequence from its recurrence relation. It turns out that
 
 {% math %}
-\frac{1}{1 - x - x^2} = x + x^2 + 2x^3 + 3x+^4 + 5x^6 + 8x^7 + 13x^8 + \ldots + F(i)x^i + \ldots
+\frac{x}{1 - x - x^2} = x + x^2 + 2x^3 + 3x+^4 + 5x^6 + 8x^7 + 13x^8 + \ldots + F(i)x^i + \ldots
 {% endmath %}
 
 There are all sorts of algebraic tricks to figure out what the generating function is for a sequence given a
@@ -49,11 +49,13 @@ counting to etc etc.
 
 I was thinking the other day whether any part of the practice of constructing or evaluating generating functions can
 be automated. Finding the function that generates a given polynomial involves a lot of cleverness and trickery, so
-it's probably not a good task for a computer. How about going the other way, checking your work, seeing what sequence
+it's probably not a good task for a computer.
+
+How about going the other way, checking your work, seeing what sequence
 a function generates? That might be doable. It would be great if I could do
 
-    scala> generate(x => 1 / (1 - x - x^2))
-    res0: Stream[Int] = Stream(0, 1, 1, 2, 3, 5, 8, 13, ...) 
+    scala> val fibs = generate(x => x / (1 - x - x^2))
+    fibs: Stream[Int] = Stream(0, 1, 1, 2, 3, 5, 8, 13, ...) 
 
 {% highlight scala %}
 

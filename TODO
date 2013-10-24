@@ -21,6 +21,8 @@ fib in log n (F(n) * F(n-1) is a known identity?)
 impossible functions: injection
 computational algebra
 generating functions
+complex/quaternion/dual tower - other combinations?
+four-square theorem
 
 val harmonic: Stream[Double] = Stream.from(1).map(n => 1.0 / n)
 
