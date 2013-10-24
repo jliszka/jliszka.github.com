@@ -376,7 +376,7 @@ How about the first 8 derivatives of {%m%}g(x) = \frac{4x^2}{(1 - x)^3}{%em%} at
     i: I = 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
 
     scala> val e = new E(9)
-    \e: D = 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+    e: D = 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
 
     scala> def g(x: Dual): Dual = x.pow(2) * 4 / (one - x).pow(3)
     g: (x: Dual)Dual
