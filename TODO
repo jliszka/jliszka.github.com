@@ -22,7 +22,7 @@ impossible functions: injection
 computational algebra
 generating functions
 complex/quaternion/dual tower - other combinations?
-four-square theorem
+four-square theorem: http://www.alpertron.com.ar/4SQUARES.HTM
 
 val harmonic: Stream[Double] = Stream.from(1).map(n => 1.0 / n)
 

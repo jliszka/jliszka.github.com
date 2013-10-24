@@ -4,7 +4,7 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-10-24T11:16:37-04:00</updated>
+ <updated>2013-10-24T14:29:23-04:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
@@ -53,7 +53,7 @@ f(x + p) = f(x) + f'(x)p + \frac{f''(x)p^2}{2!} + \frac{f^{(3)}(x)p^3}{3!} + \ld
 
 &lt;h3 id='implementing_dual_numbers'&gt;Implementing dual numbers&lt;/h3&gt;
 
-&lt;p&gt;One interesting way to implement dual numbers is with matrices. The number &lt;script type='math/tex'&gt;a + bd&lt;/script&gt; can be encoded as&lt;/p&gt;
+&lt;p&gt;One interesting way to implement dual numbers is with matrices. The number &lt;script type='math/tex'&gt;a + b\e&lt;/script&gt; can be encoded as&lt;/p&gt;
 &lt;script type='math/tex; mode=display'&gt;
 %&lt;![CDATA[
 \begin{pmatrix}
