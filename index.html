@@ -91,10 +91,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -124,6 +120,8 @@
 <h2 id='archive'>Archive</h2>
 <ul class='posts'>
   
+    <li><span>24 Oct 2013</span> &raquo; <a href='/2013/10/24/exact-numeric-nth-derivatives.html'>Exact numeric nth derivatives</a></li>
+  
     <li><span>19 Oct 2013</span> &raquo; <a href='/2013/10/19/impossible-functions.html'>Some impossible functions</a></li>
   
     <li><span>10 Oct 2013</span> &raquo; <a href='/2013/10/10/understanding-a-b-test-analysis.html'>Understanding A/B Test Analysis</a></li>
@@ -147,6 +145,8 @@
 </ul>
 <h2 id='recent_posts'>Recent Posts</h2>
 <div class='post-content-truncate'>
+
+  
 
   
     <h2 class='title'>Some impossible functions</h2>
@@ -379,60 +379,6 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))</code></pre>
 <p>It looks like this:</p>
 
     <a href='/2013/08/19/climbing-the-probability-distribution-ladder.html'>Read more</a>
-  
-
-  
-    <h2 class='title'>A Frequentist Approach to Probability</h2>
-    <p>One thing that always confused me in my intro stats classes was the concept of a random variable. A random variable is not a variable like I&#8217;m used to thinking about, like a thing that has one value at a time. A random variable is instead an object that you can sample values from, and the values you get will be distributed according to some underlying probability distribution.</p>
-
-<p>In that way it sort of acts like a container, where the only operation is to sample a value from the container. In Scala it might look something like:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>trait</span><span class='kd'> </span><span class='nc'>Distribution</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]</span> <span class='p'>{</span>
-  <span class='k'>def</span> <span class='nf'>get</span><span class='k'>:</span> <span class='kt'>A</span>
-<span class='p'>}</span>
-</code></pre></div>
-<p>The idea is that <code>get</code> returns a different value (of type <code>A</code>) from the distribution every time you call it.</p>
-
-<p>I&#8217;m going to add a <code>sample</code> method that lets me draw a sample of any size I want from the distribution.</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>trait</span><span class='kd'> </span><span class='nc'>Distribution</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]</span> <span class='p'>{</span>
-  <span class='k'>def</span> <span class='nf'>get</span><span class='k'>:</span> <span class='kt'>A</span>
-
-  <span class='k'>def</span> <span class='nf'>sample</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
-    <span class='nc'>List</span><span class='p'>.</span><span class='n'>fill</span><span class='p'>(</span><span class='n'>n</span><span class='p'>)(</span><span class='k'>this</span><span class='p'>.</span><span class='n'>get</span><span class='p'>)</span>
-  <span class='p'>}</span>
-<span class='p'>}</span>
-</code></pre></div>
-<p>Now to create a simple distribution. Here&#8217;s one whose samples are uniformly distributed between 0 and 1.</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>val</span> <span class='n'>uniform</span> <span class='k'>=</span> <span class='k'>new</span> <span class='nc'>Distribution</span><span class='p'>[</span><span class='kt'>Double</span><span class='p'>]</span> <span class='p'>{</span>
-  <span class='k'>private</span> <span class='k'>val</span> <span class='n'>rand</span> <span class='k'>=</span> <span class='k'>new</span> <span class='n'>java</span><span class='p'>.</span><span class='n'>util</span><span class='p'>.</span><span class='nc'>Random</span><span class='p'>()</span>
-  <span class='k'>override</span> <span class='k'>def</span> <span class='nf'>get</span> <span class='k'>=</span> <span class='n'>rand</span><span class='p'>.</span><span class='n'>nextDouble</span><span class='p'>()</span>
-<span class='p'>}</span>
-</code></pre></div>
-<p>And sampling it gives</p>
-
-<pre><code>scala&gt; uniform.sample(10).foreach(println)
-0.15738645964157327
-0.7827120503875181
-0.8787176537434814
-0.38506604599728245
-0.9469681837641953
-0.20822217752687067
-0.8229649049912187
-0.7767540566158817
-0.4133782959276152
-0.8152378840945975</code></pre>
-
-<h3 id='transforming_distributions'>Transforming distributions</h3>
-
-<p>Every good container should have a <code>map</code> method. <code>map</code> will transform values produced by the distribution according to some function you pass it.</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>trait</span><span class='kd'> </span><span class='nc'>Distribution</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]</span> <span class='p'>{</span>
-  <span class='n'>self</span> <span class='k'>=&gt;</span>
-  <span class='c1'>// ...</span>
-  <span class='k'>def</span> <span class='nf'>map</span><span class='p'>[</span><span class='kt'>B</span><span class='p'>](</span><span class='n'>f</span><span class='k'>:</span> <span class='kt'>A</span> <span class='kt'>=&gt;</span> <span class='kt'>B</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>B</span><span class='p'>]</span> <span class='k'>=</span> <span class='k'>new</span> <span class='nc'>Distribution</span><span class='p'>[</span><span class='kt'>B</span><span class='p'>]</span> <span class='p'>{</span>
-    <span class='k'>override</span> <span class='k'>def</span> <span class='nf'>get</span> <span class='k'>=</span> <span class='n'>f</span><span class='p'>(</span><span class='n'>self</span><span class='p'>.</span><span class='n'>get</span><span class='p'>)</span>
-  <span class='p'>}</span>
-<span class='p'>}</span>
-</code></pre></div>
-    <a href='/2013/08/12/a-frequentist-approach-to-probability.html'>Read more</a>
   
 
 </div>

@@ -5,10 +5,377 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-10-24T11:12:20-04:00</lastBuildDate>
-        <pubDate>2013-10-24T11:12:20-04:00</pubDate>
+        <lastBuildDate>2013-10-24T11:16:37-04:00</lastBuildDate>
+        <pubDate>2013-10-24T11:16:37-04:00</pubDate>
         <ttl>1800</ttl>
 
+
+        <item>
+                <title>Exact numeric nth derivatives</title>
+                <description>
+                
+                        &lt;p&gt;Automatic differentiation is a well-studied technique for computing exact numeric derivatives. Dan Piponi has a &lt;a href='http://blog.sigfpe.com/2005/07/automatic-differentiation.html'&gt;great introduction on the subject&lt;/a&gt;, but to give you an overview, the idea is that you introduce an algebraic symbol &lt;script type='math/tex'&gt;\newcommand\e\epsilon\e&lt;/script&gt; such that &lt;script type='math/tex'&gt;\e \ne 0&lt;/script&gt; but &lt;script type='math/tex'&gt;\e^2 = 0&lt;/script&gt;. Formulas involving &lt;script type='math/tex'&gt;\e&lt;/script&gt; are called &lt;a href='http://en.wikipedia.org/wiki/Dual_number'&gt;dual numbers&lt;/a&gt; (e.g., &lt;script type='math/tex'&gt;1 + \e&lt;/script&gt;, &lt;script type='math/tex'&gt;3 - 5\e&lt;/script&gt;) in much the same way as complex numbers are formulas involving the algebraic symbol &lt;script type='math/tex'&gt;i&lt;/script&gt;, which has the property &lt;script type='math/tex'&gt;i^2 = -1&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;Then you teach the computer how to add, subtract, multiply and divide with dual numbers. So for example, &lt;script type='math/tex'&gt;(1 + \e)(3 - 5\e) = 3 + 3\e - 5\e - 5\e^2 = 3 - 2\e&lt;/script&gt; (since &lt;script type='math/tex'&gt;\e^2 = 0&lt;/script&gt;). The computer keeps everything in &amp;#8220;normal form,&amp;#8221; i.e., &lt;script type='math/tex'&gt;a + b\e&lt;/script&gt;, as you go along.&lt;/p&gt;
+
+&lt;p&gt;In order to find the derivative of some function &lt;script type='math/tex'&gt;f&lt;/script&gt; at a point &lt;script type='math/tex'&gt;x&lt;/script&gt;, all you have to do is compute &lt;script type='math/tex'&gt;f(x + \e)&lt;/script&gt;. The answer you get (in normal form) is&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+f(x + \e) = f(x) + f'(x)\e
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;So for example, let &lt;script type='math/tex'&gt;f(x) = x^2&lt;/script&gt; and let&amp;#8217;s find &lt;script type='math/tex'&gt;f'(3)&lt;/script&gt;. To do this, we compute &lt;script type='math/tex'&gt;f(3 + \e)&lt;/script&gt;:&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+\begin{align}
+f(3 + \e) &amp;= (3 + \e)^2 \\
+ &amp;= 9 + 6\e + \e^2 \\
+ &amp;= 9 + 6\e
+\end{align}
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;We expected &lt;script type='math/tex'&gt;f(3 + \e) = f(3) + f'(3)\e&lt;/script&gt;. Equating these two results, we can conclude that &lt;script type='math/tex'&gt;f(3) = 9&lt;/script&gt; and &lt;script type='math/tex'&gt;f'(3) = 6&lt;/script&gt;. Which is true!&lt;/p&gt;
+
+&lt;p&gt;This works not just for simple polynomials, but for any compound or nested formula of any kind. Somehow dual numbers keep track of the derivative during the evaluation of the formula, respecting the chain rule, the product rule and all.&lt;/p&gt;
+
+&lt;p&gt;The reason this works becomes clearer when you consider the &lt;a href='http://en.wikipedia.org/wiki/Taylor_series'&gt;Taylor series&lt;/a&gt; expansion of a function:&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+f(x + p) = f(x) + f'(x)p + \frac{f''(x)p^2}{2!} + \frac{f^{(3)}(x)p^3}{3!} + \ldots
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;When you evaluate &lt;script type='math/tex'&gt;f(x + \e)&lt;/script&gt;, all the higher-order terms drop out (because &lt;script type='math/tex'&gt;\e^2 = 0&lt;/script&gt;) and all you&amp;#8217;re left with is &lt;script type='math/tex'&gt;f(x) + f'(x)\e&lt;/script&gt;.&lt;/p&gt;
+
+&lt;h3 id='implementing_dual_numbers'&gt;Implementing dual numbers&lt;/h3&gt;
+
+&lt;p&gt;One interesting way to implement dual numbers is with matrices. The number &lt;script type='math/tex'&gt;a + bd&lt;/script&gt; can be encoded as&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+\begin{pmatrix}
+a &amp; b \\
+0 &amp; a
+\end{pmatrix}
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;This encoding has the properties &lt;script type='math/tex'&gt;\e \ne 0&lt;/script&gt; and &lt;script type='math/tex'&gt;\e^2 = 0&lt;/script&gt;:&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+\begin{pmatrix}
+0 &amp; 1 \\
+0 &amp; 0
+\end{pmatrix}^2
+=
+\begin{pmatrix}
+0 &amp; 0 \\
+0 &amp; 0
+\end{pmatrix}
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;Furthermore, they add, multiply and divide like dual numbers.&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+\begin{pmatrix}
+3 &amp; 1 \\
+0 &amp; 3
+\end{pmatrix}
+\begin{pmatrix}
+3 &amp; 1 \\
+0 &amp; 3
+\end{pmatrix}
+=
+\begin{pmatrix}
+9 &amp; 6 \\
+0 &amp; 9
+\end{pmatrix}
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;This is nice because if you already have a library for doing matrix math, implementing automatic differentiation is trivial.&lt;/p&gt;
+
+&lt;h3 id='higherorder_derivatives'&gt;Higher-order derivatives&lt;/h3&gt;
+
+&lt;p&gt;Many of the papers on automatic differentiation point out that this technique generalizes to second derivatives or arbitrary nth derivatives, but I haven&amp;#8217;t found a good explanation of how that works. So, here&amp;#8217;s my attempt.&lt;/p&gt;
+
+&lt;p&gt;To compute second derivatives, we need to carry out the Taylor series expansion one step further. So instead of &lt;script type='math/tex'&gt;\e^2 = 0&lt;/script&gt;, we need &lt;script type='math/tex'&gt;\e^3 = 0&lt;/script&gt; and &lt;script type='math/tex'&gt;\e \ne \e^2&lt;/script&gt;. Then we get numbers of the form &lt;script type='math/tex'&gt;a + b\e + c\e^2&lt;/script&gt;. When we want to find the first and second derivatives of some function &lt;script type='math/tex'&gt;f&lt;/script&gt; at &lt;script type='math/tex'&gt;x&lt;/script&gt;, we compute &lt;script type='math/tex'&gt;f(x + \e)&lt;/script&gt; as before, but now we get&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+f(x + \e) = f(x) + f'(x)\e + \frac{f''(x)\e^2}{2!}
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;since the &lt;script type='math/tex'&gt;\e^3&lt;/script&gt; and higher terms drop out.&lt;/p&gt;
+
+&lt;p&gt;Now all we need to do is find a mathematical object that behaves this way. It turns out there&amp;#8217;s a matrix for this too:&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+a + b\e + c\e^2 =
+\begin{pmatrix}
+a &amp; b &amp; c \\
+0 &amp; a &amp; b \\
+0 &amp; 0 &amp; a
+\end{pmatrix}
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;It encodes the properties we want:&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+\begin{pmatrix}
+0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 1 \\
+0 &amp; 0 &amp; 0
+\end{pmatrix}^2
+=
+\begin{pmatrix}
+0 &amp; 0 &amp; 1 \\
+0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0
+\end{pmatrix}
+
+\qquad
+
+\begin{pmatrix}
+0 &amp; 0 &amp; 1 \\
+0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0
+\end{pmatrix}^2
+=
+\begin{pmatrix}
+0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0
+\end{pmatrix}
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;Pretty neat!&lt;/p&gt;
+
+&lt;p&gt;If you want 3rd derivatives, you need a 4 x 4 matrix:&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+a + b\e + c\e^2 + d\e^3 =
+\begin{pmatrix}
+a &amp; b &amp; c &amp; d \\
+0 &amp; a &amp; b &amp; c \\
+0 &amp; 0 &amp; a &amp; b \\
+0 &amp; 0 &amp; 0 &amp; a
+\end{pmatrix}
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;So we have&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+\e = \begin{pmatrix}
+0 &amp; 1 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 1 \\
+0 &amp; 0 &amp; 0 &amp; 0
+\end{pmatrix}
+
+\quad
+
+\e^2 = \begin{pmatrix}
+0 &amp; 0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 1 \\
+0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0
+\end{pmatrix}
+
+\quad
+
+\e^3 = \begin{pmatrix}
+0 &amp; 0 &amp; 0 &amp; 1 \\
+0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0
+\end{pmatrix}
+
+\quad
+
+\e^4 = \begin{pmatrix}
+0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0
+\end{pmatrix}
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;You can extend this technique to any order derivative you want.&lt;/p&gt;
+
+&lt;h3 id='code'&gt;Code&lt;/h3&gt;
+
+&lt;p&gt;OK, enough math, let&amp;#8217;s code it up. The &lt;code&gt;Dual&lt;/code&gt; class will represent a dual number. The underlying representation is a square &lt;a href='http://en.wikipedia.org/wiki/Triangular_matrix'&gt;upper triangular&lt;/a&gt; &lt;a href='http://en.wikipedia.org/wiki/Toeplitz_matrix'&gt;diagonal-constant&lt;/a&gt; matrix. Unlike typical matrix libraries, I&amp;#8217;m not going to store the cell values as a &lt;code&gt;List[List[Double]]&lt;/code&gt; or anything. Instead I&amp;#8217;m just going to have a method &lt;code&gt;get(r: Int, c: Int): Double&lt;/code&gt; that returns the value in the specified cell. Also I&amp;#8217;ll memoize it, so yeah, I guess I am storing the cell values somewhere. But this technique makes all the matrix operations easier to write.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;abstract&lt;/span&gt; &lt;span class='k'&gt;class&lt;/span&gt;&lt;span class='kd'&gt; &lt;/span&gt;&lt;span class='nc'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
+  &lt;span class='n'&gt;self&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt;
+
+  &lt;span class='c1'&gt;// Cell value accessor&lt;/span&gt;
+  &lt;span class='k'&gt;protected&lt;/span&gt; &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;get&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;
+
+  &lt;span class='c1'&gt;// Memoizing cell value accessor.&lt;/span&gt;
+  &lt;span class='c1'&gt;// Since it&amp;#39;s a diagonal-constant matrix, we can use r - c as the key.&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;apply&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt; &lt;span class='p'&gt;= &lt;/span&gt;&lt;span class='n'&gt;memo&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;getOrElseUpdate&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;get&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='p'&gt;))&lt;/span&gt;
+
+  &lt;span class='c1'&gt;// The memo table&lt;/span&gt;
+  &lt;span class='k'&gt;private&lt;/span&gt; &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;memo&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;scala&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;collection&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;mutable&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='nc'&gt;HashMap&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;, &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='p'&gt;]()&lt;/span&gt;
+&lt;span class='p'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now the usual matrix operations.&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;abstract&lt;/span&gt; &lt;span class='k'&gt;class&lt;/span&gt;&lt;span class='kd'&gt; &lt;/span&gt;&lt;span class='nc'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
+  &lt;span class='c1'&gt;// ...&lt;/span&gt;
+
+  &lt;span class='n'&gt;def&lt;/span&gt; &lt;span class='o'&gt;+&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;other&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Dual&lt;/span&gt; &lt;span class='p'&gt;= &lt;/span&gt;&lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='nc'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;get&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='o'&gt;+&lt;/span&gt; &lt;span class='n'&gt;other&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;
+  &lt;span class='p'&gt;}&lt;/span&gt;
+
+  &lt;span class='n'&gt;def&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;other&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Dual&lt;/span&gt; &lt;span class='p'&gt;= &lt;/span&gt;&lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='nc'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;get&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='n'&gt;other&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;
+  &lt;span class='p'&gt;}&lt;/span&gt;
+
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;unary_-&lt;/span&gt;&lt;span class='p'&gt;()&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Dual&lt;/span&gt; &lt;span class='p'&gt;= &lt;/span&gt;&lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='nc'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;get&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt;&lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;
+  &lt;span class='p'&gt;}&lt;/span&gt;
+
+  &lt;span class='n'&gt;def&lt;/span&gt; &lt;span class='o'&gt;*&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;other&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Dual&lt;/span&gt; &lt;span class='p'&gt;= &lt;/span&gt;&lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='nc'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;get&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='mi'&gt;1&lt;/span&gt; &lt;span class='n'&gt;to&lt;/span&gt; &lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='p'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;i&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;i&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='o'&gt;*&lt;/span&gt; &lt;span class='n'&gt;other&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;i&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='p'&gt;)).&lt;/span&gt;&lt;span class='n'&gt;sum&lt;/span&gt;
+  &lt;span class='p'&gt;}&lt;/span&gt;
+
+  &lt;span class='n'&gt;def&lt;/span&gt; &lt;span class='o'&gt;*&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Dual&lt;/span&gt; &lt;span class='p'&gt;= &lt;/span&gt;&lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='nc'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;get&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='o'&gt;*&lt;/span&gt; &lt;span class='n'&gt;x&lt;/span&gt;
+  &lt;span class='p'&gt;}&lt;/span&gt;
+&lt;span class='p'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Division is implemented as multiplication by the inverse: &lt;script type='math/tex'&gt;A/B = AB^{-1}&lt;/script&gt;. Matrix inverses are annoying to find and may not exist in the general case, but thankfully all we&amp;#8217;re dealing with are square upper triangular matrices, which are a lot easier to invert. Actually, we have something even better: all of our matrices are of the form &lt;script type='math/tex'&gt;aI +
+D&lt;/script&gt;, where &lt;script type='math/tex'&gt;D&lt;/script&gt; is a nilpotent matrix, meaning &lt;script type='math/tex'&gt;D^n = 0&lt;/script&gt; for some &lt;script type='math/tex'&gt;n&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;It turns out that for any nilpotent matrix &lt;script type='math/tex'&gt;N&lt;/script&gt;,&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+(I - N)^{-1} = I + N + N^2 + N^3 + \ldots + N^{n-1}
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;à la the familiar algebraic identity&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+(1-x)^{-1} = 1 + x + x^2 + x^3 + \ldots
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;So now we can find the inverse as follows:&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+(aI + D)^{-1} = \frac{1}{a}(I + N + N^2 + N^3 + \ldots + N^{n-1})
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;where &lt;script type='math/tex'&gt;N = \frac{-1}{a}D&lt;/script&gt;. Here&amp;#8217;s the code:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;abstract&lt;/span&gt; &lt;span class='k'&gt;class&lt;/span&gt;&lt;span class='kd'&gt; &lt;/span&gt;&lt;span class='nc'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
+  &lt;span class='c1'&gt;// ...&lt;/span&gt;
+
+  &lt;span class='n'&gt;def&lt;/span&gt; &lt;span class='o'&gt;/&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;other&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Dual&lt;/span&gt; &lt;span class='p'&gt;= &lt;/span&gt;&lt;span class='n'&gt;self&lt;/span&gt; &lt;span class='o'&gt;*&lt;/span&gt; &lt;span class='n'&gt;other&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;inv&lt;/span&gt;
+
+  &lt;span class='n'&gt;def&lt;/span&gt; &lt;span class='o'&gt;/&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Dual&lt;/span&gt; &lt;span class='p'&gt;= &lt;/span&gt;&lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='nc'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;get&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='o'&gt;/&lt;/span&gt; &lt;span class='n'&gt;x&lt;/span&gt;
+  &lt;span class='p'&gt;}&lt;/span&gt;
+
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;inv&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Dual&lt;/span&gt; &lt;span class='p'&gt;= {&lt;/span&gt;
+    &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;a&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='mi'&gt;1&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='mi'&gt;1&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;
+    &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;D&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;self&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt; &lt;span class='n'&gt;I&lt;/span&gt; &lt;span class='o'&gt;*&lt;/span&gt; &lt;span class='n'&gt;a&lt;/span&gt;
+    &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;N&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='o'&gt;-&lt;/span&gt;&lt;span class='n'&gt;D&lt;/span&gt; &lt;span class='o'&gt;/&lt;/span&gt; &lt;span class='n'&gt;a&lt;/span&gt;
+    &lt;span class='nc'&gt;List&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;iterate&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;I&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='p'&gt;)(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt; &lt;span class='o'&gt;*&lt;/span&gt; &lt;span class='n'&gt;N&lt;/span&gt;&lt;span class='p'&gt;).&lt;/span&gt;&lt;span class='n'&gt;reduce&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt; &lt;span class='o'&gt;+&lt;/span&gt; &lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='o'&gt;/&lt;/span&gt; &lt;span class='n'&gt;a&lt;/span&gt;
+  &lt;span class='p'&gt;}&lt;/span&gt;
+
+  &lt;span class='c1'&gt;// An identity matrix of the same rank as this one&lt;/span&gt;
+  &lt;span class='k'&gt;lazy&lt;/span&gt; &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;I&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Dual&lt;/span&gt; &lt;span class='p'&gt;= &lt;/span&gt;&lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='nc'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
+    &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;get&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;if&lt;/span&gt; &lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='mi'&gt;1&lt;/span&gt; &lt;span class='k'&gt;else&lt;/span&gt; &lt;span class='mi'&gt;0&lt;/span&gt;
+  &lt;span class='p'&gt;}&lt;/span&gt;
+&lt;span class='p'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Finally, some utility methods:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;abstract&lt;/span&gt; &lt;span class='k'&gt;class&lt;/span&gt;&lt;span class='kd'&gt; &lt;/span&gt;&lt;span class='nc'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
+  &lt;span class='c1'&gt;// ...&lt;/span&gt;
+
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;pow&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;p&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Dual&lt;/span&gt; &lt;span class='p'&gt;= {&lt;/span&gt;
+    &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;helper&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;b&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;e&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;acc&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Dual&lt;/span&gt; &lt;span class='p'&gt;= {&lt;/span&gt;
+      &lt;span class='k'&gt;if&lt;/span&gt; &lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;e&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='mi'&gt;0&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='n'&gt;acc&lt;/span&gt;
+      &lt;span class='k'&gt;else&lt;/span&gt; &lt;span class='n'&gt;helper&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;b&lt;/span&gt; &lt;span class='o'&gt;*&lt;/span&gt; &lt;span class='n'&gt;b&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;e&lt;/span&gt; &lt;span class='o'&gt;/&lt;/span&gt; &lt;span class='mi'&gt;2&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='k'&gt;if&lt;/span&gt; &lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;e&lt;/span&gt; &lt;span class='o'&gt;%&lt;/span&gt; &lt;span class='mi'&gt;2&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='mi'&gt;0&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='n'&gt;acc&lt;/span&gt; &lt;span class='k'&gt;else&lt;/span&gt; &lt;span class='n'&gt;acc&lt;/span&gt; &lt;span class='o'&gt;*&lt;/span&gt; &lt;span class='n'&gt;b&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;
+    &lt;span class='p'&gt;}&lt;/span&gt;
+    &lt;span class='n'&gt;helper&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;p&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;I&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;
+  &lt;span class='p'&gt;}&lt;/span&gt;
+
+  &lt;span class='k'&gt;override&lt;/span&gt; &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;toString&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
+    &lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='mi'&gt;1&lt;/span&gt; &lt;span class='n'&gt;to&lt;/span&gt; &lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='p'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;c&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='mi'&gt;1&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='p'&gt;)).&lt;/span&gt;&lt;span class='n'&gt;mkString&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='s'&gt;&amp;quot; &amp;quot;&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;
+  &lt;span class='p'&gt;}&lt;/span&gt;
+&lt;span class='p'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now we need concrete classes representing 1 and &lt;script type='math/tex'&gt;\e&lt;/script&gt;:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;class&lt;/span&gt;&lt;span class='kd'&gt; &lt;/span&gt;&lt;span class='nc'&gt;I&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='k'&gt;override&lt;/span&gt; &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='k'&gt;extends&lt;/span&gt; &lt;span class='nc'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;get&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;if&lt;/span&gt; &lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='mi'&gt;1&lt;/span&gt; &lt;span class='k'&gt;else&lt;/span&gt; &lt;span class='mi'&gt;0&lt;/span&gt;
+&lt;span class='p'&gt;}&lt;/span&gt;
+
+&lt;span class='k'&gt;class&lt;/span&gt;&lt;span class='kd'&gt; &lt;/span&gt;&lt;span class='nc'&gt;E&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='k'&gt;override&lt;/span&gt; &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='k'&gt;extends&lt;/span&gt; &lt;span class='nc'&gt;Dual&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;rank&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;get&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;if&lt;/span&gt; &lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;r&lt;/span&gt; &lt;span class='o'&gt;+&lt;/span&gt; &lt;span class='mi'&gt;1&lt;/span&gt; &lt;span class='o'&gt;==&lt;/span&gt; &lt;span class='n'&gt;c&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='mi'&gt;1&lt;/span&gt; &lt;span class='k'&gt;else&lt;/span&gt; &lt;span class='mi'&gt;0&lt;/span&gt;
+&lt;span class='p'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Let&amp;#8217;s try it out. Suppose we want to find the first 5 derivatives of &lt;script type='math/tex'&gt;f(x) = x^4&lt;/script&gt; at &lt;script type='math/tex'&gt;f(2)&lt;/script&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val one = new I(6)
+i: I = 1.0 0.0 0.0 0.0 0.0 0.0
+
+scala&amp;gt; val e = new E(6)
+e: D = 0.0 1.0 0.0 0.0 0.0 0.0
+
+scala&amp;gt; def f(x: Dual): Dual = x.pow(4)
+f: (x: Dual)Dual
+
+scala&amp;gt; f(one*2 + e)
+res0: Dual = 16.0 32.0 24.0 8.0 1.0 0.0&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is &lt;script type='math/tex'&gt;16 + 32\e + 24\e^2 + 8\e^3 + \e^4&lt;/script&gt;. The coefficient of &lt;script type='math/tex'&gt;\e^n&lt;/script&gt; will be &lt;script type='math/tex'&gt;f^{(n)}(x)/n!&lt;/script&gt;. And it checks out:&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+\begin{array}{ r l r l}
+f(x) &amp;= x^4 &amp; f(2) &amp;= 16 = 16 \cdot 0! \\
+f'(x) &amp;= 4x^3 &amp; f'(2) &amp;= 32 = 32 \cdot 1! \\
+f''(x) &amp;= 12x^2 &amp; f''(2) &amp;= 48 = 24 \cdot 2! \\
+f^{(3)}(x) &amp;= 24x &amp; f^{(3)}(2) &amp;= 48 = 8 \cdot 3! \\
+f^{(4)}(x) &amp;= 24 &amp; f^{(4)}(2) &amp;= 24 = 1 \cdot 4! \\
+f^{(5)}(x) &amp;= 0 &amp; f^{(5)}(2) &amp;= 0 = 0 \cdot 5!
+\end{array}
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;How about the first 8 derivatives of &lt;script type='math/tex'&gt;g(x) = \frac{4x^2}{(1 - x)^3}&lt;/script&gt; at &lt;script type='math/tex'&gt;g(3)&lt;/script&gt;?&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val one = new I(9)
+i: I = 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+
+scala&amp;gt; val e = new E(9)
+\e: D = 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+
+scala&amp;gt; def g(x: Dual): Dual = x.pow(2) * 4 / (one - x).pow(3)
+g: (x: Dual)Dual
+
+scala&amp;gt; g(one*3 + e)
+res1: Dual = -4.5 3.75 -2.75 1.875 -1.21875 0.765625 -0.46875 0.28125 -0.166015625&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;OK, let&amp;#8217;s just check &lt;script type='math/tex'&gt;g^{(4)}(3)&lt;/script&gt;. I&amp;#8217;m gonna use &lt;a href='http://www.wolframalpha.com/input/?i=4th+derivative+of+4x%5E2%2F%281-x%29%5E3'&gt;Wolfram Alpha&lt;/a&gt; for this, because&amp;#8230; yeah.&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+\begin{align}
+g^{(4)}(x) &amp;= \frac{96(x^2 + 8x + 6)}{(1 - x)^7} \\
+g^{(4)}(3) &amp;= -29.25 \\
+           &amp;= -1.21875 * 4!
+\end{align}
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;Neat!&lt;/p&gt;
+
+&lt;h3 id='conclusion'&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;This is a pretty amazing technique. Instead of computing a difference quotient with tiny values of &lt;script type='math/tex'&gt;h&lt;/script&gt;, which is prone to all sorts of floating-point rounding errors, you get exact numerical derivatives. In fact you get as many higher-order derivatives as you want, simultaneously. So, you almost never need to do symbolic differentiation.&lt;/p&gt;
+
+&lt;p&gt;Of course, for this to be really useful, I&amp;#8217;d have to implement more than just the standard arithmetic operations on dual numbers. I&amp;#8217;ll also want be able to compute &lt;script type='math/tex'&gt;e^{x+\e}&lt;/script&gt; or &lt;script type='math/tex'&gt;\sin(x+\e)&lt;/script&gt; or &lt;script type='math/tex'&gt;\sqrt[3]{x+\e}&lt;/script&gt;. There are certainly ways to do this! But maybe it&amp;#8217;s a topic for another post.&lt;/p&gt;
+
+&lt;p&gt;All of the code in this post is available in &lt;a href='https://gist.github.com/jliszka/7085427'&gt;this gist&lt;/a&gt;.&lt;/p&gt;
+                
+                </description>
+                <link>http://jliszka.github.io/2013/10/24/exact-numeric-nth-derivatives.html</link>
+                <guid>http://jliszka.github.io/2013/10/24/exact-numeric-nth-derivatives</guid>
+                <pubDate>2013-10-24T00:00:00-04:00</pubDate>
+        </item>
 
         <item>
                 <title>Some impossible functions</title>
