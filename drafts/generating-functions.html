@@ -114,14 +114,14 @@
 <div class="row-fluid post-full">
   <div class="span12">
     <div class="date">
-      <span>25 October 2013</span>
+      <span>26 October 2013</span>
     </div>
     <div class="content">
       <blockquote>
 <p><em>&#8220;Never underestimate the amount of information that can be encoded in the coefficients of a polynomial.&#8221;</em> —Dana C. Scott</p>
 </blockquote>
 
-<p>Generating functions are one witness to the truth of this statement. The basic idea is that if you have an infinite sequence of numbers, you first create a polynomial with those numbers as coefficients. Then you find a function whose Taylor series expansion is that polynomial.</p>
+<p>Generating functions are one witness to the truth of this statement. The basic idea is that if you have an infinite sequence of numbers, you can create a polynomial with those numbers as coefficients. Then you find a function whose Taylor series expansion is that polynomial.</p>
 
 <p>A simple example is the sequence <script type='math/tex'>a_n = 1</script>, that is, the sequence of all 1s. Ths maps to the polynomial</p>
 <script type='math/tex; mode=display'>
@@ -141,35 +141,30 @@ x + 2x^2 + 3x^3 + 4x^4 + \ldots & = x\frac{d}{dx}(1 + x + x^2 + x^3 + \ldots) \\
 \end{align}
 %]]>
 </script>
-<p>You can even find the generating the Fibonacci sequence from its recurrence relation. It turns out to be</p>
+<p>You can even find the generating the Fibonacci sequence from its recurrence relation. It turns out that</p>
 <script type='math/tex; mode=display'>
 %<![CDATA[
 \frac{x}{1 - x - x^2} = x + x^2 + 2x^3 + 3x+^4 + 5x^6 + 8x^7 + 13x^8 + \ldots + F(i)x^i + \ldots
 %]]>
 </script>
-<p>Anyway, there are all sorts of algebraic tricks to figure out what the generating function is for a sequence, given either a recurrence relation or a formula for each term of the sequence.</p>
+<p>There are all sorts of algebraic tricks to figure out what the generating function is for a sequence given a recurrence relation or a formula for each term of the sequence.</p>
 
-<p>If you&#8217;re curious about it, you should head on over to <a href='http://www.math.upenn.edu/~wilf/gfologyLinked2.pdf'>Generatingfunctionology</a>. It&#8217;s like a whole book on generating functions. The intro and first chapter give you a good sense for the power of this technique, from counting to statistical analysis to proving certain identities.</p>
+<p>If you&#8217;re curious about it, you should head on over to <a href=''>Generatingfunctionology</a>. It&#8217;s like a whole book on generating functions. But the intro and first chapter give you a good sense for the power of this technique, from counting to etc etc.</p>
 
-<p>The other day I was thinking whether any part of the practice of constructing or evaluating generating functions can be automated. Finding the function that generates a given polynomial involves a lot of cleverness and trickery, so it&#8217;s probably not a good task for a computer.</p>
+<p>I was thinking the other day whether any part of the practice of constructing or evaluating generating functions can be automated. Finding the function that generates a given polynomial involves a lot of cleverness and trickery, so it&#8217;s probably not a good task for a computer.</p>
 
 <p>How about going the other way, checking your work, seeing what sequence a function generates? That might be doable. It would be great if I could do</p>
 
 <pre><code>scala&gt; val fibs = generate(x =&gt; x / (1 - x - x^2))
 fibs: Stream[Int] = Stream(0, 1, 1, 2, 3, 5, 8, 13, ...) </code></pre>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>generate</span><span class='p'>(</span><span class='n'>f</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='kt'>=&gt;</span> <span class='kt'>Dual</span><span class='p'>,</span> <span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='n'>f</span><span class='p'>(</span><span class='k'>new</span> <span class='n'>D</span><span class='p'>(</span><span class='n'>n</span><span class='p'>))</span>
+<span class='p'>}</span>
 
-<p>Actually this is pretty easy! All we need is to be able to compute the Taylor series expansion of an arbitrary function. This can be done in an exact fashion using <a href=''>dual numbers</a>, which are pretty easy to teach a computer to work with.</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>generate</span><span class='p'>(</span><span class='n'>f</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='kt'>=&gt;</span> <span class='kt'>Dual</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>f</span><span class='p'>(</span><span class='n'>e</span><span class='p'>)</span>
+<span class='k'>implicit</span> <span class='k'>def</span> <span class='nf'>intToDual</span><span class='p'>(</span><span class='n'>i</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Dual</span> <span class='p'>= </span><span class='k'>new</span> <span class='n'>I</span><span class='p'>(</span><span class='mi'>1000</span><span class='p'>)</span> <span class='o'>*</span> <span class='n'>i</span>
+
+<span class='n'>generate</span><span class='p'>(</span><span class='n'>x</span> <span class='k'>=&gt;</span> <span class='n'>x</span> <span class='o'>/</span> <span class='p'>(</span><span class='n'>i</span> <span class='o'>-</span> <span class='n'>x</span> <span class='o'>-</span> <span class='n'>x</span><span class='p'>.</span><span class='n'>pow</span><span class='p'>(</span><span class='mi'>2</span><span class='p'>)),</span> <span class='mi'>6</span><span class='p'>)</span>
 </code></pre></div>
-<p>OK let&#8217;s try it:</p>
-
-<pre><code>scala&gt; val fibs = generate(x =&gt; x / (1 - x - x.pow(2)))
-fibs: Dual = { 0.0, 1.0, 1.0, 2.0, 3.0, 5.0, 8.0, 13.0, 21.0, 34.0, ... }
-
-scala&gt; fibs(50).toLong
-res0: Long = 12586269025</code></pre>
-
-<p>Great! Done.</p>
     </div>
 
     
@@ -185,22 +180,6 @@ res0: Long = 12586269025</code></pre>
 
 
 
-  
-    <ul class="tag_box inline">
-      <li><i class="icon-tags"></i></li>
-      
-      
-
-
-  
-     
-    	<li><a href="/tags.html#automatic differentiation-ref">automatic differentiation <span>1</span></a></li>
-    
-  
-
-
-
-    </ul>
     
     <div style="clear: both"></div>
 
