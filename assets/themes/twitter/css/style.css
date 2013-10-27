@@ -123,3 +123,8 @@ h2 {
 code {
   color: #586e75;
 }
+
+pre {
+  color: #eee;
+  background: #444;
+}
