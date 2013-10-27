@@ -91,6 +91,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -146,6 +150,41 @@
 <h2 id='recent_posts'>Recent Posts</h2>
 <div class='post-content-truncate'>
 
+  
+    <h2 class='title'>Exact numeric nth derivatives</h2>
+    <p>Automatic differentiation is a well-studied technique for computing exact numeric derivatives. Dan Piponi has a <a href='http://blog.sigfpe.com/2005/07/automatic-differentiation.html'>great introduction on the subject</a>, but to give you an overview, the idea is that you introduce an algebraic symbol <script type='math/tex'>\newcommand\e\epsilon\e</script> such that <script type='math/tex'>\e \ne 0</script> but <script type='math/tex'>\e^2 = 0</script>. Formulas involving <script type='math/tex'>\e</script> are called <a href='http://en.wikipedia.org/wiki/Dual_number'>dual numbers</a> (e.g., <script type='math/tex'>1 + \e</script>, <script type='math/tex'>3 - 5\e</script>) in much the same way as complex numbers are formulas involving the algebraic symbol <script type='math/tex'>i</script>, which has the property <script type='math/tex'>i^2 = -1</script>.</p>
+
+<p>Then you teach the computer how to add, subtract, multiply and divide with dual numbers. So for example, <script type='math/tex'>(1 + \e)(3 - 5\e) = 3 + 3\e - 5\e - 5\e^2 = 3 - 2\e</script> (since <script type='math/tex'>\e^2 = 0</script>). The computer keeps everything in &#8220;normal form,&#8221; i.e., <script type='math/tex'>a + b\e</script>, as you go along.</p>
+
+<p>In order to find the derivative of some function <script type='math/tex'>f</script> at a point <script type='math/tex'>x</script>, all you have to do is compute <script type='math/tex'>f(x + \e)</script>. The answer you get (in normal form) is</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+f(x + \e) = f(x) + f'(x)\e
+%]]>
+</script>
+<p>So for example, let <script type='math/tex'>f(x) = x^2</script> and let&#8217;s find <script type='math/tex'>f'(3)</script>. To do this, we compute <script type='math/tex'>f(3 + \e)</script>:</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+\begin{align}
+f(3 + \e) &= (3 + \e)^2 \\
+ &= 9 + 6\e + \e^2 \\
+ &= 9 + 6\e
+\end{align}
+%]]>
+</script>
+<p>We expected <script type='math/tex'>f(3 + \e) = f(3) + f'(3)\e</script>. Equating these two results, we can conclude that <script type='math/tex'>f(3) = 9</script> and <script type='math/tex'>f'(3) = 6</script>. Which is true!</p>
+
+<p>This works not just for simple polynomials, but for any compound or nested formula of any kind. Somehow dual numbers keep track of the derivative during the evaluation of the formula, respecting the chain rule, the product rule and all.</p>
+
+<p>The reason this works becomes clearer when you consider the <a href='http://en.wikipedia.org/wiki/Taylor_series'>Taylor series</a> expansion of a function:</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+f(x + p) = f(x) + f'(x)p + \frac{f''(x)p^2}{2!} + \frac{f^{(3)}(x)p^3}{3!} + \ldots
+%]]>
+</script>
+<p>When you evaluate <script type='math/tex'>f(x + \e)</script>, all the higher-order terms drop out (because <script type='math/tex'>\e^2 = 0</script>) and all you&#8217;re left with is <script type='math/tex'>f(x) + f'(x)\e</script>.</p>
+
+    <a href='/2013/10/24/exact-numeric-nth-derivatives.html'>Read more</a>
   
 
   
