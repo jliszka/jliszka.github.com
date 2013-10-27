@@ -51,6 +51,8 @@ f(x + p) = f(x) + f'(x)p + \frac{f''(x)p^2}{2!} + \frac{f^{(3)}(x)p^3}{3!} + \ld
 When you evaluate {%m%}f(x + \e){%em%}, all the higher-order terms drop out (because {%m%}\e^2 = 0{%em%})
 and all you're left with is {%m%}f(x) + f'(x)\e{%em%}.
 
+<!-- more -->
+
 ### Implementing dual numbers
 
 One interesting way to implement dual numbers is with matrices. The number {%m%}a + b\e{%em%} can be encoded as
