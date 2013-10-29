@@ -128,3 +128,9 @@ pre {
   color: #eee;
   background: #444;
 }
+
+blockquote.quote {
+  font-family: Georgia, serif;
+  text-align: right;
+}
+
