@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "More backwards functions: Unevaluating polynomials"
+title: "Unevaluating polynomials"
 description: ""
 category: 
-tags: [ "code" , "backwards programming" ]
+tags: [ "backwards programming", "polynomials" ]
 ---
 {% include JB/setup %}
 

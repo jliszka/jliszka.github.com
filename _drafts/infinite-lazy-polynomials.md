@@ -3,7 +3,7 @@ layout: post
 title: "Infinite lazy polynomials"
 description: ""
 category: 
-tags: [ "automatic differentiation" ]
+tags: [ "polynomials", automatic differentiation" ]
 ---
 {% include JB/setup %}
 

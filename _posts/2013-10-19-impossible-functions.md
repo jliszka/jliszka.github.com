@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Some impossible functions"
+title: "Impossible functions"
 description: ""
 category: 
 tags: [ "code" ]

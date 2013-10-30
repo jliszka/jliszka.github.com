@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "A Frequentist Approach to Probability"
+title: "A frequentist approach to probability"
 description: ""
 category: 
 tags: [ "probability" ]

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Understanding A/B Test Analysis"
+title: "Understanding A/B test analysis"
 description: ""
 category: 
 tags: [ "probability" ]
