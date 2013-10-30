@@ -16,14 +16,15 @@ stochastic calculus, ito calculus
 
 reversible computing
 not a monad tutorial
-fib in log n (F(n) * F(n-1) is a known identity?)
+fib in log n (F(n) * F(n-1) is a known identity)
 computational algebra
 generating functions
 complex/quaternion/dual tower - other combinations?
 four-square theorem: http://www.alpertron.com.ar/4SQUARES.HTM
-automatic symbolic differentiation!
+automatic symbolic differentiation
 kalman filter (iterated PGM), conjugate priors
-"popular posts"
+effective annual review feedback
+poly in haskell
 
 more probability: http://www.amazon.com/Problems-Probability-Mathematical-Statistics-Mathematics/dp/0387735119/ref=sr_1_2?s=books&ie=UTF8&qid=1373846207&sr=1-2&keywords=40+statistics
 

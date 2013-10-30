@@ -1,9 +1,11 @@
-<div class="page-header">
-  <h1>{{ page.title }} {% if page.tagline %}<small>{{page.tagline}}</small>{% endif %}</h1>
+<div class="row-fluid">
+  <div class="span10 post-content post-spacer"></div>
 </div>
-
 <div class="row-fluid post-full">
-  <div class="span12">
+  <div class="span10 post-content">
+    <div class="page-header">
+      <h1>{{ page.title }} {% if page.tagline %}<small>{{page.tagline}}</small>{% endif %}</h1>
+    </div>
     <div class="date">
       <span>{{ page.date | date_to_long_string }}</span>
     </div>
@@ -42,5 +44,31 @@
     </div>
     <hr>
     {% include JB/comments %}
+  </div>
+
+  <div class="span2 sidebar">
+    <a href="/"><div id="photo"></div></a>
+    <div id="bio">
+      <b>Jason Liszka</b><br/>
+      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+    </div>
+    <h4>Popular posts</h4>
+    <ul>
+      <li><a href="{{ site.posts[-8].url }}">{{ site.posts[-8].title }}</a></li>
+      <li><a href="{{ site.posts[-1].url }}">{{ site.posts[-1].title }}</a></li>
+      <li><a href="{{ site.posts[-11].url }}">{{ site.posts[-11].title }}</a></li>
+      <li><a href="{{ site.posts[-7].url }}">{{ site.posts[-7].title }}</a></li>
+    </ul>
+
+    <h4>Recent posts</h4>
+    <ul>
+      {% for post in site.posts limit:5 %}
+        <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+      {% endfor %}
+    </ul>
+
+    <a href="https://twitter.com/jliszka" class="twitter-follow-button" data-show-count="false" data-size="large" data-show-screen-name="false">Follow @jliszka</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
   </div>
 </div>
