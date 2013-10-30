@@ -39,6 +39,17 @@ def kahan(xs: Seq[Double]): (Double, Double) = {
   }}
 }
 
+def kahan(xs: Seq[Double]): Double = {
+  val (sum, carry) = xs.foldLeft((0.0, 0.0)){ case ((sum, carry), x) => {
+    val x2 = x - carry
+    val newSum = sum + x2
+    (newSum, (newSum - sum) - x2)
+  }}
+  sum
+}
+
+
+
 val rs: Stream[Rational] = Stream.from(1).map(n => Rational(1, n))
 
 def extend(s: List[Int => Int]): Int => (Int => Int) = {

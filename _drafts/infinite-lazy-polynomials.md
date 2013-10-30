@@ -18,7 +18,7 @@ In this post I'm going to write a toy library for manipulating infinite lazy pol
 
 One way represent a polynomial of infinite degree is as an infinite stream of coefficients. But I think it would be
 easier to think about it in terms of a function {%m%}c:\mathbb{N} \rightarrow \mathbb{R}{%em%} that gives you the coefficient
-for a given power of {%m%}x{%em%} in the polynomial. So the polynomial represented by {%m%}c{%em%} would be
+for a given power of {%m%}x{%em%} in the polynomial. So the polynomial represented by some function {%m%}c{%em%} would be
 
 {% math %}
 p_c(x) = c(0) + c(1)x + c(2)x^2 + c(3)x^3 + \ldots
@@ -37,29 +37,30 @@ class Poly(coeffs: Int => Double) {
   private val memo = scala.collection.mutable.HashMap[Int, Double]()
 
   override def toString = {
-    "{ %s, ... }".format((0 to 10).map(i => self(i)).mkString(", "))
+    "{ %s, ... }".format((0 to 10).map(i => df.format(self(i))).mkString(", "))
   }
+  private val df = new java.text.DecimalFormat("#.#######")
 }
 {% endhighlight %}
 
-I'm memoizing the output of the function for good measure.
+I'm memoizing the output of the function to avoid duplicating work.
 
 Now we can create instances like this:
 
     scala> val one = new Poly(n => if (n == 0) 1 else 0)
-    one: Poly = { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ... }
+    one: Poly = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 
     scala> val x = new Poly(n => if (n == 1) 1 else 0)
-    x: Poly = { 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ... }
+    x: Poly = { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 
 The ```.toString``` just prints out the first 10 or so coefficients. If you want more you can call ```p(12)``` or whatever.
 I might add a ```.toStream``` or a ```.take(n)``` later.
 
 Just keep in mind that ```p(n)``` is the coefficient of {%m%}x^n{%em%} in ```p```, not {%m%}p(n){%em%} (i.e.,
 {%m%}p{%em%} evaluated at {%m%}n{%em%}) as you might expect to see. I can get away with this because I'm probably never
-going to evaluate these polynomials, I'm just going to treat them "formally," as mathematical objects in their own right.
+going to evaluate these polynomials, I'm just going to treat them formally, as mathematical objects in their own right.
 
-### Arithmetic
+### Simple operations
 
 ```Poly```s aren't that useful until we can do arithmetic to them. Let's add support for addition, subtraction and negation:
 
@@ -111,16 +112,16 @@ class Poly(coeffs: Int => Double) {
 
 It's pretty nice to only have to think about the coefficient of one power of {%m%}x{%em%} at a time!
 
-Anyway, let's try it out:
+Let's try it out:
 
     scala> one + x
-    res0: Poly = { 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ... }
+    res0: Poly = { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 
     scala> one + x*x*3
-    res1: Poly = { 1.0, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ... }
+    res1: Poly = { 1, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 
     scala> (x + one*4) * (x - one*3)
-    res2: Poly = { -12.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ... }
+    res2: Poly = { -12, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 
 I'm going to get tired of typing ```one*4``` every time I mean ```4```, so before I go any further I'm going to add some
 implicit conversions from ```Int``` and ```Double``` to ```Poly```:
@@ -133,11 +134,10 @@ implicit def doubleToPoly(d: Double): Poly = one * d
 The compiler will insert these methods any time they would help get the expression to typecheck. So now I can do
 
     scala> (1 + 2*x + x*x) * (3 - x)
-    res0: Poly = { 3.0, 5.0, 1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ... }
+    res0: Poly = { 3, 5, 1, -1, 0, 0, 0, 0, 0, 0, 0, ... }
 
     scala> (x + 7) * (x - 7)
-    res1: Poly = { -49.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ... }
-
+    res1: Poly = { -49, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 
 That's much nicer.
 
@@ -161,7 +161,7 @@ class Poly(coeffs: Int => Double) {
 }
 {% endhighlight %}
 
-I memoized it because I love memoizing things, but also because we're going to need it in the next section.
+I memoized it because I love memoizing things, but also because I'm going to need it in the next section.
 
 ### Division
 
@@ -204,7 +204,7 @@ where {%m%}a{%em%} is the constant term of {%m%}p(x){%em%}. Then we'll have
 \frac{1}{p(x)} = \frac{1}{a}\frac{1}{1-q(x)}
 {% endmath %}
 
-Here's the code:
+all of which we know how to compute. Here's the code:
 
 {% highlight scala %}
 class Poly(coeffs: Int => Double) {
@@ -223,12 +223,29 @@ class Poly(coeffs: Int => Double) {
 Let's try it:
 
     scala> (6 + 5*x + x**2) / (x + 2)
-    res0: Poly = { 3.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ... }
+    res0: Poly = { 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 
-Nice! And even:
+Nice! How about something that doesn't divide evenly:
+
+    scala> val p = (1 + 2*x - x**2) / (5 + x)
+    p: Poly = { 0.2, 0.36, -0.272, 0.0544, -0.01088, 0.002176, -0.0004352, 0.000087, -0.0000174, 0.0000035, -0.0000007, ... }
+
+    scala> p * (5 + x)
+    res1: Poly = { 1, 2, -1, 0, -0, 0, -0, 0, 0, 0, -0, ... }
+
+Cool. It looks like there are some floating-point rounding artifacts, but fundamentally it looks like it works.
+
+One more, for fun:
 
     scala> 1 / (1 - x)
-    res1: Poly = { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, ... }
+    res2: Poly = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ... }
+
+Looks good!
+
+It's worth noting that those rounding artifacts are due to my use of ```Double``` to store and manipulate the numbers
+that make up the polynomial. It's _not_ because the formulas I'm using are inexact, or because they only approximate the
+"true" answer. If I were using an arbitrary precision number class instead of ```Double```, the numbers would come out
+as close to correct as I wanted.
 
 ### Fractional powers
 
@@ -260,9 +277,10 @@ class Poly(coeffs: Int => Double) {
 
   def **(r: Double): Poly = {
     val a = self(0)
+    val ar = math.pow(a, r)
     val q = self / a - 1
     def coeff(n: Int) = (0 to n-1).map(i => r - i).product / (1 to n).product
-    new Poly(n => (0 to n).map(i => coeff(i) * (q ** i)(n)).sum * math.pow(a, r))
+    new Poly(n => (0 to n).map(i => coeff(i) * (q ** i)(n)).sum * ar)
   }
 }
 {% endhighlight %}
@@ -270,60 +288,34 @@ class Poly(coeffs: Int => Double) {
 OK, let's see if this actually works...
 
     scala> val p = (4 + x)**2
-    p: Poly = { 16.0, 8.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ... }
+    p: Poly = { 16, 8, 1, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 
     scala> p ** 0.5
-    res0: Poly = { 4.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ... }
+    res0: Poly = { 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 
 Alright! Let's try it on a polynomial that is not a perfect square:
 
     scala> val p = (5 + 2*x + x**3) ** 0.5
-    p: Poly = { 2.23606797749979, 0.447213595499958, -0.04472135954999581, 0.23255106965997815, -0.0469574275274956, 0.014042506898698685, -0.015840305552608513, 0.008332483711355221, -0.003936776559826582, 0.002896289408536379, ... }
+    p: Poly = { 2.236068, 0.4472136, -0.0447214, 0.2325511, -0.0469574, 0.0140425, -0.0158403, 0.0083325, -0.0039368, 0.0028963, -0.0019013, ... }
 
-    scala> p ** 2
-    res1: Poly = { 5.000000000000001, 2.0000000000000004, -2.7755575615628914E-17, 1.0000000000000002, -2.7755575615628914E-17, 0.0, 0.0, 1.3877787807814457E-17, 0.0, 0.0, ... }
+    scala> p * p
+    res1: Poly = { 5, 2, -0, 1, -0, -0, 0, 0, 0, 0, -0, ... }
 
-OK, um, pretty close? It looks like it works, but there are lots of floating-point rounding errors. Let me just clean
-that up in the display code:
-
-{% highlight scala %}
-  override def toString = {
-    val rm = BigDecimal.RoundingMode.HALF_UP
-    "{ %s, ... }".format(
-      self.take(10).map(x => BigDecimal(x).setScale(5, rm).toDouble).mkString(", ")
-    )
-  }
-{% endhighlight %}
-
-(Note: there are a lot of other ways I could have handled this, but this seemed to be the easiest.)
-
-(Also note: these errors are _not_ because the formulas I'm using are inexact, or because they only approximate the
-"true" answer. If I were using an arbitrary precision number class instead of ```Double```, the numbers would come out
-as close to correct as I wanted.)
-
-Anyway, let's see if that's any better:
-
-    scala> val p = (5 + 2*x + x**3) ** 0.5
-    p: Poly = { 2.23607, 0.44721, -0.04472, 0.23255, -0.04696, 0.01404, -0.01584, 0.00833, -0.00394, 0.0029, ... }
-
-    scala> p ** 2
-    res0: Poly = { 5.0, 2.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ... }
-
-Nice!
+Spooky.
 
 Who knew you could take the 5th root of any polynomial you wanted?
 
     scala> val p = (2 - 3*x + x**3 + x**7) ** 0.2
-    p: Poly = { 1.1487, -0.34461, -0.20677, -0.07122, -0.05755, -0.03666, -0.02975, 0.09187, 0.11861, 0.17, ... }
+    p: Poly = { 1.1486984, -0.3446095, -0.2067657, -0.0712193, -0.0575498, -0.0366596, -0.0297476, 0.0918742, 0.1186057, 0.1700039, 0.200703, ... }
 
     scala> p ** 5
-    res1: Poly = { 2.0, -3.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, ... }
+    res1: Poly = { 2, -3, -0, 1, 0, 0, 0, 1, -0, -0, -0, ... }
 
 WTFFFFF.
 
 ### Log and exp
 
-I'm going to push forward at the risk of going insane. Let's start with {%m%}e^{p(x)}{%em%}. The identity
+I'm going to push forward at the risk of going insane. Let's look at {%m%}e^{p(x)}{%em%}. The identity
 to use here is
 
 {% math %}
@@ -391,43 +383,100 @@ class Poly(coeffs: Int => Double) {
 Let's just check the identities and that ```exp``` and ```log``` are inverses of each other:
 
     scala> x.exp
-    res0: Poly = { 1.0, 1.0, 0.5, 0.16667, 0.04167, 0.00833, 0.00139, 2.0E-4, 2.0E-5, 0.0, ... }
+    res0: Poly = { 1, 1, 0.5, 0.1666667, 0.0416667, 0.0083333, 0.0013889, 0.0001984, 0.0000248, 0.0000028, 0.0000003, ... }
 
     scala> (1 + x).log
-    res1: Poly = { 0.0, 1.0, -0.5, 0.33333, -0.25, 0.2, -0.16667, 0.14286, -0.125, 0.11111, ... }
+    res1: Poly = { 0, 1, -0.5, 0.3333333, -0.25, 0.2, -0.1666667, 0.1428571, -0.125, 0.1111111, -0.1, ... }
 
     scala> (1 - 2*x + x**3).exp
-    res2: Poly = { 2.71828, -5.43656, 5.43656, -0.90609, -3.62438, 4.71169, -2.02361, -0.97513, 2.01067, -1.12135, ... }
+    res2: Poly = { 2.7182818, -5.4365637, 5.4365637, -0.9060939, -3.6243758, 4.7116885, -2.0236098, -0.9751297, 2.0106656, -1.1213512, -0.0682687, ... }
 
     scala> (1 - 2*x + x**3).exp.log
-    res3: Poly = { 1.0, -2.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ... }
+    res3: Poly = { 1, -2, 0, 1, 0, 0, 0, 0, 0, 0, -0, ... }
 
     scala> (1 - 2*x + x**3).log
-    res4: Poly = { 0.0, -2.0, -2.0, -1.66667, -2.0, -2.4, -3.16667, -4.28571, -6.0, -8.55556, ... }
+    res4: Poly = { 0, -2, -2, -1.6666667, -2, -2.4, -3.1666667, -4.2857143, -6, -8.5555556, -12.4, ... }
 
     scala> (1 - 2*x + x**3).log.exp
-    res5: Poly = { 1.0, -2.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ... }
+    res5: Poly = { 1, -2, 0, 1, -0, -0, 0, -0, 0, 0, -0, ... }
 
 Awesome.
 
 ### Fun with polynomials
 
-- Binomial coefficients
-- difference and running sum
+You can use polynomials to produce binomial coefficients:
+
+    scala> (1 + x)**4
+    res0: Poly = { 1, 4, 6, 4, 1, 0, 0, 0, 0, 0, 0, ... }
+
+    scala> (1 + x)**7
+    res1: Poly = { 1, 7, 21, 35, 35, 21, 7, 1, 0, 0, 0, ... }
+
+There's also a trick for "differentiating" a sequence — I use that term very loosely. All I mean is producing a
+polynomial where the coefficients are the differences between successive coefficients in some other polynomial.
+You do this by multiplying by {%m%}(1 - x){%em%}. For example:
+
+    scala> (1 + 2*x + 7*x*x) * (1 - x)
+    res2: Poly = { 1, 1, 5, -7, 0, 0, 0, 0, 0, 0, 0, ... }
+
+    scala> (1 + x)**7 * (1 - x)
+    res3: Poly = { 1, 6, 14, 14, 0, -14, -14, -6, -1, 0, 0, ... }
+
+This makes sense because {%m%}p(x)(1 - x) = p(x) - xp(x){%em%}. So you're literally subtracting one coefficient from the
+next.
+
+If that works, then dividing by {%m%}(1 - x){%em%} should "integrate" a sequence — that is, keep a running sum of
+the coefficients.
+
+    scala> (1 + 3*x - 5*(x**3)) / (1 - x)
+    res4: Poly = { 1, 4, 4, -1, -1, -1, -1, -1, -1, -1, -1, ... }
+
+    scala> (1 + x)**7 / (1 - x)
+    res5: Poly = { 1, 8, 29, 64, 99, 120, 127, 128, 128, 128, 128, ... }
+
+    scala> 1 / ((1 - x)**2)
+    res6: Poly = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ... }
+
+The second example there demonstrates the fact that the sum of binomial coefficients is a power of 2. We can also
+demonstrate that the sum of the "even" and "odd" binomial coefficients are equal:
+
+    scala> (1 - x)**7
+    res7: Poly = { 1, -7, 21, -35, 35, -21, 7, -1, 0, 0, 0, ... }
+
+    scala> (1 - x)**7 / (1 - x)
+    res8: Poly = { 1, -6, 15, -20, 15, -6, 1, 0, 0, 0, 0, ... }
+
+since the running sum ends up at 0.
+
+Here's a polynomial with alternating signs:
+
+    scala> 1 / (1 + x)
+    res9: Poly = { 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, ... }
+
+Now "integrate" it twice...
+
+    scala> 1 / (1 + x) / (1 - x)
+    res10: Poly = { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, ... }
+
+    scala> 1 / (1 + x) / ((1 - x)**2)
+    res11: Poly = { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, ... }
+
+What a weird polynomial! This is pretty fun to play around with.
 
 ### Generating functions
 
-Generating functions are awesome. The basic idea is that if you have an infinite sequence
-of numbers, you first create a polynomial with those numbers as coefficients. Then you find a function whose Taylor series
-expansion is that polynomial.
+This brings us to the world of [generating functions](http://en.wikipedia.org/wiki/Generating_function). Generating
+functions are awesome. The basic idea is that if you have an infinite sequence of numbers, you first create a polynomial
+with those numbers as coefficients. Then you find a simple "closed-form" function whose Taylor series expansion is that
+polynomial.
 
-A simple example is the sequence {%m%}a_n = 1{%em%}, that is, the sequence of all 1s. This maps to the polynomial
+A simple example is the sequence {%m%}a_n = 1{%em%}, that is, the sequence of all 1s. This corresponds to the polynomial
 
 {% math %}
 1 + x + x^2 + x^3 + \ldots = \frac{1}{1-x}
 {% endmath %}
 
-You would say that {%m%}\frac{1}{1-x}{%em%} is the generating function for {%m%}a_n = 1{%em%}.
+You would say that {%m%}\frac{1}{1-x}{%em%} is the generating function for the sequence {%m%}a_n = 1{%em%}.
 (Here the value of {%m%}x{%em%} and the radius of convergence of the functions are irrelevant; these formulas are to be
 interpreted symbolically, not numerically.)
 
@@ -437,46 +486,78 @@ The sequence {%m%}a_n = n{%em%} can likewise be generated by
 \begin{align}
 x + 2x^2 + 3x^3 + 4x^4 + \ldots & = x\frac{d}{dx}(1 + x + x^2 + x^3 + \ldots) \\
 &= x\frac{d}{dx}\frac{1}{1-x} \\
-&= \frac{x^2}{(1-x)^2}
+&= \frac{x}{(1-x)^2}
 \end{align}
 {% endmath %}
 
-You can even find the generating the Fibonacci sequence from its recurrence relation. It turns out to be
+You can even find the generating function for the Fibonacci sequence from its recurrence relation. It turns out to be
 
 {% math %}
-\frac{x}{1 - x - x^2} = x + x^2 + 2x^3 + 3x+^4 + 5x^6 + 8x^7 + 13x^8 + \ldots + F(i)x^i + \ldots
+\frac{x}{1 - x - x^2} = x + x^2 + 2x^3 + 3x^4 + 5x^6 + 8x^7 + \ldots + F_ix^i + \ldots
 {% endmath %}
 
-Anyway, there are all sorts of algebraic tricks to figure out what the generating function is for a sequence, given either 
+There are all sorts of algebraic tricks to figure out what the generating function is for a sequence, given either 
 a recurrence relation or a formula for each term of the sequence.
 
 If you're curious about it, you should head on over to [Generatingfunctionology](http://www.math.upenn.edu/~wilf/gfologyLinked2.pdf).
-It's like a whole book on generating functions. The intro and first chapter give you a good sense for the power of this
+The intro and first chapter give you a good sense for the power of this
 technique, from counting to statistical analysis to proving certain identities.
 
-The other day I was thinking whether any part of the practice of constructing or evaluating generating functions can
-be automated. Finding the function that generates a given polynomial involves a lot of cleverness and trickery, so
-it's probably not a good task for a computer.
+After you've found a generating function for your sequence, you can use infinite lazy polynomials to check your work.
+Let's try it:
 
-How about going the other way, checking your work, seeing what sequence a function generates?
-Actually this is pretty easy! All we need is to be able to compute the Taylor series expansion of an arbitrary function.
+    scala> x / ((1 - x)**2)
+    res0: Poly = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ... }
+
+    scala> x / (1 - x - x**2)
+    res1: Poly = { 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, ... }
+
+    scala> x * (x + 1) / ((1 - x)**3)
+    res2: Poly = { 0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, ... }
+
+### Automatic differentiation
+
+```Poly``` is essentially a trick to produce the Taylor series of a function. Recall that the Taylor series
+of a function {%m%}f{%em%} around a point {%m%}c{%em%} is:
+
+{% math %}
+f(c + x) = f(c) + f'(c)x + \frac{f''(c)}{2!}x^2 + \frac{f^{(3)}(c)}{3!}x^3 + \ldots
+{% endmath %}
+
+That means if you want to find the derivatives of a function at a point, you can write the function as a ```Poly => Poly```,
+evaluate it at ```c + x```, and read the derivatives right off the coefficients.
 
 {% highlight scala %}
-def generate(f: Dual => Dual) = f(e)
+def derivatives(f: Poly => Poly, c: Double): Stream[Double] = {
+  def fact(n: Int) = (1 to n).product
+  val fc = f(c + x)
+  Stream.from(1).map(i => fc(i) * fact(i))
+}
 {% endhighlight %}
 
-OK let's try it:
+For example, here are the first 20 derivatives of {%m%}f(x) = \ln^2 (x + 1){%em%} at 1:
 
-    scala> val fibs = x / (1 - x - x**2)
-    fibs: Dual = { 0.0, 1.0, 1.0, 2.0, 3.0, 5.0, 8.0, 13.0, 21.0, 34.0, ... }
+    scala> derivatives(x => (x + 1).log ** 2, 1).take(20).toList
+    res0: List[Double] = List(0.6931471805599453, 0.15342640972002733, -0.4034264097200274, 0.8551396145800411, -2.085279229160082, 5.963198072900205, -19.76459421870062, 74.80107976545214, -318.89181906180863, 1513.7631857781387, -7923.190928890694, 45349.42510889882, -87446.88299088406, 27733.67519683439, -20865.303964105937, 10034.86743176731, 696.0046429573814, -1045.8464120718293, -61.68000765454794, -572.2744267431246)
 
-    scala> fibs(50).toLong
-    res0: Long = 12586269025
+Double checking, say, the 12th derivative (45349.42510889882) against
+[Wolfram Alpha](http://www.wolframalpha.com/input/?i=12th+derivative+of+%28log+%28x+%2B+1%29%29%5E2):
 
-### Derivatives
+    scala> def d12(x: Double) = -2880 * (27720 * math.log(x+1) - 83711) / math.pow(x+1, 12)
+    d12: (x: Double)Double
 
-### Blass
+    scala> d12(1)
+    res0: Double = 45349.42510889882
 
+  OK!
 
+### Conclusion
 
+If you read my [last post on exact numeric nth derivatives]({{ page.previous.url }}), 
+you might have noticed that the code for ```Poly``` is pretty similar to the
+[implementation of dual numbers](https://gist.github.com/jliszka/7085427) that I presented in that post.
+Really the only difference is the lack of reference to the rank of the matrix. The matrices were already lazy
+and already only contained {%m%}O(n){%em%} information, so it was a short step to turn them into lazy infinite polynomials.
+
+All the code in this post is available in [this gist]().
 
