@@ -570,4 +570,4 @@ and already only contained {%m%}O(n){%em%} information, so it was a short step t
 BTW, I'm pretty sure this article doesn't contain any new code, and it almost certainly contains no new math. I tried to supply
 references where I could find them, but please send me links to relevant articles I may have missed!
 
-All the code in this post is available in [this gist]().
+All the code in this post is available in [this gist](https://gist.github.com/jliszka/7244101).
