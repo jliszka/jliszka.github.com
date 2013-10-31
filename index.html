@@ -93,10 +93,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -130,6 +126,8 @@
 <h2 id='archive'>Archive</h2>
 <ul class='posts'>
   
+    <li><span>31 Oct 2013</span> &raquo; <a href='/2013/10/31/infinite-lazy-polynomials.html'>Infinite lazy polynomials</a></li>
+  
     <li><span>24 Oct 2013</span> &raquo; <a href='/2013/10/24/exact-numeric-nth-derivatives.html'>Exact numeric nth derivatives</a></li>
   
     <li><span>19 Oct 2013</span> &raquo; <a href='/2013/10/19/impossible-functions.html'>Impossible functions</a></li>
@@ -155,6 +153,63 @@
 </ul>
 <h2 id='recent_posts'>Recent Posts</h2>
 <div class='post-content-truncate'>
+
+  
+    <h2 class='title'>Infinite lazy polynomials</h2>
+    <blockquote class='quote'>
+  <p>"Never underestimate the insights encoded into the coefficients of a polynomial!"</p>
+  —Steven Rudich
+</blockquote>
+<p>In this post I&#8217;m going to write a toy library for manipulating infinite lazy polynomials. I promise this will be fun.</p>
+
+<h3 id='representation'>Representation</h3>
+
+<p>You might try representing a polynomial of infinite degree as an infinite stream of coefficients. But I think it would be easier to think about it in terms of a function <script type='math/tex'>c:\mathbb{N} \rightarrow \mathbb{R}</script> that gives you the coefficient for a given power of <script type='math/tex'>x</script> in the polynomial. So the polynomial represented by some function <script type='math/tex'>c</script> would be</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+p_c(x) = c(0) + c(1)x + c(2)x^2 + c(3)x^3 + \ldots
+%]]>
+</script>
+<p>Here&#8217;s the setup:</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>class</span><span class='kd'> </span><span class='nc'>Poly</span><span class='p'>(</span><span class='n'>coeffs</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Double</span><span class='p'>)</span> <span class='p'>{</span>
+
+  <span class='c1'>// Memoizing coefficient accessor. Returns the coefficient for x^n.</span>
+  <span class='k'>def</span> <span class='nf'>apply</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Double</span> <span class='p'>= </span><span class='n'>memo</span><span class='p'>.</span><span class='n'>getOrElseUpdate</span><span class='p'>(</span><span class='n'>n</span><span class='p'>,</span> <span class='k'>this</span><span class='p'>.</span><span class='n'>coeffs</span><span class='p'>(</span><span class='n'>n</span><span class='p'>))</span>
+
+  <span class='c1'>// The memo table</span>
+  <span class='k'>private</span> <span class='k'>val</span> <span class='n'>memo</span> <span class='k'>=</span> <span class='n'>scala</span><span class='p'>.</span><span class='n'>collection</span><span class='p'>.</span><span class='n'>mutable</span><span class='p'>.</span><span class='nc'>HashMap</span><span class='p'>[</span><span class='kt'>Int</span>, <span class='kt'>Double</span><span class='p'>]()</span>
+
+  <span class='k'>override</span> <span class='k'>def</span> <span class='nf'>toString</span> <span class='k'>=</span> <span class='p'>{</span>
+    <span class='s'>&quot;{ %s, ... }&quot;</span><span class='p'>.</span><span class='n'>format</span><span class='p'>((</span><span class='mi'>0</span> <span class='n'>to</span> <span class='mi'>10</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>i</span> <span class='k'>=&gt;</span> <span class='n'>df</span><span class='p'>.</span><span class='n'>format</span><span class='p'>(</span><span class='k'>this</span><span class='p'>(</span><span class='n'>i</span><span class='p'>))).</span><span class='n'>mkString</span><span class='p'>(</span><span class='s'>&quot;, &quot;</span><span class='p'>))</span>
+  <span class='p'>}</span>
+  <span class='k'>private</span> <span class='k'>val</span> <span class='n'>df</span> <span class='k'>=</span> <span class='k'>new</span> <span class='n'>java</span><span class='p'>.</span><span class='n'>text</span><span class='p'>.</span><span class='nc'>DecimalFormat</span><span class='p'>(</span><span class='s'>&quot;#.#######&quot;</span><span class='p'>)</span>
+<span class='p'>}</span>
+</code></pre></div>
+<p>The <code>Poly</code> class just wraps a function of type <code>Int =&gt; Double</code>, memoizes it, and provides a <code>toString</code> representation including the first so many coefficients.</p>
+
+<p>Now we can create instances like this:</p>
+
+<pre><code>scala&gt; val one = new Poly(n =&gt; if (n == 0) 1 else 0)
+one: Poly = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }
+
+scala&gt; val x = new Poly(n =&gt; if (n == 1) 1 else 0)
+x: Poly = { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }</code></pre>
+
+<p>You can access arbitrary coefficients by calling the <code>apply</code> method.</p>
+
+<pre><code>scala&gt; x(0)
+res0: Double = 0.0
+
+scala&gt; x(1)
+res1: Double = 1.0
+
+scala&gt; x(12)
+res2: Double = 0.0</code></pre>
+
+<p>Just keep in mind that <code>p(n)</code> is the coefficient of <script type='math/tex'>x^n</script> in <code>p</code>, not <script type='math/tex'>p(n)</script> (i.e., <script type='math/tex'>p</script> evaluated at <script type='math/tex'>n</script>) as you might expect to see. I can get away with this because I&#8217;m probably never going to evaluate these polynomials, I&#8217;m just going to treat them formally, as mathematical objects in their own right.</p>
+
+    <a href='/2013/10/31/infinite-lazy-polynomials.html'>Read more</a>
+  
 
   
     <h2 class='title'>Exact numeric nth derivatives</h2>
@@ -404,26 +459,6 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))</code></pre>
 <p>Let&#8217;s try it on some of the distributions we&#8217;ve <a href='/2013/08/19/climbing-the-probability-distribution-ladder.html'>created</a>.</p>
 
     <a href='/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html'>Read more</a>
-  
-
-  
-    <h2 class='title'>Climbing the probability distribution ladder</h2>
-    <p>In the <a href='/2013/08/12/a-frequentist-approach-to-probability.html'>last post</a> I created a simple library for constructing probability distributions, based on the <a href='http://en.wikipedia.org/wiki/Monte_Carlo_method'>Monte Carlo method</a>. I started with the uniform distribution and derived the Bernoulli and normal distributions from it.</p>
-
-<p>In this post I&#8217;ll construct some more common distributions in the same manner.</p>
-
-<h3 id='the_exponential_distribution'>The exponential distribution</h3>
-
-<p>If <script type='math/tex'>X</script> is a uniformly distributed random variable, then <script type='math/tex'>-log(X)/\lambda</script> is distributed according to the <a href='http://en.wikipedia.org/wiki/Exponential_distribution'>exponential distribution</a>. The parameter <script type='math/tex'>\lambda</script> is just a scaling factor. In code:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>exponential</span><span class='p'>(</span><span class='n'>l</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Double</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='k'>for</span> <span class='p'>{</span>
-    <span class='n'>x</span> <span class='k'>&lt;-</span> <span class='n'>uniform</span>
-  <span class='p'>}</span> <span class='k'>yield</span> <span class='n'>math</span><span class='p'>.</span><span class='n'>log</span><span class='p'>(</span><span class='n'>x</span><span class='p'>)</span> <span class='o'>*</span> <span class='p'>(</span><span class='o'>-</span><span class='mi'>1</span><span class='o'>/</span><span class='n'>l</span><span class='p'>)</span>
-<span class='p'>}</span>
-</code></pre></div>
-<p>It looks like this:</p>
-
-    <a href='/2013/08/19/climbing-the-probability-distribution-ladder.html'>Read more</a>
   
 
 </div>

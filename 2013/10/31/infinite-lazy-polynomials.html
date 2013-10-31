@@ -93,10 +93,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -120,7 +116,7 @@
       <h1>Infinite lazy polynomials </h1>
     </div>
     <div class="date">
-      <span>30 October 2013</span>
+      <span>31 October 2013</span>
     </div>
     <div class="content">
       <blockquote class='quote'>
@@ -174,7 +170,7 @@ scala&gt; x(12)
 res2: Double = 0.0</code></pre>
 
 <p>Just keep in mind that <code>p(n)</code> is the coefficient of <script type='math/tex'>x^n</script> in <code>p</code>, not <script type='math/tex'>p(n)</script> (i.e., <script type='math/tex'>p</script> evaluated at <script type='math/tex'>n</script>) as you might expect to see. I can get away with this because I&#8217;m probably never going to evaluate these polynomials, I&#8217;m just going to treat them formally, as mathematical objects in their own right.</p>
-
+<!-- more -->
 <h3 id='simple_operations'>Simple operations</h3>
 
 <p><code>Poly</code>s aren&#8217;t that useful until we can do arithmetic to them. Let&#8217;s add support for addition, subtraction and negation:</p>
@@ -601,7 +597,7 @@ res0: Double = 45349.42510889882</code></pre>
 
 <h3 id='conclusion'>Conclusion</h3>
 
-<p>If you read my <a href=''>last post on exact numeric nth derivatives</a>, you might have noticed that the code for <code>Poly</code> is pretty similar to the <a href='https://gist.github.com/jliszka/7085427'>implementation of dual numbers</a> that I presented in that post. Really the only difference is the lack of reference to the rank of the matrix. The matrices were already lazy and already only contained <script type='math/tex'>O(n)</script> information, so it was a short step to turn them into lazy infinite polynomials.</p>
+<p>If you read my <a href='/2013/10/24/exact-numeric-nth-derivatives.html'>last post on exact numeric nth derivatives</a>, you might have noticed that the code for <code>Poly</code> is pretty similar to the <a href='https://gist.github.com/jliszka/7085427'>implementation of dual numbers</a> that I presented in that post. Really the only difference is the lack of reference to the rank of the matrix. The matrices were already lazy and already only contained <script type='math/tex'>O(n)</script> information, so it was a short step to turn them into lazy infinite polynomials.</p>
 
 <p>BTW, I&#8217;m pretty sure this article doesn&#8217;t contain any new code, and it almost certainly contains no new math. I tried to supply references where I could find them, but please send me links to relevant articles I may have missed!</p>
 
@@ -614,7 +610,7 @@ res0: Double = 45349.42510889882</code></pre>
 
 
   <div style="float: right; margin-top: 5px">
-  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/infinite-lazy-polynomials.html" data-text="Infinite lazy polynomials" data-via="jliszka">Tweet</a>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/2013/10/31/infinite-lazy-polynomials.html" data-text="Infinite lazy polynomials" data-via="jliszka">Tweet</a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
@@ -630,9 +626,9 @@ res0: Double = 45349.42510889882</code></pre>
 
   
      
-    	<li><a href="/tags.html#polynomials-ref">polynomials <span>1</span></a></li>
+    	<li><a href="/tags.html#polynomials-ref">polynomials <span>2</span></a></li>
      
-    	<li><a href="/tags.html#automatic differentiation-ref">automatic differentiation <span>1</span></a></li>
+    	<li><a href="/tags.html#automatic differentiation-ref">automatic differentiation <span>2</span></a></li>
     
   
 
@@ -644,6 +640,8 @@ res0: Double = 45349.42510889882</code></pre>
 
     <hr>
     <div class="navigation">
+    
+      <span class="prev"><a href="/2013/10/24/exact-numeric-nth-derivatives.html" title="Exact numeric nth derivatives">&larr; Exact numeric nth derivatives</a></span>
     
     
       <div style="clear: both"></div>
@@ -688,6 +686,8 @@ res0: Double = 45349.42510889882</code></pre>
     <h4>Recent posts</h4>
     <ul>
       
+        <li><a href="/2013/10/31/infinite-lazy-polynomials.html">Infinite lazy polynomials</a></li>
+      
         <li><a href="/2013/10/24/exact-numeric-nth-derivatives.html">Exact numeric nth derivatives</a></li>
       
         <li><a href="/2013/10/19/impossible-functions.html">Impossible functions</a></li>
@@ -695,8 +695,6 @@ res0: Double = 45349.42510889882</code></pre>
         <li><a href="/2013/10/10/understanding-a-b-test-analysis.html">Understanding A/B test analysis</a></li>
       
         <li><a href="/2013/10/01/how-traffic-actually-works.html">How traffic actually works</a></li>
-      
-        <li><a href="/2013/09/24/more-backwards-functions-unevaluating-polynomials.html">Unevaluating polynomials</a></li>
       
     </ul>
 

@@ -5,10 +5,74 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-10-30T23:51:45-04:00</lastBuildDate>
-        <pubDate>2013-10-30T23:51:45-04:00</pubDate>
+        <lastBuildDate>2013-10-31T00:13:09-04:00</lastBuildDate>
+        <pubDate>2013-10-31T00:13:09-04:00</pubDate>
         <ttl>1800</ttl>
 
+
+        <item>
+                <title>Infinite lazy polynomials</title>
+                <description>
+                
+                        &lt;blockquote class='quote'&gt;
+  &lt;p&gt;&quot;Never underestimate the insights encoded into the coefficients of a polynomial!&quot;&lt;/p&gt;
+  —Steven Rudich
+&lt;/blockquote&gt;
+&lt;p&gt;In this post I&amp;#8217;m going to write a toy library for manipulating infinite lazy polynomials. I promise this will be fun.&lt;/p&gt;
+
+&lt;h3 id='representation'&gt;Representation&lt;/h3&gt;
+
+&lt;p&gt;You might try representing a polynomial of infinite degree as an infinite stream of coefficients. But I think it would be easier to think about it in terms of a function &lt;script type='math/tex'&gt;c:\mathbb{N} \rightarrow \mathbb{R}&lt;/script&gt; that gives you the coefficient for a given power of &lt;script type='math/tex'&gt;x&lt;/script&gt; in the polynomial. So the polynomial represented by some function &lt;script type='math/tex'&gt;c&lt;/script&gt; would be&lt;/p&gt;
+&lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+p_c(x) = c(0) + c(1)x + c(2)x^2 + c(3)x^3 + \ldots
+%]]&gt;
+&lt;/script&gt;
+&lt;p&gt;Here&amp;#8217;s the setup:&lt;/p&gt;
+&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;class&lt;/span&gt;&lt;span class='kd'&gt; &lt;/span&gt;&lt;span class='nc'&gt;Poly&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;coeffs&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt; &lt;span class='kt'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
+
+  &lt;span class='c1'&gt;// Memoizing coefficient accessor. Returns the coefficient for x^n.&lt;/span&gt;
+  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;apply&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt; &lt;span class='p'&gt;= &lt;/span&gt;&lt;span class='n'&gt;memo&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;getOrElseUpdate&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='k'&gt;this&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;coeffs&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='p'&gt;))&lt;/span&gt;
+
+  &lt;span class='c1'&gt;// The memo table&lt;/span&gt;
+  &lt;span class='k'&gt;private&lt;/span&gt; &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;memo&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;scala&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;collection&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;mutable&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='nc'&gt;HashMap&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;, &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='p'&gt;]()&lt;/span&gt;
+
+  &lt;span class='k'&gt;override&lt;/span&gt; &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;toString&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
+    &lt;span class='s'&gt;&amp;quot;{ %s, ... }&amp;quot;&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;format&lt;/span&gt;&lt;span class='p'&gt;((&lt;/span&gt;&lt;span class='mi'&gt;0&lt;/span&gt; &lt;span class='n'&gt;to&lt;/span&gt; &lt;span class='mi'&gt;10&lt;/span&gt;&lt;span class='p'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;i&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;df&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;format&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='k'&gt;this&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;i&lt;/span&gt;&lt;span class='p'&gt;))).&lt;/span&gt;&lt;span class='n'&gt;mkString&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='s'&gt;&amp;quot;, &amp;quot;&lt;/span&gt;&lt;span class='p'&gt;))&lt;/span&gt;
+  &lt;span class='p'&gt;}&lt;/span&gt;
+  &lt;span class='k'&gt;private&lt;/span&gt; &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;df&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='n'&gt;java&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;text&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='nc'&gt;DecimalFormat&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='s'&gt;&amp;quot;#.#######&amp;quot;&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;
+&lt;span class='p'&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The &lt;code&gt;Poly&lt;/code&gt; class just wraps a function of type &lt;code&gt;Int =&amp;gt; Double&lt;/code&gt;, memoizes it, and provides a &lt;code&gt;toString&lt;/code&gt; representation including the first so many coefficients.&lt;/p&gt;
+
+&lt;p&gt;Now we can create instances like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; val one = new Poly(n =&amp;gt; if (n == 0) 1 else 0)
+one: Poly = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }
+
+scala&amp;gt; val x = new Poly(n =&amp;gt; if (n == 1) 1 else 0)
+x: Poly = { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can access arbitrary coefficients by calling the &lt;code&gt;apply&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;scala&amp;gt; x(0)
+res0: Double = 0.0
+
+scala&amp;gt; x(1)
+res1: Double = 1.0
+
+scala&amp;gt; x(12)
+res2: Double = 0.0&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Just keep in mind that &lt;code&gt;p(n)&lt;/code&gt; is the coefficient of &lt;script type='math/tex'&gt;x^n&lt;/script&gt; in &lt;code&gt;p&lt;/code&gt;, not &lt;script type='math/tex'&gt;p(n)&lt;/script&gt; (i.e., &lt;script type='math/tex'&gt;p&lt;/script&gt; evaluated at &lt;script type='math/tex'&gt;n&lt;/script&gt;) as you might expect to see. I can get away with this because I&amp;#8217;m probably never going to evaluate these polynomials, I&amp;#8217;m just going to treat them formally, as mathematical objects in their own right.&lt;/p&gt;
+
+                        &lt;a href="http://jliszka.github.io   /2013/10/31/infinite-lazy-polynomials.html">Read more&lt;/a>
+                
+                </description>
+                <link>http://jliszka.github.io/2013/10/31/infinite-lazy-polynomials.html</link>
+                <guid>http://jliszka.github.io/2013/10/31/infinite-lazy-polynomials</guid>
+                <pubDate>2013-10-31T00:00:00-04:00</pubDate>
+        </item>
 
         <item>
                 <title>Exact numeric nth derivatives</title>
