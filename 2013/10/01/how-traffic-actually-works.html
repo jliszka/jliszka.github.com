@@ -152,7 +152,7 @@
 <p>It&#8217;s worth noting that the 2 second following distance is measured front bumper to front bumper — if you were sitting by the side of the highway, that&#8217;s how you&#8217;d count the time between cars going by. But drivers generally like to keep a 2 second following distance between their front bumper and the <em>rear</em> bumper of the car in front of them. The difference between these is negligible at high speeds, but at a low enough speed, it becomes difficult to maintain a 2 second following distance from the <em>front</em> bumper of the car in front of you without impinging on the <em>rear</em> bumper of the car in front of you, especially if said car is more than 0 feet long. So under these circumstances the flow rate of the highway decreases below 1 car every 2 seconds — maybe to 1 car every 5 seconds. So now you have to wait 5 seconds for every car in front of you in line.</p>
 
 <p>The situation is modeled pretty well by <a href='http://en.wikipedia.org/wiki/Catastrophe_theory'>catastrophe theory</a>, something I never thought would be useful.</p>
-<center><img src='/assets/img/traffic/catastrophe.png' class='spacer' /></center>
+<center><img class='spacer' src='/assets/img/traffic/catastrophe.png' /></center>
 <p>At low occupancy (cars per mile), drivers can go as fast as they&#8217;d like. As occupancy increases, so does flow rate, even though speed decreases somewhat due to everyone trying to maintain following distance. At a certain point, when occupancy becomes high enough, speed dips low enough to where drivers are unable to maintain their minimum following distance, and — catastrophe! — the flow rate decreases dramatically.</p>
 
 <h3 id='some_code'>Some code</h3>
@@ -167,13 +167,13 @@
 <span class='p'>}</span>
 </code></pre></div>
 <p>Evaluating <code>traffic</code> with values of <code>carsPerKm</code> between 1 and 200 produces the following output:</p>
-<center><img src='/assets/img/traffic/model.png' class='spacer' /></center>
+<center><img class='spacer' src='/assets/img/traffic/model.png' /></center>
 <p>Each dot represents a different value of <code>carsPerKm</code> and is plotted as the maximum speed and flow rate it implies. Below an occupancy of about 16 cars per km, the maximum speed that still allows everyone to keep a 1.8-second following distance is well above a reasonable speed limit, so I just capped it at 120 kph. Obviously real highway traffic is going to <a href='http://books.google.com/books?id=4g7f1h4BfYsC&amp;printsec=frontcover#v=onepage&amp;q&amp;f=false'>behave in more subtle ways than that</a>. But it doesn&#8217;t matter because the congested part is all I care about, and this model matches observed data pretty well. Here&#8217;s some data from a meta-analysis by the <a href='http://www.fhwa.dot.gov/publications/research/operations/tft/chap2.pdf'>Federal Highway Administration</a>:</p>
-<center><img src='/assets/img/traffic/speed_vs_flow.png' class='spacer' /></center>
+<center><img class='spacer' src='/assets/img/traffic/speed_vs_flow.png' /></center>
 <p>For another comparison, here&#8217;s what the model predicts for flow rate vs. occupancy:</p>
-<center><img src='/assets/img/traffic/inverted-v-model.png' class='spacer' /></center>
+<center><img class='spacer' src='/assets/img/traffic/inverted-v-model.png' /></center>
 <p>And here&#8217;s the data, from <a href='http://trid.trb.org/view.aspx?id=308654'>Freeway Speed-Flow Concentration Relationships</a>:</p>
-<center><img src='/assets/img/traffic/inverted-v-actual.png' class='spacer' /></center>
+<center><img class='spacer' src='/assets/img/traffic/inverted-v-actual.png' /></center>
 <p>And a quote from the same source:</p>
 
 <blockquote>
@@ -184,8 +184,8 @@
 
 <p><strong>Update</strong>: Lots of great comments in the <a href='https://news.ycombinator.com/item?id=6476836'>hacker news thread</a>. One thing one of the commenters rightly points out is that this model does not account for the variance in flow rates in congested traffic. I don&#8217;t have any data to back this up, but it&#8217;s possible that variance in car length (% of trucks on the road) might account for it. Here&#8217;s the same model but with car length ranging between 5 and 8 meters:</p>
 <center>
-  <img src='/assets/img/traffic/speed-vs-occupancy-2.png' class='spacer' />
-  <img src='/assets/img/traffic/flow-vs-occupancy-2.png' class='spacer' />
+  <img class='spacer' src='/assets/img/traffic/speed-vs-occupancy-2.png' />
+  <img class='spacer' src='/assets/img/traffic/flow-vs-occupancy-2.png' />
 </center>
 <p>But it&#8217;s also possible that driver behavior is responsible for it. Pathological driving could certainly create pockets of low-flow traffic, as human response times and vehicle acceleration times aren&#8217;t instantaneous.</p>
 
