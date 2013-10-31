@@ -107,12 +107,14 @@
 
       <div class="content">
         
-<div class="page-header">
-  <h1>Insertion sort is dual to bubble sort </h1>
+<div class="row-fluid">
+  <div class="span10 post-content post-spacer"></div>
 </div>
-
 <div class="row-fluid post-full">
-  <div class="span12">
+  <div class="span10 post-content">
+    <div class="page-header">
+      <h1>Insertion sort is dual to bubble sort </h1>
+    </div>
     <div class="date">
       <span>18 September 2013</span>
     </div>
@@ -150,7 +152,7 @@
 
 <p>It&#8217;s not obvious from the code that these functions are backwards versions of each other, but look at their data flow diagrams:</p>
 <!-- more -->
-<p><img src='/assets/img/main.png' alt='main function data flow' /></p>
+<p><img alt='main function data flow' src='/assets/img/main.png' /></p>
 
 <p>They are exactly the same, except with the arrows going the other way.</p>
 
@@ -187,7 +189,7 @@
 
 <p>The data flow diagrams of these functions make it totally clear that they are the same function, only one has the arrows reversed and the boxes running backwards:</p>
 
-<p><img src='/assets/img/helper.png' alt='helper function data flow' /></p>
+<p><img alt='helper function data flow' src='/assets/img/helper.png' /></p>
 
 <p>The only thing left is this <code>sort</code> method, which takes 2 arguments and returns them in sorted order. Which I guess is the same if you run it backwards?</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>sort</span><span class='p'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]](</span><span class='n'>a</span><span class='k'>:</span> <span class='kt'>A</span><span class='p'>,</span> <span class='n'>b</span><span class='k'>:</span> <span class='kt'>A</span><span class='p'>)</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>A</span><span class='p'>,</span> <span class='kt'>A</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
@@ -259,7 +261,7 @@
 
   
      
-    	<li><a href="/tags.html#code-ref">code <span>3</span></a></li>
+    	<li><a href="/tags.html#code-ref">code <span>2</span></a></li>
      
     	<li><a href="/tags.html#backwards programming-ref">backwards programming <span>2</span></a></li>
     
@@ -277,7 +279,7 @@
       <span class="prev"><a href="/2013/09/09/the-3-things-you-should-understand-about-quantum-computing.html" title="The 3 Things You Should Understand about Quantum Computation">&larr; The 3 Things You Should Understand about Quantum Computation</a></span>
     
     
-      <span class="next"><a href="/2013/09/24/more-backwards-functions-unevaluating-polynomials.html" title="More backwards functions: Unevaluating polynomials">More backwards functions: Unevaluating polynomials &rarr;</a></span>
+      <span class="next"><a href="/2013/09/24/more-backwards-functions-unevaluating-polynomials.html" title="Unevaluating polynomials">Unevaluating polynomials &rarr;</a></span>
     
       <div style="clear: both"></div>
     </div>
@@ -301,6 +303,40 @@
 
 
 
+
+  </div>
+
+  <div class="span2 sidebar">
+    <a href="/"><div id="photo"></div></a>
+    <div id="bio">
+      <b>Jason Liszka</b><br/>
+      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+    </div>
+    <h4>Popular posts</h4>
+    <ul>
+      <li><a href="/2013/10/01/how-traffic-actually-works.html">How traffic actually works</a></li>
+      <li><a href="/2013/08/12/a-frequentist-approach-to-probability.html">A frequentist approach to probability</a></li>
+      <li><a href="/2013/10/24/exact-numeric-nth-derivatives.html">Exact numeric nth derivatives</a></li>
+      <li><a href="/2013/09/24/more-backwards-functions-unevaluating-polynomials.html">Unevaluating polynomials</a></li>
+    </ul>
+
+    <h4>Recent posts</h4>
+    <ul>
+      
+        <li><a href="/2013/10/24/exact-numeric-nth-derivatives.html">Exact numeric nth derivatives</a></li>
+      
+        <li><a href="/2013/10/19/impossible-functions.html">Impossible functions</a></li>
+      
+        <li><a href="/2013/10/10/understanding-a-b-test-analysis.html">Understanding A/B test analysis</a></li>
+      
+        <li><a href="/2013/10/01/how-traffic-actually-works.html">How traffic actually works</a></li>
+      
+        <li><a href="/2013/09/24/more-backwards-functions-unevaluating-polynomials.html">Unevaluating polynomials</a></li>
+      
+    </ul>
+
+    <a href="https://twitter.com/jliszka" class="twitter-follow-button" data-show-count="false" data-size="large" data-show-screen-name="false">Follow @jliszka</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
   </div>
 </div>

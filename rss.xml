@@ -5,8 +5,8 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-10-26T21:49:53-04:00</lastBuildDate>
-        <pubDate>2013-10-26T21:49:53-04:00</pubDate>
+        <lastBuildDate>2013-10-30T21:53:32-04:00</lastBuildDate>
+        <pubDate>2013-10-30T21:53:32-04:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -55,7 +55,7 @@ f(x + p) = f(x) + f'(x)p + \frac{f''(x)p^2}{2!} + \frac{f^{(3)}(x)p^3}{3!} + \ld
         </item>
 
         <item>
-                <title>Some impossible functions</title>
+                <title>Impossible functions</title>
                 <description>
                 
                         &lt;style type='text/css'&gt;
@@ -87,7 +87,7 @@ tbody tr:nth-child(even) {
         </item>
 
         <item>
-                <title>Understanding A/B Test Analysis</title>
+                <title>Understanding A/B test analysis</title>
                 <description>
                 
                         &lt;style type='text/css'&gt;
@@ -149,7 +149,7 @@ tbody tr:nth-child(even) {
         </item>
 
         <item>
-                <title>More backwards functions: Unevaluating polynomials</title>
+                <title>Unevaluating polynomials</title>
                 <description>
                 
                         &lt;p&gt;I have a function that evaluates polynomials with integer coefficients. To evaluate &lt;script type='math/tex; mode=display'&gt;
@@ -351,7 +351,7 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
         </item>
 
         <item>
-                <title>A Frequentist Approach to Probability</title>
+                <title>A frequentist approach to probability</title>
                 <description>
                 
                         &lt;p&gt;One thing that always confused me in my intro stats classes was the concept of a random variable. A random variable is not a variable like I&amp;#8217;m used to thinking about, like a thing that has one value at a time. A random variable is instead an object that you can sample values from, and the values you get will be distributed according to some underlying probability distribution.&lt;/p&gt;

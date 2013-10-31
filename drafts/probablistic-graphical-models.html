@@ -107,12 +107,14 @@
 
       <div class="content">
         
-<div class="page-header">
-  <h1>Probabilistic Graphical Models </h1>
+<div class="row-fluid">
+  <div class="span10 post-content post-spacer"></div>
 </div>
-
 <div class="row-fluid post-full">
-  <div class="span12">
+  <div class="span10 post-content">
+    <div class="page-header">
+      <h1>Probabilistic Graphical Models </h1>
+    </div>
     <div class="date">
       <span>26 October 2013</span>
     </div>
@@ -145,15 +147,15 @@ do-notation
 
 <p>A PGM encodes the causal relationships between events. For example, you might construct this graph to model a chain of causes resulting in someone getting a college scholarship:</p>
 
-<p><img src='/assets/img/pgm/sat.png' alt='A -&gt; B -&gt; C' /></p>
+<p><img alt='A -&gt; B -&gt; C' src='/assets/img/pgm/sat.png' /></p>
 
 <p>Or the relationship between diseases and their symptoms:</p>
 
-<p><img src='/assets/img/pgm/flu.png' alt='A &lt;- B -&gt; C' /></p>
+<p><img alt='A &lt;- B -&gt; C' src='/assets/img/pgm/flu.png' /></p>
 
 <p>Or the events surrounding a traffic jam:</p>
 
-<p><img src='/assets/img/pgm/trafficjam.png' alt='A -&gt; B &lt;- C -&gt; D' /></p>
+<p><img alt='A -&gt; B &lt;- C -&gt; D' src='/assets/img/pgm/trafficjam.png' /></p>
 
 <p>These are easy enough to translate into code. Let&#8217;s try the last one.</p>
 
@@ -248,7 +250,7 @@ res4: Double = 0.1807</code></pre>
 
 <p><strong>Rule 1.</strong> In the graph below, A and B can be correlated:</p>
 
-<p><img src='/assets/img/pgm/linear.png' alt='A -&gt; C -&gt; B' /></p>
+<p><img alt='A -&gt; C -&gt; B' src='/assets/img/pgm/linear.png' /></p>
 
 <p>Knowing the value of A will change your belief about the value of B. However, knowing the value of B will also change your belief about the value of A. This makes some intuitive sense; if someone got a scholarship, that raises your belief about whether they studied for their SATs.</p>
 
@@ -256,7 +258,7 @@ res4: Double = 0.1807</code></pre>
 
 <p><strong>Rule 2.</strong> In the graph below, A and B can be correlated:</p>
 
-<p><img src='/assets/img/pgm/fork.png' alt='A &lt;- C -&gt; B' /></p>
+<p><img alt='A &lt;- C -&gt; B' src='/assets/img/pgm/fork.png' /></p>
 
 <p>Knowing the value of A influences your belief about the value of C, which directly affects the value of B. For example, knowing that someone has a fever increases the likelihood that they have the flu, which in turn increases the likelihood that they have a sore throat.</p>
 
@@ -264,7 +266,7 @@ res4: Double = 0.1807</code></pre>
 
 <p><strong>Rule 3.</strong> In the graph below, A and B must be independent:</p>
 
-<p><img src='/assets/img/pgm/join.png' alt='A -&gt; C &lt;- B' /></p>
+<p><img alt='A -&gt; C &lt;- B' src='/assets/img/pgm/join.png' /></p>
 
 <p>To give you the intuition, whether the weather is bad should have no influence over whether it&#8217;s currently rush hour, even though they both cause traffic jams.</p>
 
@@ -537,6 +539,40 @@ nx^2/pq(1-pq) is a chi2 distribution with df=1
 
 
 
+
+  </div>
+
+  <div class="span2 sidebar">
+    <a href="/"><div id="photo"></div></a>
+    <div id="bio">
+      <b>Jason Liszka</b><br/>
+      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+    </div>
+    <h4>Popular posts</h4>
+    <ul>
+      <li><a href="/2013/10/01/how-traffic-actually-works.html">How traffic actually works</a></li>
+      <li><a href="/2013/08/12/a-frequentist-approach-to-probability.html">A frequentist approach to probability</a></li>
+      <li><a href="/2013/10/24/exact-numeric-nth-derivatives.html">Exact numeric nth derivatives</a></li>
+      <li><a href="/2013/09/24/more-backwards-functions-unevaluating-polynomials.html">Unevaluating polynomials</a></li>
+    </ul>
+
+    <h4>Recent posts</h4>
+    <ul>
+      
+        <li><a href="/2013/10/24/exact-numeric-nth-derivatives.html">Exact numeric nth derivatives</a></li>
+      
+        <li><a href="/2013/10/19/impossible-functions.html">Impossible functions</a></li>
+      
+        <li><a href="/2013/10/10/understanding-a-b-test-analysis.html">Understanding A/B test analysis</a></li>
+      
+        <li><a href="/2013/10/01/how-traffic-actually-works.html">How traffic actually works</a></li>
+      
+        <li><a href="/2013/09/24/more-backwards-functions-unevaluating-polynomials.html">Unevaluating polynomials</a></li>
+      
+    </ul>
+
+    <a href="https://twitter.com/jliszka" class="twitter-follow-button" data-show-count="false" data-size="large" data-show-screen-name="false">Follow @jliszka</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
   </div>
 </div>
