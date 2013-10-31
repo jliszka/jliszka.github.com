@@ -68,6 +68,8 @@ Just keep in mind that ```p(n)``` is the coefficient of {%m%}x^n{%em%} in ```p``
 {%m%}p{%em%} evaluated at {%m%}n{%em%}) as you might expect to see. I can get away with this because I'm probably never
 going to evaluate these polynomials, I'm just going to treat them formally, as mathematical objects in their own right.
 
+<!-- more -->
+
 ### Simple operations
 
 ```Poly```s aren't that useful until we can do arithmetic to them. Let's add support for addition, subtraction and negation:
