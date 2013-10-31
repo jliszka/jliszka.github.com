@@ -595,9 +595,33 @@ res0: Double = 45349.42510889882</code></pre>
 
 <p>OK!</p>
 
+<p>If you read my <a href='/2013/10/24/exact-numeric-nth-derivatives.html'>last post on exact numeric nth derivatives</a>, you might have noticed that the code for <code>Poly</code> is pretty similar to the <a href='https://gist.github.com/jliszka/7085427'>implementation of dual numbers</a> that I presented in that post. Really the only difference is the lack of reference to the rank of the matrix. The matrices were already lazy and already only contained <script type='math/tex'>O(n)</script> information, so it was a short step to turn them into lazy infinite polynomials.</p>
+
 <h3 id='conclusion'>Conclusion</h3>
 
-<p>If you read my <a href='/2013/10/24/exact-numeric-nth-derivatives.html'>last post on exact numeric nth derivatives</a>, you might have noticed that the code for <code>Poly</code> is pretty similar to the <a href='https://gist.github.com/jliszka/7085427'>implementation of dual numbers</a> that I presented in that post. Really the only difference is the lack of reference to the rank of the matrix. The matrices were already lazy and already only contained <script type='math/tex'>O(n)</script> information, so it was a short step to turn them into lazy infinite polynomials.</p>
+<p>Some things to think about:</p>
+
+<ol>
+<li>
+<p>Is there a generating function for the sequence <script type='math/tex'>a_n = n!</script>? Or a way to construct a new sequence <script type='math/tex'>b_n</script> from an existing sequence <script type='math/tex'>a_n</script> such that <script type='math/tex'>b_n + n!a_n</script>, at the generating function level? I guess what I&#8217;m getting at is, is there a way to get the coefficients of some polynomial to be the derivatives of some function, without having to multiply each one by <script type='math/tex'>n!</script>? Kinda silly, but it would be neat.</p>
+</li>
+
+<li>
+<p>Right now dividing by <script type='math/tex'>x</script> or any polynomial with no constant term results <code>NaN</code>s everywhere. I see why it&#8217;s happening&#8230; the first term of the Taylor series for <script type='math/tex'>f(x)</script> is <script type='math/tex'>f(0)</script>, so <script type='math/tex'>f[0]</script> (a.k.a. <code>f(0)</code>) will always equal <script type='math/tex'>f(0)</script>. But it should work at least some of the time, for instance when you can factor out a power of <script type='math/tex'>x</script> from both the numerator and the denominator and cancel. So <script type='math/tex'>xp(x) / xq(x)</script> should reduce to <script type='math/tex'>p(x) / q(x)</script>. That should be easy to implement.</p>
+</li>
+
+<li>
+<p>I should really use <a href='http://en.wikipedia.org/wiki/Kahan_summation'>Kahan summation</a> to reduce floating point error (h/t to my friend <a href='http://adereth.github.io/blog/2013/10/10/add-it-up/'>Matt Adereth</a> for the idea).</p>
+</li>
+
+<li>
+<p>Complex-valued polynomials would let me implement <code>sin</code> and <code>cos</code> in terms of <code>exp</code>. I should genericize the implementation of <code>Poly</code> to work with any numeric type. Might be fun to use <a href='http://github.com/non/spire'>spire</a>&#8217;s numeric tower for that.</p>
+</li>
+
+<li>
+<p>While I&#8217;m at it I should make <code>Poly</code> an instace of spire&#8217;s <code>Ring</code> typeclass. Infinite polynomials are a ring but not a field because some non-zero elements lack a multiplicative inverse, for instance, <script type='math/tex'>x</script>. For any <code>p: Poly</code>, <code>p / p</code> will evaluate to 1 (provided I&#8217;ve implemented cancellation), but <code>1 / p</code> doesn&#8217;t always exist as its own <code>Poly</code>, and that&#8217;s what I&#8217;d need for it to qualify as a field.</p>
+</li>
+</ol>
 
 <p>BTW, I&#8217;m pretty sure this article doesn&#8217;t contain any new code, and it almost certainly contains no new math. I tried to supply references where I could find them, but please send me links to relevant articles I may have missed!</p>
 
