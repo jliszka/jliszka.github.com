@@ -561,15 +561,40 @@ Double checking, say, the 12th derivative (45349.42510889882) against
 
   OK!
 
-### Conclusion
-
 If you read my [last post on exact numeric nth derivatives]({{ page.previous.url }}), 
 you might have noticed that the code for ```Poly``` is pretty similar to the
 [implementation of dual numbers](https://gist.github.com/jliszka/7085427) that I presented in that post.
 Really the only difference is the lack of reference to the rank of the matrix. The matrices were already lazy
 and already only contained {%m%}O(n){%em%} information, so it was a short step to turn them into lazy infinite polynomials.
 
-BTW, I'm pretty sure this article doesn't contain any new code, and it almost certainly contains no new math. I tried to supply
-references where I could find them, but please send me links to relevant articles I may have missed!
+### Conclusion
+
+Some things to think about:
+
+1. Is there a generating function for the sequence {%m%}a_n = n!{%em%}? Or a way to construct a new sequence {%m%}b_n{%em%}
+from an existing sequence {%m%}a_n{%em%} such that {%m%}b_n + n!a_n{%em%}, at the generating function level? I guess what I'm
+getting at is, is there a way to get the coefficients of some polynomial to be the derivatives of some function, without
+having to multiply each one by {%m%}n!{%em%}? Kinda silly, but it would be neat.
+
+2. Right now dividing by {%m%}x{%em%} or any polynomial with no constant term results ```NaN```s everywhere. I see why
+it's happening... the first term of the Taylor series for {%m%}f(x){%em%} is {%m%}f(0){%em%}, so {%m%}f[0]{%em%} (a.k.a.
+```f(0)```) will always equal {%m%}f(0){%em%}. But it should work at least some of the time, for instance when you can
+factor out a power of {%m%}x{%em%} from both the numerator and the denominator and cancel. So {%m%}xp(x) / xq(x){%em%}
+should reduce to {%m%}p(x) / q(x){%em%}. That should be easy to implement.
+
+3. I should really use [Kahan summation](http://en.wikipedia.org/wiki/Kahan_summation) to reduce floating point error
+(h/t to my friend [Matt Adereth](http://adereth.github.io/blog/2013/10/10/add-it-up/) for the idea).
+
+4. Complex-valued polynomials would let me implement ```sin``` and ```cos``` in terms of ```exp```.
+I should genericize the implementation of ```Poly``` to work with any numeric type. Might be fun
+to use [spire](http://github.com/non/spire)'s numeric tower for that.
+
+5. While I'm at it I should make ```Poly``` an instace of spire's ```Ring``` typeclass. Infinite polynomials are a ring
+but not a field because some non-zero elements lack a multiplicative inverse, for instance, {%m%}x{%em%}. For any ```p: Poly```,
+```p / p``` will evaluate to 1 (provided I've implemented cancellation), but ```1 / p``` doesn't always exist as its own ```Poly```,
+and that's what I'd need for it to qualify as a field.
+
+BTW, I'm pretty sure this article doesn't contain any new code, and it almost certainly contains no new math. I tried to
+supply references where I could find them, but please send me links to relevant articles I may have missed!
 
 All the code in this post is available in [this gist](https://gist.github.com/jliszka/7244101).
