@@ -568,8 +568,7 @@ you might have noticed that the code for ```Poly``` is pretty similar to the
 Really the only difference is the lack of reference to the rank of the matrix. The matrices were already lazy
 and already only contained {%m%}O(n){%em%} information, so it was a short step to turn them into lazy infinite polynomials.
 
-BTW, I don't believe this article contains any new code, and it almost certainly presents no new math. I tried to supply
+BTW, I'm pretty sure this article doesn't contain any new code, and it almost certainly contains no new math. I tried to supply
 references where I could find them, but please send me links to relevant articles I may have missed!
 
 All the code in this post is available in [this gist]().
-
