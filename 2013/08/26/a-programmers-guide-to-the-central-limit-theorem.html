@@ -39,11 +39,13 @@
     <div class="navbar">
       <div class="navbar-inner">
         <div class="container-narrow">
-          <a class="brand" href="/">A Gentleman and a Scala</a>
-          <ul class="nav">
-            
-            
-            
+          <div class="row-fluid">
+            <div class="span9 offset1">
+              <a class="brand" href="/">A Gentleman and a Scala</a>
+              <ul class="nav">
+                
+                
+                
 
 
   
@@ -98,7 +100,9 @@
 
 
 
-          </ul>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -108,10 +112,10 @@
       <div class="content">
         
 <div class="row-fluid">
-  <div class="span10 post-content post-spacer"></div>
+  <div class="span9 offset1 post-content post-spacer"></div>
 </div>
 <div class="row-fluid post-full">
-  <div class="span10 post-content">
+  <div class="span9 offset1 post-content">
     <div class="page-header">
       <h1>A Programmer's Guide to the Central Limit Theorem </h1>
     </div>
@@ -367,7 +371,7 @@ res12: Double = 0.17756920958319758</code></pre>
 
 <p>You&#8217;ve probably seen <a href='http://en.wikipedia.org/wiki/Standard_deviation'>this diagram</a> before:</p>
 
-<p><img alt='the normal distribution' src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' /></p>
+<p><img src='http://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/325px-Standard_deviation_diagram.svg.png' alt='the normal distribution' /></p>
 
 <p>This is what we&#8217;re working with. A value drawn from a normal distribution will be within 2 standard deviations of the mean 96% of the time. Since sample means are normally distributed around the true mean, sample means will be within 2 standard errors of the true mean 96% of the time. If a sample mean is more than 2 standard deviations away from the true mean, the sample is unlikely to have been drawn from that distribution.</p>
 

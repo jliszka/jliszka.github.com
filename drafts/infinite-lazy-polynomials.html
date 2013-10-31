@@ -39,11 +39,13 @@
     <div class="navbar">
       <div class="navbar-inner">
         <div class="container-narrow">
-          <a class="brand" href="/">A Gentleman and a Scala</a>
-          <ul class="nav">
-            
-            
-            
+          <div class="row-fluid">
+            <div class="span9 offset1">
+              <a class="brand" href="/">A Gentleman and a Scala</a>
+              <ul class="nav">
+                
+                
+                
 
 
   
@@ -98,7 +100,9 @@
 
 
 
-          </ul>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -108,10 +112,10 @@
       <div class="content">
         
 <div class="row-fluid">
-  <div class="span10 post-content post-spacer"></div>
+  <div class="span9 offset1 post-content post-spacer"></div>
 </div>
 <div class="row-fluid post-full">
-  <div class="span10 post-content">
+  <div class="span9 offset1 post-content">
     <div class="page-header">
       <h1>Infinite lazy polynomials </h1>
     </div>
@@ -135,16 +139,15 @@ p_c(x) = c(0) + c(1)x + c(2)x^2 + c(3)x^3 + \ldots
 </script>
 <p>Here&#8217;s the setup:</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>class</span><span class='kd'> </span><span class='nc'>Poly</span><span class='p'>(</span><span class='n'>coeffs</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Double</span><span class='p'>)</span> <span class='p'>{</span>
-  <span class='n'>self</span> <span class='k'>=&gt;</span>
 
   <span class='c1'>// Memoizing coefficient accessor. Returns the coefficient for x^n.</span>
-  <span class='k'>def</span> <span class='nf'>apply</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Double</span> <span class='p'>= </span><span class='n'>memo</span><span class='p'>.</span><span class='n'>getOrElseUpdate</span><span class='p'>(</span><span class='n'>n</span><span class='p'>,</span> <span class='n'>self</span><span class='p'>.</span><span class='n'>coeffs</span><span class='p'>(</span><span class='n'>n</span><span class='p'>))</span>
+  <span class='k'>def</span> <span class='nf'>apply</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Double</span> <span class='p'>= </span><span class='n'>memo</span><span class='p'>.</span><span class='n'>getOrElseUpdate</span><span class='p'>(</span><span class='n'>n</span><span class='p'>,</span> <span class='k'>this</span><span class='p'>.</span><span class='n'>coeffs</span><span class='p'>(</span><span class='n'>n</span><span class='p'>))</span>
 
   <span class='c1'>// The memo table</span>
   <span class='k'>private</span> <span class='k'>val</span> <span class='n'>memo</span> <span class='k'>=</span> <span class='n'>scala</span><span class='p'>.</span><span class='n'>collection</span><span class='p'>.</span><span class='n'>mutable</span><span class='p'>.</span><span class='nc'>HashMap</span><span class='p'>[</span><span class='kt'>Int</span>, <span class='kt'>Double</span><span class='p'>]()</span>
 
   <span class='k'>override</span> <span class='k'>def</span> <span class='nf'>toString</span> <span class='k'>=</span> <span class='p'>{</span>
-    <span class='s'>&quot;{ %s, ... }&quot;</span><span class='p'>.</span><span class='n'>format</span><span class='p'>((</span><span class='mi'>0</span> <span class='n'>to</span> <span class='mi'>10</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>i</span> <span class='k'>=&gt;</span> <span class='n'>df</span><span class='p'>.</span><span class='n'>format</span><span class='p'>(</span><span class='n'>self</span><span class='p'>(</span><span class='n'>i</span><span class='p'>))).</span><span class='n'>mkString</span><span class='p'>(</span><span class='s'>&quot;, &quot;</span><span class='p'>))</span>
+    <span class='s'>&quot;{ %s, ... }&quot;</span><span class='p'>.</span><span class='n'>format</span><span class='p'>((</span><span class='mi'>0</span> <span class='n'>to</span> <span class='mi'>10</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>i</span> <span class='k'>=&gt;</span> <span class='n'>df</span><span class='p'>.</span><span class='n'>format</span><span class='p'>(</span><span class='k'>this</span><span class='p'>(</span><span class='n'>i</span><span class='p'>))).</span><span class='n'>mkString</span><span class='p'>(</span><span class='s'>&quot;, &quot;</span><span class='p'>))</span>
   <span class='p'>}</span>
   <span class='k'>private</span> <span class='k'>val</span> <span class='n'>df</span> <span class='k'>=</span> <span class='k'>new</span> <span class='n'>java</span><span class='p'>.</span><span class='n'>text</span><span class='p'>.</span><span class='nc'>DecimalFormat</span><span class='p'>(</span><span class='s'>&quot;#.#######&quot;</span><span class='p'>)</span>
 <span class='p'>}</span>
@@ -178,20 +181,20 @@ res2: Double = 0.0</code></pre>
 <div class='highlight'><pre><code class='scala'><span class='k'>class</span><span class='kd'> </span><span class='nc'>Poly</span><span class='p'>(</span><span class='n'>coeffs</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Double</span><span class='p'>)</span> <span class='p'>{</span>
   <span class='c1'>// ...</span>
 
-  <span class='k'>def</span> <span class='nf'>+</span><span class='p'>(</span><span class='n'>other</span><span class='k'>:</span> <span class='kt'>Poly</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Poly</span><span class='p'>(</span><span class='n'>n</span> <span class='k'>=&gt;</span> <span class='n'>self</span><span class='p'>(</span><span class='n'>n</span><span class='p'>)</span> <span class='o'>+</span> <span class='n'>other</span><span class='p'>(</span><span class='n'>n</span><span class='p'>))</span>
+  <span class='k'>def</span> <span class='nf'>+</span><span class='p'>(</span><span class='n'>that</span><span class='k'>:</span> <span class='kt'>Poly</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Poly</span><span class='p'>(</span><span class='n'>n</span> <span class='k'>=&gt;</span> <span class='k'>this</span><span class='p'>(</span><span class='n'>n</span><span class='p'>)</span> <span class='o'>+</span> <span class='n'>that</span><span class='p'>(</span><span class='n'>n</span><span class='p'>))</span>
 
-  <span class='k'>def</span> <span class='nf'>-</span><span class='p'>(</span><span class='n'>other</span><span class='k'>:</span> <span class='kt'>Poly</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Poly</span><span class='p'>(</span><span class='n'>n</span> <span class='k'>=&gt;</span> <span class='n'>self</span><span class='p'>(</span><span class='n'>n</span><span class='p'>)</span> <span class='o'>-</span> <span class='n'>other</span><span class='p'>(</span><span class='n'>n</span><span class='p'>))</span>
+  <span class='k'>def</span> <span class='nf'>-</span><span class='p'>(</span><span class='n'>that</span><span class='k'>:</span> <span class='kt'>Poly</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Poly</span><span class='p'>(</span><span class='n'>n</span> <span class='k'>=&gt;</span> <span class='k'>this</span><span class='p'>(</span><span class='n'>n</span><span class='p'>)</span> <span class='o'>-</span> <span class='n'>that</span><span class='p'>(</span><span class='n'>n</span><span class='p'>))</span>
 
-  <span class='k'>def</span> <span class='nf'>unary_-</span><span class='p'>()</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Poly</span><span class='p'>(</span><span class='n'>n</span> <span class='k'>=&gt;</span> <span class='o'>-</span><span class='n'>self</span><span class='p'>(</span><span class='n'>n</span><span class='p'>))</span>
+  <span class='k'>def</span> <span class='nf'>unary_-</span><span class='p'>()</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Poly</span><span class='p'>(</span><span class='n'>n</span> <span class='k'>=&gt;</span> <span class='o'>-</span><span class='k'>this</span><span class='p'>(</span><span class='n'>n</span><span class='p'>))</span>
 <span class='p'>}</span>
 </code></pre></div>
 <p>It just goes elementwise. Multiplication and division by a constant are also easy:</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>class</span><span class='kd'> </span><span class='nc'>Poly</span><span class='p'>(</span><span class='n'>coeffs</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Double</span><span class='p'>)</span> <span class='p'>{</span>
   <span class='c1'>// ...</span>
 
-  <span class='k'>def</span> <span class='nf'>*</span><span class='p'>(</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Poly</span><span class='p'>(</span><span class='n'>n</span> <span class='k'>=&gt;</span> <span class='n'>self</span><span class='p'>(</span><span class='n'>n</span><span class='p'>)</span> <span class='o'>*</span> <span class='n'>x</span><span class='p'>)</span>
+  <span class='k'>def</span> <span class='nf'>*</span><span class='p'>(</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Poly</span><span class='p'>(</span><span class='n'>n</span> <span class='k'>=&gt;</span> <span class='k'>this</span><span class='p'>(</span><span class='n'>n</span><span class='p'>)</span> <span class='o'>*</span> <span class='n'>x</span><span class='p'>)</span>
 
-  <span class='k'>def</span> <span class='nf'>/</span><span class='p'>(</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Poly</span><span class='p'>(</span><span class='n'>n</span> <span class='k'>=&gt;</span> <span class='n'>self</span><span class='p'>(</span><span class='n'>n</span><span class='p'>)</span> <span class='o'>/</span> <span class='n'>x</span><span class='p'>)</span>
+  <span class='k'>def</span> <span class='nf'>/</span><span class='p'>(</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Poly</span><span class='p'>(</span><span class='n'>n</span> <span class='k'>=&gt;</span> <span class='k'>this</span><span class='p'>(</span><span class='n'>n</span><span class='p'>)</span> <span class='o'>/</span> <span class='n'>x</span><span class='p'>)</span>
 <span class='p'>}</span>
 </code></pre></div>
 <p>Multiplication of polynomials is the first interesting case. How do you multiply two infinite polynomials? Well, let&#8217;s just consider the coefficient of <script type='math/tex'>x^n</script>. It&#8217;s going to be the sum of the products of the coefficents of all pairs of powers that add up to <script type='math/tex'>n</script>. In math:</p>
@@ -206,8 +209,8 @@ res2: Double = 0.0</code></pre>
 <div class='highlight'><pre><code class='scala'><span class='k'>class</span><span class='kd'> </span><span class='nc'>Poly</span><span class='p'>(</span><span class='n'>coeffs</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Double</span><span class='p'>)</span> <span class='p'>{</span>
   <span class='c1'>// ...</span>
 
-  <span class='k'>def</span> <span class='nf'>*</span><span class='p'>(</span><span class='n'>other</span><span class='k'>:</span> <span class='kt'>Poly</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Poly</span><span class='p'>(</span><span class='n'>n</span> <span class='k'>=&gt;</span>
-    <span class='p'>(</span><span class='mi'>0</span> <span class='n'>to</span> <span class='n'>n</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>i</span> <span class='k'>=&gt;</span> <span class='n'>self</span><span class='p'>(</span><span class='n'>i</span><span class='p'>)</span> <span class='o'>*</span> <span class='n'>other</span><span class='p'>(</span><span class='n'>n</span><span class='o'>-</span><span class='n'>i</span><span class='p'>)).</span><span class='n'>sum</span>
+  <span class='k'>def</span> <span class='nf'>*</span><span class='p'>(</span><span class='n'>that</span><span class='k'>:</span> <span class='kt'>Poly</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= </span><span class='k'>new</span> <span class='nc'>Poly</span><span class='p'>(</span><span class='n'>n</span> <span class='k'>=&gt;</span>
+    <span class='p'>(</span><span class='mi'>0</span> <span class='n'>to</span> <span class='n'>n</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>i</span> <span class='k'>=&gt;</span> <span class='k'>this</span><span class='p'>(</span><span class='n'>i</span><span class='p'>)</span> <span class='o'>*</span> <span class='n'>that</span><span class='p'>(</span><span class='n'>n</span><span class='o'>-</span><span class='n'>i</span><span class='p'>)).</span><span class='n'>sum</span>
   <span class='p'>)</span>
 <span class='p'>}</span>
 </code></pre></div>
@@ -248,8 +251,8 @@ res1: Poly = { -49, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, ... }</code></pre>
     <span class='n'>powMemo</span><span class='p'>.</span><span class='n'>getOrElseUpdate</span><span class='p'>(</span><span class='n'>p</span><span class='p'>,</span> <span class='p'>{</span>
       <span class='k'>if</span> <span class='p'>(</span><span class='n'>p</span> <span class='o'>==</span> <span class='mi'>0</span><span class='p'>)</span> <span class='mi'>1</span>
       <span class='k'>else</span> <span class='p'>{</span>
-        <span class='k'>val</span> <span class='n'>p2</span> <span class='k'>=</span> <span class='n'>self</span> <span class='o'>**</span> <span class='p'>(</span><span class='n'>p</span> <span class='o'>/</span> <span class='mi'>2</span><span class='p'>)</span>
-        <span class='k'>if</span> <span class='p'>(</span><span class='n'>p</span> <span class='o'>%</span> <span class='mi'>2</span> <span class='o'>==</span> <span class='mi'>0</span><span class='p'>)</span> <span class='n'>p2</span> <span class='o'>*</span> <span class='n'>p2</span> <span class='k'>else</span> <span class='n'>p2</span> <span class='o'>*</span> <span class='n'>p2</span> <span class='o'>*</span> <span class='n'>self</span>
+        <span class='k'>val</span> <span class='n'>p2</span> <span class='k'>=</span> <span class='k'>this</span> <span class='o'>**</span> <span class='p'>(</span><span class='n'>p</span> <span class='o'>/</span> <span class='mi'>2</span><span class='p'>)</span>
+        <span class='k'>if</span> <span class='p'>(</span><span class='n'>p</span> <span class='o'>%</span> <span class='mi'>2</span> <span class='o'>==</span> <span class='mi'>0</span><span class='p'>)</span> <span class='n'>p2</span> <span class='o'>*</span> <span class='n'>p2</span> <span class='k'>else</span> <span class='n'>p2</span> <span class='o'>*</span> <span class='n'>p2</span> <span class='o'>*</span> <span class='k'>this</span>
       <span class='p'>}</span>
     <span class='p'>})</span>
   <span class='p'>}</span>
@@ -293,11 +296,11 @@ q(x) = 1 - \frac{p(x)}{a}
 <div class='highlight'><pre><code class='scala'><span class='k'>class</span><span class='kd'> </span><span class='nc'>Poly</span><span class='p'>(</span><span class='n'>coeffs</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='kt'>=&gt;</span> <span class='kt'>Double</span><span class='p'>)</span> <span class='p'>{</span>
   <span class='c1'>// ...</span>
 
-  <span class='k'>def</span> <span class='nf'>/</span><span class='p'>(</span><span class='n'>other</span><span class='k'>:</span> <span class='kt'>Poly</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= </span><span class='n'>self</span> <span class='o'>*</span> <span class='n'>other</span><span class='p'>.</span><span class='n'>inv</span>
+  <span class='k'>def</span> <span class='nf'>/</span><span class='p'>(</span><span class='n'>that</span><span class='k'>:</span> <span class='kt'>Poly</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= </span><span class='k'>this</span> <span class='o'>*</span> <span class='n'>that</span><span class='p'>.</span><span class='n'>inv</span>
 
   <span class='k'>def</span> <span class='nf'>inv</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= {</span>
-    <span class='k'>val</span> <span class='n'>a</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>(</span><span class='mi'>0</span><span class='p'>)</span>
-    <span class='k'>val</span> <span class='n'>q</span> <span class='k'>=</span> <span class='mi'>1</span> <span class='o'>-</span> <span class='n'>self</span> <span class='o'>/</span> <span class='n'>a</span>
+    <span class='k'>val</span> <span class='n'>a</span> <span class='k'>=</span> <span class='k'>this</span><span class='p'>(</span><span class='mi'>0</span><span class='p'>)</span>
+    <span class='k'>val</span> <span class='n'>q</span> <span class='k'>=</span> <span class='mi'>1</span> <span class='o'>-</span> <span class='k'>this</span> <span class='o'>/</span> <span class='n'>a</span>
     <span class='k'>new</span> <span class='nc'>Poly</span><span class='p'>(</span><span class='n'>n</span> <span class='k'>=&gt;</span> <span class='p'>(</span><span class='mi'>0</span> <span class='n'>to</span> <span class='n'>n</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>i</span> <span class='k'>=&gt;</span> <span class='p'>(</span><span class='n'>q</span> <span class='o'>**</span> <span class='n'>i</span><span class='p'>)(</span><span class='n'>n</span><span class='p'>)).</span><span class='n'>sum</span> <span class='o'>/</span> <span class='n'>a</span><span class='p'>)</span>
   <span class='p'>}</span>
 <span class='p'>}</span>
@@ -351,9 +354,9 @@ p(x)^r = a^r(1 + q(x))^r
   <span class='c1'>// ...</span>
 
   <span class='k'>def</span> <span class='nf'>**</span><span class='p'>(</span><span class='n'>r</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= {</span>
-    <span class='k'>val</span> <span class='n'>a</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>(</span><span class='mi'>0</span><span class='p'>)</span>
+    <span class='k'>val</span> <span class='n'>a</span> <span class='k'>=</span> <span class='k'>this</span><span class='p'>(</span><span class='mi'>0</span><span class='p'>)</span>
     <span class='k'>val</span> <span class='n'>ar</span> <span class='k'>=</span> <span class='n'>math</span><span class='p'>.</span><span class='n'>pow</span><span class='p'>(</span><span class='n'>a</span><span class='p'>,</span> <span class='n'>r</span><span class='p'>)</span>
-    <span class='k'>val</span> <span class='n'>q</span> <span class='k'>=</span> <span class='n'>self</span> <span class='o'>/</span> <span class='n'>a</span> <span class='o'>-</span> <span class='mi'>1</span>
+    <span class='k'>val</span> <span class='n'>q</span> <span class='k'>=</span> <span class='k'>this</span> <span class='o'>/</span> <span class='n'>a</span> <span class='o'>-</span> <span class='mi'>1</span>
     <span class='k'>def</span> <span class='nf'>coeff</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>(</span><span class='mi'>0</span> <span class='n'>to</span> <span class='n'>n</span><span class='o'>-</span><span class='mi'>1</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>i</span> <span class='k'>=&gt;</span> <span class='n'>r</span> <span class='o'>-</span> <span class='n'>i</span><span class='p'>).</span><span class='n'>product</span> <span class='o'>/</span> <span class='p'>(</span><span class='mi'>1</span> <span class='n'>to</span> <span class='n'>n</span><span class='p'>).</span><span class='n'>product</span>
     <span class='k'>new</span> <span class='nc'>Poly</span><span class='p'>(</span><span class='n'>n</span> <span class='k'>=&gt;</span> <span class='p'>(</span><span class='mi'>0</span> <span class='n'>to</span> <span class='n'>n</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>i</span> <span class='k'>=&gt;</span> <span class='n'>coeff</span><span class='p'>(</span><span class='n'>i</span><span class='p'>)</span> <span class='o'>*</span> <span class='p'>(</span><span class='n'>q</span> <span class='o'>**</span> <span class='n'>i</span><span class='p'>)(</span><span class='n'>n</span><span class='p'>)).</span><span class='n'>sum</span> <span class='o'>*</span> <span class='n'>ar</span><span class='p'>)</span>
   <span class='p'>}</span>
@@ -406,8 +409,8 @@ e^{p(x)} = e^{a + q(x)} = e^a e^{q(x)}
   <span class='c1'>// ...</span>
 
   <span class='k'>def</span> <span class='nf'>exp</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= {</span>
-    <span class='k'>val</span> <span class='n'>a</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>(</span><span class='mi'>0</span><span class='p'>)</span>
-    <span class='k'>val</span> <span class='n'>q</span> <span class='k'>=</span> <span class='n'>self</span> <span class='o'>-</span> <span class='n'>a</span>
+    <span class='k'>val</span> <span class='n'>a</span> <span class='k'>=</span> <span class='k'>this</span><span class='p'>(</span><span class='mi'>0</span><span class='p'>)</span>
+    <span class='k'>val</span> <span class='n'>q</span> <span class='k'>=</span> <span class='k'>this</span> <span class='o'>-</span> <span class='n'>a</span>
     <span class='k'>val</span> <span class='n'>ea</span> <span class='k'>=</span> <span class='n'>math</span><span class='p'>.</span><span class='n'>exp</span><span class='p'>(</span><span class='n'>a</span><span class='p'>)</span>
     <span class='k'>def</span> <span class='nf'>fact</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>(</span><span class='mi'>1</span> <span class='n'>to</span> <span class='n'>n</span><span class='p'>).</span><span class='n'>product</span>
     <span class='k'>new</span> <span class='nc'>Poly</span><span class='p'>(</span><span class='n'>n</span> <span class='k'>=&gt;</span> <span class='p'>(</span><span class='mi'>0</span> <span class='n'>to</span> <span class='n'>n</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>i</span> <span class='k'>=&gt;</span> <span class='p'>(</span><span class='n'>q</span> <span class='o'>**</span> <span class='n'>i</span><span class='p'>)(</span><span class='n'>n</span><span class='p'>)</span> <span class='o'>/</span> <span class='n'>fact</span><span class='p'>(</span><span class='n'>i</span><span class='p'>)).</span><span class='n'>sum</span> <span class='o'>*</span> <span class='n'>ea</span><span class='p'>)</span>
@@ -437,9 +440,9 @@ q(x) = \frac{p(x)}{a} - 1
   <span class='c1'>// ...</span>
 
   <span class='k'>def</span> <span class='nf'>log</span><span class='k'>:</span> <span class='kt'>Poly</span> <span class='p'>= {</span>
-    <span class='k'>val</span> <span class='n'>a</span> <span class='k'>=</span> <span class='n'>self</span><span class='p'>(</span><span class='mi'>0</span><span class='p'>)</span>
+    <span class='k'>val</span> <span class='n'>a</span> <span class='k'>=</span> <span class='k'>this</span><span class='p'>(</span><span class='mi'>0</span><span class='p'>)</span>
     <span class='k'>val</span> <span class='n'>logA</span> <span class='k'>=</span> <span class='n'>math</span><span class='p'>.</span><span class='n'>log</span><span class='p'>(</span><span class='n'>a</span><span class='p'>)</span>
-    <span class='k'>val</span> <span class='n'>q</span> <span class='k'>=</span> <span class='n'>self</span> <span class='o'>/</span> <span class='n'>a</span> <span class='o'>-</span> <span class='mi'>1</span>
+    <span class='k'>val</span> <span class='n'>q</span> <span class='k'>=</span> <span class='k'>this</span> <span class='o'>/</span> <span class='n'>a</span> <span class='o'>-</span> <span class='mi'>1</span>
     <span class='k'>def</span> <span class='nf'>alternatingHarmonic</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='k'>if</span> <span class='p'>(</span><span class='n'>n</span> <span class='o'>%</span> <span class='mi'>2</span> <span class='o'>==</span> <span class='mi'>0</span><span class='p'>)</span> <span class='o'>-</span><span class='mf'>1.0</span> <span class='o'>/</span> <span class='n'>n</span> <span class='k'>else</span> <span class='mf'>1.0</span> <span class='o'>/</span> <span class='n'>n</span>
     <span class='n'>logA</span> <span class='o'>+</span> <span class='k'>new</span> <span class='nc'>Poly</span><span class='p'>(</span><span class='n'>n</span> <span class='k'>=&gt;</span> <span class='p'>(</span><span class='mi'>1</span> <span class='n'>to</span> <span class='n'>n</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>i</span> <span class='k'>=&gt;</span> <span class='n'>alternatingHarmonic</span><span class='p'>(</span><span class='n'>i</span><span class='p'>)</span> <span class='o'>*</span> <span class='p'>(</span><span class='n'>q</span> <span class='o'>**</span> <span class='n'>i</span><span class='p'>)(</span><span class='n'>n</span><span class='p'>)).</span><span class='n'>sum</span><span class='p'>)</span>
   <span class='p'>}</span>
@@ -600,9 +603,9 @@ res0: Double = 45349.42510889882</code></pre>
 
 <p>If you read my <a href=''>last post on exact numeric nth derivatives</a>, you might have noticed that the code for <code>Poly</code> is pretty similar to the <a href='https://gist.github.com/jliszka/7085427'>implementation of dual numbers</a> that I presented in that post. Really the only difference is the lack of reference to the rank of the matrix. The matrices were already lazy and already only contained <script type='math/tex'>O(n)</script> information, so it was a short step to turn them into lazy infinite polynomials.</p>
 
-<p>BTW, I don&#8217;t believe this article contains any new code, and it almost certainly presents no new math. I tried to supply references where I could find them, but please send me links to relevant articles I may have missed!</p>
+<p>BTW, I&#8217;m pretty sure this article doesn&#8217;t contain any new code, and it almost certainly contains no new math. I tried to supply references where I could find them, but please send me links to relevant articles I may have missed!</p>
 
-<p>All the code in this post is available in <a href=''>this gist</a>.</p>
+<p>All the code in this post is available in <a href='https://gist.github.com/jliszka/7244101'>this gist</a>.</p>
     </div>
 
     

@@ -39,11 +39,13 @@
     <div class="navbar">
       <div class="navbar-inner">
         <div class="container-narrow">
-          <a class="brand" href="/">A Gentleman and a Scala</a>
-          <ul class="nav">
-            
-            
-            
+          <div class="row-fluid">
+            <div class="span9 offset1">
+              <a class="brand" href="/">A Gentleman and a Scala</a>
+              <ul class="nav">
+                
+                
+                
 
 
   
@@ -98,7 +100,9 @@
 
 
 
-          </ul>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -108,10 +112,10 @@
       <div class="content">
         
 <div class="row-fluid">
-  <div class="span10 post-content post-spacer"></div>
+  <div class="span9 offset1 post-content post-spacer"></div>
 </div>
 <div class="row-fluid post-full">
-  <div class="span10 post-content">
+  <div class="span9 offset1 post-content">
     <div class="page-header">
       <h1>Insertion sort is dual to bubble sort </h1>
     </div>
@@ -152,7 +156,7 @@
 
 <p>It&#8217;s not obvious from the code that these functions are backwards versions of each other, but look at their data flow diagrams:</p>
 <!-- more -->
-<p><img alt='main function data flow' src='/assets/img/main.png' /></p>
+<p><img src='/assets/img/main.png' alt='main function data flow' /></p>
 
 <p>They are exactly the same, except with the arrows going the other way.</p>
 
@@ -189,7 +193,7 @@
 
 <p>The data flow diagrams of these functions make it totally clear that they are the same function, only one has the arrows reversed and the boxes running backwards:</p>
 
-<p><img alt='helper function data flow' src='/assets/img/helper.png' /></p>
+<p><img src='/assets/img/helper.png' alt='helper function data flow' /></p>
 
 <p>The only thing left is this <code>sort</code> method, which takes 2 arguments and returns them in sorted order. Which I guess is the same if you run it backwards?</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>sort</span><span class='p'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]](</span><span class='n'>a</span><span class='k'>:</span> <span class='kt'>A</span><span class='p'>,</span> <span class='n'>b</span><span class='k'>:</span> <span class='kt'>A</span><span class='p'>)</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>A</span><span class='p'>,</span> <span class='kt'>A</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
