@@ -28,16 +28,15 @@ Here's the setup:
 
 {% highlight scala %}
 class Poly(coeffs: Int => Double) {
-  self =>
 
   // Memoizing coefficient accessor. Returns the coefficient for x^n.
-  def apply(n: Int): Double = memo.getOrElseUpdate(n, self.coeffs(n))
+  def apply(n: Int): Double = memo.getOrElseUpdate(n, this.coeffs(n))
 
   // The memo table
   private val memo = scala.collection.mutable.HashMap[Int, Double]()
 
   override def toString = {
-    "{ %s, ... }".format((0 to 10).map(i => df.format(self(i))).mkString(", "))
+    "{ %s, ... }".format((0 to 10).map(i => df.format(this(i))).mkString(", "))
   }
   private val df = new java.text.DecimalFormat("#.#######")
 }
@@ -77,11 +76,11 @@ going to evaluate these polynomials, I'm just going to treat them formally, as m
 class Poly(coeffs: Int => Double) {
   // ...
 
-  def +(other: Poly): Poly = new Poly(n => self(n) + other(n))
+  def +(that: Poly): Poly = new Poly(n => this(n) + that(n))
 
-  def -(other: Poly): Poly = new Poly(n => self(n) - other(n))
+  def -(that: Poly): Poly = new Poly(n => this(n) - that(n))
 
-  def unary_-(): Poly = new Poly(n => -self(n))
+  def unary_-(): Poly = new Poly(n => -this(n))
 }
 {% endhighlight %}
 
@@ -91,9 +90,9 @@ It just goes elementwise. Multiplication and division by a constant are also eas
 class Poly(coeffs: Int => Double) {
   // ...
 
-  def *(x: Double): Poly = new Poly(n => self(n) * x)
+  def *(x: Double): Poly = new Poly(n => this(n) * x)
 
-  def /(x: Double): Poly = new Poly(n => self(n) / x)
+  def /(x: Double): Poly = new Poly(n => this(n) / x)
 }
 {% endhighlight %}
 
@@ -113,8 +112,8 @@ In code:
 class Poly(coeffs: Int => Double) {
   // ...
 
-  def *(other: Poly): Poly = new Poly(n =>
-    (0 to n).map(i => self(i) * other(n-i)).sum
+  def *(that: Poly): Poly = new Poly(n =>
+    (0 to n).map(i => this(i) * that(n-i)).sum
   )
 }
 {% endhighlight %}
@@ -162,8 +161,8 @@ class Poly(coeffs: Int => Double) {
     powMemo.getOrElseUpdate(p, {
       if (p == 0) 1
       else {
-        val p2 = self ** (p / 2)
-        if (p % 2 == 0) p2 * p2 else p2 * p2 * self
+        val p2 = this ** (p / 2)
+        if (p % 2 == 0) p2 * p2 else p2 * p2 * this
       }
     })
   }
@@ -219,11 +218,11 @@ all of which we know how to compute. Here's the code:
 class Poly(coeffs: Int => Double) {
   // ...
 
-  def /(other: Poly): Poly = self * other.inv
+  def /(that: Poly): Poly = this * that.inv
 
   def inv: Poly = {
-    val a = self(0)
-    val q = 1 - self / a
+    val a = this(0)
+    val q = 1 - this / a
     new Poly(n => (0 to n).map(i => (q ** i)(n)).sum / a)
   }
 }
@@ -285,9 +284,9 @@ class Poly(coeffs: Int => Double) {
   // ...
 
   def **(r: Double): Poly = {
-    val a = self(0)
+    val a = this(0)
     val ar = math.pow(a, r)
-    val q = self / a - 1
+    val q = this / a - 1
     def coeff(n: Int) = (0 to n-1).map(i => r - i).product / (1 to n).product
     new Poly(n => (0 to n).map(i => coeff(i) * (q ** i)(n)).sum * ar)
   }
@@ -346,8 +345,8 @@ class Poly(coeffs: Int => Double) {
   // ...
 
   def exp: Poly = {
-    val a = self(0)
-    val q = self - a
+    val a = this(0)
+    val q = this - a
     val ea = math.exp(a)
     def fact(n: Int) = (1 to n).product
     new Poly(n => (0 to n).map(i => (q ** i)(n) / fact(i)).sum * ea)
@@ -380,9 +379,9 @@ class Poly(coeffs: Int => Double) {
   // ...
 
   def log: Poly = {
-    val a = self(0)
+    val a = this(0)
     val logA = math.log(a)
-    val q = self / a - 1
+    val q = this / a - 1
     def alternatingHarmonic(n: Int) = if (n % 2 == 0) -1.0 / n else 1.0 / n
     logA + new Poly(n => (1 to n).map(i => alternatingHarmonic(i) * (q ** i)(n)).sum)
   }
