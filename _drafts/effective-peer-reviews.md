@@ -7,23 +7,13 @@ tags: []
 ---
 {% include JB/setup %}
 
-Peer reviews are the worst. Most people I know dread the prospect of having to write one. The kind I'm talking about is
-where you nominate a handful of your co-workers, and your manager collects their written feedback, usually in the form
-of 2 or 3 free-response questions, and delivers it in some form to you along with their own synthesis and additional
-feedback. This is pretty common in the tech industry. It's what Google and Facebook do, and a lot of startups opt for
-it by default.
+Peer reviews take a ton of time to do well, and every tech company does them. Everyone understands how important they are
+— only your peers really know what it's like to work with you, and they have the most insightful, nuanced and helpful
+suggestions for improvement — but everyone I know hates writing them. The problem is that good feedback takes a really
+long time to write, sometimes on the order of 4 or 5 hours for a single peer review.
 
-Peer feedback is the most effective kind of feedback, if done well. Only your peers really know what it's like to work
-with you, and they have the most insightful, nuanced and helpful suggestions for improvement. The problem is that good
-feedback takes a really long time to write. It's not uncommon to take 4 or 5 hours to write a single peer review, and
-that can stretch out over a period of a week or more if you're an expert procrastinator.
-
-I'd like to solve this problem. You might think that there's a natural tradeoff between quality and time spent, that the
-higher quality you demand, the more time it will take. So there's certainly no way to get higher quality reviews in
-*less* time. That's asking too much! Wait, what about in a *quarter* of the time?
-
-This is all possible, and as a manager I've done it probably 25 times in the last year. The thing to realize is, the
-only thing that makes writing good peer reviews difficult is: writing itself.
+I'd like to solve this problem. You'd think that there's a natural trade-off between quality and time spent — but you'd
+be overlooking an important point: the only thing that makes writing peer reviews difficult is: writing itself.
 
 ### The interview method
 
@@ -37,19 +27,17 @@ reviewee, going through emails, code commits, and their own recollections. _Time
 
 3. **Interview.** During the meeting, the reviewer talks about the reviewee, and the manager writes down everything they
 say, as verbatim as possible. The manager guides the discussion by asking clarifying questions or bringing up broad
-topics (think "How would you characterize Joe's impact on the organization?" not "Joe breaks the build all the time,
-what do you think about that?"). _Time: 30 minutes_.
+topics. _Time: 30 minutes_.
 
 4. **Edit.** After the meeting, the manager turns their notes into written, readable English, of the quality that you
-would see in a regular written review. This consists of two parts: copy editing (fixing typos, supplying connecting
-words, expanding abbreviations, removing redundancies) and organization (rearranging the sentences and paragraphs into
-common themes — people do tend to ramble). _Time: 15 minutes_.
+would see in a regular written review. This consists of two parts: copy editing and reorganization (people do tend to
+ramble). _Time: 15 minutes_.
 
 5. **Get approval.** The manager shows the finished review to the reviewer for approval. The reviewer makes sure that
 their thoughts are being accurately represented and that they are comfortable with the content of the review, and
 makes any necessary edits. _Time: 5 minutes_.
 
-You're done! Total elapsed time: one hour. Total person-hours: one hour and 30 minutes.
+You're done! Total elapsed time: one hour.
 
 ### Why this is great
 
@@ -60,14 +48,13 @@ There's no loss of fidelity — written reviews produced this way are typically 
 produced by traditional means. In my experience, it's pretty rare for the reviewer to make significant changes in the
 "approval" step — usually it's just a phrase here or there.
 
-But on top of this, you also get things in an interview that the reviewer would have never written down in the first
-place. Interviewing someone is a remarkably effective way of getting honest feedback out of them, particularly critical
-feedback. For some reason, people filter their thoughts when they write, but not so much when they speak. Certain things
-that they would hesitate to write down, they have no trouble saying aloud.
+But on top of this, you also get things in an interview that the reviewer would have never written down. 
+Interviewing someone turns out to be a remarkably effective way of getting honest feedback out of them, particularly critical
+feedback. There's a reason reporters want to interview people in person instead of sending a one-line email and waiting
+for a response.
 
-You also tend to get a lot more volume from people who don't think they have much to say, or who would
-normally write very little. I think one reason for this is that writing interrupts your train of thought. Sometimes, by
-the time you finish writing the first half of your thoughts, you've forgotten the second half.
+With the right prompting, you can get a lot more volume from people who don't think they have much to say, or who would
+normally write very little. Eliminating the friction of having to write everything down doesn't hurt, either.
 
 This method also removes the possibility of procrastination (at least on the part of a peer reviewer). If you're sitting
 in a room with someone, you're not going to go off and check twitter or get distracted. As a manager this is reassuring
@@ -75,16 +62,12 @@ in a room with someone, you're not going to go off and check twitter or get dist
 
 ### Why it works
 
+Humans are just wired to speak to other humans. When you think about it, writing is a fundamentally unnatural act.
 So much of writing is putting yourself in your reader's shoes and handling possible objections or misinterpretations —
 you're not going to be there when they read it, so you have to cover your bases. This is a taxing, laborious process.
 Having someone there to give you immediate feedback short circuits much of it. The manager will do this instinctively by
 giving subtle non-verbal cues to the reviewer that lets them know whether what they're saying makes sense. This frees
-up the reviewer to just speak their mind without the burden of having to figure out how precisely to word it.
-
-I think what's going on here is that humans are just wired to speak to other humans. When you think about it, writing
-things down is a fundamentally unnatural act. If you want to get quick access to the thoughts in someone's head, you
-talk to them in person. And I think there's something about just having another person in the room that turns on a
-circuit in your brain that makes you a better communicator.
+up the reviewer to literally "speak their mind" without the burden of having to figure out how precisely to word it.
 
 ### Common objections
 
@@ -139,39 +122,27 @@ is your job as the manager conducting the review. The goal is to make the prose 
 the original meaning. This means that paraphrasing is sometimes necessary, but you should avoid it if you can. More
 commonly, you'll just want to trim down rambling or duplicated sentences or ideas. When people talk, they often retread
 over the same idea multiple times using different words. As a diligent note-taker, you've written them all down. Feel
-free to pick one or two of them and delete the rest.
+free to pick one or two of them and delete the rest. But most often, you'll just be turning your notes into Proper
+English Sentences.
 
-But most often, you'll just be turning your notes into Proper English Sentences. To give you an idea what I mean, here
-is what I typed during one actual interview:
-
-> "very storng design sense about how these things should work, can comm htem effectively and clearly.
-> this works and this works, but this one is better bc it will let us do x y and z down the road.
-
-And here's the final result:
-
-> "He has a very strong design sense about how things should work and can communicate them effectively and clearly. For
-> example, maybe there are two solutions that work, but he'll articulate that one of them is better because it allows
-> us to do more things down the road."
-
-It involved a little paraphrasing, but it improved clarity without changing the meaning. I think that's as far as
-you'll want to go in paraphrasing, though.
-
-Luckily, the fallback is that the reviewer gets final say as to what goes into their review. If you accidentally misrepresent
-them in what you type up, they have the opportunity to correct it.
+Don't be too concerned about the idea of changing people's words. Your fallback is that the reviewer gets final say as
+to what goes into their review. If you accidentally misrepresent them in what you type up, they have the opportunity to
+correct it.
 
 **Reorganizing is critical.** This is one step beyond editing. People retread the same topics and touch on the same
 themes throughout the interview. You'll just want to group together things that are related. You can do it by topic
 (technical skill, communication, leadership, getting things done, detail-oriented) or by subject (accomplishments,
 things they're good at, things to work on). But the point is that the review should lay out a coherent story and should
-not jump around between topics, even if that's what the reviewer did during the interview. It's much more important that
-the review is delivered effectively than that it is 100% true to what the reviewer said in the order they said it.
-
+not jump around between topics, even if that's what the reviewer did during the interview.
 ### Conclusion
 
 I've been conducting annual reviews this way for almost a year, with overwhelmingly positive results. Reviewers
-uniformly and enthusiastically prefer it, and reviewees don't notice the difference (I always give them the choice,
-though). The only times it hasn't gone as well were my own fault, due to insufficient editing of my notes into a coherent
-review.
+uniformly and enthusiastically prefer it. And one reviewee told me that it was the most helpful, constructive review he
+had ever received in his career.
 
 Anyway, try it out, and let me know what you think!
+
+<span style="font-size: 9pt">
+  Thanks to <a href="https://twitter.com/noah_weiss">Noah Weiss</a> for his feedback on early drafts of this post.
+</span>
 
