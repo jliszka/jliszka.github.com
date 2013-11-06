@@ -54,21 +54,37 @@ You're done! Total elapsed time: one hour. Total person-hours: one hour and 30 m
 ### Why this is great
 
 It's efficient. There's nothing like getting 4 hours of your life back, and given the choice, potential peer
-reviewers will jump for it every time, and will thank you for it. And you're not sacrificing any fidelity — written
-reviews produced this way are typically of equal if not higher quality than those produced by traditional means.
+reviewers will jump for it every time, and will thank you for it.
 
-It's a surprisingly effective way of getting honest feedback out of people, particularly critical feedback. For some
-reason, people filter their thoughts when they write, but not so much when they speak. Certain things that they would
-hesitate to write down, they have no trouble saying aloud.
+There's no loss of fidelity — written reviews produced this way are typically of equal if not higher quality than those
+produced by traditional means. In my experience, it's pretty rare for the reviewer to make significant changes in the
+"approval" step — usually it's just a phrase here or there.
 
-I also tend to get a lot more volume from people who don't think they have much to say, or who would normally write very
-little. I think one reason for this is that writing interrupts your train of thought. Sometimes, by the time you finish
-writing the first half of your thoughts, you've forgotten the second half.
+But on top of this, you also get things in an interview that the reviewer would have never written down in the first
+place. Interviewing someone is a remarkably effective way of getting honest feedback out of them, particularly critical
+feedback. For some reason, people filter their thoughts when they write, but not so much when they speak. Certain things
+that they would hesitate to write down, they have no trouble saying aloud.
+
+You also tend to get a lot more volume from people who don't think they have much to say, or who would
+normally write very little. I think one reason for this is that writing interrupts your train of thought. Sometimes, by
+the time you finish writing the first half of your thoughts, you've forgotten the second half.
+
+This method also removes the possibility of procrastination (at least on the part of a peer reviewer). If you're sitting
+in a room with someone, you're not going to go off and check twitter or get distracted. As a manager this is reassuring
+— just put something on the calendar, and you know the reviewer's work will be done by the end of that meeting.
+
+### Why it works
 
 So much of writing is putting yourself in your reader's shoes and handling possible objections or misinterpretations —
 you're not going to be there when they read it, so you have to cover your bases. This is a taxing, laborious process.
 Having someone there to give you immediate feedback short circuits much of it. The manager will do this instinctively by
-giving subtle non-verbal cues to the reviewer that lets them know whether what they're saying makes sense.
+giving subtle non-verbal cues to the reviewer that lets them know whether what they're saying makes sense. This frees
+up the reviewer to just speak their mind without the burden of having to figure out how precisely to word it.
+
+I think what's going on here is that humans are just wired to speak to other humans. When you think about it, writing
+things down is a fundamentally unnatural act. If you want to get quick access to the thoughts in someone's head, you
+talk to them in person. And I think there's something about just having another person in the room that turns on a
+circuit in your brain that makes you a better communicator.
 
 ### Common objections
 
@@ -100,8 +116,8 @@ this is how I felt, this is what I said."
 
 ### Pro tips for managers
 
-This technique takes a little bit of practice. You shouldn't expect your first review to come out perfect in an hour.
-There's a decent amount of trial and error that goes into it. But here are some tips to help you avoid some of the
+This technique takes a little bit of practice. You shouldn't expect your first review to come out perfect in an hour —
+there's a decent amount of trial and error that goes into it. But here are some tips to help you avoid some of the
 mistakes I made early on:
 
 **Keep the conversation in a helpful place.** The whole purpose of this is to find ways to help people improve. If
@@ -128,23 +144,16 @@ free to pick one or two of them and delete the rest.
 But most often, you'll just be turning your notes into Proper English Sentences. To give you an idea what I mean, here
 is what I typed during one actual interview:
 
-> "very storng design sense about how these things should work, can comm htem effectively and clearly. we don’t nec
-> agree, but it’s easy for us to id that quickly and come to a soluteiom"
+> "very storng design sense about how these things should work, can comm htem effectively and clearly.
+> this works and this works, but this one is better bc it will let us do x y and z down the road.
 
 And here's the final result:
 
-> "He has a very strong design sense about how things should work and can communicate them effectively and clearly. We
-> don't always necessarily agree, but it's easy for us to identify that and come to a solution."
+> "He has a very strong design sense about how things should work and can communicate them effectively and clearly. For
+> example, maybe there are two solutions that work, but he'll articulate that one of them is better because it allows
+> us to do more things down the road."
 
-Interview:
-
-> this works and this works, but this one is better because it will let us do x y and z down the road 
-
-Final:
-
-> There are two solutions that work, but one of them is better because it allows us to do more things down the road.
-
-That one involved a little paraphrasing, but it improved clarity without changing the meaning. I think that's as far as
+It involved a little paraphrasing, but it improved clarity without changing the meaning. I think that's as far as
 you'll want to go in paraphrasing, though.
 
 Luckily, the fallback is that the reviewer gets final say as to what goes into their review. If you accidentally misrepresent
@@ -163,11 +172,6 @@ I've been conducting annual reviews this way for almost a year, with overwhelmin
 uniformly and enthusiastically prefer it, and reviewees don't notice the difference (I always give them the choice,
 though). The only times it hasn't gone as well were my own fault, due to insufficient editing of my notes into a coherent
 review.
-
-I think the fundamental reason this is so effective is that humans are just wired to speak to other humans. When you
-think about it, writing things down is a very unnatural act. If you want to get quick access to the thoughts in
-someone's head, you talk to them in person. And I think there's something about just having another person in the room
-that turns on a circuit in your brain that makes you a better communicator.
 
 Anyway, try it out, and let me know what you think!
 
