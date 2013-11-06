@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Automatic Differentiation, Part 2</title>
+    <title>Not a monad tutorial</title>
     <meta name="description" content="">
     <meta name="author" content="Jason Liszka">
 
@@ -93,6 +93,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -113,47 +117,38 @@
 <div class="row-fluid post-full">
   <div class="span9 offset1 post-content">
     <div class="page-header">
-      <h1>Automatic Differentiation, Part 2 </h1>
+      <h1>Not a monad tutorial </h1>
     </div>
     <div class="date">
-      <span>31 October 2013</span>
+      <span>02 November 2013</span>
     </div>
     <div class="content">
-      <p>In my <a href=''>last post</a> I presented some code that implements the well-known matrix formulation of dual numbers, and used it to compute exact numeric nth derivatives of some simple functions.</p>
+      <blockquote style='text-align: left' class='quote'>
+  <p>"You can dream about anything, but a dream within a dream is still just a dream."</p>
+</blockquote>
+<p>I&#8217;m not going to tell you that &#8220;a monad is like a dream,&#8221; but the quote above does encapsulate the basic idea of a monad: a monad is a container (you can put anything in it) with a flattening rule (a container of containers is just a container).</p>
 
-<p>I want to extend that code in a couple of ways. Here&#8217;s what I&#8217;m thinking:</p>
+<p>If you&#8217;ve never encountered monads before, that description is unlikely to be helpful — it&#8217;s a description, not an explanation. Instead of trying to explain monads, I&#8217;m just going to show you a ton of examples of monads, and the magical human brain between your ears will do what it does best: extract a pattern. And at the end I will tell you that that that pattern is called &#8220;a monad.&#8221;</p>
 
-<ol>
-<li>
-<p>I only care about the first row of the matrix. So I&#8217;ll dispense with <code>def get(r: Int, c:Int)</code> and only provide <code>def get(n: Int)</code> that provides access to the cells of the top row of the matrix. If I need to access a cell in another row of the matrix (e.g., during multiplication), I&#8217;ll just figure out what cell in the top row it corresponds to.</p>
-</li>
+<h3 id='list'>List</h3>
 
-<li>
-<p>I don&#8217;t want to have to specify the rank of the matrix ahead of time, but I&#8217;ll still want to access arbitrary cells. To do that, all I have to do is remove all references to the rank of the matrix in the implementation. This will involve some changes to the way <code>*</code> and <code>inv</code> are implemented. But that way I&#8217;ll have essentially an infinite matrix (or an arbitrarily large one). And at that point I&#8217;ll have something that looks more like an infinite sequence than a matrix.</p>
-</li>
+<h3 id='option'>Option</h3>
 
-<li>
-<p>Now that it&#8217;s a sequence, it would make more sense if the indexes were 0-based. This makes sense in the context of derivates too because the <script type='math/tex'>n</script>th derivative would live at index <script type='math/tex'>n</script> in the sequence.</p>
-</li>
+<h3 id='tree'>Tree</h3>
 
-<li>
-<p>Add support for <code>exp</code>, <code>log</code>, <code>sin</code>, <code>cos</code> and fractional <code>pow</code>s.</p>
-</li>
+<h3 id='future'>Future</h3>
 
-<li>
-<p>Parameterize <code>Dual</code> on the underlying type rather than hard-coding in <code>Double</code>. So you could use <code>Rational</code> or <code>BigDecimal</code> or <code>Complex</code> or any instance of the <code>Numeric</code> typeclass. At this point it would also make sense to declare <code>Dual</code> as an instance of <code>Numeric</code>.</p>
-</li>
+<h3 id='logger'>Logger</h3>
 
-<li>
-<p>Supply implicit conversions from <code>Numeric</code> types to <code>Dual</code>, so I can say things like <code>3 + e</code> instead of <code>one*3 + e</code>.</p>
-</li>
-</ol>
+<h3 id='environment'>Environment</h3>
 
-<p>Binomial theorem: <script type='math/tex; mode=display'>
-%<![CDATA[
-(1 + x)^p = 1 + px + \frac{p(p-1)}{2!}x^2 + \frac{p(p-1)(p-2)}{3!}x^3 + ...
-%]]>
-</script></p>
+<h3 id='random_number_generator'>Random number generator</h3>
+
+<h3 id='parser'>Parser</h3>
+
+<h3 id='random_variable'>Random variable</h3>
+
+<h3 id='vector_space'>Vector space</h3>
     </div>
 
     
@@ -162,29 +157,13 @@
 
 
   <div style="float: right; margin-top: 5px">
-  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/automatic-differentiation-part-2.html" data-text="Automatic Differentiation, Part 2" data-via="jliszka">Tweet</a>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/not-a-monad-tutorial.html" data-text="Not a monad tutorial" data-via="jliszka">Tweet</a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
 
 
 
-  
-    <ul class="tag_box inline">
-      <li><i class="icon-tags"></i></li>
-      
-      
-
-
-  
-     
-    	<li><a href="/tags.html#automatic differentiation-ref">automatic differentiation <span>2</span></a></li>
-    
-  
-
-
-
-    </ul>
     
     <div style="clear: both"></div>
 
