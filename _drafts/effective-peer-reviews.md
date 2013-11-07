@@ -61,15 +61,6 @@ Interviewing someone turns out to be a remarkably effective way of getting hones
 feedback**. There's a reason reporters want to interview people in person instead of sending a one-line email and waiting
 for a response.
 
-### Why it works
-
-Humans are just wired to speak to other humans. When you think about it, writing is a fundamentally unnatural act.
-So much of writing is putting yourself in your reader's shoes and handling possible objections or misinterpretations —
-you're not going to be there when they read it, so you have to cover your bases. This is a taxing, laborious process.
-Having someone there to give you immediate feedback short circuits much of it. The manager will do this instinctively by
-giving subtle non-verbal cues to the reviewer that lets them know whether what they're saying makes sense. This frees
-up the reviewer to literally "speak their mind" without the burden of having to figure out how precisely to word it.
-
 ### Common objections
 
 People are naturally pretty skeptical of this process when they first hear about it. I, too, was surprised by its
@@ -136,6 +127,15 @@ things they're good at, things to work on). But the point is that the review sho
 not jump around between topics, even if that's what the reviewer did during the interview.
 
 ### Conclusion
+
+If I had to speculate about why this works, my guess is it's because humans are just wired to speak to other humans,
+especially about other humans. It's practically the reason language was invented. On the other hand, writing is a
+fundamentally unnatural act. So much of writing is putting yourself in your reader's shoes and handling possible
+objections or misinterpretations — you're not going to be there when they read it, so you have to cover your bases. This
+is a taxing, laborious process. Having someone there to give you immediate feedback short circuits much of it. The
+manager will do this instinctively by giving subtle non- verbal cues to the reviewer that lets them know whether what
+they're saying makes sense. This frees up the reviewer to literally "speak their mind" without the burden of having to
+figure out how precisely to word it.
 
 I've been conducting annual reviews this way for almost a year, with overwhelmingly positive results. Reviewers
 uniformly and enthusiastically prefer it. And one reviewee told me that it was the most helpful, constructive review he
