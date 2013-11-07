@@ -7,17 +7,18 @@ tags: []
 ---
 {% include JB/setup %}
 
-Peer reviews take a ton of time to do well, and every tech company does them. Everyone understands how important they are
-— only your peers really know what it's like to work with you, and they have the most insightful, nuanced and helpful
-suggestions for improvement — but everyone I know hates writing them. The problem is that good feedback takes a really
-long time to write, sometimes on the order of 4 or 5 hours for a single peer review.
+Peer reviews are the most effective kind of feedback — only your peers really know what it's like to work with you, and
+they have the most insightful, nuanced and helpful suggestions for improvement. Almost every tech company I can think of
+does them as part of their annual review process. The problem is that everyone hates writing them, because decent
+feedback takes a really long time to write, sometimes on the order of 4 or 5 hours for a single peer review.
 
-I'd like to solve this problem. You'd think that there's a natural trade-off between quality and time spent — but you'd
-be overlooking an important point: the only thing that makes writing peer reviews difficult is: writing itself.
+I'd like to solve this problem. Most people think that there's a natural, unavoidable relationship between quality and
+time spent. But that overlooks an important point — the only thing that makes writing peer reviews difficult is: writing
+itself.
 
 ### The interview method
 
-Here are 5 easy steps to collecting effective, insightful, critical, honest peer review feedback in about an hour:
+Here are 5 easy steps to collecting insightful, critical, honest peer review feedback, in about an hour:
 
 1. **Schedule a meeting.** The manager conducting the review sets up a 30 minute 1-on-1 meeting with the peer reviewer.
 _Time: 30 seconds_.
@@ -41,24 +42,24 @@ You're done! Total elapsed time: one hour.
 
 ### Why this is great
 
-It's efficient. There's nothing like getting 4 hours of your life back, and given the choice, potential peer
+It's **efficient**. There's nothing like getting 4 hours of your life back, and given the choice, potential peer
 reviewers will jump for it every time, and will thank you for it.
 
-There's no loss of fidelity — written reviews produced this way are typically of equal if not higher quality than those
+It also **makes procrastination impossible**, at least on the part of a peer reviewer. If you're sitting
+in a room with someone, you're not going to go off and check twitter or get distracted. As a manager this is reassuring.
+Just put something on the calendar, and you know the reviewer's work will be done by the end of that meeting.
+
+With the right prompting, you can get a lot **more volume** from people who don't think they have much to say, or who would
+normally write very little. Eliminating the friction of having to write everything down doesn't hurt, either.
+
+There's **no loss of fidelity** — written reviews produced this way are typically of equal if not higher quality than those
 produced by traditional means. In my experience, it's pretty rare for the reviewer to make significant changes in the
 "approval" step — usually it's just a phrase here or there.
 
 But on top of this, you also get things in an interview that the reviewer would have never written down. 
-Interviewing someone turns out to be a remarkably effective way of getting honest feedback out of them, particularly critical
-feedback. There's a reason reporters want to interview people in person instead of sending a one-line email and waiting
+Interviewing someone turns out to be a remarkably effective way of getting honest feedback out of them, particularly **critical
+feedback**. There's a reason reporters want to interview people in person instead of sending a one-line email and waiting
 for a response.
-
-With the right prompting, you can get a lot more volume from people who don't think they have much to say, or who would
-normally write very little. Eliminating the friction of having to write everything down doesn't hurt, either.
-
-This method also removes the possibility of procrastination (at least on the part of a peer reviewer). If you're sitting
-in a room with someone, you're not going to go off and check twitter or get distracted. As a manager this is reassuring
-— just put something on the calendar, and you know the reviewer's work will be done by the end of that meeting.
 
 ### Why it works
 
@@ -71,15 +72,15 @@ up the reviewer to literally "speak their mind" without the burden of having to 
 
 ### Common objections
 
-People are naturally pretty skeptical of this process when they first hear about it. I was surprised by its
-effectiveness, too, at first!
+People are naturally pretty skeptical of this process when they first hear about it. I, too, was surprised by its
+effectiveness at first!
 
 **Isn't this more work for the manager conducting the review?**<br/> Yes, but it's mostly mindless work. Copy editing is
 not the same thing as creating insightful sentences from whole cloth; the manager is polishing and rearranging existing
-material, not creating it. It does certainly involve more clock time for the manager, about an hour per reviewer.
+material, not creating it. It does certainly involve more clock time for the manager, about an hour per peer reviewer.
 
 But the upside is that it dramatically decreases the load on peer reviewers, by a factor of 3 or more. That frees them
-up to do their actual job — which, to me, is what being a [servant-leader](http://en.wikipedia.org/wiki/Servant_leadership)
+up to do their actual job — which, to me, is what being a [servant leader](http://en.wikipedia.org/wiki/Servant_leadership)
 is all about. Besides, if I can't spend 3-5 hours per report per *year* as a manager to get them the best feedback I can,
 what am I doing?
 
@@ -122,18 +123,18 @@ is your job as the manager conducting the review. The goal is to make the prose 
 the original meaning. This means that paraphrasing is sometimes necessary, but you should avoid it if you can. More
 commonly, you'll just want to trim down rambling or duplicated sentences or ideas. When people talk, they often retread
 over the same idea multiple times using different words. As a diligent note-taker, you've written them all down. Feel
-free to pick one or two of them and delete the rest. But most often, you'll just be turning your notes into Proper
-English Sentences.
+free to pick one or two of them and delete the rest.
 
-Don't be too concerned about the idea of changing people's words. Your fallback is that the reviewer gets final say as
-to what goes into their review. If you accidentally misrepresent them in what you type up, they have the opportunity to
-correct it.
+But most often, you'll just be turning your notes into Proper English Sentences. Don't be too concerned about the idea
+of changing people's words a little. Your fallback is that the reviewer gets final say as to what goes into their
+review. If you accidentally misrepresent them in what you type up, they have the opportunity to correct it.
 
 **Reorganizing is critical.** This is one step beyond editing. People retread the same topics and touch on the same
 themes throughout the interview. You'll just want to group together things that are related. You can do it by topic
 (technical skill, communication, leadership, getting things done, detail-oriented) or by subject (accomplishments,
 things they're good at, things to work on). But the point is that the review should lay out a coherent story and should
 not jump around between topics, even if that's what the reviewer did during the interview.
+
 ### Conclusion
 
 I've been conducting annual reviews this way for almost a year, with overwhelmingly positive results. Reviewers
@@ -143,6 +144,7 @@ had ever received in his career.
 Anyway, try it out, and let me know what you think!
 
 <span style="font-size: 9pt">
-  Thanks to <a href="https://twitter.com/noah_weiss">Noah Weiss</a> for his feedback on early drafts of this post.
+  Thanks to <a href="https://twitter.com/noah_weiss">Noah Weiss</a> and <a href="https://twitter.com/itsmejon">Jon Steinback</a>
+  for their feedback on early drafts of this post.
 </span>
 
