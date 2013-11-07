@@ -93,10 +93,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -130,6 +126,8 @@
 <h2 id='archive'>Archive</h2>
 <ul class='posts'>
   
+    <li><span>07 Nov 2013</span> &raquo; <a href='/2013/11/07/effective-peer-reviews.html'>Painless, effective peer reviews</a></li>
+  
     <li><span>31 Oct 2013</span> &raquo; <a href='/2013/10/31/infinite-lazy-polynomials.html'>Infinite lazy polynomials</a></li>
   
     <li><span>24 Oct 2013</span> &raquo; <a href='/2013/10/24/exact-numeric-nth-derivatives.html'>Exact numeric nth derivatives</a></li>
@@ -157,6 +155,8 @@
 </ul>
 <h2 id='recent_posts'>Recent Posts</h2>
 <div class='post-content-truncate'>
+
+  
 
   
     <h2 class='title'>Infinite lazy polynomials</h2>
@@ -441,28 +441,6 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))</code></pre>
 <p>When you start to code this up, one question jumps out: In step 1, when you choose a bias &#8220;at random,&#8221; what distribution do you draw it from?</p>
 
     <a href='/2013/09/03/fun-with-bayesian-priors.html'>Read more</a>
-  
-
-  
-    <h2 class='title'>A Programmer's Guide to the Central Limit Theorem</h2>
-    <p>This post is a continuation of a series of posts about exploring probability distributions through code. The first post is <a href='/2013/08/12/a-frequentist-approach-to-probability.html'>here</a>.</p>
-
-<p>In this post I&#8217;m going to look at the Central Limit Theorem.</p>
-
-<h3 id='sample_means'>Sample means</h3>
-
-<p>Suppose I have a random variable whose underlying distribution is unknown to me. I take sample of a reasonable size (say 100) and find the mean of the sample. What can I say about the relationship between the true mean and the mean of the sample?</p>
-
-<p>The most comprehensive answer to this is to look at the distribution of the sample mean.</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>sampleMean</span><span class='p'>(</span><span class='n'>d</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Double</span><span class='p'>],</span> <span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='p'>= </span><span class='mi'>100</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Double</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='n'>d</span><span class='p'>.</span><span class='n'>repeat</span><span class='p'>(</span><span class='n'>n</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>sum</span> <span class='o'>/</span> <span class='n'>n</span><span class='p'>)</span>
-<span class='p'>}</span>
-</code></pre></div>
-<p>This method takes a probability distribution and returns the distribution of means of samples from that distribution. You can specify the sample size, but by default we&#8217;ll use 100.</p>
-
-<p>Let&#8217;s try it on some of the distributions we&#8217;ve <a href='/2013/08/19/climbing-the-probability-distribution-ladder.html'>created</a>.</p>
-
-    <a href='/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html'>Read more</a>
   
 
 </div>
