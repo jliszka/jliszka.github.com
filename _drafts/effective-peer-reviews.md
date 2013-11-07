@@ -69,8 +69,10 @@ effectiveness at first!
 **Isn't this more work for the manager conducting the review?**<br/> Yes, but it's mostly mindless work. Copy editing is
 not the same thing as creating insightful sentences from whole cloth; the manager is polishing and rearranging existing
 material, not creating it. It does certainly involve more clock time for the manager, about an hour per peer reviewer.
+But some of that time is time you were going to spend anyway reading through written feedback in order to formulate your
+own review. Copy editing subsumes that time, and is a great way to make sure you give peer feedback a thorough read.
 
-But the upside is that it dramatically decreases the load on peer reviewers, by a factor of 3 or more. That frees them
+The upside, of course, is that it dramatically decreases the load on peer reviewers, by a factor of 3 or more. That frees them
 up to do their actual job — which, to me, is what being a [servant leader](http://en.wikipedia.org/wiki/Servant_leadership)
 is all about. Besides, if I can't spend 3-5 hours per report per *year* as a manager to get them the best feedback I can,
 what am I doing?
@@ -126,6 +128,10 @@ themes throughout the interview. You'll just want to group together things that 
 things they're good at, things to work on). But the point is that the review should lay out a coherent story and should
 not jump around between topics, even if that's what the reviewer did during the interview.
 
+**Talk to the reviewee beforehand.** The process shouldn't really change much from their perspective, except that
+they'll get higher-quality feedback. But it's good for them to know ahead of time so they can feel comfortable with the
+process.
+
 ### Conclusion
 
 If I had to speculate about why this works, my guess is it's because humans are just wired to speak to other humans,
@@ -144,7 +150,11 @@ had ever received in his career.
 Anyway, try it out, and let me know what you think!
 
 <span style="font-size: 9pt">
-  Thanks to <a href="https://twitter.com/noah_weiss">Noah Weiss</a> and <a href="https://twitter.com/itsmejon">Jon Steinback</a>
+  Thanks to
+  <a href="https://twitter.com/noah_weiss">Noah Weiss</a>,
+  <a href="https://twitter.com/itsmejon">Jon Steinback</a>,
+  <a href="https://twitter.com/ahogue">Andrew Hogue</a>, and
+  <a href="https://twitter.com/tamara">Tamara Hilmes</a>
   for their feedback on early drafts of this post.
 </span>
 
