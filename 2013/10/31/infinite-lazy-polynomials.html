@@ -169,7 +169,7 @@ res1: Double = 1.0
 scala&gt; x(12)
 res2: Double = 0.0</code></pre>
 
-<p>Just keep in mind that <code>p(n)</code> is the coefficient of <script type='math/tex'>x^n</script> in <code>p</code>, not <script type='math/tex'>p(n)</script> (i.e., <script type='math/tex'>p</script> evaluated at <script type='math/tex'>n</script>) as you might expect to see. I can get away with this because I&#8217;m probably never going to evaluate these polynomials, I&#8217;m just going to treat them formally, as mathematical objects in their own right.</p>
+<p>Just keep in mind that <code>p(n)</code> is the coefficient of <script type='math/tex'>x^n</script> in <code>p</code>, not <script type='math/tex'>p(n)</script> (i.e., <script type='math/tex'>p</script> evaluated at <script type='math/tex'>n</script>) as you might expect to see. I can get away with this because I&#8217;m probably never going to evaluate these polynomials, I&#8217;m just going to treat them formally, as mathematical objects in their own right. (To get my terminology straight, as some commenters have pointed out, these objects are called <a href='http://en.wikipedia.org/wiki/Formal_power_series'>formal power series</a>.)</p>
 <!-- more -->
 <h3 id='simple_operations'>Simple operations</h3>
 
@@ -603,7 +603,7 @@ res0: Double = 45349.42510889882</code></pre>
 
 <ol>
 <li>
-<p>Is there a generating function for the sequence <script type='math/tex'>a_n = n!</script>? Or a way to construct a new sequence <script type='math/tex'>b_n</script> from an existing sequence <script type='math/tex'>a_n</script> such that <script type='math/tex'>b_n + n!a_n</script>, at the generating function level? I guess what I&#8217;m getting at is, is there a way to get the coefficients of some polynomial to be the derivatives of some function, without having to multiply each one by <script type='math/tex'>n!</script>? Kinda silly, but it would be neat.</p>
+<p>Is there a generating function for the sequence <script type='math/tex'>a_n = n!</script>? Or a way to construct a new sequence <script type='math/tex'>b_n</script> from an existing sequence <script type='math/tex'>a_n</script> such that <script type='math/tex'>b_n = n!a_n</script>, at the generating function level? I guess what I&#8217;m getting at is, is there a way to get the coefficients of some polynomial to be the derivatives of some function, without having to multiply each one by <script type='math/tex'>n!</script>? Kinda silly, but it would be neat.</p>
 </li>
 
 <li>

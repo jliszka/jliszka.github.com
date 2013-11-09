@@ -4,7 +4,7 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-11-07T10:42:39-05:00</updated>
+ <updated>2013-11-09T15:45:10-05:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
@@ -27,101 +27,7 @@
 
 &lt;p&gt;Here are 5 easy steps to collecting insightful, critical, honest peer review feedback, in about an hour:&lt;/p&gt;
 
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Schedule a meeting.&lt;/strong&gt; The manager conducting the review sets up a 30 minute 1-on-1 meeting with the peer reviewer. &lt;em&gt;Time: 30 seconds&lt;/em&gt;.&lt;/p&gt;
-&lt;/li&gt;
-
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Prepare notes.&lt;/strong&gt; Before the meeting, the peer reviewer takes a few minutes to jot down some notes about the reviewee, going through emails, code commits, and their own recollections. &lt;em&gt;Time: 10 minutes&lt;/em&gt;.&lt;/p&gt;
-&lt;/li&gt;
-
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Interview.&lt;/strong&gt; During the meeting, the reviewer talks about the reviewee, and the manager writes down everything they say, as verbatim as possible. The manager guides the discussion by asking clarifying questions or bringing up broad topics. &lt;em&gt;Time: 30 minutes&lt;/em&gt;.&lt;/p&gt;
-&lt;/li&gt;
-
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Edit.&lt;/strong&gt; After the meeting, the manager turns their notes into written, readable English, of the quality that you would see in a regular written review. This consists of two parts: copy editing and reorganization (people do tend to ramble). &lt;em&gt;Time: 15 minutes&lt;/em&gt;.&lt;/p&gt;
-&lt;/li&gt;
-
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Get approval.&lt;/strong&gt; The manager shows the finished review to the reviewer for approval. The reviewer makes sure that their thoughts are being accurately represented and that they are comfortable with the content of the review, and makes any necessary edits. &lt;em&gt;Time: 5 minutes&lt;/em&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;You&amp;#8217;re done! Total elapsed time: one hour.&lt;/p&gt;
-
-&lt;h3 id='why_this_is_great'&gt;Why this is great&lt;/h3&gt;
-
-&lt;p&gt;It&amp;#8217;s &lt;strong&gt;efficient&lt;/strong&gt;. There&amp;#8217;s nothing like getting 4 hours of your life back, and given the choice, potential peer reviewers will jump for it every time, and will thank you for it.&lt;/p&gt;
-
-&lt;p&gt;It also &lt;strong&gt;makes procrastination impossible&lt;/strong&gt;, at least on the part of a peer reviewer. If you&amp;#8217;re sitting in a room with someone, you&amp;#8217;re not going to go off and check twitter or get distracted. As a manager this is reassuring. Just put something on the calendar, and you know the reviewer&amp;#8217;s work will be done by the end of that meeting.&lt;/p&gt;
-
-&lt;p&gt;With the right prompting, you can get a lot &lt;strong&gt;more volume&lt;/strong&gt; from people who don&amp;#8217;t think they have much to say, or who would normally write very little. Eliminating the friction of having to write everything down doesn&amp;#8217;t hurt, either.&lt;/p&gt;
-
-&lt;p&gt;There&amp;#8217;s &lt;strong&gt;no loss of fidelity&lt;/strong&gt; — written reviews produced this way are typically of equal if not higher quality than those produced by traditional means. In my experience, it&amp;#8217;s pretty rare for the reviewer to make significant changes in the &amp;#8220;approval&amp;#8221; step — usually it&amp;#8217;s just a phrase here or there.&lt;/p&gt;
-
-&lt;p&gt;But on top of this, you also get things in an interview that the reviewer would have never written down. Interviewing someone turns out to be a remarkably effective way of getting honest feedback out of them, particularly &lt;strong&gt;critical feedback&lt;/strong&gt;. There&amp;#8217;s a reason reporters want to interview people in person instead of sending a one-line email and waiting for a response.&lt;/p&gt;
-
-&lt;h3 id='common_objections'&gt;Common objections&lt;/h3&gt;
-
-&lt;p&gt;People are naturally pretty skeptical of this process when they first hear about it. I, too, was surprised by its effectiveness at first!&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Isn&amp;#8217;t this more work for the manager conducting the review?&lt;/strong&gt;&lt;br /&gt; Yes, but it&amp;#8217;s mostly mindless work. Copy editing is not the same thing as creating insightful sentences from whole cloth; the manager is polishing and rearranging existing material, not creating it. It does certainly involve more clock time for the manager, about an hour per peer reviewer. But some of that time is time you were going to spend anyway reading through written feedback in order to formulate your own review. Copy editing subsumes that time, and is a great way to make sure you give peer feedback a thorough read.&lt;/p&gt;
-
-&lt;p&gt;The upside, of course, is that it dramatically decreases the load on peer reviewers, by a factor of 3 or more. That frees them up to do their actual job — which, to me, is what being a &lt;a href='http://en.wikipedia.org/wiki/Servant_leadership'&gt;servant leader&lt;/a&gt; is all about. Besides, if I can&amp;#8217;t spend 3-5 hours per report per &lt;em&gt;year&lt;/em&gt; as a manager to get them the best feedback I can, what am I doing?&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Won&amp;#8217;t the manager bias the reviewer during the interview?&lt;/strong&gt;&lt;br /&gt; It is a theoretical concern, but in practice the manager is too busy typing to do much else. There is certainly room for a malicious manager to do some damage here. But if you don&amp;#8217;t trust your managers, you have bigger problems, right?&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Aren&amp;#8217;t peer reviewers going to shy away from being critical in person?&lt;/strong&gt;&lt;br /&gt; This is what surprised me the most. It turns out that critical feedback flows much more freely in a face-to-face discussion than it does in writing. I can&amp;#8217;t really explain it, except that perhaps people are wary of committing criticism to writing. When they see it on the page in black and white, attributed to them, they freak out a little bit and change it. When speaking off the cuff, their thoughts tend to come out less filtered.&lt;/p&gt;
-
-&lt;p&gt;One peer reviewer, looking back at the notes I had taken after a particularly critical review, remarked to me, &amp;#8220;Wow, there&amp;#8217;s no way I would have written these things down. It&amp;#8217;s brutally honest and blunt — but I&amp;#8217;m happy with it, because this is how I felt, this is what I said.&amp;#8221;&lt;/p&gt;
-
-&lt;h3 id='pro_tips_for_managers'&gt;Pro tips for managers&lt;/h3&gt;
-
-&lt;p&gt;This technique takes a little bit of practice. You shouldn&amp;#8217;t expect your first review to come out perfect in an hour — there&amp;#8217;s a decent amount of trial and error that goes into it. But here are some tips to help you avoid some of the mistakes I made early on:&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Keep the conversation in a helpful place.&lt;/strong&gt; The whole purpose of this is to find ways to help people improve. If you&amp;#8217;re hearing a lot of unconstructive complaining, you can keep it on track by asking, &amp;#8220;what should X be doing differently here?&amp;#8221; or &amp;#8220;so what&amp;#8217;s your advice for X?&amp;#8221;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Ask questions to keep things moving along.&lt;/strong&gt; Most of the time, reviewers have no shortage of things to say, but sometimes a little prompting goes a long way. For example:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&amp;#8220;Can you elaborate on that?&amp;#8221;&lt;/li&gt;
-
-&lt;li&gt;&amp;#8220;Can you give me an example of that?&amp;#8221;&lt;/li&gt;
-
-&lt;li&gt;&amp;#8220;Can you talk about X&amp;#8217;s impact on the org/technical skill/ability to get things done/communication skills?&amp;#8221;&lt;/li&gt;
-
-&lt;li&gt;&amp;#8220;What could X do to be even better?&amp;#8221;&lt;/li&gt;
-
-&lt;li&gt;&amp;#8220;What&amp;#8217;s the one piece of advice you have for X?&amp;#8221;&lt;/li&gt;
-
-&lt;li&gt;&amp;#8220;What else?&amp;#8221;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Editing is critical.&lt;/strong&gt; There&amp;#8217;s a big difference between the way people talk and the way people read. Bridging the gap is your job as the manager conducting the review. The goal is to make the prose as readable as possible while retaining the original meaning. This means that paraphrasing is sometimes necessary, but you should avoid it if you can. More commonly, you&amp;#8217;ll just want to trim down rambling or duplicated sentences or ideas. When people talk, they often retread over the same idea multiple times using different words. As a diligent note-taker, you&amp;#8217;ve written them all down. Feel free to pick one or two of them and delete the rest.&lt;/p&gt;
-
-&lt;p&gt;But most often, you&amp;#8217;ll just be turning your notes into Proper English Sentences. Don&amp;#8217;t be too concerned about the idea of changing people&amp;#8217;s words a little. Your fallback is that the reviewer gets final say as to what goes into their review. If you accidentally misrepresent them in what you type up, they have the opportunity to correct it.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Reorganizing is critical.&lt;/strong&gt; This is one step beyond editing. People retread the same topics and touch on the same themes throughout the interview. You&amp;#8217;ll just want to group together things that are related. You can do it by topic (technical skill, communication, leadership, getting things done, detail-oriented) or by subject (accomplishments, things they&amp;#8217;re good at, things to work on). But the point is that the review should lay out a coherent story and should not jump around between topics, even if that&amp;#8217;s what the reviewer did during the interview.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Talk to the reviewee beforehand.&lt;/strong&gt; The process shouldn&amp;#8217;t really change much from their perspective, except that they&amp;#8217;ll get higher-quality feedback. But it&amp;#8217;s good for them to know ahead of time so they can feel comfortable with the process.&lt;/p&gt;
-
-&lt;h3 id='conclusion'&gt;Conclusion&lt;/h3&gt;
-
-&lt;p&gt;If I had to speculate about why this works, my guess is it&amp;#8217;s because humans are just wired to speak to other humans, especially about other humans. It&amp;#8217;s practically the reason language was invented. On the other hand, writing is a fundamentally unnatural act. So much of writing is putting yourself in your reader&amp;#8217;s shoes and handling possible objections or misinterpretations — you&amp;#8217;re not going to be there when they read it, so you have to cover your bases. This is a taxing, laborious process. Having someone there to give you immediate feedback short circuits much of it. The manager will do this instinctively by giving subtle non- verbal cues to the reviewer that lets them know whether what they&amp;#8217;re saying makes sense. This frees up the reviewer to literally &amp;#8220;speak their mind&amp;#8221; without the burden of having to figure out how precisely to word it.&lt;/p&gt;
-
-&lt;p&gt;I&amp;#8217;ve been conducting annual reviews this way for almost a year, with overwhelmingly positive results. Reviewers uniformly and enthusiastically prefer it. And one reviewee told me that it was the most helpful, constructive review he had ever received in his career.&lt;/p&gt;
-
-&lt;p&gt;Anyway, try it out, and let me know what you think!&lt;/p&gt;
-&lt;span style='font-size: 9pt'&gt;
-  Thanks to
-  &lt;a href='https://twitter.com/noah_weiss'&gt;Noah Weiss&lt;/a&gt;,
-  &lt;a href='https://twitter.com/itsmejon'&gt;Jon Steinback&lt;/a&gt;,
-  &lt;a href='https://twitter.com/ahogue'&gt;Andrew Hogue&lt;/a&gt;, and
-  &lt;a href='https://twitter.com/tamara'&gt;Tamara Hilmes&lt;/a&gt;
-  for their feedback on early drafts of this post.
-&lt;/span&gt;
+      &lt;a href="http://jliszka.github.io/2013/11/07/effective-peer-reviews.html">Read more&lt;/a>
     
    </content>
  </entry>
@@ -183,7 +89,7 @@ res1: Double = 1.0
 scala&amp;gt; x(12)
 res2: Double = 0.0&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Just keep in mind that &lt;code&gt;p(n)&lt;/code&gt; is the coefficient of &lt;script type='math/tex'&gt;x^n&lt;/script&gt; in &lt;code&gt;p&lt;/code&gt;, not &lt;script type='math/tex'&gt;p(n)&lt;/script&gt; (i.e., &lt;script type='math/tex'&gt;p&lt;/script&gt; evaluated at &lt;script type='math/tex'&gt;n&lt;/script&gt;) as you might expect to see. I can get away with this because I&amp;#8217;m probably never going to evaluate these polynomials, I&amp;#8217;m just going to treat them formally, as mathematical objects in their own right.&lt;/p&gt;
+&lt;p&gt;Just keep in mind that &lt;code&gt;p(n)&lt;/code&gt; is the coefficient of &lt;script type='math/tex'&gt;x^n&lt;/script&gt; in &lt;code&gt;p&lt;/code&gt;, not &lt;script type='math/tex'&gt;p(n)&lt;/script&gt; (i.e., &lt;script type='math/tex'&gt;p&lt;/script&gt; evaluated at &lt;script type='math/tex'&gt;n&lt;/script&gt;) as you might expect to see. I can get away with this because I&amp;#8217;m probably never going to evaluate these polynomials, I&amp;#8217;m just going to treat them formally, as mathematical objects in their own right. (To get my terminology straight, as some commenters have pointed out, these objects are called &lt;a href='http://en.wikipedia.org/wiki/Formal_power_series'&gt;formal power series&lt;/a&gt;.)&lt;/p&gt;
 
       &lt;a href="http://jliszka.github.io/2013/10/31/infinite-lazy-polynomials.html">Read more&lt;/a>
     
