@@ -20,6 +20,8 @@ itself.
 
 Here are 5 easy steps to collecting insightful, critical, honest peer review feedback, in about an hour:
 
+<!-- more -->
+
 1. **Schedule a meeting.** The manager conducting the review sets up a 30 minute 1-on-1 meeting with the peer reviewer.
 _Time: 30 seconds_.
 
@@ -155,6 +157,6 @@ Anyway, try it out, and let me know what you think!
   <a href="https://twitter.com/itsmejon">Jon Steinback</a>,
   <a href="https://twitter.com/ahogue">Andrew Hogue</a>, and
   <a href="https://twitter.com/tamara">Tamara Hilmes</a>
-  for their feedback on early drafts of this post.
+  for their feedback on drafts of this post.
 </span>
 

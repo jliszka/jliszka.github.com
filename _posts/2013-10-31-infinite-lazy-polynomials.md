@@ -67,6 +67,8 @@ You can access arbitrary coefficients by calling the ```apply``` method.
 Just keep in mind that ```p(n)``` is the coefficient of {%m%}x^n{%em%} in ```p```, not {%m%}p(n){%em%} (i.e.,
 {%m%}p{%em%} evaluated at {%m%}n{%em%}) as you might expect to see. I can get away with this because I'm probably never
 going to evaluate these polynomials, I'm just going to treat them formally, as mathematical objects in their own right.
+(To get my terminology straight, as some commenters have pointed out, these objects are called
+[formal power series](http://en.wikipedia.org/wiki/Formal_power_series).)
 
 <!-- more -->
 
@@ -572,7 +574,7 @@ and already only contained {%m%}O(n){%em%} information, so it was a short step t
 Some things to think about:
 
 1. Is there a generating function for the sequence {%m%}a_n = n!{%em%}? Or a way to construct a new sequence {%m%}b_n{%em%}
-from an existing sequence {%m%}a_n{%em%} such that {%m%}b_n + n!a_n{%em%}, at the generating function level? I guess what I'm
+from an existing sequence {%m%}a_n{%em%} such that {%m%}b_n = n!a_n{%em%}, at the generating function level? I guess what I'm
 getting at is, is there a way to get the coefficients of some polynomial to be the derivatives of some function, without
 having to multiply each one by {%m%}n!{%em%}? Kinda silly, but it would be neat.
 
