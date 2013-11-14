@@ -18,7 +18,7 @@ that every natural number can be expressed as the sum of four squares. For examp
 123456789 = 2142^2 + 8673^2 + 6264^2 + 2100^2
 {% endmath %}
 
-The proof given on the Wikipedia page is only an existence proof, but I was able to find [mostly constructive proof]()
+The proof given on the Wikipedia page is only an existence proof, but I was able to find a [mostly constructive proof]()
 elsewhere online. I want to present an outline of the proof along with some code that carries out the construction.
 Here's a preview:
 
