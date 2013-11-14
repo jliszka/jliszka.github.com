@@ -25,6 +25,8 @@ Here's a preview:
     *Main> foursquare 123456789
     (-2142,8673,6264,-2100)
 
+<!-- more -->
+
 ### Outline of the constructive proof
 
 To write a number {%m%}n{%em%} as the sum of four squares:
