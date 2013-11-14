@@ -93,10 +93,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -120,7 +116,7 @@
       <h1>Probabilistic Graphical Models </h1>
     </div>
     <div class="date">
-      <span>09 November 2013</span>
+      <span>13 November 2013</span>
     </div>
     <div class="content">
       <!--
@@ -151,15 +147,15 @@ do-notation
 
 <p>A PGM encodes the causal relationships between events. For example, you might construct this graph to model a chain of causes resulting in someone getting a college scholarship:</p>
 
-<p><img alt='A -&gt; B -&gt; C' src='/assets/img/pgm/sat.png' /></p>
+<p><img src='/assets/img/pgm/sat.png' alt='A -&gt; B -&gt; C' /></p>
 
 <p>Or the relationship between diseases and their symptoms:</p>
 
-<p><img alt='A &lt;- B -&gt; C' src='/assets/img/pgm/flu.png' /></p>
+<p><img src='/assets/img/pgm/flu.png' alt='A &lt;- B -&gt; C' /></p>
 
 <p>Or the events surrounding a traffic jam:</p>
 
-<p><img alt='A -&gt; B &lt;- C -&gt; D' src='/assets/img/pgm/trafficjam.png' /></p>
+<p><img src='/assets/img/pgm/trafficjam.png' alt='A -&gt; B &lt;- C -&gt; D' /></p>
 
 <p>These are easy enough to translate into code. Let&#8217;s try the last one.</p>
 
@@ -254,7 +250,7 @@ res4: Double = 0.1807</code></pre>
 
 <p><strong>Rule 1.</strong> In the graph below, A and B can be correlated:</p>
 
-<p><img alt='A -&gt; C -&gt; B' src='/assets/img/pgm/linear.png' /></p>
+<p><img src='/assets/img/pgm/linear.png' alt='A -&gt; C -&gt; B' /></p>
 
 <p>Knowing the value of A will change your belief about the value of B. However, knowing the value of B will also change your belief about the value of A. This makes some intuitive sense; if someone got a scholarship, that raises your belief about whether they studied for their SATs.</p>
 
@@ -262,7 +258,7 @@ res4: Double = 0.1807</code></pre>
 
 <p><strong>Rule 2.</strong> In the graph below, A and B can be correlated:</p>
 
-<p><img alt='A &lt;- C -&gt; B' src='/assets/img/pgm/fork.png' /></p>
+<p><img src='/assets/img/pgm/fork.png' alt='A &lt;- C -&gt; B' /></p>
 
 <p>Knowing the value of A influences your belief about the value of C, which directly affects the value of B. For example, knowing that someone has a fever increases the likelihood that they have the flu, which in turn increases the likelihood that they have a sore throat.</p>
 
@@ -270,7 +266,7 @@ res4: Double = 0.1807</code></pre>
 
 <p><strong>Rule 3.</strong> In the graph below, A and B must be independent:</p>
 
-<p><img alt='A -&gt; C &lt;- B' src='/assets/img/pgm/join.png' /></p>
+<p><img src='/assets/img/pgm/join.png' alt='A -&gt; C &lt;- B' /></p>
 
 <p>To give you the intuition, whether the weather is bad should have no influence over whether it&#8217;s currently rush hour, even though they both cause traffic jams.</p>
 
@@ -563,6 +559,8 @@ nx^2/pq(1-pq) is a chi2 distribution with df=1
     <h4>Recent posts</h4>
     <ul>
       
+        <li><a href="/2013/11/14/the-foursquare-theorem.html">The Foursquare Theorem</a></li>
+      
         <li><a href="/2013/11/07/effective-peer-reviews.html">Painless, effective peer reviews</a></li>
       
         <li><a href="/2013/10/31/infinite-lazy-polynomials.html">Infinite lazy polynomials</a></li>
@@ -570,8 +568,6 @@ nx^2/pq(1-pq) is a chi2 distribution with df=1
         <li><a href="/2013/10/24/exact-numeric-nth-derivatives.html">Exact numeric nth derivatives</a></li>
       
         <li><a href="/2013/10/19/impossible-functions.html">Impossible functions</a></li>
-      
-        <li><a href="/2013/10/10/understanding-a-b-test-analysis.html">Understanding A/B test analysis</a></li>
       
     </ul>
 

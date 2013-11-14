@@ -4,13 +4,39 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-11-13T22:22:38-05:00</updated>
+ <updated>2013-11-14T10:51:36-05:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
    <email>jliszka@alumni.cmu.edu</email>
  </author>
 
+ 
+ <entry>
+   <title>The Foursquare Theorem</title>
+   <link href="http://jliszka.github.io/2013/11/14/the-foursquare-theorem.html"/>
+   <updated>2013-11-14T00:00:00-05:00</updated>
+   <id>http://jliszka.github.io/2013/11/14/the-foursquare-theorem</id>
+   <content type="html">
+    
+      &lt;p&gt;This has nothing to do with the &lt;a href='http://en.wikipedia.org/wiki/Four_square'&gt;playground game&lt;/a&gt;, the &lt;a href='http://www.foursquare.org/'&gt;church&lt;/a&gt;, or the &lt;a href='https://foursquare.com'&gt;mobile/social/local city guide&lt;/a&gt; that helps you make the most of where you are. (Disclosure: I work at Foursquare.)&lt;/p&gt;
+
+&lt;p&gt;This is about &lt;a href='http://en.wikipedia.org/wiki/Lagrange%27s_four-square_theorem'&gt;Lagrange&amp;#8217;s four-square theorem&lt;/a&gt;, which states that every natural number can be expressed as the sum of four squares. For example, &lt;script type='math/tex; mode=display'&gt;
+%&lt;![CDATA[
+\newcommand\m[1]{\text{ }(\text{mod }#1)}
+123456789 = 2142^2 + 8673^2 + 6264^2 + 2100^2
+%]]&gt;
+&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;The proof given on the Wikipedia page is only an existence proof, but I was able to find &lt;a href=''&gt;mostly constructive proof&lt;/a&gt; elsewhere online. I want to present an outline of the proof along with some code that carries out the construction. Here&amp;#8217;s a preview:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;*Main&amp;gt; foursquare 123456789
+(-2142,8673,6264,-2100)&lt;/code&gt;&lt;/pre&gt;
+
+      &lt;a href="http://jliszka.github.io/2013/11/14/the-foursquare-theorem.html">Read more&lt;/a>
+    
+   </content>
+ </entry>
  
  <entry>
    <title>Painless, effective peer reviews</title>

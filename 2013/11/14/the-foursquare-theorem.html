@@ -93,10 +93,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -120,7 +116,7 @@
       <h1>The Foursquare Theorem </h1>
     </div>
     <div class="date">
-      <span>13 November 2013</span>
+      <span>14 November 2013</span>
     </div>
     <div class="content">
       <p>This has nothing to do with the <a href='http://en.wikipedia.org/wiki/Four_square'>playground game</a>, the <a href='http://www.foursquare.org/'>church</a>, or the <a href='https://foursquare.com'>mobile/social/local city guide</a> that helps you make the most of where you are. (Disclosure: I work at Foursquare.)</p>
@@ -136,7 +132,7 @@
 
 <pre><code>*Main&gt; foursquare 123456789
 (-2142,8673,6264,-2100)</code></pre>
-
+<!-- more -->
 <h3 id='outline_of_the_constructive_proof'>Outline of the constructive proof</h3>
 
 <p>To write a number <script type='math/tex'>n</script> as the sum of four squares:</p>
@@ -174,7 +170,7 @@
       <span class='kr'>in</span> <span class='p'>(</span><span class='n'>a</span><span class='p'>,</span> <span class='n'>b</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>)</span> <span class='o'>|&gt;</span> <span class='n'>reduce</span> <span class='n'>p</span>
     <span class='n'>reduce</span> <span class='n'>p</span> <span class='p'>(</span><span class='n'>a</span><span class='p'>,</span> <span class='n'>b</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>,</span> <span class='n'>d</span><span class='p'>)</span> <span class='ow'>=</span> <span class='n'>undefined</span>
 </code></pre></div>
-<p>So we factor <code>n</code>, and for each prime factor, find its four-square decomposition using <code>foursquare&#39;</code>, then <code>combine</code> them pairwise. For its part, <code>foursquare&#39;</code> does some magic to find initial values for our 4 numbers and shuffles them off to <code>reduce</code> to get the sum of their squares to be exactly equal to <code>p</code> instead of just a multiple of <code>p</code>.</p>
+<p>So we factor <code>n</code>, and for each prime factor, find its four-square decomposition using <code>foursquare&#39;</code>, then <code>combine</code> them pairwise. For its part, <code>foursquare&#39;</code> does some magic to find initial values for our 4 numbers and shuffles them off to <code>reduce</code> to get the sum of their squares to be exactly equal to <code>p</code> instead of a multiple of <code>p</code>.</p>
 
 <p>I also defined the operator <code>|&gt;</code> as backwards function application. It makes more sense to me to push a value through a series of functions than to have to read all my expressions inside out.</p>
 
@@ -240,7 +236,7 @@
   <span class='kr'>let</span> <span class='n'>a</span> <span class='ow'>=</span> <span class='n'>undefined</span>
   <span class='kr'>in</span> <span class='p'>(</span><span class='n'>a</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>)</span> <span class='o'>|&gt;</span> <span class='n'>reduce</span> <span class='n'>p</span>
 </code></pre></div>
-<p>Here we have to find <script type='math/tex'>a</script> such that <script type='math/tex'>a^2 + 1 \equiv 0 \m p</script>. In other words, we&#8217;re looking for a square root of <script type='math/tex'>-1 \m p</script>. By <a href='http://en.wikipedia.org/wiki/Fermat&apos;s_little_theorem'>Fermat&#8217;s little theorem</a>, if <script type='math/tex'>n \lt p</script> then <script type='math/tex'>n^{p-1} \equiv 1 \m p</script>, which means that its square root, <script type='math/tex'>n^{(p-1)/2}</script>, is congruent to <script type='math/tex'>\pm 1 \m p</script>. If we can find one <script type='math/tex'>n</script> such that <script type='math/tex'>n^{(p-1)/2} \equiv -1 \m p</script>, then <em>its</em> square root, <script type='math/tex'>n^{(p-1)/4}</script>, is the <script type='math/tex'>a</script> we&#8217;re after.</p>
+<p>Here we have to find <script type='math/tex'>a</script> such that <script type='math/tex'>a^2 + 1 \equiv 0 \m p</script>. In other words, we&#8217;re looking for a square root of <script type='math/tex'>-1 \m p</script>. By <a href='http://en.wikipedia.org/wiki/Fermat&apos;s_little_theorem'>Fermat&#8217;s little theorem</a>, if <script type='math/tex'>n \lt p</script> then <script type='math/tex'>n^{p-1} \equiv 1 \m p</script>, which means that its square root, <script type='math/tex'>n^{(p-1)/2}</script>, is congruent to <script type='math/tex'>\pm 1 \m p</script>. If we can find one <script type='math/tex'>n</script> such that <script type='math/tex'>n^{(p-1)/2} \equiv -1 \m p</script>, then <em>its</em> square root, <script type='math/tex'>n^{(p-1)/4}</script>, is the <script type='math/tex'>a</script> we&#8217;re after. Notice this only works because <script type='math/tex'>(p-1)/4</script> is an integer.</p>
 
 <p>Well luckily it turns out that half of the time, <script type='math/tex'>n^{(p-1)/2} \equiv -1 \m p</script>, so if we just try numbers sequentially we&#8217;re liable to find one pretty quickly. It also turns out that the smallest such <script type='math/tex'>n</script> is always a prime number, so we can narrow down the search that way.</p>
 
@@ -248,8 +244,8 @@
 <div class='highlight'><pre><code class='haskell'><span class='nf'>foursquare&#39;</span> <span class='n'>p</span> <span class='o'>|</span> <span class='n'>p</span> <span class='p'>`</span><span class='n'>mod</span><span class='p'>`</span> <span class='mi'>4</span> <span class='o'>==</span> <span class='mi'>1</span> <span class='ow'>=</span> 
   <span class='kr'>let</span>
     <span class='n'>findSqrtMinus1</span> <span class='p'>(</span><span class='n'>n</span><span class='kt'>:</span><span class='n'>ps</span><span class='p'>)</span> <span class='ow'>=</span>
-      <span class='kr'>let</span> <span class='n'>b</span> <span class='ow'>=</span> <span class='n'>modexp</span> <span class='n'>n</span> <span class='p'>((</span><span class='n'>p</span><span class='o'>-</span><span class='mi'>1</span><span class='p'>)</span> <span class='p'>`</span><span class='n'>div</span><span class='p'>`</span> <span class='mi'>4</span><span class='p'>)</span> <span class='n'>p</span>
-      <span class='kr'>in</span> <span class='kr'>if</span> <span class='n'>b</span><span class='o'>*</span><span class='n'>b</span> <span class='p'>`</span><span class='n'>mod</span><span class='p'>`</span> <span class='n'>p</span> <span class='o'>==</span> <span class='n'>p</span><span class='o'>-</span><span class='mi'>1</span> <span class='kr'>then</span> <span class='n'>b</span> <span class='kr'>else</span> <span class='n'>findSqrtMinus1</span> <span class='n'>ps</span>
+      <span class='kr'>let</span> <span class='n'>r</span> <span class='ow'>=</span> <span class='n'>modexp</span> <span class='n'>n</span> <span class='p'>((</span><span class='n'>p</span><span class='o'>-</span><span class='mi'>1</span><span class='p'>)</span> <span class='p'>`</span><span class='n'>div</span><span class='p'>`</span> <span class='mi'>4</span><span class='p'>)</span> <span class='n'>p</span>
+      <span class='kr'>in</span> <span class='kr'>if</span> <span class='n'>r</span><span class='o'>*</span><span class='n'>r</span> <span class='p'>`</span><span class='n'>mod</span><span class='p'>`</span> <span class='n'>p</span> <span class='o'>==</span> <span class='n'>p</span><span class='o'>-</span><span class='mi'>1</span> <span class='kr'>then</span> <span class='n'>r</span> <span class='kr'>else</span> <span class='n'>findSqrtMinus1</span> <span class='n'>ps</span>
     <span class='n'>a</span> <span class='ow'>=</span> <span class='n'>findSqrtMinus1</span> <span class='n'>primes</span>
   <span class='kr'>in</span> <span class='p'>(</span><span class='n'>a</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>)</span> <span class='o'>|&gt;</span> <span class='n'>reduce</span> <span class='n'>p</span>
 </code></pre></div>
@@ -267,7 +263,7 @@
 (x^{(p+1)/4})^2 = x^{(p+1)/2} = (x^{\frac{1}{2}})^{p+1} = (x^{\frac{1}{2}})^2(x^{\frac{1}{2}})^{p-1} \equiv x \m p
 %]]>
 </script>
-<p>since <script type='math/tex'>a^{p-1} \equiv 1 \m p</script> by Fermat&#8217;s little theorem. (This doesn&#8217;t always produce a square root of <script type='math/tex'>x \m p</script> since it might instead be a square root of <script type='math/tex'>-x \m p</script>.)</p>
+<p>since <script type='math/tex'>(x^{\frac{1}{2}})^{p-1} \equiv 1 \m p</script> by Fermat&#8217;s little theorem. (This doesn&#8217;t always produce a square root of <script type='math/tex'>x \m p</script> since it might instead be a square root of <script type='math/tex'>-x \m p</script>.)</p>
 
 <p>The proof gets a little hand-wavy on this part, but it turns out that finding an <script type='math/tex'>a</script> such that <script type='math/tex'>-1 - a^2</script> has a square root mod <script type='math/tex'>p</script> is pretty easy. It points out that -2 has a square root mod <script type='math/tex'>p</script> for all <script type='math/tex'>p \equiv 3 \m 8</script>, which is already half of the cases.</p>
 
@@ -307,7 +303,7 @@
 <div class='highlight'><pre><code class='haskell'><span class='nf'>sortWith</span> <span class='n'>f</span> <span class='ow'>=</span> <span class='n'>sortBy</span> <span class='p'>(</span><span class='nf'>\</span><span class='n'>a</span> <span class='n'>b</span> <span class='ow'>-&gt;</span> <span class='n'>compare</span> <span class='p'>(</span><span class='n'>f</span> <span class='n'>a</span><span class='p'>)</span> <span class='p'>(</span><span class='n'>f</span> <span class='n'>b</span><span class='p'>))</span>
 <span class='nf'>map4</span> <span class='n'>f</span> <span class='p'>(</span><span class='n'>a</span><span class='p'>,</span> <span class='n'>b</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>,</span> <span class='n'>d</span><span class='p'>)</span> <span class='ow'>=</span> <span class='p'>(</span><span class='n'>f</span> <span class='n'>a</span><span class='p'>,</span> <span class='n'>f</span> <span class='n'>b</span><span class='p'>,</span> <span class='n'>f</span> <span class='n'>c</span><span class='p'>,</span> <span class='n'>f</span> <span class='n'>d</span><span class='p'>)</span>
 </code></pre></div>
-<p>If <script type='math/tex'>k</script> is odd, we can replace each of the 4 numbers by their &#8220;absolute least residue&#8221; mod <script type='math/tex'>k</script>. All this means is, if <script type='math/tex'>a \gt \frac{k}{2}</script>, we replace it with <script type='math/tex'>a - k</script>, which reduces its absolute value without changing its meaning mod <script type='math/tex'>k</script>. So let <script type='math/tex'>a'</script> be the absolute least residue of <script type='math/tex'>a \m k</script> and so on. Since all of them are smaller than <script type='math/tex'>\frac{k}{2}</script>, their squares are less than <script type='math/tex'>\frac{k}{4}</script> and the sum of their squares is less than <script type='math/tex'>k^2</script>. The sum of their squares is still <script type='math/tex'>0 \m k</script>, so the sum must be equal to <script type='math/tex'>mk</script> for some <script type='math/tex'>m \lt k</script>.</p>
+<p>If <script type='math/tex'>k</script> is odd, we can replace each of the 4 numbers by their &#8220;absolute least residue&#8221; mod <script type='math/tex'>k</script>. All this means is, if <script type='math/tex'>a \gt \frac{k}{2}</script>, we replace it with <script type='math/tex'>a - k</script>, which reduces its absolute value without changing its meaning mod <script type='math/tex'>k</script>. So let <script type='math/tex'>a'</script> be the absolute least residue of <script type='math/tex'>a \m k</script> and so on. Since all of them are smaller than <script type='math/tex'>\frac{k}{2}</script>, their squares are less than <script type='math/tex'>\frac{k^2}{4}</script> and the sum of their squares is less than <script type='math/tex'>k^2</script>. The sum of their squares is still <script type='math/tex'>0 \m k</script>, so the sum must be equal to <script type='math/tex'>mk</script> for some <script type='math/tex'>m \lt k</script>.</p>
 
 <p>Now we can use <code>combine</code> to construct the product</p>
 <script type='math/tex; mode=display'>
@@ -331,8 +327,8 @@
     <span class='mi'>1</span> <span class='ow'>-&gt;</span>
       <span class='n'>abcd</span> <span class='o'>|&gt;</span> <span class='n'>map4</span> <span class='p'>(</span><span class='n'>absoluteLeastResidue</span> <span class='n'>k</span><span class='p'>)</span> <span class='o'>|&gt;</span> <span class='n'>combine</span> <span class='n'>abcd</span> <span class='o'>|&gt;</span> <span class='n'>map4</span> <span class='p'>(`</span><span class='n'>div</span><span class='p'>`</span> <span class='n'>k</span><span class='p'>)</span> <span class='o'>|&gt;</span> <span class='n'>reduce</span> <span class='n'>p</span>
 
-<span class='nf'>absoluteLeastResidue</span> <span class='n'>k</span> <span class='n'>m</span> <span class='ow'>=</span> <span class='kr'>if</span> <span class='n'>n</span> <span class='o'>&lt;=</span> <span class='n'>k</span> <span class='p'>`</span><span class='n'>div</span><span class='p'>`</span> <span class='mi'>2</span> <span class='kr'>then</span> <span class='n'>n</span> <span class='kr'>else</span> <span class='n'>n</span> <span class='o'>-</span> <span class='n'>k</span>
-  <span class='kr'>where</span> <span class='n'>n</span> <span class='ow'>=</span> <span class='n'>m</span> <span class='p'>`</span><span class='n'>mod</span><span class='p'>`</span> <span class='n'>k</span>
+<span class='nf'>absoluteLeastResidue</span> <span class='n'>k</span> <span class='n'>m</span> <span class='ow'>=</span> <span class='kr'>if</span> <span class='n'>a</span> <span class='o'>&lt;=</span> <span class='n'>k</span> <span class='p'>`</span><span class='n'>div</span><span class='p'>`</span> <span class='mi'>2</span> <span class='kr'>then</span> <span class='n'>a</span> <span class='kr'>else</span> <span class='n'>a</span> <span class='o'>-</span> <span class='n'>k</span>
+  <span class='kr'>where</span> <span class='n'>a</span> <span class='ow'>=</span> <span class='n'>m</span> <span class='p'>`</span><span class='n'>mod</span><span class='p'>`</span> <span class='n'>k</span>
 </code></pre></div>
 <p>And that completes the construction.</p>
 
@@ -358,7 +354,7 @@
 
 
   <div style="float: right; margin-top: 5px">
-  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/the-foursquare-theorem.html" data-text="The Foursquare Theorem" data-via="jliszka">Tweet</a>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/2013/11/14/the-foursquare-theorem.html" data-text="The Foursquare Theorem" data-via="jliszka">Tweet</a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
@@ -370,6 +366,8 @@
 
     <hr>
     <div class="navigation">
+    
+      <span class="prev"><a href="/2013/11/07/effective-peer-reviews.html" title="Painless, effective peer reviews">&larr; Painless, effective peer reviews</a></span>
     
     
       <div style="clear: both"></div>
@@ -414,6 +412,8 @@
     <h4>Recent posts</h4>
     <ul>
       
+        <li><a href="/2013/11/14/the-foursquare-theorem.html">The Foursquare Theorem</a></li>
+      
         <li><a href="/2013/11/07/effective-peer-reviews.html">Painless, effective peer reviews</a></li>
       
         <li><a href="/2013/10/31/infinite-lazy-polynomials.html">Infinite lazy polynomials</a></li>
@@ -421,8 +421,6 @@
         <li><a href="/2013/10/24/exact-numeric-nth-derivatives.html">Exact numeric nth derivatives</a></li>
       
         <li><a href="/2013/10/19/impossible-functions.html">Impossible functions</a></li>
-      
-        <li><a href="/2013/10/10/understanding-a-b-test-analysis.html">Understanding A/B test analysis</a></li>
       
     </ul>
 
