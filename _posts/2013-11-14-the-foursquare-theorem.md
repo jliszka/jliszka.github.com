@@ -85,7 +85,7 @@ Here it is from scratch, for fun:
 {% highlight haskell %}
 nats = [1..]
 divides a b = b `mod` a == 0
-sieve (h:t) = h : filter (not . divides h) t
+sieve (h:t) = h : sieve (filter (not . divides h) t)
 primes = sieve (tail nats)
 
 factor n = 
