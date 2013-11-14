@@ -68,7 +68,7 @@ foursquare n = factor n |> map foursquare' |> foldl1 combine
 
 So we factor ```n```, and for each prime factor, find its four-square decomposition using ```foursquare'```,
 then ```combine``` them pairwise. For its part, ```foursquare'``` does some magic to find initial values for our 4 numbers
-and shuffles them off to ```reduce``` to get the sum of their squares to be exactly equal to ```p``` instead of just
+and shuffles them off to ```reduce``` to get the sum of their squares to be exactly equal to ```p``` instead of
 a multiple of ```p```.
 
 I also defined the operator ```|>``` as backwards function application.
@@ -159,6 +159,7 @@ By [Fermat's little theorem](http://en.wikipedia.org/wiki/Fermat's_little_theore
 if {%m%}n \lt p{%em%} then {%m%}n^{p-1} \equiv 1 \m p{%em%}, which means that its square
 root, {%m%}n^{(p-1)/2}{%em%}, is congruent to {%m%}\pm 1 \m p{%em%}. If we can find one {%m%}n{%em%} such that
 {%m%}n^{(p-1)/2} \equiv -1 \m p{%em%}, then _its_ square root, {%m%}n^{(p-1)/4}{%em%}, is the {%m%}a{%em%} we're after.
+Notice this only works because {%m%}(p-1)/4{%em%} is an integer.
 
 Well luckily it turns out that half of the time, {%m%}n^{(p-1)/2} \equiv -1 \m p{%em%}, so if we just
 try numbers sequentially we're liable to find one pretty quickly. It also turns out that the smallest such {%m%}n{%em%}
@@ -171,8 +172,8 @@ The code is below. We're just trying prime numbers {%m%}n{%em%} until one of the
 foursquare' p | p `mod` 4 == 1 = 
   let
     findSqrtMinus1 (n:ps) =
-      let b = modexp n ((p-1) `div` 4) p
-      in if b*b `mod` p == p-1 then b else findSqrtMinus1 ps
+      let r = modexp n ((p-1) `div` 4) p
+      in if r*r `mod` p == p-1 then r else findSqrtMinus1 ps
     a = findSqrtMinus1 primes
   in (a, 1, 0, 0) |> reduce p
 {% endhighlight %}
@@ -200,7 +201,7 @@ then {%m%}x^{(p+1)/4}{%em%} is a square root of {%m%}x \m p{%em%}, if it has one
 (x^{(p+1)/4})^2 = x^{(p+1)/2} = (x^{\frac{1}{2}})^{p+1} = (x^{\frac{1}{2}})^2(x^{\frac{1}{2}})^{p-1} \equiv x \m p
 {% endmath %}
 
-since {%m%}a^{p-1} \equiv 1 \m p{%em%} by Fermat's little theorem. (This doesn't always produce a square root of
+since {%m%}(x^{\frac{1}{2}})^{p-1} \equiv 1 \m p{%em%} by Fermat's little theorem. (This doesn't always produce a square root of
 {%m%}x \m p{%em%} since it might instead be a square root of {%m%}-x \m p{%em%}.)
 
 The proof gets a little hand-wavy on this part, but it turns out that finding an {%m%}a{%em%} such that {%m%}-1 - a^2{%em%}
@@ -258,7 +259,7 @@ map4 f (a, b, c, d) = (f a, f b, f c, f d)
 If {%m%}k{%em%} is odd, we can replace each of the 4 numbers by their "absolute least residue" mod {%m%}k{%em%}.
 All this means is, if {%m%}a \gt \frac{k}{2}{%em%}, we replace it with {%m%}a - k{%em%}, which reduces its absolute value
 without changing its meaning mod {%m%}k{%em%}. So let {%m%}a'{%em%} be the absolute least residue of {%m%}a \m k{%em%} and
-so on. Since all of them are smaller than {%m%}\frac{k}{2}{%em%}, their squares are less than {%m%}\frac{k}{4}{%em%}
+so on. Since all of them are smaller than {%m%}\frac{k}{2}{%em%}, their squares are less than {%m%}\frac{k^2}{4}{%em%}
 and the sum of their squares is less than {%m%}k^2{%em%}. The sum of their squares is still {%m%}0 \m k{%em%}, so the
 sum must be equal to {%m%}mk{%em%} for some {%m%}m \lt k{%em%}.
 
@@ -290,8 +291,8 @@ reduce p abcd@(a, b, c, d) | otherwise =
     1 ->
       abcd |> map4 (absoluteLeastResidue k) |> combine abcd |> map4 (`div` k) |> reduce p
 
-absoluteLeastResidue k m = if n <= k `div` 2 then n else n - k
-  where n = m `mod` k
+absoluteLeastResidue k m = if a <= k `div` 2 then a else a - k
+  where a = m `mod` k
 {% endhighlight %}
 
 And that completes the construction.
