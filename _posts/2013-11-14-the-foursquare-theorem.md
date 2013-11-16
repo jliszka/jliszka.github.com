@@ -18,7 +18,8 @@ that every natural number can be expressed as the sum of four squares. For examp
 123456789 = 2142^2 + 8673^2 + 6264^2 + 2100^2
 {% endmath %}
 
-The proof given on the Wikipedia page is only an existence proof, but I was able to find a [mostly constructive proof]()
+The proof given on the Wikipedia page is only an existence proof, but I was able to find a
+[mostly constructive proof](http://www.alpertron.com.ar/4SQUARES.HTM)
 elsewhere online. I want to present an outline of the proof along with some code that carries out the construction.
 Here's a preview:
 
@@ -55,15 +56,17 @@ The whole flow of the program looks like this:
 {% highlight haskell %}
 foursquare n = factor n |> map foursquare' |> foldl1 combine
   where
-    foursquare' 2 = (1, 1, 0, 0)
-    foursquare' p | p `mod` 4 == 1 =
-      let a = undefined
-      in (a, 1, 0, 0) |> reduce p
-    foursquare' p | p `mod` 4 == 3 =
-      let a = undefined
-          b = undefined
-      in (a, b, 1, 0) |> reduce p
-    reduce p (a, b, c, d) = undefined
+    foursquare' p
+      | p == 2 = (1, 1, 0, 0)
+      | p `mod` 4 == 1 =
+        let a = undefined
+        in (a, 1, 0, 0) |> reduce
+      | p `mod` 4 == 3 =
+        let a = undefined
+            b = undefined
+        in (a, b, 1, 0) |> reduce
+      where
+        reduce (a, b, c, d) = undefined
 {% endhighlight %}
 
 So we factor ```n```, and for each prime factor, find its four-square decomposition using ```foursquare'```,
@@ -95,7 +98,7 @@ factor n =
   in factor' n primes
 {% endhighlight %}
 
-And yes, there are more efficient ways to generate primes.
+And yes, there are [more efficient ways](http://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf) to generate primes.
 
 ```combine``` is a straighforward realization of [Euler's four-square identity](http://en.wikipedia.org/wiki/Euler%27s_four-square_identity):
 
@@ -148,9 +151,10 @@ I freaking love ```quickCheck```.
 Now to fill in the missing parts of ```foursquare'```. Here's the first clause:
 
 {% highlight haskell %}
-foursquare' p | p `mod` 4 == 1 =
-  let a = undefined
-  in (a, 1, 0, 0) |> reduce p
+foursquare' p
+  | p `mod` 4 == 1 =
+    let a = undefined
+    in (a, 1, 0, 0) |> reduce
 {% endhighlight %}
 
 Here we have to find {%m%}a{%em%} such that {%m%}a^2 + 1 \equiv 0 \m p{%em%}.
@@ -169,13 +173,14 @@ The code is below. We're just trying prime numbers {%m%}n{%em%} until one of the
 {%m%}(n^{(p-1)/4})^2 \equiv -1 \m p{%em%}.
 
 {% highlight haskell %}
-foursquare' p | p `mod` 4 == 1 = 
-  let
-    findSqrtMinus1 (n:ps) =
-      let r = modexp n ((p-1) `div` 4) p
-      in if r*r `mod` p == p-1 then r else findSqrtMinus1 ps
-    a = findSqrtMinus1 primes
-  in (a, 1, 0, 0) |> reduce p
+foursquare' p
+  | p `mod` 4 == 1 =
+    let
+      findSqrtMinus1 (n:ps) =
+        let r = modexp n ((p-1) `div` 4) p
+        in if r*r `mod` p == p-1 then r else findSqrtMinus1 ps
+      a = findSqrtMinus1 primes
+    in (a, 1, 0, 0) |> reduce
 {% endhighlight %}
 
 ### Odd primes congruent to 3 mod 4
@@ -183,10 +188,11 @@ foursquare' p | p `mod` 4 == 1 =
 Here's the next clause of ```foursquare'```:
 
 {% highlight haskell %}
-foursquare' p | p `mod` 4 == 3 =
-  let a = undefined
-      b = undefined
-  in (a, b, 1, 0) |> reduce p
+foursquare' p
+  | p `mod` 4 == 3 =
+    let a = undefined
+        b = undefined
+    in (a, b, 1, 0) |> reduce
 {% endhighlight %}
 
 This case is a little more difficult. We're looking for {%m%}a{%em%} and {%m%}b{%em%} such that {%m%}a^2 + b^2 + 1 \equiv 0 \m p{%em%}.
@@ -211,15 +217,16 @@ has a square root mod {%m%}p{%em%} is pretty easy. It points out that -2 has a s
 Anyway, here's the code:
 
 {% highlight haskell %}
-foursquare' p | p `mod` 4 == 3 =
-  let
-    findNumberWithSqrt (a:ns) =
-      let
-        x = (-1 - a*a) `mod` p
-        b = modexp x ((p+1) `div` 4) p
-      in if b*b `mod` p == x then (a, b) else findNumberWithSqrt ns
-    (a, b) = findNumberWithSqrt [1..p]
-  in (a, b, 1, 0) |> reduce p
+foursquare' p
+  | p `mod` 4 == 3 =
+    let
+      findNumberWithSqrt (a:ns) =
+        let
+          x = (-1 - a*a) `mod` p
+          b = modexp x ((p+1) `div` 4) p
+        in if b*b `mod` p == x then (a, b) else findNumberWithSqrt ns
+      (a, b) = findNumberWithSqrt [1..p]
+    in (a, b, 1, 0) |> reduce
 {% endhighlight %}
 
 ### The reduce phase
@@ -240,7 +247,7 @@ are both even. Then we can divide through by 2 and get
 and we have the reduction we need. In code:
 
 {% highlight haskell %}
-reduce p abcd@(a, b, c, d) =
+reduce abcd@(a, b, c, d) =
   let k = (sumOfSquares abcd) `div` p
   in case k `mod` 2 of
     0 ->
@@ -281,18 +288,19 @@ reduction we need.
 Here's the complete code for ```reduce```:
 
 {% highlight haskell %}
-reduce p abcd | sumOfSquares abcd == p = abcd
-reduce p abcd@(a, b, c, d) | otherwise =
-  let k = (sumOfSquares abcd) `div` p
-  in case k `mod` 2 of
-    0 ->
-      let [a', b', c', d'] = sortWith (`mod` 2) [a, b, c, d]
-      in (a'+b', a'-b', c'+d', c'-d') |> map4 (`div` 2) |> reduce p
-    1 ->
-      abcd |> map4 (absoluteLeastResidue k) |> combine abcd |> map4 (`div` k) |> reduce p
-
-absoluteLeastResidue k m = if a <= k `div` 2 then a else a - k
-  where a = m `mod` k
+reduce abcd@(a, b, c, d)
+  | sumOfSquares abcd == p = abcd
+  | otherwise =
+    let k = (sumOfSquares abcd) `div` p
+    in case k `mod` 2 of
+      0 ->
+        let [a', b', c', d'] = sortWith (`mod` 2) [a, b, c, d]
+        in (a'+b', a'-b', c'+d', c'-d') |> map4 (`div` 2) |> reduce
+      1 ->
+        abcd |> map4 (absoluteLeastResidue k) |> combine abcd |> map4 (`div` k) |> reduce
+  where
+    absoluteLeastResidue k m = if a <= k `div` 2 then a else a - k
+      where a = m `mod` k
 {% endhighlight %}
 
 And that completes the construction.
