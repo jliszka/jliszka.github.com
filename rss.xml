@@ -5,8 +5,8 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-11-14T11:44:38-05:00</lastBuildDate>
-        <pubDate>2013-11-14T11:44:38-05:00</pubDate>
+        <lastBuildDate>2013-11-16T10:58:54-05:00</lastBuildDate>
+        <pubDate>2013-11-16T10:58:54-05:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -23,7 +23,7 @@
 %]]&gt;
 &lt;/script&gt;&lt;/p&gt;
 
-&lt;p&gt;The proof given on the Wikipedia page is only an existence proof, but I was able to find a &lt;a href=''&gt;mostly constructive proof&lt;/a&gt; elsewhere online. I want to present an outline of the proof along with some code that carries out the construction. Here&amp;#8217;s a preview:&lt;/p&gt;
+&lt;p&gt;The proof given on the Wikipedia page is only an existence proof, but I was able to find a &lt;a href='http://www.alpertron.com.ar/4SQUARES.HTM'&gt;mostly constructive proof&lt;/a&gt; elsewhere online. I want to present an outline of the proof along with some code that carries out the construction. Here&amp;#8217;s a preview:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;*Main&amp;gt; foursquare 123456789
 (-2142,8673,6264,-2100)&lt;/code&gt;&lt;/pre&gt;
