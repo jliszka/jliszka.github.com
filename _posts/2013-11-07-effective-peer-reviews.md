@@ -13,7 +13,7 @@ does them as part of their annual review process. The problem is that everyone h
 feedback takes a really long time to write, sometimes on the order of 4 or 5 hours for a single peer review.
 
 I'd like to solve this problem. Most people think that there's a natural, unavoidable relationship between quality and
-time spent. But that overlooks an important point — the only thing that makes writing peer reviews difficult is: writing
+time spent. But that overlooks an important point — the thing that makes writing peer reviews difficult is: writing
 itself.
 
 ### The interview method
@@ -51,14 +51,15 @@ It also **makes procrastination impossible**, at least on the part of a peer rev
 in a room with someone, you're not going to go off and check twitter or get distracted. As a manager this is reassuring.
 Just put something on the calendar, and you know the reviewer's work will be done by the end of that meeting.
 
-With the right prompting, you can get a lot **more volume** from people who don't think they have much to say, or who would
-normally write very little. Eliminating the friction of having to write everything down doesn't hurt, either.
+You can get a lot **more volume** from people who don't think they have much to say, or who would
+normally write very little. The interview method eliminates the friction of having to write everything down, and allows
+the manager to prompt the reviewer in order to elicit details and examples that they might not think to write.
 
 There's **no loss of fidelity** — written reviews produced this way are typically of equal if not higher quality than those
 produced by traditional means. In my experience, it's pretty rare for the reviewer to make significant changes in the
 "approval" step — usually it's just a phrase here or there.
 
-But on top of this, you also get things in an interview that the reviewer would have never written down. 
+But on top of all this, you also get things in an interview that the reviewer would have never written down. 
 Interviewing someone turns out to be a remarkably effective way of getting honest feedback out of them, particularly **critical
 feedback**. There's a reason reporters want to interview people in person instead of sending a one-line email and waiting
 for a response.
@@ -124,8 +125,8 @@ But most often, you'll just be turning your notes into Proper English Sentences.
 of changing people's words a little. Your fallback is that the reviewer gets final say as to what goes into their
 review. If you accidentally misrepresent them in what you type up, they have the opportunity to correct it.
 
-**Reorganizing is critical.** This is one step beyond editing. People retread the same topics and touch on the same
-themes throughout the interview. You'll just want to group together things that are related. You can do it by topic
+**Reorganizing is critical.** This is one step beyond editing. Reviewers will touch on the same themes multiple times
+throughout the interview. You'll just want to group together things that are related. You can do it by topic
 (technical skill, communication, leadership, getting things done, detail-oriented) or by subject (accomplishments,
 things they're good at, things to work on). But the point is that the review should lay out a coherent story and should
 not jump around between topics, even if that's what the reviewer did during the interview.
@@ -136,20 +137,24 @@ process.
 
 ### Conclusion
 
-If I had to speculate about why this works, my guess is it's because humans are just wired to speak to other humans,
-especially about other humans. It's practically the reason language was invented. On the other hand, writing is a
-fundamentally unnatural act. So much of writing is putting yourself in your reader's shoes and handling possible
-objections or misinterpretations — you're not going to be there when they read it, so you have to cover your bases. This
-is a taxing, laborious process. Having someone there to give you immediate feedback short circuits much of it. The
-manager will do this instinctively by giving subtle non- verbal cues to the reviewer that lets them know whether what
-they're saying makes sense. This frees up the reviewer to literally "speak their mind" without the burden of having to
-figure out how precisely to word it.
+Gossip is practically the reason language was invented. Humans are just wired to speak to other humans, especially about
+other humans. The urge to gossip is extremely powerful and can often be damaging — not only to the subject, but to the
+listener and the speaker as well. But you can turn all this on its head by harnessing the power of gossip for good!
+
+Writing, on the other hand, is a fundamentally unnatural act. So much of writing is putting yourself in your reader's
+shoes and handling possible objections or misinterpretations — you're not going to be there when they read it, so you
+have to cover your bases. This is a taxing, laborious process. Having someone there to give you immediate feedback short
+circuits much of it. The manager will do this instinctively by giving subtle non-verbal cues to the reviewer that lets
+them know whether what they're saying makes sense. This frees up the reviewer to literally "speak their mind" without
+the burden of having to figure out how precisely to word it.
 
 I've been conducting annual reviews this way for almost a year, with overwhelmingly positive results. Reviewers
 uniformly and enthusiastically prefer it. And one reviewee told me that it was the most helpful, constructive review he
 had ever received in his career.
 
 Anyway, try it out, and let me know what you think!
+
+**Update 22 Nov 2013:** Made some edits for clarity.
 
 <span style="font-size: 9pt">
   Thanks to
