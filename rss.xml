@@ -5,8 +5,8 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-11-16T10:58:54-05:00</lastBuildDate>
-        <pubDate>2013-11-16T10:58:54-05:00</pubDate>
+        <lastBuildDate>2013-11-22T05:28:46+00:00</lastBuildDate>
+        <pubDate>2013-11-22T05:28:46+00:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -33,7 +33,7 @@
                 </description>
                 <link>http://jliszka.github.io/2013/11/14/the-foursquare-theorem.html</link>
                 <guid>http://jliszka.github.io/2013/11/14/the-foursquare-theorem</guid>
-                <pubDate>2013-11-14T00:00:00-05:00</pubDate>
+                <pubDate>2013-11-14T00:00:00+00:00</pubDate>
         </item>
 
         <item>
@@ -42,7 +42,7 @@
                 
                         &lt;p&gt;Peer reviews are the most effective kind of feedback — only your peers really know what it&amp;#8217;s like to work with you, and they have the most insightful, nuanced and helpful suggestions for improvement. Almost every tech company I can think of does them as part of their annual review process. The problem is that everyone hates writing them, because decent feedback takes a really long time to write, sometimes on the order of 4 or 5 hours for a single peer review.&lt;/p&gt;
 
-&lt;p&gt;I&amp;#8217;d like to solve this problem. Most people think that there&amp;#8217;s a natural, unavoidable relationship between quality and time spent. But that overlooks an important point — the only thing that makes writing peer reviews difficult is: writing itself.&lt;/p&gt;
+&lt;p&gt;I&amp;#8217;d like to solve this problem. Most people think that there&amp;#8217;s a natural, unavoidable relationship between quality and time spent. But that overlooks an important point — the thing that makes writing peer reviews difficult is: writing itself.&lt;/p&gt;
 
 &lt;h3 id='the_interview_method'&gt;The interview method&lt;/h3&gt;
 
@@ -53,7 +53,7 @@
                 </description>
                 <link>http://jliszka.github.io/2013/11/07/effective-peer-reviews.html</link>
                 <guid>http://jliszka.github.io/2013/11/07/effective-peer-reviews</guid>
-                <pubDate>2013-11-07T00:00:00-05:00</pubDate>
+                <pubDate>2013-11-07T00:00:00+00:00</pubDate>
         </item>
 
         <item>
@@ -117,7 +117,7 @@ res2: Double = 0.0&lt;/code&gt;&lt;/pre&gt;
                 </description>
                 <link>http://jliszka.github.io/2013/10/31/infinite-lazy-polynomials.html</link>
                 <guid>http://jliszka.github.io/2013/10/31/infinite-lazy-polynomials</guid>
-                <pubDate>2013-10-31T00:00:00-04:00</pubDate>
+                <pubDate>2013-10-31T00:00:00+00:00</pubDate>
         </item>
 
         <item>
@@ -161,7 +161,7 @@ f(x + p) = f(x) + f'(x)p + \frac{f''(x)p^2}{2!} + \frac{f^{(3)}(x)p^3}{3!} + \ld
                 </description>
                 <link>http://jliszka.github.io/2013/10/24/exact-numeric-nth-derivatives.html</link>
                 <guid>http://jliszka.github.io/2013/10/24/exact-numeric-nth-derivatives</guid>
-                <pubDate>2013-10-24T00:00:00-04:00</pubDate>
+                <pubDate>2013-10-24T00:00:00+00:00</pubDate>
         </item>
 
         <item>
@@ -193,7 +193,7 @@ tbody tr:nth-child(even) {
                 </description>
                 <link>http://jliszka.github.io/2013/10/19/impossible-functions.html</link>
                 <guid>http://jliszka.github.io/2013/10/19/impossible-functions</guid>
-                <pubDate>2013-10-19T00:00:00-04:00</pubDate>
+                <pubDate>2013-10-19T00:00:00+00:00</pubDate>
         </item>
 
         <item>
@@ -235,7 +235,7 @@ tbody tr:nth-child(even) {
                 </description>
                 <link>http://jliszka.github.io/2013/10/10/understanding-a-b-test-analysis.html</link>
                 <guid>http://jliszka.github.io/2013/10/10/understanding-a-b-test-analysis</guid>
-                <pubDate>2013-10-10T00:00:00-04:00</pubDate>
+                <pubDate>2013-10-10T00:00:00+00:00</pubDate>
         </item>
 
         <item>
@@ -255,7 +255,7 @@ tbody tr:nth-child(even) {
                 </description>
                 <link>http://jliszka.github.io/2013/10/01/how-traffic-actually-works.html</link>
                 <guid>http://jliszka.github.io/2013/10/01/how-traffic-actually-works</guid>
-                <pubDate>2013-10-01T00:00:00-04:00</pubDate>
+                <pubDate>2013-10-01T00:00:00+00:00</pubDate>
         </item>
 
         <item>
@@ -296,7 +296,7 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
                 </description>
                 <link>http://jliszka.github.io/2013/09/24/more-backwards-functions-unevaluating-polynomials.html</link>
                 <guid>http://jliszka.github.io/2013/09/24/more-backwards-functions-unevaluating-polynomials</guid>
-                <pubDate>2013-09-24T00:00:00-04:00</pubDate>
+                <pubDate>2013-09-24T00:00:00+00:00</pubDate>
         </item>
 
         <item>
@@ -341,7 +341,7 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
                 </description>
                 <link>http://jliszka.github.io/2013/09/18/insertion-sort-is-dual-to-bubble-sort.html</link>
                 <guid>http://jliszka.github.io/2013/09/18/insertion-sort-is-dual-to-bubble-sort</guid>
-                <pubDate>2013-09-18T00:00:00-04:00</pubDate>
+                <pubDate>2013-09-18T00:00:00+00:00</pubDate>
         </item>
 
         <item>
@@ -369,7 +369,7 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
                 </description>
                 <link>http://jliszka.github.io/2013/09/09/the-3-things-you-should-understand-about-quantum-computing.html</link>
                 <guid>http://jliszka.github.io/2013/09/09/the-3-things-you-should-understand-about-quantum-computing</guid>
-                <pubDate>2013-09-09T00:00:00-04:00</pubDate>
+                <pubDate>2013-09-09T00:00:00+00:00</pubDate>
         </item>
 
         <item>
@@ -401,7 +401,7 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
                 </description>
                 <link>http://jliszka.github.io/2013/09/03/fun-with-bayesian-priors.html</link>
                 <guid>http://jliszka.github.io/2013/09/03/fun-with-bayesian-priors</guid>
-                <pubDate>2013-09-03T00:00:00-04:00</pubDate>
+                <pubDate>2013-09-03T00:00:00+00:00</pubDate>
         </item>
 
         <item>
@@ -430,7 +430,7 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
                 </description>
                 <link>http://jliszka.github.io/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html</link>
                 <guid>http://jliszka.github.io/2013/08/26/a-programmers-guide-to-the-central-limit-theorem</guid>
-                <pubDate>2013-08-26T00:00:00-04:00</pubDate>
+                <pubDate>2013-08-26T00:00:00+00:00</pubDate>
         </item>
 
         <item>
@@ -457,7 +457,7 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
                 </description>
                 <link>http://jliszka.github.io/2013/08/19/climbing-the-probability-distribution-ladder.html</link>
                 <guid>http://jliszka.github.io/2013/08/19/climbing-the-probability-distribution-ladder</guid>
-                <pubDate>2013-08-19T00:00:00-04:00</pubDate>
+                <pubDate>2013-08-19T00:00:00+00:00</pubDate>
         </item>
 
         <item>
@@ -518,7 +518,7 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
                 </description>
                 <link>http://jliszka.github.io/2013/08/12/a-frequentist-approach-to-probability.html</link>
                 <guid>http://jliszka.github.io/2013/08/12/a-frequentist-approach-to-probability</guid>
-                <pubDate>2013-08-12T00:00:00-04:00</pubDate>
+                <pubDate>2013-08-12T00:00:00+00:00</pubDate>
         </item>
 
 
