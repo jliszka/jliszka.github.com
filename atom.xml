@@ -4,13 +4,31 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-11-22T05:28:46+00:00</updated>
+ <updated>2013-11-23T05:34:44+00:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
    <email>jliszka@alumni.cmu.edu</email>
  </author>
 
+ 
+ <entry>
+   <title>Unlikely things happen all the time</title>
+   <link href="http://jliszka.github.io/2013/11/22/unlikely-things-happen-all-the-time.html"/>
+   <updated>2013-11-22T00:00:00+00:00</updated>
+   <id>http://jliszka.github.io/2013/11/22/unlikely-things-happen-all-the-time</id>
+   <content type="html">
+    
+      &lt;p&gt;Yesterday I received an unexpected media query from Jen Doll, a journalist at New York Magazine, reporting on the story where Frank Bruni found Courtney Love&amp;#8217;s iPhone in a taxi. She was musing about the statistical likelihood of an event like that, and somehow found &lt;a href='http://replyz.com/c/2552117-does-anyone-know-the-probability-of-getting-the-same-nyc-cab-driver-twice'&gt;this twitter thread&lt;/a&gt; where I had calculated the probability of getting the same cab driver twice. She wanted to know how I arrived at my figures and whether I had any additional insight on the question.&lt;/p&gt;
+
+&lt;p&gt;So of course I wrote her back a whole essay, and today &lt;a href='http://nymag.com/daily/intelligencer/2013/11/long-odds-of-getting-courtney-loves-taxi.html'&gt;there&amp;#8217;s this article&lt;/a&gt;. Her editors had cut it way down, &lt;a href='http://www.theatlantic.com/technology/archive/2013/11/english-has-a-new-preposition-because-internet/281601/'&gt;because journalism&lt;/a&gt;. But I had put all this work into it, so I thought I&amp;#8217;d post it here.&lt;/p&gt;
+
+&lt;p&gt;The text of my reply is below.&lt;/p&gt;
+
+      &lt;a href="http://jliszka.github.io/2013/11/22/unlikely-things-happen-all-the-time.html">Read more&lt;/a>
+    
+   </content>
+ </entry>
  
  <entry>
    <title>The Foursquare Theorem</title>
