@@ -21,7 +21,9 @@ Her editors had cut it way down,
 But I had put all this work into it, so I thought I'd post it here.
 
 The text of my reply is below.
+
 <!-- more -->
+
 <hr/>
 Hi Jen,
 
