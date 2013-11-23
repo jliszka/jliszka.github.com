@@ -29,7 +29,8 @@ I also make no claims about being a gentleman, title of this blog notwithstandin
   {% if post.content contains "<!-- more -->" %}
     <h2 class="title">{{ post.title }}</h2>
     {{ post.content | split:"<!-- more -->" | first % }}
-    <a href="{{ post.url }}">Read more</a>
+    <a href="{{ post.url }}">Read more &rarr;</a>
+    <hr/>
   {% endif %}
 {% endfor %}
 </div>
