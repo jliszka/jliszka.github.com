@@ -29,7 +29,8 @@ Each node represents a random variable, and the arrows represent dependence rela
 a node with incoming arrows as a probability distribution parameterized on some set of inputs; in other words,
 a function from some set of inputs to a probability distribution.
 
-It's easy to translate a PGM into code. All we need are the observed frequencies for each node and its inputs.
+It's easy to translate a PGM into code using this [toy probability library]({{ site.poss[0].url }}).
+All we need are the observed frequencies for each node and its inputs.
 Let's try the traffic jam graph. I'll make up some numbers and we'll see how it works.
 
 <!-- more -->
@@ -42,6 +43,9 @@ val badWeather: Distribution[Boolean] = tf(0.05)
 {% endhighlight %}
 
 In this hypothetical world, 20% of the time it's rush hour, and 5% of the time there's bad weather.
+
+For nodes with incoming arrows, we return a different distribution depending on the particular value its
+in-neighbor takes.
 
 {% highlight scala %}
 def accident(badWeather: Boolean): Distribution[Boolean] = {
@@ -163,7 +167,7 @@ if rain causes the sidewalk to be wet, then seeing a wet sidewalk changes your b
 
 Knowing the value of A will change your belief about the value of B. Furthermore, knowing the value of B will also
 change your belief about the value of A. Intuitively, if someone got a scholarship (B), that raises your belief about
-whether they studied for their SATs (A), considering the intermediate event of a high SAT score (C). 
+whether they studied for their SATs (A), even if there's an intermediate cause in the mix, say a high SAT score (C).
 
 So far, it seems like belief can propagate through arrows in either direction.
 
