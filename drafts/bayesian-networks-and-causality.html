@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Causal models</title>
+    <title>Bayesian networks and causality</title>
     <meta name="description" content="">
     <meta name="author" content="Jason Liszka">
 
@@ -117,10 +117,10 @@
 <div class="row-fluid post-full">
   <div class="span9 offset1 post-content">
     <div class="page-header">
-      <h1>Causal models </h1>
+      <h1>Bayesian networks and causality </h1>
     </div>
     <div class="date">
-      <span>17 December 2013</span>
+      <span>18 December 2013</span>
     </div>
     <div class="content">
       <p>Correlation does not imply causality — you&#8217;ve heard it a thousand times. But causality does imply correlation. Being good Bayesians, we should know how to turn a statement like that around and find a way to infer causality from correlation.</p>
@@ -139,9 +139,11 @@
 
 <p>Each node represents a random variable, and the arrows represent dependence relations between them. You can think of a node with incoming arrows as a probability distribution parameterized on some set of inputs; in other words, a function from some set of inputs to a probability distribution.</p>
 
-<p>It&#8217;s easy to translate a PGM into code using this <a href=''>toy probability library</a>. All we need are the observed frequencies for each node and its inputs. Let&#8217;s try the traffic jam graph. I&#8217;ll make up some numbers and we&#8217;ll see how it works.</p>
+<p>PGMs with directed edges and no cycles are specifically called <a href='http://en.wikipedia.org/wiki/Bayesian_network'>Bayesian networks</a>, and that&#8217;s the kind of PGM I&#8217;m going to focus on.</p>
+
+<p>It&#8217;s easy to translate a Bayesian network into code using this <a href=''>toy probability library</a>. All we need are the observed frequencies for each node and its inputs. Let&#8217;s try the traffic jam graph. I&#8217;ll make up some numbers and we&#8217;ll see how it works.</p>
 <!-- more -->
-<p>I&#8217;ll start with the nodes with no incoming arrows.</p>
+<p>Let&#8217;s start with the nodes with no incoming arrows.</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>val</span> <span class='n'>rushHour</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Boolean</span><span class='p'>]</span> <span class='k'>=</span> <span class='n'>tf</span><span class='p'>(</span><span class='mf'>0.2</span><span class='p'>)</span>
 <span class='k'>val</span> <span class='n'>badWeather</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Boolean</span><span class='p'>]</span> <span class='k'>=</span> <span class='n'>tf</span><span class='p'>(</span><span class='mf'>0.05</span><span class='p'>)</span>
 </code></pre></div>
@@ -190,7 +192,7 @@
   <span class='n'>sirens</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='p'>,</span>
   <span class='n'>trafficJam</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='p'>)</span>
 
-<span class='k'>val</span> <span class='n'>traffic</span> <span class='k'>=</span> <span class='k'>for</span> <span class='p'>{</span>
+<span class='k'>val</span> <span class='n'>traffic</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Traffic</span><span class='p'>]</span> <span class='k'>=</span> <span class='k'>for</span> <span class='p'>{</span>
   <span class='n'>r</span> <span class='k'>&lt;-</span> <span class='n'>rushHour</span>
   <span class='n'>w</span> <span class='k'>&lt;-</span> <span class='n'>badWeather</span>
   <span class='n'>a</span> <span class='k'>&lt;-</span> <span class='n'>accident</span><span class='p'>(</span><span class='n'>w</span><span class='p'>)</span>
@@ -233,7 +235,7 @@ res4: Double = 0.1807</code></pre>
 
 <h3 id='belief_propagation'>Belief propagation</h3>
 
-<p>The neat thing about PGMs is that they completely explain which nodes can be correlated and which are independent. By following a few simple rules, you can read this information right off the graph.</p>
+<p>The neat thing about Bayesian networks is that they completely explain which nodes can be correlated and which are independent. By following a few simple rules, you can read this information right off the graph.</p>
 
 <p><strong>Rule 0.</strong> In the graph below, A and B can be correlated:</p>
 
@@ -279,7 +281,7 @@ res4: Double = 0.1807</code></pre>
 
 <p><img alt='A &lt;- C -&gt; B' src='/assets/img/pgm/fork-c.png' /></p>
 
-<p>Again, knowledge of the middle node blocks belief from propagating through it. If you know someone has the flu (C), knowing that they have a sore throat (A) does not affect your belief that they have a fever (B); knowing that they have the flu tells you everything you need to know about their body temperature.</p>
+<p>Again, knowledge of the middle node blocks belief from propagating through it. If you know someone has the flu (C), knowing that they have a sore throat (A) does not affect your belief that they have a fever (B); knowing that they have the flu already tells you everything you need to know about their body temperature.</p>
 
 <p><strong>Rule 3a.</strong> In the graph below, if C is known, A and B can be correlated.</p>
 
@@ -287,31 +289,191 @@ res4: Double = 0.1807</code></pre>
 
 <p>This case is interesting — normally, belief would not be able to propagate through node C like this, but if its value is known, the node becomes &#8220;activated&#8221; and belief can flow through. The intuition here is that if I already know that there&#8217;s a traffic jam (C), then knowing that it&#8217;s rush hour (A) should <em>decrease</em> my belief that the weather is bad (B). Rush hour &#8220;explains away&#8221; the traffic jam, making bad weather seem less likely.</p>
 
-<p>Now we have some rules, let&#8217;s put them to use.</p>
+<p><strong>Rule 3b.</strong> In the graph below, if D is known, A and B can be correlated.</p>
+
+<p><img alt='A -&gt; CD &lt;- B' src='/assets/img/pgm/join-cd.png' /></p>
+
+<p>This rule is a variation on Rule 3a. If we know D, then we also know something about C, which partially activates C and allows belief to flow through it from A to B. For example, if I observe someone wearing a college sweatshirt (D), that increases my belief that they went to college (C). If I find out that they got a high SAT score (A), that can decrease my belief that they played sports (B).</p>
+
+<p>These rules are collectively known as the <a href='http://mlg.eng.cam.ac.uk/zoubin/course03/BayesBall.pdf'>Bayes-Ball algorithm</a>. There&#8217;s no Dr. Ball; it&#8217;s just a pun on &#8220;baseball.&#8221; Statistics jokes: they&#8217;re probably funny!</p>
+
+<p>Anyway, now that we have some rules, let&#8217;s put them to use.</p>
 
 <h3 id='are_coin_flips_independent'>Are coin flips independent?</h3>
 
 <p>Everyone knows that coin flips are independent of one another – if you flip a fair coin 10 times and it comes up heads each time, the probability that it will come up heads on the next flip is stil 50%.</p>
 
-<p>But here&#8217;s a different argument: If I flip a coin 100 times and it comes up heads 85 times, I might notice that this is astronomically unlikely under the assumption that I have a fair coin and call shenanigans on the whole thing. I could then reasonably conclude that the coin&#8217;s bias is actually 85%, in which case the next flip is maybe 85% likely to come up heads — meaning the next flip was <em>not</em> independent of the other flips!</p>
+<p>But here&#8217;s a different argument: If I flip a coin 100 times and it comes up heads 85 times, I might notice that this is astronomically unlikely under the assumption that I have a fair coin, and call shenanigans on the whole thing. I could then reasonably conclude that the coin&#8217;s bias is actually 85%, in which case the next flip is maybe 85% likely to come up heads — meaning the next flip was <em>not</em> independent of the other flips!</p>
 
-<p>How can we reconcile these two arguments? There&#8217;s a subtle difference between the two that becomes clear when you draw out the PGMs.</p>
+<p>How can we reconcile these two arguments? There&#8217;s a subtle difference between the two that becomes clear when you draw out the graph.</p>
 
 <p>Here&#8217;s the first case:</p>
 
 <p><img alt='coin bias known' src='/assets/img/pgm/coin-b.png' /></p>
 
-<p>The bias is known (50%), so belief is blocked from propagating between the individual flips.</p>
+<p>The bias is known (50%), so belief is blocked from propagating between the individual flips (Rule 2a).</p>
 
 <p>Here&#8217;s the second case:</p>
 
 <p><img alt='coin bias unknown' src='/assets/img/pgm/coin.png' /></p>
 
-<p>Here, the bias is unknown, so belief is allowed to flow through the &#8220;bias&#8221; node.</p>
+<p>Here, the bias is unknown, so belief is allowed to flow through the &#8220;bias&#8221; node (Rule 2).</p>
 
 <p>So both are right! They just make subtly different assumptions.</p>
 
-<h3 id='correlation_does_not_imply_causation'>Correlation does not imply causation</h3>
+<h3 id='inferring_the_values_of_unobservable_nodes'>Inferring the values of unobservable nodes</h3>
+
+<p>The Bayesian network below represents the blood types of several members of a family. The shaded nodes indicate nodes we can&#8217;t observe. But as long as we know how they interact with the observable nodes, we can make inferences about how the observable nodes interact with each other.</p>
+
+<p><img alt='blood types' src='/assets/img/pgm/bloodtypes.png' /></p>
+
+<p>This will be pretty fun to code up. Here&#8217;s how we&#8217;ll represent the genotypes and phenotypes (blood types):</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>sealed</span> <span class='k'>trait</span><span class='kd'> </span><span class='nc'>BloodGene</span>
+<span class='k'>case</span> <span class='k'>object</span><span class='kd'> </span><span class='nc'>A_</span> <span class='k'>extends</span> <span class='nc'>BloodGene</span>
+<span class='k'>case</span> <span class='k'>object</span><span class='kd'> </span><span class='nc'>B_</span> <span class='k'>extends</span> <span class='nc'>BloodGene</span>
+<span class='k'>case</span> <span class='k'>object</span><span class='kd'> </span><span class='nc'>O_</span> <span class='k'>extends</span> <span class='nc'>BloodGene</span>
+
+<span class='k'>sealed</span> <span class='k'>trait</span><span class='kd'> </span><span class='nc'>BloodType</span>
+<span class='k'>case</span> <span class='k'>object</span><span class='kd'> </span><span class='nc'>A</span> <span class='k'>extends</span> <span class='nc'>BloodType</span>
+<span class='k'>case</span> <span class='k'>object</span><span class='kd'> </span><span class='nc'>B</span> <span class='k'>extends</span> <span class='nc'>BloodType</span>
+<span class='k'>case</span> <span class='k'>object</span><span class='kd'> </span><span class='nc'>AB</span> <span class='k'>extends</span> <span class='nc'>BloodType</span>
+<span class='k'>case</span> <span class='k'>object</span><span class='kd'> </span><span class='nc'>O</span> <span class='k'>extends</span> <span class='nc'>BloodType</span>
+</code></pre></div>
+<p>Yeah, I know, Scala makes this unnecessarily verbose.</p>
+
+<p>For the arrows linking each person&#8217;s genes to their blood type, we need a function that determines <code>BloodType</code> given two <code>BloodGene</code>s. This happens to be a deterministic function, but I&#8217;m implementing it as a stochastic function anyway.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>typeFromGene</span><span class='p'>(</span><span class='n'>g</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>BloodGene</span><span class='p'>,</span> <span class='kt'>BloodGene</span><span class='p'>))</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>BloodType</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='n'>g</span> <span class='k'>match</span> <span class='p'>{</span>
+    <span class='k'>case</span> <span class='p'>(</span><span class='nc'>A_</span><span class='p'>,</span> <span class='nc'>B_</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='n'>always</span><span class='p'>(</span><span class='nc'>AB</span><span class='p'>)</span>
+    <span class='k'>case</span> <span class='p'>(</span><span class='nc'>B_</span><span class='p'>,</span> <span class='nc'>A_</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='n'>always</span><span class='p'>(</span><span class='nc'>AB</span><span class='p'>)</span>
+    <span class='k'>case</span> <span class='p'>(</span><span class='nc'>A_</span><span class='p'>,</span> <span class='k'>_</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='n'>always</span><span class='p'>(</span><span class='n'>A</span><span class='p'>)</span>
+    <span class='k'>case</span> <span class='p'>(</span><span class='k'>_</span><span class='p'>,</span> <span class='nc'>A_</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='n'>always</span><span class='p'>(</span><span class='n'>A</span><span class='p'>)</span>
+    <span class='k'>case</span> <span class='p'>(</span><span class='nc'>B_</span><span class='p'>,</span> <span class='k'>_</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='n'>always</span><span class='p'>(</span><span class='n'>B</span><span class='p'>)</span>
+    <span class='k'>case</span> <span class='p'>(</span><span class='k'>_</span><span class='p'>,</span> <span class='nc'>B_</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='n'>always</span><span class='p'>(</span><span class='n'>B</span><span class='p'>)</span>
+    <span class='k'>case</span> <span class='p'>(</span><span class='nc'>O_</span><span class='p'>,</span> <span class='nc'>O_</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='n'>always</span><span class='p'>(</span><span class='n'>O</span><span class='p'>)</span>
+  <span class='p'>}</span>
+<span class='p'>}</span>
+</code></pre></div>
+<p>For the arrows linking parents&#8217; genes to their children&#8217;s genes, we can implement this function that chooses one gene from each parent at random:</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>childFromParents</span><span class='p'>(</span><span class='n'>p1</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>BloodGene</span><span class='p'>,</span> <span class='kt'>BloodGene</span><span class='p'>),</span>
+                     <span class='n'>p2</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>BloodGene</span><span class='p'>,</span> <span class='kt'>BloodGene</span><span class='p'>))</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[(</span><span class='kt'>BloodGene</span>, <span class='kt'>BloodGene</span><span class='p'>)]</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='k'>val</span> <span class='p'>(</span><span class='n'>p1a</span><span class='p'>,</span> <span class='n'>p1b</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>p1</span>
+  <span class='k'>val</span> <span class='p'>(</span><span class='n'>p2a</span><span class='p'>,</span> <span class='n'>p2b</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>p2</span>
+  <span class='n'>discreteUniform</span><span class='p'>(</span><span class='k'>for</span> <span class='p'>{</span>
+    <span class='n'>p1</span> <span class='k'>&lt;-</span> <span class='nc'>List</span><span class='p'>(</span><span class='n'>p1a</span><span class='p'>,</span> <span class='n'>p1b</span><span class='p'>)</span>
+    <span class='n'>p2</span> <span class='k'>&lt;-</span> <span class='nc'>List</span><span class='p'>(</span><span class='n'>p2a</span><span class='p'>,</span> <span class='n'>p2b</span><span class='p'>)</span>
+  <span class='p'>}</span> <span class='k'>yield</span> <span class='p'>(</span><span class='n'>p1</span><span class='p'>,</span> <span class='n'>p2</span><span class='p'>))</span>
+<span class='p'>}</span>
+</code></pre></div>
+<p>Finally, for the people whose parents are not specified, we supply a prior on each of the 3 genes refecting their <a href='http://en.wikipedia.org/wiki/Blood_type_distribution_by_country'>prevalence in the general population</a>.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>val</span> <span class='n'>bloodPrior</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[(</span><span class='kt'>BloodGene</span>, <span class='kt'>BloodGene</span><span class='p'>)]</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='k'>val</span> <span class='n'>geneFrequencies</span> <span class='k'>=</span> <span class='n'>discrete</span><span class='p'>(</span><span class='nc'>A_</span> <span class='o'>-&gt;</span> <span class='mf'>0.26</span><span class='p'>,</span> <span class='nc'>B_</span> <span class='o'>-&gt;</span> <span class='mf'>0.08</span><span class='p'>,</span> <span class='nc'>O_</span> <span class='o'>-&gt;</span> <span class='mf'>0.66</span><span class='p'>)</span>
+  <span class='k'>for</span> <span class='p'>{</span>
+    <span class='n'>g1</span> <span class='k'>&lt;-</span> <span class='n'>geneFrequencies</span>
+    <span class='n'>g2</span> <span class='k'>&lt;-</span> <span class='n'>geneFrequencies</span>
+  <span class='p'>}</span> <span class='k'>yield</span> <span class='p'>(</span><span class='n'>g1</span><span class='p'>,</span> <span class='n'>g2</span><span class='p'>)</span>
+<span class='p'>}</span>
+</code></pre></div>
+<p>OK, now let&#8217;s wire everything up. This should be a straightforward translation of the Bayesian network into code.</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>case</span> <span class='k'>class</span><span class='kd'> </span><span class='nc'>BloodTrial</span><span class='p'>(</span><span class='n'>lisa</span><span class='k'>:</span> <span class='kt'>BloodType</span><span class='p'>,</span> <span class='n'>homer</span><span class='k'>:</span> <span class='kt'>BloodType</span><span class='p'>,</span> <span class='n'>marge</span><span class='k'>:</span> <span class='kt'>BloodType</span><span class='p'>,</span>
+                      <span class='n'>selma</span><span class='k'>:</span> <span class='kt'>BloodType</span><span class='p'>,</span> <span class='n'>jackie</span><span class='k'>:</span> <span class='kt'>BloodType</span><span class='p'>,</span> <span class='n'>harry</span><span class='k'>:</span> <span class='kt'>BloodType</span><span class='p'>)</span>
+
+<span class='k'>val</span> <span class='n'>bloodType</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>BloodTrial</span><span class='p'>]</span> <span class='k'>=</span> <span class='k'>for</span> <span class='p'>{</span>
+  <span class='n'>gHomer</span> <span class='k'>&lt;-</span> <span class='n'>bloodPrior</span>
+  <span class='n'>gHarry</span> <span class='k'>&lt;-</span> <span class='n'>bloodPrior</span>
+  <span class='n'>gJackie</span> <span class='k'>&lt;-</span> <span class='n'>bloodPrior</span>
+  <span class='n'>gSelma</span> <span class='k'>&lt;-</span> <span class='n'>childFromParents</span><span class='p'>(</span><span class='n'>gHarry</span><span class='p'>,</span> <span class='n'>gJackie</span><span class='p'>)</span>
+  <span class='n'>gMarge</span> <span class='k'>&lt;-</span> <span class='n'>childFromParents</span><span class='p'>(</span><span class='n'>gHarry</span><span class='p'>,</span> <span class='n'>gJackie</span><span class='p'>)</span>
+  <span class='n'>gLisa</span> <span class='k'>&lt;-</span> <span class='n'>childFromParents</span><span class='p'>(</span><span class='n'>gHomer</span><span class='p'>,</span> <span class='n'>gMarge</span><span class='p'>)</span>
+  <span class='n'>bLisa</span> <span class='k'>&lt;-</span> <span class='n'>typeFromGene</span><span class='p'>(</span><span class='n'>gLisa</span><span class='p'>)</span>
+  <span class='n'>bHomer</span> <span class='k'>&lt;-</span> <span class='n'>typeFromGene</span><span class='p'>(</span><span class='n'>gHomer</span><span class='p'>)</span>
+  <span class='n'>bMarge</span> <span class='k'>&lt;-</span> <span class='n'>typeFromGene</span><span class='p'>(</span><span class='n'>gMarge</span><span class='p'>)</span>
+  <span class='n'>bSelma</span> <span class='k'>&lt;-</span> <span class='n'>typeFromGene</span><span class='p'>(</span><span class='n'>gSelma</span><span class='p'>)</span>
+  <span class='n'>bJackie</span> <span class='k'>&lt;-</span> <span class='n'>typeFromGene</span><span class='p'>(</span><span class='n'>gJackie</span><span class='p'>)</span>
+  <span class='n'>bHarry</span> <span class='k'>&lt;-</span> <span class='n'>typeFromGene</span><span class='p'>(</span><span class='n'>gHarry</span><span class='p'>)</span>
+<span class='p'>}</span> <span class='k'>yield</span> <span class='nc'>BloodTrial</span><span class='p'>(</span><span class='n'>bLisa</span><span class='p'>,</span> <span class='n'>bHomer</span><span class='p'>,</span> <span class='n'>bMarge</span><span class='p'>,</span> <span class='n'>bSelma</span><span class='p'>,</span> <span class='n'>bJackie</span><span class='p'>,</span> <span class='n'>bHarry</span><span class='p'>)</span>
+</code></pre></div>
+<p>Here it is in action:</p>
+
+<pre><code>scala&gt; bloodType.map(_.marge).hist
+ A 40.40% ########################################
+ B 11.19% ###########
+AB  4.25% ####
+ O 44.16% ############################################
+
+scala&gt; bloodType.given(_.lisa == B).map(_.marge).hist
+ A 12.65% ############
+ B 42.98% ##########################################
+AB 13.32% #############
+ O 31.05% ###############################
+
+scala&gt; bloodType.given(_.lisa == AB).map(_.marge).hist
+ A 45.71% #############################################
+ B 37.40% #####################################
+AB 16.89% ################</code></pre>
+
+<p>Makes sense so far. Let&#8217;s look at Lisa and her Aunt Selma:</p>
+
+<pre><code>scala&gt; bloodType.map(_.lisa).hist
+ A 41.79% #########################################
+ B 11.24% ###########
+AB  3.94% ###
+ O 43.03% ###########################################
+
+scala&gt; bloodType.given(_.selma == A).map(_.lisa).hist
+ A 52.82% ####################################################
+ B  7.47% #######
+AB  4.90% ####
+ O 34.81% ##################################
+
+scala&gt; bloodType.given(_.selma == B).map(_.lisa).hist
+ A 26.84% ##########################
+ B 27.22% ###########################
+AB  9.08% #########
+ O 36.86% ####################################</code></pre>
+
+<p>Homer and Marge should not affect each other, unless Lisa&#8217;s blood type is known:</p>
+
+<pre><code>scala&gt; bloodType.map(_.homer).hist
+ A 40.34% ########################################
+ B 10.74% ##########
+AB  4.21% ####
+ O 44.71% ############################################
+
+scala&gt; bloodType.given(_.marge == A).map(_.homer).hist
+ A 40.60% ########################################
+ B 10.83% ##########
+AB  3.91% ###
+ O 44.66% ############################################
+
+scala&gt; bloodType.given(_.marge == A).given(_.lisa == O).map(_.homer).hist
+A 25.64% #########################
+B  8.49% ########
+O 65.87% #################################################################</code></pre>
+
+<p>This is Rule 3b in effect. Even Harry and Jackie are correlated if their grandchild&#8217;s blood type is known:</p>
+
+<pre><code>scala&gt; bloodType.map(_.harry).hist
+ A 40.92% ########################################
+ B 11.25% ###########
+AB  4.30% ####
+ O 43.53% ###########################################
+
+scala&gt; bloodType.given(_.jackie == A).map(_.harry).hist
+ A 41.46% #########################################
+ B 11.23% ###########
+AB  4.22% ####
+ O 43.09% ###########################################
+
+scala&gt; bloodType.given(_.jackie == A).given(_.lisa == AB).map(_.harry).hist
+ A 43.98% ###########################################
+ B 23.69% #######################
+AB  9.62% #########
+ O 22.71% ######################</code></pre>
+
+<p>This is pretty fun to play around with.</p>
+
+<h3 id='causal_fallacies'>Causal fallacies</h3>
 
 <p>If you observe that two events A and B are correlated, you cannot determine the direction of causality from observational data on these two events alone. Any of</p>
 
@@ -337,7 +499,7 @@ res4: Double = 0.1807</code></pre>
 
 <h3 id='determining_causality'>Determining causality</h3>
 
-<p>This brings up an important question: if I observe some events and their frequencies, how can I figure out which of the possible PGMs I could draw is the correct one? Well, the great thing about PGMs is that they <em>make testable predictions</em>. In particular, for a given PGM, if the independence relations that we now know how to read off of it do not bear themselves out empirically, we can eliminate that graph as a possibility. We can also use common sense to rule out graphs that make unphysical predictions, for example, the sidewalk being wet causes it to rain, and effects preceding their causes in general.</p>
+<p>This brings up an important question: if I observe some events and their frequencies, how can I figure out which of the possible graphs I could draw is the correct one? Well, the great thing about Bayesian networks is that they <em>make testable predictions</em>. In particular, for a given graph, if the independence relations that we now know how to read off of it do not bear themselves out empirically, we can eliminate that graph as a possibility. We can also use common sense to rule out graphs that make unphysical predictions, for example, the sidewalk being wet causes it to rain, and effects preceding their causes in general.</p>
 
 <p>To take an example, the graph</p>
 
@@ -347,7 +509,9 @@ res4: Double = 0.1807</code></pre>
 
 <p>Usually we can narrow down the set of possible graphs to a handful of possibilities, but not always. With only 2 events to observe, there&#8217;s no way to distinguish <script type='math/tex'>A \rightarrow B</script> and <script type='math/tex'>A \leftarrow B</script> just from the data. With 3 events that are all dependent, you can&#8217;t distinguish between <script type='math/tex'>A \rightarrow B \rightarrow C</script> and <script type='math/tex'>A \leftarrow B \leftarrow C</script> and <script type='math/tex'>A \leftarrow B \rightarrow C</script>. However, you can distinguish <script type='math/tex'>A \rightarrow B \rightarrow C</script> from <script type='math/tex'>B \rightarrow A \rightarrow C</script>, since in the first case, <script type='math/tex'>A</script> and <script type='math/tex'>C</script> are independent when you control for <script type='math/tex'>B</script>.</p>
 
-<p>If you&#8217;re lucky, you can narrow down the set of possible PGMs enough to be able to infer what arrows there are and what direction they point in. And before you know it, you&#8217;ve inferred causality from mere correlation. Voilà!</p>
+<p>If you&#8217;re lucky, you can narrow down the set of possible graphs enough to be able to infer what arrows there are and what direction they point in. And before you know it, you&#8217;ve inferred causality from mere correlation. Voilà!</p>
+
+<p>In practice, though, this rarely happens, especially if you have more than like 5 nodes in your graph. There are simply too many possible graphs to consider, and the very connected ones don&#8217;t make any predictions at all that might help us falsify them. But if you can step in and control things a bit, you can simplify the interactions and make the problem tractable again.</p>
 
 <h3 id='controlled_experiments'>Controlled experiments</h3>
 
@@ -375,7 +539,7 @@ res4: Double = 0.1807</code></pre>
 
 <p><img alt='Smoking 1' src='/assets/img/pgm/smoking1.png' /></p>
 
-<p>You can&#8217;t step in and force some people to smoke or not smoke. You&#8217;d think we might be stuck here, but fortunately some <a href='http://en.wikipedia.org/wiki/Judea_Pearl'>extremely clever people</a> have figured out how to infer causality in a situation like this without needing to intervene. In this example, if you are able to hypothesize some observable intermediate cause, such as the presence of tar in someone&#8217;s lungs:</p>
+<p>You can&#8217;t step in and force some people to smoke or not smoke. You&#8217;d think we might be stuck here, but fortunately some <a href='http://en.wikipedia.org/wiki/Judea_Pearl'>extremely clever people</a> have figured out how to infer causality in a situation like this without needing to run a controlled experiment. In this example, if you are able to hypothesize some observable intermediate cause, such as the presence of tar in someone&#8217;s lungs:</p>
 
 <p><img alt='Smoking 2' src='/assets/img/pgm/smoking2.png' /></p>
 
@@ -383,11 +547,11 @@ res4: Double = 0.1807</code></pre>
 
 <p><img alt='Smoking 3' src='/assets/img/pgm/smoking3.png' /></p>
 
-<p>The two &#8220;smokes&#8221; nodes have the same probability distribution but are independent from one another, and the one on the bottom is now independent of any other factors.</p>
+<p>The two &#8220;smokes&#8221; nodes have the same probability distribution but are independent from one another.</p>
 
-<p>This is great! We can now ask this graph about the probability of someone getting cancer, as if their decision to smoke was independent of any other factors.</p>
+<p>This is pretty great! Using the &#8220;smokes&#8221; node on the bottom, we can now ask this graph about the probability of someone getting cancer, as if their decision to smoke was independent of any other factors.</p>
 
-<p>Before we do that, though, we&#8217;re going to need to make one more little change — as is, we&#8217;re going to run into trouble with the &#8220;???&#8221; node. Since this node represents unknown causes in our model, we&#8217;re not going to be able to observe it or its effects on other nodes. Fortunately, due to the magic of the PGM rules, we can replace it with an arrow that goes directly from &#8220;smokes&#8221; to &#8220;cancer&#8221;, without changing the meaning of the PGM.</p>
+<p>Before we do that, though, we&#8217;re going to need to make one more little change — as it is, we&#8217;re going to run into trouble with the &#8220;???&#8221; node. Since this node represents unknown causes in our model, we&#8217;re not going to be able to observe it or its effects on other nodes. Fortunately, due to the magic of the Bayes-Ball rules, we can replace it with an arrow that goes directly from &#8220;smokes&#8221; to &#8220;cancer&#8221;, without changing the meaning of the graph.</p>
 
 <p><img alt='Smoking 4' src='/assets/img/pgm/smoking4.png' /></p>
 
@@ -416,10 +580,10 @@ res4: Double = 0.1807</code></pre>
 </code></pre></div>
 <p>Again, these numbers represent simple observed frequencies. We could actually do this in practice if we had experimental data. (Obviously all the numbers here are extrememly made up.)</p>
 
-<p>Now let&#8217;s wire everything together. We&#8217;ll do it two ways: the first way encoding the original PGM, and the second way encoding the manipulated PGM that separates &#8220;smokes&#8221; from external influences.</p>
+<p>Now let&#8217;s wire everything together. We&#8217;ll do it two ways: the first way encoding the original graph, and the second way encoding the manipulated graph that separates &#8220;smokes&#8221; from external influences.</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>case</span> <span class='k'>class</span><span class='kd'> </span><span class='nc'>SmokingTrial</span><span class='p'>(</span><span class='n'>smokes</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='p'>,</span> <span class='n'>tar</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='p'>,</span> <span class='n'>cancer</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='p'>)</span>
 
-<span class='k'>def</span> <span class='nf'>smoking</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>SmokingTrial</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
+<span class='k'>def</span> <span class='nf'>smoking1</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>SmokingTrial</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
   <span class='k'>for</span> <span class='p'>{</span>
     <span class='n'>s</span> <span class='k'>&lt;-</span> <span class='n'>smokes</span>
     <span class='n'>t</span> <span class='k'>&lt;-</span> <span class='n'>tar</span><span class='p'>(</span><span class='n'>s</span><span class='p'>)</span>
@@ -427,7 +591,7 @@ res4: Double = 0.1807</code></pre>
   <span class='p'>}</span> <span class='k'>yield</span> <span class='nc'>SmokingTrial</span><span class='p'>(</span><span class='n'>s</span><span class='p'>,</span> <span class='n'>t</span><span class='p'>,</span> <span class='n'>c</span><span class='p'>)</span>
 <span class='p'>}</span>
 
-<span class='k'>def</span> <span class='nf'>doSmoking</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>SmokingTrial</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
+<span class='k'>def</span> <span class='nf'>smoking2</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>SmokingTrial</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
   <span class='k'>for</span> <span class='p'>{</span>
     <span class='n'>s1</span> <span class='k'>&lt;-</span> <span class='n'>smokes</span>
     <span class='n'>s2</span> <span class='k'>&lt;-</span> <span class='n'>smokes</span>
@@ -438,33 +602,35 @@ res4: Double = 0.1807</code></pre>
 </code></pre></div>
 <p>Now let&#8217;s see it in action.</p>
 
-<pre><code>scala&gt; smoking.pr(_.cancer)
+<pre><code>scala&gt; smoking1.pr(_.cancer)
 res0: Double = 0.4723
 
-scala&gt; smoking.given(_.smokes).pr(_.cancer)
+scala&gt; smoking1.given(_.smokes).pr(_.cancer)
 res1: Double = 0.8576
 
-scala&gt; doSmoking.given(_.smokes).pr(_.cancer)
-res2: Double = 0.4577</code></pre>
+scala&gt; smoking2.pr(_.cancer)
+res2: Double = 0.4759
+
+scala&gt; smoking2.given(_.smokes).pr(_.cancer)
+res3: Double = 0.4577</code></pre>
 
 <p>According to these made-up numbers, smoking actually <em>prevents</em> cancer, even though empirically, smokers have a higher incidence of cancer than the general population!</p>
-<script type='math/tex; mode=display'>
-%<![CDATA[
-P(\text{cancer}|\text{smoker}) \gt P(\text{cancer}) \\
-P(\text{cancer}|\text{do}(\text{smoker})) \lt P(\text{cancer})
-%]]>
-</script>
+
 <p>This is pretty miraculous, if you ask me.</p>
 
 <h3 id='further_reading'>Further reading</h3>
 
-<p><a href='http://lesswrong.com/lw/ev3/causal_diagrams_and_causal_models/'>Less Wrong</a> has a great introduction on using PGMs and the predictions they make to determine the direction of causality.</p>
+<p><a href='http://lesswrong.com/lw/ev3/causal_diagrams_and_causal_models/'>Less Wrong</a> has a great introduction on using Bayesian newtworks and the predictions they make to determine the direction of causality.</p>
 
-<p>You should also read <a href='http://www.michaelnielsen.org/ddi/if-correlation-doesnt-imply-causation-then-what-does/'>Michael Nielsen&#8217;s fantastic article</a> explaining Judea Pearl&#8217;s work on the subject in, like, the nineties. This is cutting-edge stuff! I bet you thought all of probability was worked out in the 1700s!</p>
+<p>Here are some slides from lectures on <a href='http://www.cs.nyu.edu/~roweis/csc412-2004/notes/lec2x.pdf'>the Bayes-Ball algorithm</a> and <a href='http://www.cs.columbia.edu/~jebara/4771/notes/class14x.pdf'>how a Bayesian network factors a joint probability distribution</a>.</p>
+
+<p>You should also read <a href='http://www.michaelnielsen.org/ddi/if-correlation-doesnt-imply-causation-then-what-does/'>Michael Nielsen&#8217;s fantastic article</a> explaining Judea Pearl&#8217;s work on simulating controlled experiments in, like, the nineties. This is cutting-edge stuff! I bet you thought all of probability was worked out in the 1700s!</p>
 
 <p>I also recommend the <a href='http://en.wikipedia.org/wiki/Graphical_model'>Coursera on probabilistic graphical models</a>.</p>
 
-<p>All of the code in this post is available in <a href=''>this gist</a>.</p>
+<p>All of the code in this post is available in <a href='https://gist.github.com/jliszka/8017888'>this gist</a>.</p>
+
+<p>Thanks to <a href='https://twitter.com/metablake'>Blake Shaw</a> for helping me with drafts of this post!</p>
     </div>
 
     
@@ -473,7 +639,7 @@ P(\text{cancer}|\text{do}(\text{smoker})) \lt P(\text{cancer})
 
 
   <div style="float: right; margin-top: 5px">
-  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/probablistic-graphical-models.html" data-text="Causal models" data-via="jliszka">Tweet</a>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/bayesian-networks-and-causality.html" data-text="Bayesian networks and causality" data-via="jliszka">Tweet</a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
