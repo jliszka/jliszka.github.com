@@ -4,13 +4,45 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2013-12-18T06:02:26+00:00</updated>
+ <updated>2013-12-18T06:03:45+00:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
    <email>jliszka@alumni.cmu.edu</email>
  </author>
 
+ 
+ <entry>
+   <title>Bayesian networks and causality</title>
+   <link href="http://jliszka.github.io/2013/12/18/bayesian-networks-and-causality.html"/>
+   <updated>2013-12-18T00:00:00+00:00</updated>
+   <id>http://jliszka.github.io/2013/12/18/bayesian-networks-and-causality</id>
+   <content type="html">
+    
+      &lt;p&gt;Correlation does not imply causality — you&amp;#8217;ve heard it a thousand times. But causality does imply correlation. Being good Bayesians, we should know how to turn a statement like that around and find a way to infer causality from correlation.&lt;/p&gt;
+
+&lt;p&gt;The tool we&amp;#8217;re going to use to do this is called a &lt;a href='http://en.wikipedia.org/wiki/Graphical_model'&gt;probabilistic graphical model&lt;/a&gt;. A PGM is a graph that encodes the causal relationships between events. For example, you might construct this graph to model a chain of causes resulting in someone getting a college scholarship:&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt='A -&amp;gt; B -&amp;gt; C' src='/assets/img/pgm/sat.png' /&gt;&lt;/p&gt;
+
+&lt;p&gt;Or the relationship between diseases and their symptoms:&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt='A &amp;lt;- B -&amp;gt; C' src='/assets/img/pgm/flu.png' /&gt;&lt;/p&gt;
+
+&lt;p&gt;Or the events surrounding a traffic jam:&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt='A -&amp;gt; B &amp;lt;- C -&amp;gt; D' src='/assets/img/pgm/trafficjam.png' /&gt;&lt;/p&gt;
+
+&lt;p&gt;Each node represents a random variable, and the arrows represent dependence relations between them. You can think of a node with incoming arrows as a probability distribution parameterized on some set of inputs; in other words, a function from some set of inputs to a probability distribution.&lt;/p&gt;
+
+&lt;p&gt;PGMs with directed edges and no cycles are specifically called &lt;a href='http://en.wikipedia.org/wiki/Bayesian_network'&gt;Bayesian networks&lt;/a&gt;, and that&amp;#8217;s the kind of PGM I&amp;#8217;m going to focus on.&lt;/p&gt;
+
+&lt;p&gt;It&amp;#8217;s easy to translate a Bayesian network into code using this &lt;a href=''&gt;toy probability library&lt;/a&gt;. All we need are the observed frequencies for each node and its inputs. Let&amp;#8217;s try the traffic jam graph. I&amp;#8217;ll make up some numbers and we&amp;#8217;ll see how it works.&lt;/p&gt;
+
+      &lt;a href="http://jliszka.github.io/2013/12/18/bayesian-networks-and-causality.html">Read more&lt;/a>
+    
+   </content>
+ </entry>
  
  <entry>
    <title>Unlikely things happen all the time</title>

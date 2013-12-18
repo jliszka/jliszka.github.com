@@ -93,10 +93,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -129,6 +125,8 @@
 
 <h2 id='archive'>Archive</h2>
 <ul class='posts'>
+  
+    <li><span>18 Dec 2013</span> &raquo; <a href='/2013/12/18/bayesian-networks-and-causality.html'>Bayesian networks and causality</a></li>
   
     <li><span>22 Nov 2013</span> &raquo; <a href='/2013/11/22/unlikely-things-happen-all-the-time.html'>Unlikely things happen all the time</a></li>
   
@@ -163,6 +161,32 @@
 </ul>
 <h2 id='recent_posts'>Recent Posts</h2>
 <div class='post-content-truncate'>
+
+  
+    <h2 class='title'>Bayesian networks and causality</h2>
+    <p>Correlation does not imply causality — you&#8217;ve heard it a thousand times. But causality does imply correlation. Being good Bayesians, we should know how to turn a statement like that around and find a way to infer causality from correlation.</p>
+
+<p>The tool we&#8217;re going to use to do this is called a <a href='http://en.wikipedia.org/wiki/Graphical_model'>probabilistic graphical model</a>. A PGM is a graph that encodes the causal relationships between events. For example, you might construct this graph to model a chain of causes resulting in someone getting a college scholarship:</p>
+
+<p><img alt='A -&gt; B -&gt; C' src='/assets/img/pgm/sat.png' /></p>
+
+<p>Or the relationship between diseases and their symptoms:</p>
+
+<p><img alt='A &lt;- B -&gt; C' src='/assets/img/pgm/flu.png' /></p>
+
+<p>Or the events surrounding a traffic jam:</p>
+
+<p><img alt='A -&gt; B &lt;- C -&gt; D' src='/assets/img/pgm/trafficjam.png' /></p>
+
+<p>Each node represents a random variable, and the arrows represent dependence relations between them. You can think of a node with incoming arrows as a probability distribution parameterized on some set of inputs; in other words, a function from some set of inputs to a probability distribution.</p>
+
+<p>PGMs with directed edges and no cycles are specifically called <a href='http://en.wikipedia.org/wiki/Bayesian_network'>Bayesian networks</a>, and that&#8217;s the kind of PGM I&#8217;m going to focus on.</p>
+
+<p>It&#8217;s easy to translate a Bayesian network into code using this <a href=''>toy probability library</a>. All we need are the observed frequencies for each node and its inputs. Let&#8217;s try the traffic jam graph. I&#8217;ll make up some numbers and we&#8217;ll see how it works.</p>
+
+    <a href='/2013/12/18/bayesian-networks-and-causality.html'>Read more</a>
+    <hr />
+  
 
   
     <h2 class='title'>Unlikely things happen all the time</h2>
@@ -414,45 +438,6 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))</code></pre>
 <p>and it echoes your input and gives you back the coefficients of the polynomial.</p>
 
     <a href='/2013/09/24/more-backwards-functions-unevaluating-polynomials.html'>Read more</a>
-    <hr />
-  
-
-  
-    <h2 class='title'>Insertion sort is dual to bubble sort</h2>
-    <p>I noticed recently that <a href='http://en.wikipedia.org/wiki/insertion_sort'>insertion sort</a> is <a href='http://en.wikipedia.org/wiki/Bubble_sort'>bubble sort</a> backwards. Or inside out. Or something.</p>
-
-<p>Both algorithms can be expressed as a main function that calls a recursive helper. Let&#8217;s take a look at the main functions first.</p>
-
-<h3 id='the_main_functions'>The main functions</h3>
-
-<p>Here&#8217;s the code:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>insertionSort</span><span class='p'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>])</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='n'>xs</span> <span class='k'>match</span> <span class='p'>{</span>
-    <span class='k'>case</span> <span class='nc'>Nil</span> <span class='k'>=&gt;</span> <span class='nc'>Nil</span>
-    <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='p'>{</span>
-      <span class='k'>val</span> <span class='n'>s</span> <span class='k'>=</span> <span class='n'>insertionSort</span><span class='p'>(</span><span class='n'>t</span><span class='p'>)</span>
-      <span class='n'>insert</span><span class='p'>(</span><span class='n'>h</span><span class='p'>,</span> <span class='n'>s</span><span class='p'>)</span>
-    <span class='p'>}</span>
-  <span class='p'>}</span>
-<span class='p'>}</span>
-</code></pre></div>
-<p><code>insertionSort</code> sorts a list by inserting the head of the list into the recursively sorted tail, in such a way that it remains sorted.</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>bubbleSort</span><span class='p'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]](</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>])</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='n'>xs</span> <span class='k'>match</span> <span class='p'>{</span>
-    <span class='k'>case</span> <span class='nc'>Nil</span> <span class='k'>=&gt;</span> <span class='nc'>Nil</span>
-    <span class='k'>case</span> <span class='n'>xs</span> <span class='k'>=&gt;</span> <span class='p'>{</span>
-      <span class='k'>val</span> <span class='p'>(</span><span class='n'>h</span><span class='p'>,</span> <span class='n'>t</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>bubble</span><span class='p'>(</span><span class='n'>xs</span><span class='p'>)</span>
-      <span class='k'>val</span> <span class='n'>s</span> <span class='k'>=</span> <span class='n'>bubbleSort</span><span class='p'>(</span><span class='n'>t</span><span class='p'>)</span>
-      <span class='n'>h</span> <span class='o'>::</span> <span class='n'>s</span>
-    <span class='p'>}</span>
-  <span class='p'>}</span>  
-<span class='p'>}</span>
-</code></pre></div>
-<p><code>bubbleSort</code> sorts a list by bubbling the smallest element to the front of the list and recursively sorting the tail.</p>
-
-<p>It&#8217;s not obvious from the code that these functions are backwards versions of each other, but look at their data flow diagrams:</p>
-
-    <a href='/2013/09/18/insertion-sort-is-dual-to-bubble-sort.html'>Read more</a>
     <hr />
   
 
