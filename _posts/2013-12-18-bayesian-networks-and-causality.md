@@ -7,7 +7,7 @@ tags: [ "probability" ]
 ---
 {% include JB/setup %}
 
-Correlation does not imply causality — you've heard it a thousand times. But causality does imply correlation. Being
+Correlation does not imply causality—you've heard it a thousand times. But causality does imply correlation. Being
 good Bayesians, we should know how to turn a statement like that around and find a way to infer causality from
 correlation.
 
@@ -32,7 +32,7 @@ a function from some set of inputs to a probability distribution.
 PGMs with directed edges and no cycles are specifically called [Bayesian networks](http://en.wikipedia.org/wiki/Bayesian_network),
 and that's the kind of PGM I'm going to focus on.
 
-It's easy to translate a Bayesian network into code using this [toy probability library]({{ site.poss[0].url }}).
+It's easy to translate a Bayesian network into code using this [toy probability library](https://github.com/jliszka/probability-monad).
 All we need are the observed frequencies for each node and its inputs.
 Let's try the traffic jam graph. I'll make up some numbers and we'll see how it works.
 
@@ -94,7 +94,7 @@ def trafficJam(rushHour: Boolean,
 {% endhighlight %}
 
 If you've done any Scala or Haskell programming, you've probably noticed that these are all functions of type
-```A => Distribution[B]``` — and yeah, you better believe we're gonna ```flatMap``` that shit.
+```A => Distribution[B]```—and yeah, you better believe we're gonna ```flatMap``` that shit.
 
 So let's wire everything up and produce the joint probability distribution for all these events.
 
@@ -192,7 +192,7 @@ To give you the intuition, whether the weather is bad (A) should have no influen
 whether it's currently rush hour (B), even though they both cause traffic jams (C).
 
 So we have two cases where belief can propagate through a node, and one case where it can't. But something interesting
-happens when the value of the middle node, C, is known — the situation completely reverses.
+happens when the value of the middle node, C, is known—the situation completely reverses.
 
 ### Belief propagation with observed nodes
 
@@ -217,7 +217,7 @@ the flu already tells you everything you need to know about their body temperatu
 
 ![A -> C <- B](/assets/img/pgm/join-c.png)
 
-This case is interesting — normally, belief would not be able to propagate through node C like this, but if its value is
+This case is interesting—normally, belief would not be able to propagate through node C like this, but if its value is
 known, the node becomes "activated" and belief can flow through. The intuition here is that if I already know that
 there's a traffic jam (C), then knowing that it's rush hour (A) should _decrease_ my belief that the weather is bad
 (B). Rush hour "explains away" the traffic jam, making bad weather seem less likely.
@@ -238,13 +238,13 @@ Anyway, now that we have some rules, let's put them to use.
 
 ### Are coin flips independent?
 
-Everyone knows that coin flips are independent of one another – if you flip a fair coin 10 times and it comes up heads each
+Everyone knows that coin flips are independent of one another—if you flip a fair coin 10 times and it comes up heads each
 time, the probability that it will come up heads on the next flip is stil 50%.
 
 But here's a different argument: If I flip a coin 100 times and it comes up heads 85 times, I might notice that this is
 astronomically unlikely under the assumption that I have a fair coin, and call shenanigans on the whole thing. I could
 then reasonably conclude that the coin's bias is actually 85%, in which case the next flip is maybe 85% likely to come up
-heads — meaning the next flip was _not_ independent of the other flips!
+heads—meaning the next flip was _not_ independent of the other flips!
 
 How can we reconcile these two arguments? There's a subtle difference between the two that becomes clear when you
 draw out the graph.
@@ -263,7 +263,7 @@ Here, the bias is unknown, so belief is allowed to flow through the "bias" node 
 
 So both are right! They just make subtly different assumptions.
 
-### Inferring the values of unobservable nodes
+### Reasoning about hidden nodes
 
 The Bayesian network below represents the blood types of several members of a family. The shaded nodes indicate nodes we
 can't observe. But as long as we know how they interact with the observable nodes, we can make inferences about how the
@@ -324,7 +324,7 @@ Finally, for the people whose parents are not specified, we supply a prior on ea
 [prevalence in the general population](http://en.wikipedia.org/wiki/Blood_type_distribution_by_country).
 
 {% highlight scala %}
-val bloodPrior: Distribution[(BloodGene, BloodGene)] = {
+val bloodGenePrior: Distribution[(BloodGene, BloodGene)] = {
   val geneFrequencies = discrete(A_ -> 0.26, B_ -> 0.08, O_ -> 0.66)
   for {
     g1 <- geneFrequencies
@@ -333,16 +333,16 @@ val bloodPrior: Distribution[(BloodGene, BloodGene)] = {
 }
 {% endhighlight %}
 
-OK, now let's wire everything up. This should be a straightforward translation of the Bayesian network into code.
+OK, now let's wire everything up. This should be a straightforward translation of the Bayesian network above into code.
 
 {% highlight scala %}
 case class BloodTrial(lisa: BloodType, homer: BloodType, marge: BloodType,
                       selma: BloodType, jackie: BloodType, harry: BloodType)
 
 val bloodType: Distribution[BloodTrial] = for {
-  gHomer <- bloodPrior
-  gHarry <- bloodPrior
-  gJackie <- bloodPrior
+  gHomer <- bloodGenePrior
+  gHarry <- bloodGenePrior
+  gJackie <- bloodGenePrior
   gSelma <- childFromParents(gHarry, gJackie)
   gMarge <- childFromParents(gHarry, gJackie)
   gLisa <- childFromParents(gHomer, gMarge)
@@ -433,7 +433,7 @@ This is Rule 3b in effect. Even Harry and Jackie are correlated if their grandch
     AB  9.62% #########
      O 22.71% ######################
 
-This is pretty fun to play around with.
+This is pretty fun to play around with!
 
 ### Causal fallacies
 
@@ -454,9 +454,9 @@ observational data on these two events alone. Any of
 
 ![A -> C <- B](/assets/img/pgm/join-c.png)
 
-where C is known. This is just a biased sample — you might conclude that academic ability interferes with athletic
+where C is known. This is just a biased sample—you might conclude that academic ability interferes with athletic
 ability after observing that they are inversely correlated, until you realize you only surveyed college students, and
-that academic and athletic scholorships are quite common — but it's neat that graphical models unify these causal
+that academic and athletic scholorships are quite common. But it's neat that graphical models unify these causal
 fallacies.
 
 To go further, you could come up with crazy causal graphs that predict a correlation between A and B, but where
@@ -482,7 +482,7 @@ To take an example, the graph
 predicts that A and B are independent, unless C is known. If we observe that, say,
 {%m%}P(A=\text{true}|B=\text{true}) > P(A=\text{true}){%em%}, then we can rule out that graph as a possible model.
 
-Usually we can narrow down the set of possible graphs to a handful of possibilities, but not always. With only 2 events
+Usually we can use observations like this to narrow down the set of possible graphs. With only 2 events
 to observe, there's no way to distinguish {%m%}A \rightarrow B{%em%} and {%m%}A \leftarrow B{%em%} just from the data.
 With 3 events that are all dependent, you can't distinguish between {%m%}A \rightarrow B \rightarrow C{%em%} and
 {%m%}A \leftarrow B \leftarrow C{%em%} and {%m%}A \leftarrow B \rightarrow C{%em%}.
@@ -529,7 +529,7 @@ By forcing "plays music" to be determined randomly and independent of anything e
 it and any other confounding factors. Then it's easy to determine whether the arrow between "plays music" and "high SAT score"
 really exists.
 
-But often this is not possible. In an example cribbed from
+But often this is not practical. In an example cribbed from
 [this excellent article on the subject](http://www.michaelnielsen.org/ddi/if-correlation-doesnt-imply-causation-then-what-does/),
 suppose you are trying to determine whether smoking causes lung cancer directly, or if instead there are some
 environmental factors that happen to cause both. You have the following possible graphs:
@@ -550,12 +550,13 @@ then through a series of formal manipulations, you can arrive at a graph that, w
 The two "smokes" nodes have the same probability distribution but are independent from one another.
 
 This is pretty great! Using the "smokes" node on the bottom, we can now ask this graph about the probability of someone
-getting cancer, as if their decision to smoke was independent of any other factors.
+getting cancer, as if their decision to smoke was independent of any other factors. In other words, we can now determine
+_what would have happened_ if we had been able to force our subjects to smoke or not smoke in a controlled experiment.
 
-Before we do that, though, we're going to need to make one more little change — as it is, we're going to run into trouble
+Before we do that, though, we're going to need to make one more little change—as it is, we're going to run into trouble
 with the "???" node. Since this node represents unknown causes in our model, we're not going to be able to
 observe it or its effects on other nodes. Fortunately, due to the magic of the Bayes-Ball rules, we can replace it with an
-arrow that goes directly from "smokes" to "cancer", without changing the meaning of the graph.
+arrow that goes directly from "smokes" to "cancer", without changing the meaning of the graph. So our two graphs become:
 
 ![Smoking 4](/assets/img/pgm/smoking4.png)
 
@@ -653,4 +654,4 @@ I also recommend the [Coursera on probabilistic graphical models](http://en.wiki
 
 All of the code in this post is available in [this gist](https://gist.github.com/jliszka/8017888).
 
-Thanks to [Blake Shaw](https://twitter.com/metablake) for helping me with drafts of this post!
+Thanks to [Blake Shaw](https://twitter.com/metablake) for his feedback on early drafts of this post.
