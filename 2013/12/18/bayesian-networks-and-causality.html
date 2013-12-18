@@ -119,7 +119,7 @@
       <span>18 December 2013</span>
     </div>
     <div class="content">
-      <p>Correlation does not imply causality — you&#8217;ve heard it a thousand times. But causality does imply correlation. Being good Bayesians, we should know how to turn a statement like that around and find a way to infer causality from correlation.</p>
+      <p>Correlation does not imply causality—you&#8217;ve heard it a thousand times. But causality does imply correlation. Being good Bayesians, we should know how to turn a statement like that around and find a way to infer causality from correlation.</p>
 
 <p>The tool we&#8217;re going to use to do this is called a <a href='http://en.wikipedia.org/wiki/Graphical_model'>probabilistic graphical model</a>. A PGM is a graph that encodes the causal relationships between events. For example, you might construct this graph to model a chain of causes resulting in someone getting a college scholarship:</p>
 
@@ -137,7 +137,7 @@
 
 <p>PGMs with directed edges and no cycles are specifically called <a href='http://en.wikipedia.org/wiki/Bayesian_network'>Bayesian networks</a>, and that&#8217;s the kind of PGM I&#8217;m going to focus on.</p>
 
-<p>It&#8217;s easy to translate a Bayesian network into code using this <a href=''>toy probability library</a>. All we need are the observed frequencies for each node and its inputs. Let&#8217;s try the traffic jam graph. I&#8217;ll make up some numbers and we&#8217;ll see how it works.</p>
+<p>It&#8217;s easy to translate a Bayesian network into code using this <a href='https://github.com/jliszka/probability-monad'>toy probability library</a>. All we need are the observed frequencies for each node and its inputs. Let&#8217;s try the traffic jam graph. I&#8217;ll make up some numbers and we&#8217;ll see how it works.</p>
 <!-- more -->
 <p>Let&#8217;s start with the nodes with no incoming arrows.</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>val</span> <span class='n'>rushHour</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Boolean</span><span class='p'>]</span> <span class='k'>=</span> <span class='n'>tf</span><span class='p'>(</span><span class='mf'>0.2</span><span class='p'>)</span>
@@ -178,7 +178,7 @@
   <span class='p'>}</span>
 <span class='p'>}</span>
 </code></pre></div>
-<p>If you&#8217;ve done any Scala or Haskell programming, you&#8217;ve probably noticed that these are all functions of type <code>A =&gt; Distribution[B]</code> — and yeah, you better believe we&#8217;re gonna <code>flatMap</code> that shit.</p>
+<p>If you&#8217;ve done any Scala or Haskell programming, you&#8217;ve probably noticed that these are all functions of type <code>A =&gt; Distribution[B]</code>—and yeah, you better believe we&#8217;re gonna <code>flatMap</code> that shit.</p>
 
 <p>So let&#8217;s wire everything up and produce the joint probability distribution for all these events.</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>case</span> <span class='k'>class</span><span class='kd'> </span><span class='nc'>Traffic</span><span class='p'>(</span>
@@ -263,7 +263,7 @@ res4: Double = 0.1807</code></pre>
 
 <p>To give you the intuition, whether the weather is bad (A) should have no influence over whether it&#8217;s currently rush hour (B), even though they both cause traffic jams (C).</p>
 
-<p>So we have two cases where belief can propagate through a node, and one case where it can&#8217;t. But something interesting happens when the value of the middle node, C, is known — the situation completely reverses.</p>
+<p>So we have two cases where belief can propagate through a node, and one case where it can&#8217;t. But something interesting happens when the value of the middle node, C, is known—the situation completely reverses.</p>
 
 <h3 id='belief_propagation_with_observed_nodes'>Belief propagation with observed nodes</h3>
 
@@ -283,7 +283,7 @@ res4: Double = 0.1807</code></pre>
 
 <p><img alt='A -&gt; C &lt;- B' src='/assets/img/pgm/join-c.png' /></p>
 
-<p>This case is interesting — normally, belief would not be able to propagate through node C like this, but if its value is known, the node becomes &#8220;activated&#8221; and belief can flow through. The intuition here is that if I already know that there&#8217;s a traffic jam (C), then knowing that it&#8217;s rush hour (A) should <em>decrease</em> my belief that the weather is bad (B). Rush hour &#8220;explains away&#8221; the traffic jam, making bad weather seem less likely.</p>
+<p>This case is interesting—normally, belief would not be able to propagate through node C like this, but if its value is known, the node becomes &#8220;activated&#8221; and belief can flow through. The intuition here is that if I already know that there&#8217;s a traffic jam (C), then knowing that it&#8217;s rush hour (A) should <em>decrease</em> my belief that the weather is bad (B). Rush hour &#8220;explains away&#8221; the traffic jam, making bad weather seem less likely.</p>
 
 <p><strong>Rule 3b.</strong> In the graph below, if D is known, A and B can be correlated.</p>
 
@@ -297,9 +297,9 @@ res4: Double = 0.1807</code></pre>
 
 <h3 id='are_coin_flips_independent'>Are coin flips independent?</h3>
 
-<p>Everyone knows that coin flips are independent of one another – if you flip a fair coin 10 times and it comes up heads each time, the probability that it will come up heads on the next flip is stil 50%.</p>
+<p>Everyone knows that coin flips are independent of one another—if you flip a fair coin 10 times and it comes up heads each time, the probability that it will come up heads on the next flip is stil 50%.</p>
 
-<p>But here&#8217;s a different argument: If I flip a coin 100 times and it comes up heads 85 times, I might notice that this is astronomically unlikely under the assumption that I have a fair coin, and call shenanigans on the whole thing. I could then reasonably conclude that the coin&#8217;s bias is actually 85%, in which case the next flip is maybe 85% likely to come up heads — meaning the next flip was <em>not</em> independent of the other flips!</p>
+<p>But here&#8217;s a different argument: If I flip a coin 100 times and it comes up heads 85 times, I might notice that this is astronomically unlikely under the assumption that I have a fair coin, and call shenanigans on the whole thing. I could then reasonably conclude that the coin&#8217;s bias is actually 85%, in which case the next flip is maybe 85% likely to come up heads—meaning the next flip was <em>not</em> independent of the other flips!</p>
 
 <p>How can we reconcile these two arguments? There&#8217;s a subtle difference between the two that becomes clear when you draw out the graph.</p>
 
@@ -317,7 +317,7 @@ res4: Double = 0.1807</code></pre>
 
 <p>So both are right! They just make subtly different assumptions.</p>
 
-<h3 id='inferring_the_values_of_unobservable_nodes'>Inferring the values of unobservable nodes</h3>
+<h3 id='reasoning_about_hidden_nodes'>Reasoning about hidden nodes</h3>
 
 <p>The Bayesian network below represents the blood types of several members of a family. The shaded nodes indicate nodes we can&#8217;t observe. But as long as we know how they interact with the observable nodes, we can make inferences about how the observable nodes interact with each other.</p>
 
@@ -362,7 +362,7 @@ res4: Double = 0.1807</code></pre>
 <span class='p'>}</span>
 </code></pre></div>
 <p>Finally, for the people whose parents are not specified, we supply a prior on each of the 3 genes refecting their <a href='http://en.wikipedia.org/wiki/Blood_type_distribution_by_country'>prevalence in the general population</a>.</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>val</span> <span class='n'>bloodPrior</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[(</span><span class='kt'>BloodGene</span>, <span class='kt'>BloodGene</span><span class='p'>)]</span> <span class='k'>=</span> <span class='p'>{</span>
+<div class='highlight'><pre><code class='scala'><span class='k'>val</span> <span class='n'>bloodGenePrior</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[(</span><span class='kt'>BloodGene</span>, <span class='kt'>BloodGene</span><span class='p'>)]</span> <span class='k'>=</span> <span class='p'>{</span>
   <span class='k'>val</span> <span class='n'>geneFrequencies</span> <span class='k'>=</span> <span class='n'>discrete</span><span class='p'>(</span><span class='nc'>A_</span> <span class='o'>-&gt;</span> <span class='mf'>0.26</span><span class='p'>,</span> <span class='nc'>B_</span> <span class='o'>-&gt;</span> <span class='mf'>0.08</span><span class='p'>,</span> <span class='nc'>O_</span> <span class='o'>-&gt;</span> <span class='mf'>0.66</span><span class='p'>)</span>
   <span class='k'>for</span> <span class='p'>{</span>
     <span class='n'>g1</span> <span class='k'>&lt;-</span> <span class='n'>geneFrequencies</span>
@@ -370,14 +370,14 @@ res4: Double = 0.1807</code></pre>
   <span class='p'>}</span> <span class='k'>yield</span> <span class='p'>(</span><span class='n'>g1</span><span class='p'>,</span> <span class='n'>g2</span><span class='p'>)</span>
 <span class='p'>}</span>
 </code></pre></div>
-<p>OK, now let&#8217;s wire everything up. This should be a straightforward translation of the Bayesian network into code.</p>
+<p>OK, now let&#8217;s wire everything up. This should be a straightforward translation of the Bayesian network above into code.</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>case</span> <span class='k'>class</span><span class='kd'> </span><span class='nc'>BloodTrial</span><span class='p'>(</span><span class='n'>lisa</span><span class='k'>:</span> <span class='kt'>BloodType</span><span class='p'>,</span> <span class='n'>homer</span><span class='k'>:</span> <span class='kt'>BloodType</span><span class='p'>,</span> <span class='n'>marge</span><span class='k'>:</span> <span class='kt'>BloodType</span><span class='p'>,</span>
                       <span class='n'>selma</span><span class='k'>:</span> <span class='kt'>BloodType</span><span class='p'>,</span> <span class='n'>jackie</span><span class='k'>:</span> <span class='kt'>BloodType</span><span class='p'>,</span> <span class='n'>harry</span><span class='k'>:</span> <span class='kt'>BloodType</span><span class='p'>)</span>
 
 <span class='k'>val</span> <span class='n'>bloodType</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>BloodTrial</span><span class='p'>]</span> <span class='k'>=</span> <span class='k'>for</span> <span class='p'>{</span>
-  <span class='n'>gHomer</span> <span class='k'>&lt;-</span> <span class='n'>bloodPrior</span>
-  <span class='n'>gHarry</span> <span class='k'>&lt;-</span> <span class='n'>bloodPrior</span>
-  <span class='n'>gJackie</span> <span class='k'>&lt;-</span> <span class='n'>bloodPrior</span>
+  <span class='n'>gHomer</span> <span class='k'>&lt;-</span> <span class='n'>bloodGenePrior</span>
+  <span class='n'>gHarry</span> <span class='k'>&lt;-</span> <span class='n'>bloodGenePrior</span>
+  <span class='n'>gJackie</span> <span class='k'>&lt;-</span> <span class='n'>bloodGenePrior</span>
   <span class='n'>gSelma</span> <span class='k'>&lt;-</span> <span class='n'>childFromParents</span><span class='p'>(</span><span class='n'>gHarry</span><span class='p'>,</span> <span class='n'>gJackie</span><span class='p'>)</span>
   <span class='n'>gMarge</span> <span class='k'>&lt;-</span> <span class='n'>childFromParents</span><span class='p'>(</span><span class='n'>gHarry</span><span class='p'>,</span> <span class='n'>gJackie</span><span class='p'>)</span>
   <span class='n'>gLisa</span> <span class='k'>&lt;-</span> <span class='n'>childFromParents</span><span class='p'>(</span><span class='n'>gHomer</span><span class='p'>,</span> <span class='n'>gMarge</span><span class='p'>)</span>
@@ -467,7 +467,7 @@ scala&gt; bloodType.given(_.jackie == A).given(_.lisa == AB).map(_.harry).hist
 AB  9.62% #########
  O 22.71% ######################</code></pre>
 
-<p>This is pretty fun to play around with.</p>
+<p>This is pretty fun to play around with!</p>
 
 <h3 id='causal_fallacies'>Causal fallacies</h3>
 
@@ -487,7 +487,7 @@ AB  9.62% #########
 
 <p><img alt='A -&gt; C &lt;- B' src='/assets/img/pgm/join-c.png' /></p>
 
-<p>where C is known. This is just a biased sample — you might conclude that academic ability interferes with athletic ability after observing that they are inversely correlated, until you realize you only surveyed college students, and that academic and athletic scholorships are quite common — but it&#8217;s neat that graphical models unify these causal fallacies.</p>
+<p>where C is known. This is just a biased sample—you might conclude that academic ability interferes with athletic ability after observing that they are inversely correlated, until you realize you only surveyed college students, and that academic and athletic scholorships are quite common. But it&#8217;s neat that graphical models unify these causal fallacies.</p>
 
 <p>To go further, you could come up with crazy causal graphs that predict a correlation between A and B, but where the causal link between A and B is non-trivial. For example, the graph below allows A and B to be correlated, but neither directly causes the other, they don&#8217;t have a common cause, and although there is a biased sample, it appears to only directly affect B.</p>
 
@@ -503,7 +503,7 @@ AB  9.62% #########
 
 <p>predicts that A and B are independent, unless C is known. If we observe that, say, <script type='math/tex'>P(A=\text{true}|B=\text{true}) > P(A=\text{true})</script>, then we can rule out that graph as a possible model.</p>
 
-<p>Usually we can narrow down the set of possible graphs to a handful of possibilities, but not always. With only 2 events to observe, there&#8217;s no way to distinguish <script type='math/tex'>A \rightarrow B</script> and <script type='math/tex'>A \leftarrow B</script> just from the data. With 3 events that are all dependent, you can&#8217;t distinguish between <script type='math/tex'>A \rightarrow B \rightarrow C</script> and <script type='math/tex'>A \leftarrow B \leftarrow C</script> and <script type='math/tex'>A \leftarrow B \rightarrow C</script>. However, you can distinguish <script type='math/tex'>A \rightarrow B \rightarrow C</script> from <script type='math/tex'>B \rightarrow A \rightarrow C</script>, since in the first case, <script type='math/tex'>A</script> and <script type='math/tex'>C</script> are independent when you control for <script type='math/tex'>B</script>.</p>
+<p>Usually we can use observations like this to narrow down the set of possible graphs. With only 2 events to observe, there&#8217;s no way to distinguish <script type='math/tex'>A \rightarrow B</script> and <script type='math/tex'>A \leftarrow B</script> just from the data. With 3 events that are all dependent, you can&#8217;t distinguish between <script type='math/tex'>A \rightarrow B \rightarrow C</script> and <script type='math/tex'>A \leftarrow B \leftarrow C</script> and <script type='math/tex'>A \leftarrow B \rightarrow C</script>. However, you can distinguish <script type='math/tex'>A \rightarrow B \rightarrow C</script> from <script type='math/tex'>B \rightarrow A \rightarrow C</script>, since in the first case, <script type='math/tex'>A</script> and <script type='math/tex'>C</script> are independent when you control for <script type='math/tex'>B</script>.</p>
 
 <p>If you&#8217;re lucky, you can narrow down the set of possible graphs enough to be able to infer what arrows there are and what direction they point in. And before you know it, you&#8217;ve inferred causality from mere correlation. Voilà!</p>
 
@@ -531,7 +531,7 @@ AB  9.62% #########
 
 <p>By forcing &#8220;plays music&#8221; to be determined randomly and independent of anything else, you break the causal link between it and any other confounding factors. Then it&#8217;s easy to determine whether the arrow between &#8220;plays music&#8221; and &#8220;high SAT score&#8221; really exists.</p>
 
-<p>But often this is not possible. In an example cribbed from <a href='http://www.michaelnielsen.org/ddi/if-correlation-doesnt-imply-causation-then-what-does/'>this excellent article on the subject</a>, suppose you are trying to determine whether smoking causes lung cancer directly, or if instead there are some environmental factors that happen to cause both. You have the following possible graphs:</p>
+<p>But often this is not practical. In an example cribbed from <a href='http://www.michaelnielsen.org/ddi/if-correlation-doesnt-imply-causation-then-what-does/'>this excellent article on the subject</a>, suppose you are trying to determine whether smoking causes lung cancer directly, or if instead there are some environmental factors that happen to cause both. You have the following possible graphs:</p>
 
 <p><img alt='Smoking 1' src='/assets/img/pgm/smoking1.png' /></p>
 
@@ -545,9 +545,9 @@ AB  9.62% #########
 
 <p>The two &#8220;smokes&#8221; nodes have the same probability distribution but are independent from one another.</p>
 
-<p>This is pretty great! Using the &#8220;smokes&#8221; node on the bottom, we can now ask this graph about the probability of someone getting cancer, as if their decision to smoke was independent of any other factors.</p>
+<p>This is pretty great! Using the &#8220;smokes&#8221; node on the bottom, we can now ask this graph about the probability of someone getting cancer, as if their decision to smoke was independent of any other factors. In other words, we can now determine <em>what would have happened</em> if we had been able to force our subjects to smoke or not smoke in a controlled experiment.</p>
 
-<p>Before we do that, though, we&#8217;re going to need to make one more little change — as it is, we&#8217;re going to run into trouble with the &#8220;???&#8221; node. Since this node represents unknown causes in our model, we&#8217;re not going to be able to observe it or its effects on other nodes. Fortunately, due to the magic of the Bayes-Ball rules, we can replace it with an arrow that goes directly from &#8220;smokes&#8221; to &#8220;cancer&#8221;, without changing the meaning of the graph.</p>
+<p>Before we do that, though, we&#8217;re going to need to make one more little change—as it is, we&#8217;re going to run into trouble with the &#8220;???&#8221; node. Since this node represents unknown causes in our model, we&#8217;re not going to be able to observe it or its effects on other nodes. Fortunately, due to the magic of the Bayes-Ball rules, we can replace it with an arrow that goes directly from &#8220;smokes&#8221; to &#8220;cancer&#8221;, without changing the meaning of the graph. So our two graphs become:</p>
 
 <p><img alt='Smoking 4' src='/assets/img/pgm/smoking4.png' /></p>
 
@@ -626,7 +626,7 @@ res3: Double = 0.4577</code></pre>
 
 <p>All of the code in this post is available in <a href='https://gist.github.com/jliszka/8017888'>this gist</a>.</p>
 
-<p>Thanks to <a href='https://twitter.com/metablake'>Blake Shaw</a> for helping me with drafts of this post!</p>
+<p>Thanks to <a href='https://twitter.com/metablake'>Blake Shaw</a> for his feedback on early drafts of this post.</p>
     </div>
 
     
