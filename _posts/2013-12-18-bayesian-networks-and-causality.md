@@ -408,30 +408,28 @@ Homer and Marge should not affect each other, unless Lisa's blood type is known:
     AB  3.91% ###
      O 44.66% ############################################
 
-    scala> bloodType.given(_.marge == A).given(_.lisa == O).map(_.homer).hist
-    A 25.64% #########################
-    B  8.49% ########
-    O 65.87% #################################################################
+    scala> bloodType.given(_.lisa == B).map(_.homer).hist
+     A 11.91% ###########
+     B 42.84% ##########################################
+    AB 13.77% #############
+     O 31.48% ###############################
+
+    scala> bloodType.given(_.lisa == B).given(_.marge == A).map(_.homer).hist
+     B 73.99% #########################################################################
+    AB 26.01% ##########################
 
 This is Rule 3b in effect. Even Harry and Jackie are correlated if their grandchild's blood type is known:
 
-    scala> bloodType.map(_.harry).hist
-     A 40.92% ########################################
-     B 11.25% ###########
-    AB  4.30% ####
-     O 43.53% ###########################################
+    scala> bloodType.given(_.lisa == AB).map(_.harry).hist
+     A 43.83% ###########################################
+     B 23.51% #######################
+    AB 10.90% ##########
+     O 21.76% #####################
 
-    scala> bloodType.given(_.jackie == A).map(_.harry).hist
-     A 41.46% #########################################
-     B 11.23% ###########
-    AB  4.22% ####
-     O 43.09% ###########################################
-
-    scala> bloodType.given(_.jackie == A).given(_.lisa == AB).map(_.harry).hist
-     A 43.98% ###########################################
-     B 23.69% #######################
-    AB  9.62% #########
-     O 22.71% ######################
+    scala> bloodType.given(_.lisa == AB).given(_.jackie == O).map(_.harry).hist
+     A 45.01% #############################################
+     B 37.73% #####################################
+    AB 17.26% #################
 
 This is pretty fun to play around with!
 
