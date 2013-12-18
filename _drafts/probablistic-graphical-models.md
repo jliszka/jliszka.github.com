@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Causal models"
+title: "Bayesian networks and causality"
 description: ""
 category: 
 tags: [ "probability" ]
@@ -29,13 +29,16 @@ Each node represents a random variable, and the arrows represent dependence rela
 a node with incoming arrows as a probability distribution parameterized on some set of inputs; in other words,
 a function from some set of inputs to a probability distribution.
 
-It's easy to translate a PGM into code using this [toy probability library]({{ site.poss[0].url }}).
+PGMs with directed edges and no cycles are specifically called [Bayesian networks](http://en.wikipedia.org/wiki/Bayesian_network),
+and that's the kind of PGM I'm going to focus on.
+
+It's easy to translate a Bayesian network into code using this [toy probability library]({{ site.poss[0].url }}).
 All we need are the observed frequencies for each node and its inputs.
 Let's try the traffic jam graph. I'll make up some numbers and we'll see how it works.
 
 <!-- more -->
 
-I'll start with the nodes with no incoming arrows.
+Let's start with the nodes with no incoming arrows.
 
 {% highlight scala %}
 val rushHour: Distribution[Boolean] = tf(0.2)
@@ -103,7 +106,7 @@ case class Traffic(
   sirens: Boolean,
   trafficJam: Boolean)
 
-val traffic = for {
+val traffic: Distribution[Traffic] = for {
   r <- rushHour
   w <- badWeather
   a <- accident(w)
@@ -149,7 +152,7 @@ But there's no direct causal link in our model between rush hour and accidents. 
 
 ### Belief propagation
 
-The neat thing about PGMs is that they completely explain which nodes can be correlated and
+The neat thing about Bayesian networks is that they completely explain which nodes can be correlated and
 which are independent. By following a few simple rules, you can read this information right off the graph.
 
 **Rule 0.** In the graph below, A and B can be correlated:
@@ -206,9 +209,9 @@ belief about whether or not they studied.
 
 ![A <- C -> B](/assets/img/pgm/fork-c.png)
 
-Again, knowledge of the middle node blocks belief from propagating through it. If you know someone has the flu (C), knowing
-that they have a sore throat (A) does not affect your belief that they have a fever (B); knowing that they have the flu tells
-you everything you need to know about their body temperature.
+Again, knowledge of the middle node blocks belief from propagating through it. If you know someone has the flu (C),
+knowing that they have a sore throat (A) does not affect your belief that they have a fever (B); knowing that they have
+the flu already tells you everything you need to know about their body temperature.
 
 **Rule 3a.** In the graph below, if C is known, A and B can be correlated.
 
@@ -219,7 +222,19 @@ known, the node becomes "activated" and belief can flow through. The intuition h
 there's a traffic jam (C), then knowing that it's rush hour (A) should _decrease_ my belief that the weather is bad
 (B). Rush hour "explains away" the traffic jam, making bad weather seem less likely.
 
-Now we have some rules, let's put them to use.
+**Rule 3b.** In the graph below, if D is known, A and B can be correlated.
+
+![A -> CD <- B](/assets/img/pgm/join-cd.png)
+
+This rule is a variation on Rule 3a. If we know D, then we also know something about C, which partially activates C and
+allows belief to flow through it from A to B. For example, if I observe someone wearing a college sweatshirt (D), that
+increases my belief that they went to college (C). If I find out that they got a high SAT score (A), that can decrease
+my belief that they played sports (B).
+
+These rules are collectively known as the [Bayes-Ball algorithm](http://mlg.eng.cam.ac.uk/zoubin/course03/BayesBall.pdf).
+There's no Dr. Ball; it's just a pun on "baseball." Statistics jokes: they're probably funny!
+
+Anyway, now that we have some rules, let's put them to use.
 
 ### Are coin flips independent?
 
@@ -227,28 +242,200 @@ Everyone knows that coin flips are independent of one another – if you flip a
 time, the probability that it will come up heads on the next flip is stil 50%.
 
 But here's a different argument: If I flip a coin 100 times and it comes up heads 85 times, I might notice that this is
-astronomically unlikely under the assumption that I have a fair coin and call shenanigans on the whole thing. I could
+astronomically unlikely under the assumption that I have a fair coin, and call shenanigans on the whole thing. I could
 then reasonably conclude that the coin's bias is actually 85%, in which case the next flip is maybe 85% likely to come up
 heads — meaning the next flip was _not_ independent of the other flips!
 
 How can we reconcile these two arguments? There's a subtle difference between the two that becomes clear when you
-draw out the PGMs.
+draw out the graph.
 
 Here's the first case:
 
 ![coin bias known](/assets/img/pgm/coin-b.png)
 
-The bias is known (50%), so belief is blocked from propagating between the individual flips.
+The bias is known (50%), so belief is blocked from propagating between the individual flips (Rule 2a).
 
 Here's the second case:
 
 ![coin bias unknown](/assets/img/pgm/coin.png)
 
-Here, the bias is unknown, so belief is allowed to flow through the "bias" node.
+Here, the bias is unknown, so belief is allowed to flow through the "bias" node (Rule 2).
 
 So both are right! They just make subtly different assumptions.
 
-### Correlation does not imply causation
+### Inferring the values of unobservable nodes
+
+The Bayesian network below represents the blood types of several members of a family. The shaded nodes indicate nodes we
+can't observe. But as long as we know how they interact with the observable nodes, we can make inferences about how the
+observable nodes interact with each other.
+
+![blood types](/assets/img/pgm/bloodtypes.png)
+
+This will be pretty fun to code up. Here's how we'll represent the genotypes and phenotypes (blood types):
+
+{% highlight scala %}
+sealed trait BloodGene
+case object A_ extends BloodGene
+case object B_ extends BloodGene
+case object O_ extends BloodGene
+
+sealed trait BloodType
+case object A extends BloodType
+case object B extends BloodType
+case object AB extends BloodType
+case object O extends BloodType
+{% endhighlight %}
+
+Yeah, I know, Scala makes this unnecessarily verbose.
+
+For the arrows linking each person's genes to their blood type, we need a function that determines ```BloodType``` given
+two ```BloodGene```s. This happens to be a deterministic function, but I'm implementing it as a stochastic function anyway.
+
+{% highlight scala %}
+def typeFromGene(g: (BloodGene, BloodGene)): Distribution[BloodType] = {
+  g match {
+    case (A_, B_) => always(AB)
+    case (B_, A_) => always(AB)
+    case (A_, _) => always(A)
+    case (_, A_) => always(A)
+    case (B_, _) => always(B)
+    case (_, B_) => always(B)
+    case (O_, O_) => always(O)
+  }
+}
+{% endhighlight %}
+
+For the arrows linking parents' genes to their children's genes, we can implement this function that chooses one
+gene from each parent at random:
+
+{% highlight scala %}
+def childFromParents(p1: (BloodGene, BloodGene),
+                     p2: (BloodGene, BloodGene)): Distribution[(BloodGene, BloodGene)] = {
+  val (p1a, p1b) = p1
+  val (p2a, p2b) = p2
+  discreteUniform(for {
+    p1 <- List(p1a, p1b)
+    p2 <- List(p2a, p2b)
+  } yield (p1, p2))
+}
+{% endhighlight %}
+
+Finally, for the people whose parents are not specified, we supply a prior on each of the 3 genes refecting their
+[prevalence in the general population](http://en.wikipedia.org/wiki/Blood_type_distribution_by_country).
+
+{% highlight scala %}
+val bloodPrior: Distribution[(BloodGene, BloodGene)] = {
+  val geneFrequencies = discrete(A_ -> 0.26, B_ -> 0.08, O_ -> 0.66)
+  for {
+    g1 <- geneFrequencies
+    g2 <- geneFrequencies
+  } yield (g1, g2)
+}
+{% endhighlight %}
+
+OK, now let's wire everything up. This should be a straightforward translation of the Bayesian network into code.
+
+{% highlight scala %}
+case class BloodTrial(lisa: BloodType, homer: BloodType, marge: BloodType,
+                      selma: BloodType, jackie: BloodType, harry: BloodType)
+
+val bloodType: Distribution[BloodTrial] = for {
+  gHomer <- bloodPrior
+  gHarry <- bloodPrior
+  gJackie <- bloodPrior
+  gSelma <- childFromParents(gHarry, gJackie)
+  gMarge <- childFromParents(gHarry, gJackie)
+  gLisa <- childFromParents(gHomer, gMarge)
+  bLisa <- typeFromGene(gLisa)
+  bHomer <- typeFromGene(gHomer)
+  bMarge <- typeFromGene(gMarge)
+  bSelma <- typeFromGene(gSelma)
+  bJackie <- typeFromGene(gJackie)
+  bHarry <- typeFromGene(gHarry)
+} yield BloodTrial(bLisa, bHomer, bMarge, bSelma, bJackie, bHarry)
+{% endhighlight %}
+
+Here it is in action:
+
+    scala> bloodType.map(_.marge).hist
+     A 40.40% ########################################
+     B 11.19% ###########
+    AB  4.25% ####
+     O 44.16% ############################################
+
+    scala> bloodType.given(_.lisa == B).map(_.marge).hist
+     A 12.65% ############
+     B 42.98% ##########################################
+    AB 13.32% #############
+     O 31.05% ###############################
+
+    scala> bloodType.given(_.lisa == AB).map(_.marge).hist
+     A 45.71% #############################################
+     B 37.40% #####################################
+    AB 16.89% ################
+
+Makes sense so far. Let's look at Lisa and her Aunt Selma:
+
+    scala> bloodType.map(_.lisa).hist
+     A 41.79% #########################################
+     B 11.24% ###########
+    AB  3.94% ###
+     O 43.03% ###########################################
+
+    scala> bloodType.given(_.selma == A).map(_.lisa).hist
+     A 52.82% ####################################################
+     B  7.47% #######
+    AB  4.90% ####
+     O 34.81% ##################################
+
+    scala> bloodType.given(_.selma == B).map(_.lisa).hist
+     A 26.84% ##########################
+     B 27.22% ###########################
+    AB  9.08% #########
+     O 36.86% ####################################
+
+Homer and Marge should not affect each other, unless Lisa's blood type is known:
+
+    scala> bloodType.map(_.homer).hist
+     A 40.34% ########################################
+     B 10.74% ##########
+    AB  4.21% ####
+     O 44.71% ############################################
+
+    scala> bloodType.given(_.marge == A).map(_.homer).hist
+     A 40.60% ########################################
+     B 10.83% ##########
+    AB  3.91% ###
+     O 44.66% ############################################
+
+    scala> bloodType.given(_.marge == A).given(_.lisa == O).map(_.homer).hist
+    A 25.64% #########################
+    B  8.49% ########
+    O 65.87% #################################################################
+
+This is Rule 3b in effect. Even Harry and Jackie are correlated if their grandchild's blood type is known:
+
+    scala> bloodType.map(_.harry).hist
+     A 40.92% ########################################
+     B 11.25% ###########
+    AB  4.30% ####
+     O 43.53% ###########################################
+
+    scala> bloodType.given(_.jackie == A).map(_.harry).hist
+     A 41.46% #########################################
+     B 11.23% ###########
+    AB  4.22% ####
+     O 43.09% ###########################################
+
+    scala> bloodType.given(_.jackie == A).given(_.lisa == AB).map(_.harry).hist
+     A 43.98% ###########################################
+     B 23.69% #######################
+    AB  9.62% #########
+     O 22.71% ######################
+
+This is pretty fun to play around with.
+
+### Causal fallacies
 
 If you observe that two events A and B are correlated, you cannot determine the direction of causality from
 observational data on these two events alone. Any of
@@ -282,8 +469,8 @@ directly affect B.
 ### Determining causality
 
 This brings up an important question: if I observe some events and their frequencies, how can I figure out which of the
-possible PGMs I could draw is the correct one? Well, the great thing about PGMs is that they _make testable predictions_.
-In particular, for a given PGM, if the independence relations that we now know how to read off of it do not bear
+possible graphs I could draw is the correct one? Well, the great thing about Bayesian networks is that they _make testable predictions_.
+In particular, for a given graph, if the independence relations that we now know how to read off of it do not bear
 themselves out empirically, we can eliminate that graph as a possibility. We can also use common sense to rule out
 graphs that make unphysical predictions, for example, the sidewalk being wet causes it to rain, and effects preceding
 their causes in general.
@@ -302,14 +489,19 @@ With 3 events that are all dependent, you can't distinguish between {%m%}A \righ
 However, you can distinguish {%m%}A \rightarrow B \rightarrow C{%em%} from {%m%}B \rightarrow A \rightarrow C{%em%},
 since in the first case, {%m%}A{%em%} and {%m%}C{%em%} are independent when you control for {%m%}B{%em%}.
 
-If you're lucky, you can narrow down the set of possible PGMs enough to be able to infer what arrows there are
+If you're lucky, you can narrow down the set of possible graphs enough to be able to infer what arrows there are
 and what direction they point in. And before you know it, you've inferred causality from mere correlation. Voilà!
+
+In practice, though, this rarely happens, especially if you have more than like 5 nodes in your graph. There are simply
+too many possible graphs to consider, and the very connected ones don't make any predictions at all that might help us
+falsify them. But if you can step in and control things a bit, you can simplify the interactions and make the problem
+tractable again.
 
 ### Controlled experiments
 
-Suppose you're trying to decide whether playing a musical instrument results in higher SAT scores. In your empirical
-observations you're careful to identify socioeconomic status as a possible confounding factor. Say you end up with
-the following 2 possible graphs:
+Suppose you're trying to decide whether playing a musical instrument results in higher SAT scores. In your
+empirical observations you're careful to identify socioeconomic status as a possible confounding factor. Say you end up
+with the following 2 possible graphs:
 
 ![SAT 1](/assets/img/pgm/sat1.png)
 
@@ -346,8 +538,8 @@ environmental factors that happen to cause both. You have the following possible
 
 You can't step in and force some people to smoke or not smoke. You'd think we might be stuck here, but fortunately some
 [extremely clever people](http://en.wikipedia.org/wiki/Judea_Pearl) have figured out how to infer causality in a
-situation like this without needing to intervene. In this example, if you are able to hypothesize some observable
-intermediate cause, such as the presence of tar in someone's lungs:
+situation like this without needing to run a controlled experiment. In this example, if you are able to hypothesize some
+observable intermediate cause, such as the presence of tar in someone's lungs:
 
 ![Smoking 2](/assets/img/pgm/smoking2.png)
 
@@ -355,16 +547,15 @@ then through a series of formal manipulations, you can arrive at a graph that, w
 
 ![Smoking 3](/assets/img/pgm/smoking3.png)
 
-The two "smokes" nodes have the same probability distribution but are independent from one another, and the one on the
-bottom is now independent of any other factors.
+The two "smokes" nodes have the same probability distribution but are independent from one another.
 
-This is great! We can now ask this graph about the probability of someone getting cancer, as if their decision to
-smoke was independent of any other factors.
+This is pretty great! Using the "smokes" node on the bottom, we can now ask this graph about the probability of someone
+getting cancer, as if their decision to smoke was independent of any other factors.
 
-Before we do that, though, we're going to need to make one more little change — as is, we're going to run into trouble
+Before we do that, though, we're going to need to make one more little change — as it is, we're going to run into trouble
 with the "???" node. Since this node represents unknown causes in our model, we're not going to be able to
-observe it or its effects on other nodes. Fortunately, due to the magic of the PGM rules, we can replace it with an
-arrow that goes directly from "smokes" to "cancer", without changing the meaning of the PGM.
+observe it or its effects on other nodes. Fortunately, due to the magic of the Bayes-Ball rules, we can replace it with an
+arrow that goes directly from "smokes" to "cancer", without changing the meaning of the graph.
 
 ![Smoking 4](/assets/img/pgm/smoking4.png)
 
@@ -403,13 +594,13 @@ def cancer(smokes: Boolean, tar: Boolean): Distribution[Boolean] = {
 Again, these numbers represent simple observed frequencies. We could actually do this in practice if we had experimental
 data. (Obviously all the numbers here are extrememly made up.)
 
-Now let's wire everything together. We'll do it two ways: the first way encoding the original PGM, and the second way
-encoding the manipulated PGM that separates "smokes" from external influences.
+Now let's wire everything together. We'll do it two ways: the first way encoding the original graph, and the second way
+encoding the manipulated graph that separates "smokes" from external influences.
 
 {% highlight scala %}
 case class SmokingTrial(smokes: Boolean, tar: Boolean, cancer: Boolean)
 
-def smoking: Distribution[SmokingTrial] = {
+def smoking1: Distribution[SmokingTrial] = {
   for {
     s <- smokes
     t <- tar(s)
@@ -417,7 +608,7 @@ def smoking: Distribution[SmokingTrial] = {
   } yield SmokingTrial(s, t, c)
 }
 
-def doSmoking: Distribution[SmokingTrial] = {
+def smoking2: Distribution[SmokingTrial] = {
   for {
     s1 <- smokes
     s2 <- smokes
@@ -429,34 +620,37 @@ def doSmoking: Distribution[SmokingTrial] = {
 
 Now let's see it in action.
 
-    scala> smoking.pr(_.cancer)
+    scala> smoking1.pr(_.cancer)
     res0: Double = 0.4723
 
-    scala> smoking.given(_.smokes).pr(_.cancer)
+    scala> smoking1.given(_.smokes).pr(_.cancer)
     res1: Double = 0.8576
 
-    scala> doSmoking.given(_.smokes).pr(_.cancer)
-    res2: Double = 0.4577
+    scala> smoking2.pr(_.cancer)
+    res2: Double = 0.4759
+
+    scala> smoking2.given(_.smokes).pr(_.cancer)
+    res3: Double = 0.4577
 
 According to these made-up numbers, smoking actually _prevents_ cancer,
 even though empirically, smokers have a higher incidence of cancer than the general population!
-
-{% math %}
-P(\text{cancer}|\text{smoker}) \gt P(\text{cancer}) \\
-P(\text{cancer}|\text{do}(\text{smoker})) \lt P(\text{cancer})
-{% endmath %}
 
 This is pretty miraculous, if you ask me. 
 
 ### Further reading
 
-[Less Wrong](http://lesswrong.com/lw/ev3/causal_diagrams_and_causal_models/) has a great introduction on using PGMs
-and the predictions they make to determine the direction of causality.
+[Less Wrong](http://lesswrong.com/lw/ev3/causal_diagrams_and_causal_models/) has a great introduction on using Bayesian
+newtworks and the predictions they make to determine the direction of causality.
+
+Here are some slides from lectures on [the Bayes-Ball algorithm](http://www.cs.nyu.edu/~roweis/csc412-2004/notes/lec2x.pdf)
+and [how a Bayesian network factors a joint probability distribution](http://www.cs.columbia.edu/~jebara/4771/notes/class14x.pdf).
 
 You should also read [Michael Nielsen's fantastic article](http://www.michaelnielsen.org/ddi/if-correlation-doesnt-imply-causation-then-what-does/)
-explaining Judea Pearl's work on the subject in, like, the nineties. This is cutting-edge stuff!
+explaining Judea Pearl's work on simulating controlled experiments in, like, the nineties. This is cutting-edge stuff!
 I bet you thought all of probability was worked out in the 1700s!
 
 I also recommend the [Coursera on probabilistic graphical models](http://en.wikipedia.org/wiki/Graphical_model).
 
-All of the code in this post is available in [this gist]().
+All of the code in this post is available in [this gist](https://gist.github.com/jliszka/8017888).
+
+Thanks to [Blake Shaw](https://twitter.com/metablake) for helping me with drafts of this post!
