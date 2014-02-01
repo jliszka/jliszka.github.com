@@ -2,32 +2,35 @@ TODO
 
 more fun examples
 more experiment analysis
-pgm
 do-notation
-beta distribution, entropy
 markov chains
 k-s test
 alias method
 stochastic calculus, ito calculus
+kalman filter (iterated PGM), conjugate priors
+beta distribution, priors, minimum entropy
+more probability: http://www.amazon.com/Problems-Probability-Mathematical-Statistics-Mathematics/dp/0387735119/ref=sr_1_2?s=books&ie=UTF8&qid=1373846207&sr=1-2&keywords=40+statistics
+
+generative models for lognormal and power law, + G-test
 
 3 ways your A/B test can go wrong
 - underlying distribution has no mean
 - independence assumption
 
 reversible computing
-not a monad tutorial
 fib in log n (F(n) * F(n-1) is a known identity)
+
 computational algebra
+polynomial tetris?
+poly in haskell
 complex/quaternion/dual tower - other combinations?
 automatic symbolic differentiation
-kalman filter (iterated PGM), conjugate priors
-poly in haskell
+
+linear logic https://secure.flickr.com/photos/8243148@N08/sets/72157635668011986
+Hnefatafl player https://medium.com/war-is-boring/cef088ae4e2d
 
 insertion sort => popular
 code: overflow-y: scroll
-
-more probability: http://www.amazon.com/Problems-Probability-Mathematical-Statistics-Mathematics/dp/0387735119/ref=sr_1_2?s=books&ie=UTF8&qid=1373846207&sr=1-2&keywords=40+statistics
-
 
 
 val harmonic: Stream[Double] = Stream.from(1).map(n => 1.0 / n)
