@@ -176,7 +176,7 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))</code></pre>
 </code></pre></div>
 <p>Now here&#8217;s <code>eval</code> as a data flow diagram. I&#8217;ve threaded through <code>x</code> as a &#8220;context&#8221; variable because it isn&#8217;t an input to <code>eval</code> per se.</p>
 
-<p><img src='/assets/img/poly/eval.png' alt='eval' /></p>
+<p><img alt='eval' src='/assets/img/poly/eval.png' /></p>
 
 <p>Following the arrows backwards from the outputs to the inputs we can write the following code:</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>unevalPoly</span><span class='p'>(</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>y</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>Int</span><span class='p'>,</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>Int</span><span class='p'>])</span> <span class='k'>=</span> <span class='p'>{</span>

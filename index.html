@@ -173,6 +173,24 @@
 <div class='post-content-truncate'>
 
   
+    <h2 class='title'>Good Tech Lead, Bad Tech Lead</h2>
+    <p>A brief guide to tech leadership at Foursquare, inspired by Ben Horowitz’s <a href='http://benhorowitz.files.wordpress.com/2010/05/good-product-manager.pdf'>Good Product Manager, Bad Product Manager</a>. Cross-posted from <a href='https://medium.com/p/948b2b806d86'>Medium</a>.</p>
+
+<h3 id='teamwork'>Teamwork</h3>
+
+<p>Good tech leads act as a member of the team, and consider themselves successful when the team is successful. They take their share of unsexy grungy work and clear roadblocks so their team can operate at 100%. They work to broaden the technical capabilities of their team, making sure knowledge of critical systems is not concentrated in one or two minds.</p>
+
+<p>Bad tech leads take the high-profile tasks for themselves and are motivated by being able to take credit for doing the work. They optimize locally, keeping team members working on projects that benefit the team at the expense of the engineering organization at large.</p>
+
+<h3 id='technical_vision'>Technical vision</h3>
+
+<p>Good tech leads have an overall vision for the technical direction of the product and make sure the team understands it. They delegate feature areas to other team members and let them own their decisions. They recognize that their team members are smart, trust them, and rely on them to handle significant pieces of the project.</p>
+
+<p>Bad tech leads resist explaining or clarifying the technical direction and dictate decisions instead. They keep critical institutional knowledge in their heads, failing to multiply their effectiveness by creating and disseminating helpful documentation.</p>
+
+    <a href='/2014/01/30/good-tech-lead-bad-tech-lead.html'>Read more</a>
+    <hr />
+  
 
   
     <h2 class='title'>Bayesian networks and causality</h2>
@@ -180,15 +198,15 @@
 
 <p>The tool we&#8217;re going to use to do this is called a <a href='http://en.wikipedia.org/wiki/Graphical_model'>probabilistic graphical model</a>. A PGM is a graph that encodes the causal relationships between events. For example, you might construct this graph to model a chain of causes resulting in someone getting a college scholarship:</p>
 
-<p><img src='/assets/img/pgm/sat.png' alt='A -&gt; B -&gt; C' /></p>
+<p><img alt='A -&gt; B -&gt; C' src='/assets/img/pgm/sat.png' /></p>
 
 <p>Or the relationship between diseases and their symptoms:</p>
 
-<p><img src='/assets/img/pgm/flu.png' alt='A &lt;- B -&gt; C' /></p>
+<p><img alt='A &lt;- B -&gt; C' src='/assets/img/pgm/flu.png' /></p>
 
 <p>Or the events surrounding a traffic jam:</p>
 
-<p><img src='/assets/img/pgm/trafficjam.png' alt='A -&gt; B &lt;- C -&gt; D' /></p>
+<p><img alt='A -&gt; B &lt;- C -&gt; D' src='/assets/img/pgm/trafficjam.png' /></p>
 
 <p>Each node represents a random variable, and the arrows represent dependence relations between them. You can think of a node with incoming arrows as a probability distribution parameterized on some set of inputs; in other words, a function from some set of inputs to a probability distribution.</p>
 
