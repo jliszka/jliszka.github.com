@@ -12,7 +12,6 @@ A brief guide to tech leadership at Foursquare, inspired by Ben Horowitz’s
 [Good Product Manager, Bad Product Manager](http://benhorowitz.files.wordpress.com/2010/05/good-product-manager.pdf).
 Cross-posted from [Medium](https://medium.com/p/948b2b806d86).
 
-
 ### Teamwork
 
 Good tech leads act as a member of the team, and consider themselves successful when the team is successful. They take
@@ -32,6 +31,8 @@ members are smart, trust them, and rely on them to handle significant pieces of 
 Bad tech leads resist explaining or clarifying the technical direction and dictate decisions instead. They keep critical
 institutional knowledge in their heads, failing to multiply their effectiveness by creating and disseminating helpful
 documentation.
+
+<!-- more -->
 
 ### Discussion and debate
 
