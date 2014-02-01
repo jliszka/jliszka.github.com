@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Lies, damned lies, and <i>p</i>-values</title>
+    <meta name="description" content="">
+    <meta name="author" content="Jason Liszka">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/themes/twitter/bootstrap/css/bootstrap.2.2.2.min.css" rel="stylesheet">
+    <link href="/assets/themes/twitter/css/style.css?body=1&amp;v=2" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/twitter/css/pygment.css" rel="stylesheet" type="text/css" media="all">
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+
+    <!-- atom & rss feed -->
+    <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-narrow">
+          <div class="row-fluid">
+            <div class="span9 offset1">
+              <a class="brand" href="/">A Gentleman and a Scala</a>
+              <ul class="nav">
+                
+                
+                
+
+
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+
+
+
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-narrow">
+
+      <div class="content">
+        
+<div class="row-fluid">
+  <div class="span9 offset1 post-content post-spacer"></div>
+</div>
+<div class="row-fluid post-full">
+  <div class="span9 offset1 post-content">
+    <div class="page-header">
+      <h1>Lies, damned lies, and <i>p</i>-values </h1>
+    </div>
+    <div class="date">
+      <span>10 January 2014</span>
+    </div>
+    <div class="content">
+      <p>degrees of freedom - searching for signficance adds degrees of freedom</p>
+
+<p>multiple experiments at once: genetics testing. just as cheap to run 1000 experiments as 1 experiment. what is the probability you will find a significant result at random?</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>case</span> <span class='k'>class</span><span class='kd'> </span><span class='nc'>Patient</span><span class='p'>(</span><span class='n'>hasDisease</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='p'>,</span> <span class='n'>genes</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>Boolean</span><span class='p'>])</span>
+
+<span class='k'>def</span> <span class='nf'>genes</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>uniform</span><span class='p'>.</span><span class='n'>repeat</span><span class='p'>(</span><span class='n'>n</span><span class='p'>)</span>
+<span class='k'>def</span> <span class='nf'>patient</span><span class='p'>(</span><span class='n'>diseasePrevalence</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>,</span> <span class='n'>genePrevalence</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>Double</span><span class='p'>])</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='k'>for</span> <span class='p'>{</span>
+    <span class='n'>hasDisease</span> <span class='k'>&lt;-</span> <span class='n'>tf</span><span class='p'>(</span><span class='n'>diseasePrevalence</span><span class='p'>)</span>
+    <span class='n'>genes</span> <span class='k'>&lt;-</span> <span class='n'>sequence</span><span class='p'>(</span><span class='n'>genePrevalence</span><span class='p'>.</span><span class='n'>map</span><span class='p'>(</span><span class='n'>tf</span><span class='p'>))</span>
+  <span class='p'>}</span> <span class='k'>yield</span> <span class='nc'>Patient</span><span class='p'>(</span><span class='n'>hasDisease</span><span class='p'>,</span> <span class='n'>genes</span><span class='p'>)</span>
+<span class='p'>}</span>
+
+<span class='k'>def</span> <span class='nf'>corr</span><span class='p'>(</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[(</span><span class='kt'>Boolean</span>, <span class='kt'>Boolean</span><span class='p'>)])</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='k'>val</span> <span class='n'>n</span> <span class='k'>=</span> <span class='n'>xs</span><span class='p'>.</span><span class='n'>size</span>
+  <span class='k'>val</span> <span class='n'>pA</span> <span class='k'>=</span> <span class='n'>xs</span><span class='p'>.</span><span class='n'>count</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>_1</span><span class='p'>).</span><span class='n'>toDouble</span> <span class='o'>/</span> <span class='n'>n</span>
+  <span class='k'>val</span> <span class='n'>pB</span> <span class='k'>=</span> <span class='n'>xs</span><span class='p'>.</span><span class='n'>count</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>_2</span><span class='p'>).</span><span class='n'>toDouble</span> <span class='o'>/</span> <span class='n'>n</span>
+  <span class='k'>val</span> <span class='n'>stdevA</span> <span class='k'>=</span> <span class='n'>math</span><span class='p'>.</span><span class='n'>sqrt</span><span class='p'>(</span><span class='n'>pA</span> <span class='o'>*</span> <span class='p'>(</span><span class='mi'>1</span> <span class='o'>-</span> <span class='n'>pA</span><span class='p'>))</span>
+  <span class='k'>val</span> <span class='n'>stdevB</span> <span class='k'>=</span> <span class='n'>math</span><span class='p'>.</span><span class='n'>sqrt</span><span class='p'>(</span><span class='n'>pB</span> <span class='o'>*</span> <span class='p'>(</span><span class='mi'>1</span> <span class='o'>-</span> <span class='n'>pB</span><span class='p'>))</span>
+  <span class='k'>def</span> <span class='nf'>toInt</span><span class='p'>(</span><span class='n'>b</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='p'>)</span> <span class='k'>=</span> <span class='k'>if</span> <span class='p'>(</span><span class='n'>b</span><span class='p'>)</span> <span class='mi'>1</span> <span class='k'>else</span> <span class='mi'>0</span>
+  <span class='k'>val</span> <span class='n'>cov</span> <span class='k'>=</span> <span class='n'>xs</span><span class='p'>.</span><span class='n'>map</span><span class='p'>{</span> <span class='k'>case</span> <span class='p'>(</span><span class='n'>a</span><span class='p'>,</span> <span class='n'>b</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='p'>(</span><span class='n'>toInt</span><span class='p'>(</span><span class='n'>a</span><span class='p'>)</span> <span class='o'>-</span> <span class='n'>pA</span><span class='p'>)</span> <span class='o'>*</span> <span class='p'>(</span><span class='n'>toInt</span><span class='p'>(</span><span class='n'>b</span><span class='p'>)</span> <span class='o'>-</span> <span class='n'>pB</span><span class='p'>)}.</span><span class='n'>sum</span> <span class='o'>/</span> <span class='n'>n</span>
+  <span class='n'>cov</span> <span class='o'>/</span> <span class='p'>(</span><span class='n'>stdevA</span> <span class='o'>*</span> <span class='n'>stdevB</span><span class='p'>)</span>
+<span class='p'>}</span>
+
+<span class='k'>def</span> <span class='nf'>experiment</span><span class='p'>(</span><span class='n'>nGenes</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>nPatients</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='k'>val</span> <span class='n'>diseasePrevalence</span> <span class='k'>=</span> <span class='mf'>0.5</span>
+  <span class='k'>for</span> <span class='p'>{</span>
+    <span class='n'>genePrevalence</span> <span class='k'>&lt;-</span> <span class='n'>genes</span><span class='p'>(</span><span class='n'>nGenes</span><span class='p'>)</span>
+    <span class='n'>patients</span> <span class='k'>&lt;-</span> <span class='n'>sequence</span><span class='p'>(</span><span class='nc'>List</span><span class='p'>.</span><span class='n'>fill</span><span class='p'>(</span><span class='n'>nPatients</span><span class='p'>)(</span><span class='n'>patient</span><span class='p'>(</span><span class='n'>diseasePrevalence</span><span class='p'>,</span> <span class='n'>genePrevalence</span><span class='p'>)))</span>
+  <span class='p'>}</span> <span class='k'>yield</span> <span class='n'>patients</span>
+<span class='p'>}</span>
+
+<span class='k'>def</span> <span class='nf'>analyze</span><span class='p'>(</span><span class='n'>patients</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>Patient</span><span class='p'>])</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='k'>val</span> <span class='n'>nGenes</span> <span class='k'>=</span> <span class='n'>patients</span><span class='p'>.</span><span class='n'>head</span><span class='p'>.</span><span class='n'>genes</span><span class='p'>.</span><span class='n'>size</span>
+  <span class='p'>(</span><span class='mi'>0</span> <span class='n'>to</span> <span class='n'>nGenes</span><span class='o'>-</span><span class='mi'>1</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>g</span> <span class='k'>=&gt;</span> <span class='p'>{</span>
+    <span class='n'>corr</span><span class='p'>(</span><span class='n'>patients</span><span class='p'>.</span><span class='n'>map</span><span class='p'>(</span><span class='n'>p</span> <span class='k'>=&gt;</span> <span class='p'>(</span><span class='n'>p</span><span class='p'>.</span><span class='n'>hasDisease</span><span class='p'>,</span> <span class='n'>p</span><span class='p'>.</span><span class='n'>genes</span><span class='p'>(</span><span class='n'>g</span><span class='p'>))))</span>
+  <span class='p'>}).</span><span class='n'>max</span>
+<span class='p'>}</span>
+</code></pre></div>
+<p>diminishing effect size publication bias + meta-analyses bayesian hypothesis testing: where do priors come from? is 50/50 reasonable? if it hasn&#8217;t already been discovered, it&#8217;s less likely to be true (prior) all the true and obvious facts have been discovered already. new hypotheses are less likely to be true.</p>
+
+<p>http://pss.sagepub.com/content/early/2013/11/07/0956797613504966.full.pdf</p>
+
+<p>http://www.newyorker.com/reporting/2010/12/13/101213fa_fact_lehrer</p>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>meanstdev</span><span class='p'>(</span><span class='n'>xs</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>Double</span><span class='p'>])</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>Double</span><span class='p'>,</span> <span class='kt'>Double</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='k'>val</span> <span class='n'>n</span> <span class='k'>=</span> <span class='n'>xs</span><span class='p'>.</span><span class='n'>size</span>
+  <span class='k'>val</span> <span class='n'>mean</span> <span class='k'>=</span> <span class='n'>xs</span><span class='p'>.</span><span class='n'>sum</span> <span class='o'>/</span> <span class='n'>n</span>
+  <span class='k'>val</span> <span class='n'>stdev</span> <span class='k'>=</span> <span class='n'>math</span><span class='p'>.</span><span class='n'>sqrt</span><span class='p'>(</span><span class='n'>xs</span><span class='p'>.</span><span class='n'>map</span><span class='p'>(</span><span class='k'>_</span> <span class='o'>-</span> <span class='n'>mean</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>x</span> <span class='k'>=&gt;</span> <span class='n'>x</span><span class='o'>*</span><span class='n'>x</span><span class='p'>).</span><span class='n'>sum</span> <span class='o'>/</span> <span class='n'>n</span><span class='p'>)</span>
+  <span class='p'>(</span><span class='n'>mean</span><span class='p'>,</span> <span class='n'>stdev</span><span class='p'>)</span>
+<span class='p'>}</span>
+
+<span class='k'>val</span> <span class='n'>d1</span> <span class='k'>=</span> <span class='n'>normal</span> <span class='o'>*</span> <span class='mi'>20</span>
+<span class='k'>val</span> <span class='n'>d2</span> <span class='k'>=</span> <span class='n'>d1</span> <span class='o'>+</span> <span class='mi'>10</span>
+
+<span class='k'>def</span> <span class='nf'>d</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
+  <span class='k'>for</span> <span class='p'>{</span>
+    <span class='n'>x1s</span> <span class='k'>&lt;-</span> <span class='n'>d1</span><span class='p'>.</span><span class='n'>repeat</span><span class='p'>(</span><span class='n'>n</span><span class='p'>)</span>
+    <span class='n'>x2s</span> <span class='k'>&lt;-</span> <span class='n'>d2</span><span class='p'>.</span><span class='n'>repeat</span><span class='p'>(</span><span class='n'>n</span><span class='p'>)</span>
+  <span class='p'>}</span> <span class='k'>yield</span> <span class='p'>{</span>
+    <span class='k'>val</span> <span class='p'>(</span><span class='n'>m1</span><span class='p'>,</span> <span class='n'>s1</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>meanstdev</span><span class='p'>(</span><span class='n'>x1s</span><span class='p'>)</span>
+    <span class='k'>val</span> <span class='p'>(</span><span class='n'>m2</span><span class='p'>,</span> <span class='n'>s2</span><span class='p'>)</span> <span class='k'>=</span> <span class='n'>meanstdev</span><span class='p'>(</span><span class='n'>x2s</span><span class='p'>)</span>
+    <span class='k'>val</span> <span class='n'>diff</span> <span class='k'>=</span> <span class='n'>m2</span> <span class='o'>-</span> <span class='n'>m1</span>
+    <span class='k'>val</span> <span class='n'>stderr</span> <span class='k'>=</span> <span class='n'>math</span><span class='p'>.</span><span class='n'>sqrt</span><span class='p'>((</span><span class='n'>s1</span><span class='o'>*</span><span class='n'>s1</span> <span class='o'>+</span> <span class='n'>s2</span><span class='o'>*</span><span class='n'>s2</span><span class='p'>)</span> <span class='o'>/</span> <span class='n'>n</span><span class='p'>)</span>
+    <span class='k'>val</span> <span class='n'>p</span> <span class='k'>=</span> <span class='p'>(</span><span class='n'>normal</span> <span class='o'>*</span> <span class='n'>stderr</span><span class='p'>).</span><span class='n'>pr</span><span class='p'>(</span><span class='k'>_</span> <span class='o'>&gt;</span> <span class='n'>diff</span><span class='p'>)</span>
+    <span class='p'>(</span><span class='n'>p</span><span class='p'>,</span> <span class='n'>diff</span> <span class='o'>-</span> <span class='mf'>1.96</span><span class='o'>*</span><span class='n'>stderr</span><span class='p'>,</span> <span class='n'>diff</span> <span class='o'>+</span> <span class='mf'>1.96</span><span class='o'>*</span><span class='n'>stderr</span><span class='p'>)</span>
+  <span class='p'>}</span>
+<span class='p'>}</span>
+</code></pre></div>
+    </div>
+
+    
+
+  
+
+
+  <div style="float: right; margin-top: 5px">
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/lies-damned-lies-and-p-values.html" data-text="Lies, damned lies, and <i>p</i>-values" data-via="jliszka">Tweet</a>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+</div>
+
+
+
+
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-tags"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="/tags.html#probability-ref">probability <span>8</span></a></li>
+    
+  
+
+
+
+    </ul>
+    
+    <div style="clear: both"></div>
+
+    <hr>
+    <div class="navigation">
+    
+    
+      <div style="clear: both"></div>
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'jliszka'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+
+  <div class="span2 sidebar">
+    <a href="/"><div id="photo"></div></a>
+    <div id="bio">
+      <b>Jason Liszka</b><br/>
+      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+    </div>
+    <h4>Popular posts</h4>
+    <ul>
+      <li><a href="/2013/10/01/how-traffic-actually-works.html">How traffic actually works</a></li>
+      <li><a href="/2013/08/12/a-frequentist-approach-to-probability.html">A frequentist approach to probability</a></li>
+      <li><a href="/2013/10/24/exact-numeric-nth-derivatives.html">Exact numeric nth derivatives</a></li>
+      <li><a href="/2013/10/31/infinite-lazy-polynomials.html">Infinite lazy polynomials</a></li>
+    </ul>
+
+    <h4>Recent posts</h4>
+    <ul>
+      
+        <li><a href="/2014/01/30/good-tech-lead-bad-tech-lead.html">Good Tech Lead, Bad Tech Lead</a></li>
+      
+        <li><a href="/2013/12/18/bayesian-networks-and-causality.html">Bayesian networks and causality</a></li>
+      
+        <li><a href="/2013/11/22/unlikely-things-happen-all-the-time.html">Unlikely things happen all the time</a></li>
+      
+        <li><a href="/2013/11/14/the-foursquare-theorem.html">The Foursquare Theorem</a></li>
+      
+        <li><a href="/2013/11/07/effective-peer-reviews.html">Painless, effective peer reviews</a></li>
+      
+    </ul>
+
+    <a href="https://twitter.com/jliszka" class="twitter-follow-button" data-show-count="false" data-size="large" data-show-screen-name="false">Follow @jliszka</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+  </div>
+</div>
+
+
+      </div>
+      <hr>
+      <footer>
+        <p>&copy; 2014 Jason Liszka
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </footer>
+
+    </div>
+
+    
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-42567355-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+  </body>
+</html>
+

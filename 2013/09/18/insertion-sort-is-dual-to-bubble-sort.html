@@ -93,6 +93,14 @@
       
     
   
+    
+      
+    
+  
+    
+      
+    
+  
 
 
 
@@ -152,7 +160,7 @@
 
 <p>It&#8217;s not obvious from the code that these functions are backwards versions of each other, but look at their data flow diagrams:</p>
 <!-- more -->
-<p><img alt='main function data flow' src='/assets/img/main.png' /></p>
+<p><img src='/assets/img/main.png' alt='main function data flow' /></p>
 
 <p>They are exactly the same, except with the arrows going the other way.</p>
 
@@ -189,7 +197,7 @@
 
 <p>The data flow diagrams of these functions make it totally clear that they are the same function, only one has the arrows reversed and the boxes running backwards:</p>
 
-<p><img alt='helper function data flow' src='/assets/img/helper.png' /></p>
+<p><img src='/assets/img/helper.png' alt='helper function data flow' /></p>
 
 <p>The only thing left is this <code>sort</code> method, which takes 2 arguments and returns them in sorted order. Which I guess is the same if you run it backwards?</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>sort</span><span class='p'>[</span><span class='kt'>A</span> <span class='k'>&lt;:</span> <span class='kt'>Ordered</span><span class='p'>[</span><span class='kt'>A</span><span class='p'>]](</span><span class='n'>a</span><span class='k'>:</span> <span class='kt'>A</span><span class='p'>,</span> <span class='n'>b</span><span class='k'>:</span> <span class='kt'>A</span><span class='p'>)</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>A</span><span class='p'>,</span> <span class='kt'>A</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
@@ -323,6 +331,8 @@
     <h4>Recent posts</h4>
     <ul>
       
+        <li><a href="/2014/01/30/good-tech-lead-bad-tech-lead.html">Good Tech Lead, Bad Tech Lead</a></li>
+      
         <li><a href="/2013/12/18/bayesian-networks-and-causality.html">Bayesian networks and causality</a></li>
       
         <li><a href="/2013/11/22/unlikely-things-happen-all-the-time.html">Unlikely things happen all the time</a></li>
@@ -330,8 +340,6 @@
         <li><a href="/2013/11/14/the-foursquare-theorem.html">The Foursquare Theorem</a></li>
       
         <li><a href="/2013/11/07/effective-peer-reviews.html">Painless, effective peer reviews</a></li>
-      
-        <li><a href="/2013/10/31/infinite-lazy-polynomials.html">Infinite lazy polynomials</a></li>
       
     </ul>
 
@@ -345,7 +353,7 @@
       </div>
       <hr>
       <footer>
-        <p>&copy; 2013 Jason Liszka
+        <p>&copy; 2014 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

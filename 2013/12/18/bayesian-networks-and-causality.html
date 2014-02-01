@@ -93,6 +93,14 @@
       
     
   
+    
+      
+    
+  
+    
+      
+    
+  
 
 
 
@@ -123,15 +131,15 @@
 
 <p>The tool we&#8217;re going to use to do this is called a <a href='http://en.wikipedia.org/wiki/Graphical_model'>probabilistic graphical model</a>. A PGM is a graph that encodes the causal relationships between events. For example, you might construct this graph to model a chain of causes resulting in someone getting a college scholarship:</p>
 
-<p><img alt='A -&gt; B -&gt; C' src='/assets/img/pgm/sat.png' /></p>
+<p><img src='/assets/img/pgm/sat.png' alt='A -&gt; B -&gt; C' /></p>
 
 <p>Or the relationship between diseases and their symptoms:</p>
 
-<p><img alt='A &lt;- B -&gt; C' src='/assets/img/pgm/flu.png' /></p>
+<p><img src='/assets/img/pgm/flu.png' alt='A &lt;- B -&gt; C' /></p>
 
 <p>Or the events surrounding a traffic jam:</p>
 
-<p><img alt='A -&gt; B &lt;- C -&gt; D' src='/assets/img/pgm/trafficjam.png' /></p>
+<p><img src='/assets/img/pgm/trafficjam.png' alt='A -&gt; B &lt;- C -&gt; D' /></p>
 
 <p>Each node represents a random variable, and the arrows represent dependence relations between them. You can think of a node with incoming arrows as a probability distribution parameterized on some set of inputs; in other words, a function from some set of inputs to a probability distribution.</p>
 
@@ -235,7 +243,7 @@ res4: Double = 0.1807</code></pre>
 
 <p><strong>Rule 0.</strong> In the graph below, A and B can be correlated:</p>
 
-<p><img alt='A -&gt; B' src='/assets/img/pgm/ab.png' /></p>
+<p><img src='/assets/img/pgm/ab.png' alt='A -&gt; B' /></p>
 
 <p>It&#8217;s almost too simple to mention, but knowing the value of A will change your belief about the value of B.</p>
 
@@ -243,7 +251,7 @@ res4: Double = 0.1807</code></pre>
 
 <p><strong>Rule 1.</strong> In the graph below, A and B can be correlated:</p>
 
-<p><img alt='A -&gt; C -&gt; B' src='/assets/img/pgm/linear.png' /></p>
+<p><img src='/assets/img/pgm/linear.png' alt='A -&gt; C -&gt; B' /></p>
 
 <p>Knowing the value of A will change your belief about the value of B. Furthermore, knowing the value of B will also change your belief about the value of A. Intuitively, if someone got a scholarship (B), that raises your belief about whether they studied for their SATs (A), even if there&#8217;s an intermediate cause in the mix, say a high SAT score (C).</p>
 
@@ -251,7 +259,7 @@ res4: Double = 0.1807</code></pre>
 
 <p><strong>Rule 2.</strong> In the graph below, A and B can be correlated:</p>
 
-<p><img alt='A &lt;- C -&gt; B' src='/assets/img/pgm/fork.png' /></p>
+<p><img src='/assets/img/pgm/fork.png' alt='A &lt;- C -&gt; B' /></p>
 
 <p>Knowing the value of A influences your belief about the value of C, which directly affects the value of B. For example, knowing that someone has a fever (A) increases your belief that they have the flu (C), which in turn increases your belief that they have a sore throat (B).</p>
 
@@ -259,7 +267,7 @@ res4: Double = 0.1807</code></pre>
 
 <p><strong>Rule 3.</strong> In the graph below, A and B must be independent:</p>
 
-<p><img alt='A -&gt; C &lt;- B' src='/assets/img/pgm/join.png' /></p>
+<p><img src='/assets/img/pgm/join.png' alt='A -&gt; C &lt;- B' /></p>
 
 <p>To give you the intuition, whether the weather is bad (A) should have no influence over whether it&#8217;s currently rush hour (B), even though they both cause traffic jams (C).</p>
 
@@ -269,25 +277,25 @@ res4: Double = 0.1807</code></pre>
 
 <p><strong>Rule 1a.</strong> In the graph below, if C is known, A and B must be independent.</p>
 
-<p><img alt='A -&gt; C -&gt; B' src='/assets/img/pgm/linear-c.png' /></p>
+<p><img src='/assets/img/pgm/linear-c.png' alt='A -&gt; C -&gt; B' /></p>
 
 <p>Knowing C &#8220;blocks&#8221; belief from propagating from A to B. If you know that someone got a high SAT score (C), whether they studied for their SATs (A) doesn&#8217;t tell you anything new about whether they got a scholarship (B). In the reverse case, if you know that someone got a high SAT score, then knowing whether or not they got a scholarship should not change your belief about whether or not they studied.</p>
 
 <p><strong>Rule 2a.</strong> In the graph below, if C is known, A and B must be independent.</p>
 
-<p><img alt='A &lt;- C -&gt; B' src='/assets/img/pgm/fork-c.png' /></p>
+<p><img src='/assets/img/pgm/fork-c.png' alt='A &lt;- C -&gt; B' /></p>
 
 <p>Again, knowledge of the middle node blocks belief from propagating through it. If you know someone has the flu (C), knowing that they have a sore throat (A) does not affect your belief that they have a fever (B); knowing that they have the flu already tells you everything you need to know about their body temperature.</p>
 
 <p><strong>Rule 3a.</strong> In the graph below, if C is known, A and B can be correlated.</p>
 
-<p><img alt='A -&gt; C &lt;- B' src='/assets/img/pgm/join-c.png' /></p>
+<p><img src='/assets/img/pgm/join-c.png' alt='A -&gt; C &lt;- B' /></p>
 
 <p>This case is interesting—normally, belief would not be able to propagate through node C like this, but if its value is known, the node becomes &#8220;activated&#8221; and belief can flow through. The intuition here is that if I already know that there&#8217;s a traffic jam (C), then knowing that it&#8217;s rush hour (A) should <em>decrease</em> my belief that the weather is bad (B). Rush hour &#8220;explains away&#8221; the traffic jam, making bad weather seem less likely.</p>
 
 <p><strong>Rule 3b.</strong> In the graph below, if D is known, A and B can be correlated.</p>
 
-<p><img alt='A -&gt; CD &lt;- B' src='/assets/img/pgm/join-cd.png' /></p>
+<p><img src='/assets/img/pgm/join-cd.png' alt='A -&gt; CD &lt;- B' /></p>
 
 <p>This rule is a variation on Rule 3a. If we know D, then we also know something about C, which partially activates C and allows belief to flow through it from A to B. For example, if I observe someone wearing a college sweatshirt (D), that increases my belief that they went to college (C). If I find out that they got a high SAT score (A), that can decrease my belief that they played sports (B).</p>
 
@@ -305,13 +313,13 @@ res4: Double = 0.1807</code></pre>
 
 <p>Here&#8217;s the first case:</p>
 
-<p><img alt='coin bias known' src='/assets/img/pgm/coin-b.png' /></p>
+<p><img src='/assets/img/pgm/coin-b.png' alt='coin bias known' /></p>
 
 <p>The bias is known (50%), so belief is blocked from propagating between the individual flips (Rule 2a).</p>
 
 <p>Here&#8217;s the second case:</p>
 
-<p><img alt='coin bias unknown' src='/assets/img/pgm/coin.png' /></p>
+<p><img src='/assets/img/pgm/coin.png' alt='coin bias unknown' /></p>
 
 <p>Here, the bias is unknown, so belief is allowed to flow through the &#8220;bias&#8221; node (Rule 2).</p>
 
@@ -321,7 +329,7 @@ res4: Double = 0.1807</code></pre>
 
 <p>The Bayesian network below represents the blood types of several members of a family. The shaded nodes indicate nodes we can&#8217;t observe. But as long as we know how they interact with the observable nodes, we can make inferences about how the observable nodes interact with each other.</p>
 
-<p><img alt='blood types' src='/assets/img/pgm/bloodtypes.png' /></p>
+<p><img src='/assets/img/pgm/bloodtypes.png' alt='blood types' /></p>
 
 <p>This will be pretty fun to code up. Here&#8217;s how we&#8217;ll represent the genotypes and phenotypes (blood types):</p>
 <div class='highlight'><pre><code class='scala'><span class='k'>sealed</span> <span class='k'>trait</span><span class='kd'> </span><span class='nc'>BloodGene</span>
@@ -471,25 +479,25 @@ AB 17.26% #################</code></pre>
 
 <p>If you observe that two events A and B are correlated, you cannot determine the direction of causality from observational data on these two events alone. Any of</p>
 
-<p><img alt='A -&gt; B' src='/assets/img/pgm/ab.png' /></p>
+<p><img src='/assets/img/pgm/ab.png' alt='A -&gt; B' /></p>
 
 <p>(&#8220;A causes B&#8221;) or</p>
 
-<p><img alt='A &lt;- B' src='/assets/img/pgm/ba.png' /></p>
+<p><img src='/assets/img/pgm/ba.png' alt='A &lt;- B' /></p>
 
 <p>(&#8220;B causes A&#8221;) or</p>
 
-<p><img alt='A &lt;- C -&gt; B' src='/assets/img/pgm/fork.png' /></p>
+<p><img src='/assets/img/pgm/fork.png' alt='A &lt;- C -&gt; B' /></p>
 
 <p>(&#8220;A and B have a common cause&#8221;) could explain the observed correlation. But there&#8217;s also this possibility:</p>
 
-<p><img alt='A -&gt; C &lt;- B' src='/assets/img/pgm/join-c.png' /></p>
+<p><img src='/assets/img/pgm/join-c.png' alt='A -&gt; C &lt;- B' /></p>
 
 <p>where C is known. This is just a biased sample—you might conclude that academic ability interferes with athletic ability after observing that they are inversely correlated, until you realize you only surveyed college students, and that academic and athletic scholorships are quite common. But it&#8217;s neat that graphical models unify these causal fallacies.</p>
 
 <p>To go further, you could come up with crazy causal graphs that predict a correlation between A and B, but where the causal link between A and B is non-trivial. For example, the graph below allows A and B to be correlated, but neither directly causes the other, they don&#8217;t have a common cause, and although there is a biased sample, it appears to only directly affect B.</p>
 
-<p><img alt='A &lt;- C -&gt; D -&gt; E &lt;- B' src='/assets/img/pgm/abcde.png' /></p>
+<p><img src='/assets/img/pgm/abcde.png' alt='A &lt;- C -&gt; D -&gt; E &lt;- B' /></p>
 
 <h3 id='determining_causality'>Determining causality</h3>
 
@@ -497,7 +505,7 @@ AB 17.26% #################</code></pre>
 
 <p>To take an example, the graph</p>
 
-<p><img alt='A -&gt; C &lt;- B' src='/assets/img/pgm/join.png' /></p>
+<p><img src='/assets/img/pgm/join.png' alt='A -&gt; C &lt;- B' /></p>
 
 <p>predicts that A and B are independent, unless C is known. If we observe that, say, <script type='math/tex'>P(A=\text{true}|B=\text{true}) > P(A=\text{true})</script>, then we can rule out that graph as a possible model.</p>
 
@@ -511,35 +519,35 @@ AB 17.26% #################</code></pre>
 
 <p>Suppose you&#8217;re trying to decide whether playing a musical instrument results in higher SAT scores. In your empirical observations you&#8217;re careful to identify socioeconomic status as a possible confounding factor. Say you end up with the following 2 possible graphs:</p>
 
-<p><img alt='SAT 1' src='/assets/img/pgm/sat1.png' /></p>
+<p><img src='/assets/img/pgm/sat1.png' alt='SAT 1' /></p>
 
 <p>You want to know whether the arrow from &#8220;plays music&#8221; to &#8220;high SAT score&#8221; exists or not. One thing you can try is to control for socioeconomic status:</p>
 
-<p><img alt='SAT 2' src='/assets/img/pgm/sat2.png' /></p>
+<p><img src='/assets/img/pgm/sat2.png' alt='SAT 2' /></p>
 
 <p>This prevents belief from propagating through the &#8220;high SES&#8221; node. If &#8220;plays music&#8221; and &#8220;high SAT score&#8221; are still correlated after controlling for socioeconomic status, then you can eliminate the graph on the right and conclude that there is a causal link between the two events. (Technically we don&#8217;t know which way the arrow should point, but that&#8217;s where common sense steps in.) If &#8220;plays music&#8221; and &#8220;high SAT score&#8221; are independent when controlling for socioeconomic status, then you have to reject the graph on the left and accept that there is no direct causal link between the events.</p>
 
 <p>Socioeconomic status might not be the only confounding factor, though. There are a whole host of possible confounding factors, and we can&#8217;t rule out the possibility that we missed one. So what we really have is this:</p>
 
-<p><img alt='SAT 3' src='/assets/img/pgm/sat3.png' /></p>
+<p><img src='/assets/img/pgm/sat3.png' alt='SAT 3' /></p>
 
 <p>You can&#8217;t control for things you can&#8217;t observe. So in this case you have to step in and rewire things a bit:</p>
 
-<p><img alt='SAT 4' src='/assets/img/pgm/sat4.png' /></p>
+<p><img src='/assets/img/pgm/sat4.png' alt='SAT 4' /></p>
 
 <p>By forcing &#8220;plays music&#8221; to be determined randomly and independent of anything else, you break the causal link between it and any other confounding factors. Then it&#8217;s easy to determine whether the arrow between &#8220;plays music&#8221; and &#8220;high SAT score&#8221; really exists.</p>
 
 <p>But often this is not practical. In an example cribbed from <a href='http://www.michaelnielsen.org/ddi/if-correlation-doesnt-imply-causation-then-what-does/'>this excellent article on the subject</a>, suppose you are trying to determine whether smoking causes lung cancer directly, or if instead there are some environmental factors that happen to cause both. You have the following possible graphs:</p>
 
-<p><img alt='Smoking 1' src='/assets/img/pgm/smoking1.png' /></p>
+<p><img src='/assets/img/pgm/smoking1.png' alt='Smoking 1' /></p>
 
 <p>You can&#8217;t step in and force some people to smoke or not smoke. You&#8217;d think we might be stuck here, but fortunately some <a href='http://en.wikipedia.org/wiki/Judea_Pearl'>extremely clever people</a> have figured out how to infer causality in a situation like this without needing to run a controlled experiment. In this example, if you are able to hypothesize some observable intermediate cause, such as the presence of tar in someone&#8217;s lungs:</p>
 
-<p><img alt='Smoking 2' src='/assets/img/pgm/smoking2.png' /></p>
+<p><img src='/assets/img/pgm/smoking2.png' alt='Smoking 2' /></p>
 
 <p>then through a series of formal manipulations, you can arrive at a graph that, weirdly enough, looks like this:</p>
 
-<p><img alt='Smoking 3' src='/assets/img/pgm/smoking3.png' /></p>
+<p><img src='/assets/img/pgm/smoking3.png' alt='Smoking 3' /></p>
 
 <p>The two &#8220;smokes&#8221; nodes have the same probability distribution but are independent from one another.</p>
 
@@ -547,7 +555,7 @@ AB 17.26% #################</code></pre>
 
 <p>Before we do that, though, we&#8217;re going to need to make one more little change—as it is, we&#8217;re going to run into trouble with the &#8220;???&#8221; node. Since this node represents unknown causes in our model, we&#8217;re not going to be able to observe it or its effects on other nodes. Fortunately, due to the magic of the Bayes-Ball rules, we can replace it with an arrow that goes directly from &#8220;smokes&#8221; to &#8220;cancer&#8221;, without changing the meaning of the graph. So our two graphs become:</p>
 
-<p><img alt='Smoking 4' src='/assets/img/pgm/smoking4.png' /></p>
+<p><img src='/assets/img/pgm/smoking4.png' alt='Smoking 4' /></p>
 
 <p>Now all of our nodes and arrows are observable, and we can go ahead and code this up.</p>
 
@@ -665,6 +673,8 @@ res3: Double = 0.4577</code></pre>
       <span class="prev"><a href="/2013/11/22/unlikely-things-happen-all-the-time.html" title="Unlikely things happen all the time">&larr; Unlikely things happen all the time</a></span>
     
     
+      <span class="next"><a href="/2014/01/30/good-tech-lead-bad-tech-lead.html" title="Good Tech Lead, Bad Tech Lead">Good Tech Lead, Bad Tech Lead &rarr;</a></span>
+    
       <div style="clear: both"></div>
     </div>
     <hr>
@@ -707,6 +717,8 @@ res3: Double = 0.4577</code></pre>
     <h4>Recent posts</h4>
     <ul>
       
+        <li><a href="/2014/01/30/good-tech-lead-bad-tech-lead.html">Good Tech Lead, Bad Tech Lead</a></li>
+      
         <li><a href="/2013/12/18/bayesian-networks-and-causality.html">Bayesian networks and causality</a></li>
       
         <li><a href="/2013/11/22/unlikely-things-happen-all-the-time.html">Unlikely things happen all the time</a></li>
@@ -714,8 +726,6 @@ res3: Double = 0.4577</code></pre>
         <li><a href="/2013/11/14/the-foursquare-theorem.html">The Foursquare Theorem</a></li>
       
         <li><a href="/2013/11/07/effective-peer-reviews.html">Painless, effective peer reviews</a></li>
-      
-        <li><a href="/2013/10/31/infinite-lazy-polynomials.html">Infinite lazy polynomials</a></li>
       
     </ul>
 
@@ -729,7 +739,7 @@ res3: Double = 0.4577</code></pre>
       </div>
       <hr>
       <footer>
-        <p>&copy; 2013 Jason Liszka
+        <p>&copy; 2014 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

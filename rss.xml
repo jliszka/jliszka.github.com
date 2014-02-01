@@ -5,10 +5,78 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2013-12-18T17:14:01+00:00</lastBuildDate>
-        <pubDate>2013-12-18T17:14:01+00:00</pubDate>
+        <lastBuildDate>2014-02-01T22:43:56+00:00</lastBuildDate>
+        <pubDate>2014-02-01T22:43:56+00:00</pubDate>
         <ttl>1800</ttl>
 
+
+        <item>
+                <title>Good Tech Lead, Bad Tech Lead</title>
+                <description>
+                
+                        &lt;p&gt;A brief guide to tech leadership at Foursquare, inspired by Ben Horowitz’s &lt;a href='http://benhorowitz.files.wordpress.com/2010/05/good-product-manager.pdf'&gt;Good Product Manager, Bad Product Manager&lt;/a&gt;. Cross-posted from &lt;a href='https://medium.com/p/948b2b806d86'&gt;Medium&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id='teamwork'&gt;Teamwork&lt;/h3&gt;
+
+&lt;p&gt;Good tech leads act as a member of the team, and consider themselves successful when the team is successful. They take their share of unsexy grungy work and clear roadblocks so their team can operate at 100%. They work to broaden the technical capabilities of their team, making sure knowledge of critical systems is not concentrated in one or two minds.&lt;/p&gt;
+
+&lt;p&gt;Bad tech leads take the high-profile tasks for themselves and are motivated by being able to take credit for doing the work. They optimize locally, keeping team members working on projects that benefit the team at the expense of the engineering organization at large.&lt;/p&gt;
+
+&lt;h3 id='technical_vision'&gt;Technical vision&lt;/h3&gt;
+
+&lt;p&gt;Good tech leads have an overall vision for the technical direction of the product and make sure the team understands it. They delegate feature areas to other team members and let them own their decisions. They recognize that their team members are smart, trust them, and rely on them to handle significant pieces of the project.&lt;/p&gt;
+
+&lt;p&gt;Bad tech leads resist explaining or clarifying the technical direction and dictate decisions instead. They keep critical institutional knowledge in their heads, failing to multiply their effectiveness by creating and disseminating helpful documentation.&lt;/p&gt;
+
+&lt;h3 id='discussion_and_debate'&gt;Discussion and debate&lt;/h3&gt;
+
+&lt;p&gt;Good tech leads listen and encourage debate. When the team is unable to resolve a debate, they describe a process or framework of thinking that would help them resolve it. They don’t enter discussions with foregone conclusions, and always allow themselves to be persuaded by great ideas.&lt;/p&gt;
+
+&lt;p&gt;Bad tech leads allow debates to go on for too long without resolution, hampering the productivity of the team. Others cut off debate prematurely, dismissing new discussions by saying the matter is “already settled.” Bad tech leads believe it is more important that they win the argument than that the team reaches the right decision.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src='/assets/img/goodtlbadtl.jpg' alt='comic' /&gt; &lt;em&gt;Amazing comic courtesy &lt;a href='http://twitter.com/blackmad'&gt;@blackmad&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id='project_management'&gt;Project management&lt;/h3&gt;
+
+&lt;p&gt;Good tech leads are proactive. They make sure technical progress is on track. They work with team members to come up with estimates and to establish intermediate milestones. They anticipate areas of concern and make sure they are addressed before they become a problem. They identify technical roadblocks and help the team get around them. They identify areas of overlap where work can be shared, and conversely, find areas that are not getting enough attention and direct resources toward it.&lt;/p&gt;
+
+&lt;p&gt;Bad tech leads are reactive. They may delegate, but do not follow up to make sure progress is being made. They don’t set intermediate goals and hope that everything just comes together in the end. They wait until just before launch to do end-to-end tests of complex systems. They allow team members to waste time on interesting but unimportant work.&lt;/p&gt;
+
+&lt;h3 id='pragmatism'&gt;Pragmatism&lt;/h3&gt;
+
+&lt;p&gt;Good tech leads are pragmatic and find a balance between doing it right and getting it done. They cut corners when it’s expedient but never out of laziness. They encourage their team to find temporary shortcuts or workarounds to problems that are blocking overall progress, and to build minimum viable infrastructure for launch. To good tech leads, details matter. Code quality, code reviews, and testing are just as important as shipping on time.&lt;/p&gt;
+
+&lt;p&gt;Bad tech leads take shortcuts that save time in the short term but cost more in the long term, and let technical debt pile up. They cannot distinguish between situations that call for expediency and those that call for perfection.&lt;/p&gt;
+
+&lt;h3 id='communication'&gt;Communication&lt;/h3&gt;
+
+&lt;p&gt;Good tech leads know that their role is much more than writing code, that effective communication is a vital part of their job, and that time spent making their team more efficient is time well spent. They acknowledge that some communication overhead is necessary when working on a team, and they sacrifice some personal productivity for overall team productivity.&lt;/p&gt;
+
+&lt;p&gt;Bad tech leads believe that they are most productive when they are writing code, and think communication is a distraction. They do not optimize for overall team productivity, but rather for what works best for themselves. They get frustrated when they have to take time to lead.&lt;/p&gt;
+
+&lt;h3 id='relationship_with_product'&gt;Relationship with Product&lt;/h3&gt;
+
+&lt;p&gt;Good tech leads are in a conversation with product managers and designers about how the product should work. They are not afraid to push back on decisions they disagree with, but keep the product goals in mind and know when to accommodate them. They find creative workarounds to technical constraints by suggesting alternative product formulations that are less technically demanding, and help PMs and designers understand technical challenges so that they make informed trade- offs themselves.&lt;/p&gt;
+
+&lt;p&gt;Bad tech leads throw product decisions “over the wall” and do not take ownership of the product. They push back due to technical constraints but do not offer alternatives or explanations.&lt;/p&gt;
+
+&lt;h3 id='resiliency'&gt;Resiliency&lt;/h3&gt;
+
+&lt;p&gt;Good tech leads are resilient to changes to the product specification and react calmly to surprises. They anticipate where changes might take place and design their code to handle them.&lt;/p&gt;
+
+&lt;p&gt;Bad tech leads are upset when the specification changes, or prematurely generalize their design in areas where changes are unlikely to occur.&lt;/p&gt;
+
+&lt;h3 id='personality'&gt;Personality&lt;/h3&gt;
+
+&lt;p&gt;Good tech leads are easy-going but assertive. Bad tech leads are confrontational and aggressive. Good tech leads emerge naturally and earn respect through technical competence and experience. Bad tech leads think their title confers respect and authority. Good tech leads are always looking for ways to improve.&lt;/p&gt;
+
+&lt;p&gt;Bad tech leads get defensive when given feedback. Good tech leads are humble and boost the confidence of everyone else on the team. Bad tech leads are arrogant and take pleasure in making their teammates feel inferior.&lt;/p&gt;
+                
+                </description>
+                <link>http://jliszka.github.io/2014/01/30/good-tech-lead-bad-tech-lead.html</link>
+                <guid>http://jliszka.github.io/2014/01/30/good-tech-lead-bad-tech-lead</guid>
+                <pubDate>2014-01-30T00:00:00+00:00</pubDate>
+        </item>
 
         <item>
                 <title>Bayesian networks and causality</title>
@@ -18,15 +86,15 @@
 
 &lt;p&gt;The tool we&amp;#8217;re going to use to do this is called a &lt;a href='http://en.wikipedia.org/wiki/Graphical_model'&gt;probabilistic graphical model&lt;/a&gt;. A PGM is a graph that encodes the causal relationships between events. For example, you might construct this graph to model a chain of causes resulting in someone getting a college scholarship:&lt;/p&gt;
 
-&lt;p&gt;&lt;img alt='A -&amp;gt; B -&amp;gt; C' src='/assets/img/pgm/sat.png' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src='/assets/img/pgm/sat.png' alt='A -&amp;gt; B -&amp;gt; C' /&gt;&lt;/p&gt;
 
 &lt;p&gt;Or the relationship between diseases and their symptoms:&lt;/p&gt;
 
-&lt;p&gt;&lt;img alt='A &amp;lt;- B -&amp;gt; C' src='/assets/img/pgm/flu.png' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src='/assets/img/pgm/flu.png' alt='A &amp;lt;- B -&amp;gt; C' /&gt;&lt;/p&gt;
 
 &lt;p&gt;Or the events surrounding a traffic jam:&lt;/p&gt;
 
-&lt;p&gt;&lt;img alt='A -&amp;gt; B &amp;lt;- C -&amp;gt; D' src='/assets/img/pgm/trafficjam.png' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src='/assets/img/pgm/trafficjam.png' alt='A -&amp;gt; B &amp;lt;- C -&amp;gt; D' /&gt;&lt;/p&gt;
 
 &lt;p&gt;Each node represents a random variable, and the arrows represent dependence relations between them. You can think of a node with incoming arrows as a probability distribution parameterized on some set of inputs; in other words, a function from some set of inputs to a probability distribution.&lt;/p&gt;
 

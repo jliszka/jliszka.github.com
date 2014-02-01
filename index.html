@@ -93,6 +93,14 @@
       
     
   
+    
+      
+    
+  
+    
+      
+    
+  
 
 
 
@@ -125,6 +133,8 @@
 
 <h2 id='archive'>Archive</h2>
 <ul class='posts'>
+  
+    <li><span>30 Jan 2014</span> &raquo; <a href='/2014/01/30/good-tech-lead-bad-tech-lead.html'>Good Tech Lead, Bad Tech Lead</a></li>
   
     <li><span>18 Dec 2013</span> &raquo; <a href='/2013/12/18/bayesian-networks-and-causality.html'>Bayesian networks and causality</a></li>
   
@@ -163,20 +173,22 @@
 <div class='post-content-truncate'>
 
   
+
+  
     <h2 class='title'>Bayesian networks and causality</h2>
     <p>Correlation does not imply causality—you&#8217;ve heard it a thousand times. But causality does imply correlation. Being good Bayesians, we should know how to turn a statement like that around and find a way to infer causality from correlation.</p>
 
 <p>The tool we&#8217;re going to use to do this is called a <a href='http://en.wikipedia.org/wiki/Graphical_model'>probabilistic graphical model</a>. A PGM is a graph that encodes the causal relationships between events. For example, you might construct this graph to model a chain of causes resulting in someone getting a college scholarship:</p>
 
-<p><img alt='A -&gt; B -&gt; C' src='/assets/img/pgm/sat.png' /></p>
+<p><img src='/assets/img/pgm/sat.png' alt='A -&gt; B -&gt; C' /></p>
 
 <p>Or the relationship between diseases and their symptoms:</p>
 
-<p><img alt='A &lt;- B -&gt; C' src='/assets/img/pgm/flu.png' /></p>
+<p><img src='/assets/img/pgm/flu.png' alt='A &lt;- B -&gt; C' /></p>
 
 <p>Or the events surrounding a traffic jam:</p>
 
-<p><img alt='A -&gt; B &lt;- C -&gt; D' src='/assets/img/pgm/trafficjam.png' /></p>
+<p><img src='/assets/img/pgm/trafficjam.png' alt='A -&gt; B &lt;- C -&gt; D' /></p>
 
 <p>Each node represents a random variable, and the arrows represent dependence relations between them. You can think of a node with incoming arrows as a probability distribution parameterized on some set of inputs; in other words, a function from some set of inputs to a probability distribution.</p>
 
@@ -406,41 +418,6 @@ tbody tr:nth-child(even) {
     <hr />
   
 
-  
-    <h2 class='title'>Unevaluating polynomials</h2>
-    <p>I have a function that evaluates polynomials with integer coefficients. To evaluate <script type='math/tex; mode=display'>
-%<![CDATA[
-f(x) = 6 + 5x + 2x^3
-%]]>
-</script> at <script type='math/tex'>f(8)</script>, for example, you do this:</p>
-
-<pre><code>scala&gt; evalPoly(8, List(6, 5, 0, 2))
-res0: (Int, Int) = (8, 1070)</code></pre>
-
-<p>For some reason it echoes the input back out to you. Here&#8217;s the code you might write:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>evalPoly</span><span class='p'>(</span><span class='n'>x</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>coeffs</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>Int</span><span class='p'>])</span><span class='k'>:</span> <span class='p'>(</span><span class='kt'>Int</span><span class='p'>,</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='k'>def</span> <span class='nf'>eval</span><span class='p'>(</span><span class='n'>cs</span><span class='k'>:</span> <span class='kt'>List</span><span class='p'>[</span><span class='kt'>Int</span><span class='p'>])</span><span class='k'>:</span> <span class='kt'>Int</span> <span class='p'>= {</span>
-    <span class='n'>cs</span> <span class='k'>match</span> <span class='p'>{</span>
-      <span class='k'>case</span> <span class='nc'>Nil</span> <span class='k'>=&gt;</span> <span class='mi'>0</span>
-      <span class='k'>case</span> <span class='n'>h</span> <span class='o'>::</span> <span class='n'>t</span> <span class='k'>=&gt;</span> <span class='n'>x</span> <span class='o'>*</span> <span class='n'>eval</span><span class='p'>(</span><span class='n'>t</span><span class='p'>)</span> <span class='o'>+</span> <span class='n'>h</span>
-    <span class='p'>}</span>
-  <span class='p'>}</span>
-  <span class='p'>(</span><span class='n'>x</span><span class='p'>,</span> <span class='n'>eval</span><span class='p'>(</span><span class='n'>coeffs</span><span class='p'>))</span>
-<span class='p'>}</span>
-</code></pre></div>
-<p>This should not be surprising.</p>
-
-<p>But I also have a function that un-evaluates polynomials. To un-evaluate <script type='math/tex'>f(8) = 1070</script>, you do this:</p>
-
-<pre><code>scala&gt; unevalPoly(8, 1070)
-res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))</code></pre>
-
-<p>and it echoes your input and gives you back the coefficients of the polynomial.</p>
-
-    <a href='/2013/09/24/more-backwards-functions-unevaluating-polynomials.html'>Read more</a>
-    <hr />
-  
-
 </div>
   </div>
 </div>
@@ -449,7 +426,7 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))</code></pre>
       </div>
       <hr>
       <footer>
-        <p>&copy; 2013 Jason Liszka
+        <p>&copy; 2014 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>
