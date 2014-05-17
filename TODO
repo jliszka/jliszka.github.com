@@ -11,6 +11,11 @@ kalman filter (iterated PGM), conjugate priors
 beta distribution, priors, minimum entropy
 more probability: http://www.amazon.com/Problems-Probability-Mathematical-Statistics-Mathematics/dp/0387735119/ref=sr_1_2?s=books&ie=UTF8&qid=1373846207&sr=1-2&keywords=40+statistics
 
+diagram of probability distribution derivations
+
+move non-technical posts to Medium
+rewrite home page
+
 generative models for lognormal and power law, + G-test
 
 3 ways your A/B test can go wrong
@@ -31,6 +36,8 @@ Hnefatafl player https://medium.com/war-is-boring/cef088ae4e2d
 
 insertion sort => popular
 code: overflow-y: scroll
+
+scala compile challenge: compile time / lines of code
 
 
 val harmonic: Stream[Double] = Stream.from(1).map(n => 1.0 / n)
