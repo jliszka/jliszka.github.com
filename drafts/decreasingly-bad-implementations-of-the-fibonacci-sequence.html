@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Not a monad tutorial</title>
+    <title>Decreasingly bad implementations of the Fibonacci Sequence</title>
     <meta name="description" content="">
     <meta name="author" content="Jason Liszka">
 
@@ -141,38 +141,65 @@
 <div class="row-fluid post-full">
   <div class="span9 offset1 post-content">
     <div class="page-header">
-      <h1>Not a monad tutorial </h1>
+      <h1>Decreasingly bad implementations of the Fibonacci Sequence </h1>
     </div>
     <div class="date">
-      <span>01 February 2014</span>
+      <span>11 April 2014</span>
     </div>
     <div class="content">
-      <blockquote class='quote' style='text-align: left'>
-  <p>"You can dream about anything, but a dream within a dream is still just a dream."</p>
-</blockquote>
-<p>I&#8217;m not going to tell you that &#8220;a monad is like a dream,&#8221; but the quote above does encapsulate the basic idea of a monad: a monad is a container (you can put anything in it) with a flattening rule (a container of containers is just a container).</p>
+      <h3 id='the_ofibn_way'>The O(Fib(n)) way</h3>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>fib0</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Long</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Long</span> <span class='p'>= {</span>
+  <span class='k'>if</span> <span class='p'>(</span><span class='n'>n</span> <span class='o'>&lt;=</span> <span class='mi'>1</span><span class='p'>)</span> <span class='n'>n</span>
+  <span class='k'>else</span> <span class='n'>fib0</span><span class='p'>(</span><span class='n'>n</span><span class='o'>-</span><span class='mi'>1</span><span class='p'>)</span> <span class='o'>+</span> <span class='n'>fib0</span><span class='p'>(</span><span class='n'>n</span><span class='o'>-</span><span class='mi'>2</span><span class='p'>)</span>
+<span class='p'>}</span>
+</code></pre></div>
+<h3 id='the_on_way'>The O(n) way</h3>
+<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>fib1</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Long</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Long</span> <span class='p'>= {</span>
+  <span class='nd'>@tailrec</span>
+  <span class='k'>def</span> <span class='nf'>helper</span><span class='p'>(</span><span class='n'>k</span><span class='k'>:</span> <span class='kt'>Long</span><span class='p'>,</span> <span class='n'>a</span><span class='k'>:</span> <span class='kt'>Long</span><span class='p'>,</span> <span class='n'>b</span><span class='k'>:</span> <span class='kt'>Long</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Long</span> <span class='p'>= {</span>
+    <span class='k'>if</span> <span class='p'>(</span><span class='n'>n</span> <span class='o'>==</span> <span class='n'>k</span><span class='p'>)</span> <span class='n'>a</span>
+    <span class='k'>else</span> <span class='n'>helper</span><span class='p'>(</span><span class='n'>k</span><span class='o'>+</span><span class='mi'>1</span><span class='p'>,</span> <span class='n'>b</span><span class='p'>,</span> <span class='n'>a</span><span class='o'>+</span><span class='n'>b</span><span class='p'>)</span>
+  <span class='p'>}</span>
+  <span class='n'>helper</span><span class='p'>(</span><span class='mi'>0</span><span class='p'>,</span> <span class='mi'>0</span><span class='p'>,</span> <span class='mi'>1</span><span class='p'>)</span>
+<span class='p'>}</span>
+</code></pre></div>
+<h3 id='the_olog_n_way'>The O(log n) way</h3>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+a_0 = 0
+b_0 = 1
+a_n = b_{n-1}
+b_n = a_{n-1} + b_{n-1}
+%]]>
+</script>
+<p>Another way to write the recursive step is:</p>
+<script type='math/tex; mode=display'>
+%<![CDATA[
+a_n = 0 * a_{n-1} + 1 * b_{n-1}
+b_n = 1 * a_{n-1} + 1 * b_{n-1}
+%]]>
+</script>
+<p>Which is the same as:</p>
 
-<p>If you&#8217;ve never encountered monads before, that description is unlikely to be helpful — it&#8217;s a description, not an explanation. Instead of trying to explain monads, I&#8217;m just going to show you a ton of examples of monads, and the magical human brain between your ears will do what it does best: extract a pattern. And at the end I will tell you that that that pattern is called &#8220;a monad.&#8221;</p>
+<p>\begin{pmatrix} a_n \ b_n</p>
 
-<h3 id='list'>List</h3>
+<h1 id='end'>\end</h1>
 
-<h3 id='option'>Option</h3>
+<p>\begin{pmatrix} 0 &amp; 1 \ 1 &amp; 1 \end{pmatrix}</p>
 
-<h3 id='tree'>Tree</h3>
+<p>\begin{pmatrix} a_{n-1} \ b_{n-1} \end{pmatrix}</p>
 
-<h3 id='future'>Future</h3>
+<p>Now using <script type='math/tex'>a_0 = 0</script> and <script type='math/tex'>b_0 = 1</script> as our starting vector, we can write</p>
 
-<h3 id='logger'>Logger</h3>
+<p>\begin{pmatrix} a_n \ b_n</p>
 
-<h3 id='environment'>Environment</h3>
+<h1 id='end'>\end</h1>
 
-<h3 id='random_number_generator'>Random number generator</h3>
+<p>\begin{pmatrix} 0 &amp; 1 \ 1 &amp; 1 \end{pmatrix} ^n \begin{pmatrix} 0 \ 1 \end{pmatrix}</p>
 
-<h3 id='parser'>Parser</h3>
+<p>Now all we need to do is compute <script type='math/tex'>F^n</script> in <script type='math/tex'>O(\log n)</script>, which we can do via repeated squaring.</p>
 
-<h3 id='random_variable'>Random variable</h3>
-
-<h3 id='vector_space'>Vector space</h3>
+<h3 id='the_o1_way'>The O(1) way</h3>
     </div>
 
     
@@ -181,7 +208,7 @@
 
 
   <div style="float: right; margin-top: 5px">
-  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/not-a-monad-tutorial.html" data-text="Not a monad tutorial" data-via="jliszka">Tweet</a>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/decreasingly-bad-implementations-of-the-fibonacci-sequence.html" data-text="Decreasingly bad implementations of the Fibonacci Sequence" data-via="jliszka">Tweet</a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 

@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Not a monad tutorial</title>
+    <title>Simpson's Paradox</title>
     <meta name="description" content="">
     <meta name="author" content="Jason Liszka">
 
@@ -141,38 +141,30 @@
 <div class="row-fluid post-full">
   <div class="span9 offset1 post-content">
     <div class="page-header">
-      <h1>Not a monad tutorial </h1>
+      <h1>Simpson's Paradox </h1>
     </div>
     <div class="date">
-      <span>01 February 2014</span>
+      <span>06 March 2014</span>
     </div>
     <div class="content">
-      <blockquote class='quote' style='text-align: left'>
-  <p>"You can dream about anything, but a dream within a dream is still just a dream."</p>
-</blockquote>
-<p>I&#8217;m not going to tell you that &#8220;a monad is like a dream,&#8221; but the quote above does encapsulate the basic idea of a monad: a monad is a container (you can put anything in it) with a flattening rule (a container of containers is just a container).</p>
-
-<p>If you&#8217;ve never encountered monads before, that description is unlikely to be helpful — it&#8217;s a description, not an explanation. Instead of trying to explain monads, I&#8217;m just going to show you a ton of examples of monads, and the magical human brain between your ears will do what it does best: extract a pattern. And at the end I will tell you that that that pattern is called &#8220;a monad.&#8221;</p>
-
-<h3 id='list'>List</h3>
-
-<h3 id='option'>Option</h3>
-
-<h3 id='tree'>Tree</h3>
-
-<h3 id='future'>Future</h3>
-
-<h3 id='logger'>Logger</h3>
-
-<h3 id='environment'>Environment</h3>
-
-<h3 id='random_number_generator'>Random number generator</h3>
-
-<h3 id='parser'>Parser</h3>
-
-<h3 id='random_variable'>Random variable</h3>
-
-<h3 id='vector_space'>Vector space</h3>
+      <div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>over45</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Boolean</span><span class='p'>]</span> <span class='k'>=</span> <span class='n'>tf</span><span class='p'>(</span><span class='mf'>0.2</span><span class='p'>)</span>
+<span class='k'>def</span> <span class='nf'>click1</span><span class='p'>(</span><span class='n'>over45</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Boolean</span><span class='p'>]</span> <span class='k'>=</span> <span class='n'>over45</span> <span class='k'>match</span> <span class='p'>{</span>
+  <span class='k'>case</span> <span class='kc'>true</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='p'>(</span><span class='mf'>0.3</span><span class='p'>)</span>
+  <span class='k'>case</span> <span class='kc'>false</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='p'>(</span><span class='mf'>0.05</span><span class='p'>)</span>
+<span class='p'>}</span>
+<span class='k'>def</span> <span class='nf'>click2</span><span class='p'>(</span><span class='n'>over45</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='p'>,</span> <span class='n'>click1</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Boolean</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>(</span><span class='n'>over45</span><span class='p'>,</span> <span class='n'>click1</span><span class='p'>)</span> <span class='k'>match</span> <span class='p'>{</span>
+  <span class='k'>case</span> <span class='p'>(</span><span class='kc'>true</span><span class='p'>,</span> <span class='kc'>false</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='p'>(</span><span class='mf'>0.35</span><span class='p'>)</span>
+  <span class='k'>case</span> <span class='p'>(</span><span class='kc'>true</span><span class='p'>,</span> <span class='kc'>true</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='p'>(</span><span class='mf'>0.25</span><span class='p'>)</span>
+  <span class='k'>case</span> <span class='p'>(</span><span class='kc'>false</span><span class='p'>,</span> <span class='kc'>false</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='p'>(</span><span class='mf'>0.07</span><span class='p'>)</span>
+  <span class='k'>case</span> <span class='p'>(</span><span class='kc'>false</span><span class='p'>,</span> <span class='kc'>true</span><span class='p'>)</span> <span class='k'>=&gt;</span> <span class='n'>tf</span><span class='p'>(</span><span class='mf'>0.03</span><span class='p'>)</span>
+<span class='p'>}</span>
+<span class='k'>case</span> <span class='k'>class</span><span class='kd'> </span><span class='nc'>Trial</span><span class='p'>(</span><span class='n'>over45</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='p'>,</span> <span class='n'>click1</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='p'>,</span> <span class='n'>click2</span><span class='k'>:</span> <span class='kt'>Boolean</span><span class='p'>)</span>
+<span class='k'>val</span> <span class='n'>d</span> <span class='k'>=</span> <span class='k'>for</span> <span class='p'>{</span>
+  <span class='n'>age</span> <span class='k'>&lt;-</span> <span class='n'>over45</span>
+  <span class='n'>c1</span> <span class='k'>&lt;-</span> <span class='n'>click1</span><span class='p'>(</span><span class='n'>age</span><span class='p'>)</span>
+  <span class='n'>c2</span> <span class='k'>&lt;-</span> <span class='n'>click2</span><span class='p'>(</span><span class='n'>age</span><span class='p'>,</span> <span class='n'>c1</span><span class='p'>)</span>
+<span class='p'>}</span> <span class='k'>yield</span> <span class='nc'>Trial</span><span class='p'>(</span><span class='n'>age</span><span class='p'>,</span> <span class='n'>c1</span><span class='p'>,</span> <span class='n'>c2</span><span class='p'>)</span>
+</code></pre></div>
     </div>
 
     
@@ -181,7 +173,7 @@
 
 
   <div style="float: right; margin-top: 5px">
-  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/not-a-monad-tutorial.html" data-text="Not a monad tutorial" data-via="jliszka">Tweet</a>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/simpsons-paradox.html" data-text="Simpson's Paradox" data-via="jliszka">Tweet</a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
