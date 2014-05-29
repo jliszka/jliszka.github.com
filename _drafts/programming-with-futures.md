@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "An effective pattern for programming with Futures"
+title: "Programming with Futures"
 description: ""
 category: 
 tags: []
