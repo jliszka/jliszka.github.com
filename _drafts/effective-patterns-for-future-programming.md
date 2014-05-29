@@ -45,26 +45,82 @@ def registerUser(token: String): Future[User] = {
 
 There are some problems with this code.
 
-### Anti-pattern #1: Doing work in a yield or a map
+### Anti-pattern #1: Blocking in a yield or a map
 
 The last part of the ```for```-comprehension desugars to
 
 {% highlight scala %}
-apiCheckinsF(apiUser, apiCategories).map(apiCheckins => createDBUser(apiUser, apiFriends, apiCheckins))
+apiCheckinsF(apiUser, apiCategories).map(apiCheckins => 
+  createDBUser(apiUser, apiFriends, apiCheckins))
 {% endhighlight %}
 
-You should never do blocking work in ```map``` on a Future. Code inside the map runs after the Future
-thread completes, but it runs on the scheduler thread, preventing it from doing any more scheduling, which is bad.
-Also there is only one such thread, so you're losing an opportunity for parallelism. It's also possible to
-cause a deadlock this way.
+The problem here is that ```createDBUser``` makes a blocking call to the database.
+You should never do blocking work in ```map``` on a Future.
+Every Future runs in a thread pool that is (hopefully) tuned for a particular purpose.
+Code inside the ```map``` runs on the thread that completes the Future. 
+So you're putting work in a thread pool that wasn't designed to handle that work.
 
-Instead, do this:
+Furthermore, when you're dealing with Futures composed from other Futures, it's often hard to tell by inspection which
+Future will be the last to complete (and whose thread pool will run the ```map``` code).
+It's frequently not the "outermost" Future. For example:
+
+{% highlight scala %}
+val outermostFuture1: Future[Int] = {
+  val runsInThreadPoolA: Future[Int] = ...
+  val runsInThreadPoolB: Future[Int] = ...
+  for {
+    a <- runsInThreadPoolA
+    b <- runsInThreadPoolB
+  } yield a+b
+}
+
+outermostFuture1.map(i => /* where do I run?? */)
+{% endhighlight %}
+
+It doesn't even have to be deterministic:
+
+{% highlight scala %}
+val outermostFuture2: Future[Int] = {
+  val runsInThreadPoolA: Future[Int] = ...
+  val runsInThreadPoolB: Future[Int] = ...
+  for {
+    (a, b) <- Future.join(runsInThreadPoolA, runsInThreadPoolB)
+  } yield a+b
+}
+
+outermostFuture2.map(i => /* where do I run?? */)
+{% endhighlight %}
+
+It's also possible that the Future completes *before* you call ```map``` — in which case the work inside the ```map```
+happens in the main thread. This is bad if your callers expect you to to return instantly with a Future.
+
+{% highlight scala %}
+def thisActuallyBlocks(a: Int): Future[Int] = {
+  val anIntF: Future[Int] = computeSomethingF(a)
+  // ... some more stuff ...
+  anIntF.map(i => somethingThatBlocks(i))
+}
+{% endhighlight %}
+
+It's also possible to cause a deadlock (and yes we've seen this in production) if the code inside the ```map```
+calls ```Await``` on another thread in the same thread pool — but again, it's hard to know what thread pool that is.
+
+So instead, set up your own thread pool for blocking work:
+
+{% highlight scala %}
+object future {
+  private val pool = FuturePool(Executors.newFixedThreadPool(10))
+  def apply[A](a: => A): Future[A] = pool(a)
+}
+{% endhighlight %}
+
+And use it like this:
 
 {% highlight scala %}
 def createDBUserF(
     user: ApiUser,
     friends: Seq[ApiUser],
-    checkins: Seq[ApiCheckin]): Future[User] = Future {
+    checkins: Seq[ApiCheckin]): Future[User] = future {
   db.insert(...)
 }
 
@@ -82,7 +138,8 @@ createDBUserF(apiUser, friends, checkins).map(user => user)
 
 which is safe.
 
-So ALWAYS ```yield``` a plain value or a simple computation.
+So ALWAYS ```yield``` a plain value or a simple computation. If you have blocking work, wrap it in a ThreadPool-backed
+Future and ```flatMap``` it.
 
 ### Anti-pattern #2: Too much parallelism
 
@@ -105,7 +162,7 @@ def apiFriendsF(apiUser: ApiUser): Future[Seq[ApiUser]] = {
 }
 {% endhighlight %}
 
-The ```groupedCollect``` utility method can be impemented as follows:
+The ```groupedCollect``` helper method can be impemented as follows:
 
 {% highlight scala %}
 object future {
@@ -182,17 +239,7 @@ for {
 {% endhighlight %}
 
 The ```join``` method runs multiple Futures in parallel and collects their results in a tuple.
-
-### Anti-pattern #4: Doing blocking I/O without a FuturePool
-
-TODO
-
-{% highlight scala %}
-object future {
-  private val pool = FuturePool(Executors.newFixedThreadPool(10))
-  def apply[A](a: => A): Future[A] = pool(a)
-}
-{% endhighlight %}
+It's also nice that the ```join``` explicitly documents that the two calls will happen in parallel.
 
 ### Conclusion
 
