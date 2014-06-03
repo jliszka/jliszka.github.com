@@ -478,7 +478,7 @@ To take an example, the graph
 ![A -> C <- B](/assets/img/pgm/join.png)
 
 predicts that A and B are independent, unless C is known. If we observe that, say,
-{%m%}P(A=\text{true}|B=\text{true}) > P(A=\text{true}){%em%}, then we can rule out that graph as a possible model.
+{%m%}P(A=\text{true}|B=\text{true}) \gt P(A=\text{true}){%em%}, then we can rule out that graph as a possible model.
 
 Usually we can use observations like this to narrow down the set of possible graphs. With only 2 events
 to observe, there's no way to distinguish {%m%}A \rightarrow B{%em%} and {%m%}A \leftarrow B{%em%} just from the data.
