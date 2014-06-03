@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Future programming patterns and anti-patterns"
+title: "Programming with futures: patterns and anti-patterns"
 description: ""
 category: 
 tags: []
