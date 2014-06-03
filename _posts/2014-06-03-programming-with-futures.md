@@ -46,6 +46,8 @@ def registerUser(token: String): Future[User] = {
 
 There are some problems with this code.
 
+<!-- more -->
+
 ### Anti-pattern #1: Blocking in a yield or a map
 
 The last part of the ```for```-comprehension desugars to
@@ -193,7 +195,7 @@ It desugars to
 
 {% highlight scala %}
 api.getSelfF().flatMap(apiUser =>
-  api.getCategoriesF().flatMap(apiCategories => 
+  api.getCategoriesF().flatMap(apiCategories =>
     ...))
 {% endhighlight %}
 
