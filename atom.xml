@@ -4,7 +4,7 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2014-05-29T17:53:52+00:00</updated>
+ <updated>2014-06-03T14:05:25+00:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
@@ -13,25 +13,88 @@
 
  
  <entry>
+   <title>Future programming patterns and anti-patterns</title>
+   <link href="http://jliszka.github.io/2014/06/03/programming-with-futures.html"/>
+   <updated>2014-06-03T00:00:00+00:00</updated>
+   <id>http://jliszka.github.io/2014/06/03/programming-with-futures</id>
+   <content type="html">
+    
+      
+&lt;p&gt;Twitter’s Future library is a beautiful abstraction for dealing with concurrency. However, there are
+code patterns that seem natural or innocuous but can cause real trouble in production systems. This short
+article outlines a few of the easiest traps to fall into.&lt;/p&gt;
+
+&lt;h3 id=&quot;an-example&quot;&gt;An example&lt;/h3&gt;
+
+&lt;p&gt;Below is a method from a fictional web application that registers a user by calling the Foursquare API
+to get the user’s profile info, the their friend graph and their recent check-ins.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;registerUser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;token&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Future&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;User&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;api&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;FoursquareApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;token&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apiFriendsF&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;apiUser&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;ApiUser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Future&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Seq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;ApiUser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nc&quot;&gt;Future&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;collect&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;apiUser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;friendIDs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;api&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getUserF&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apiCheckinsF&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;apiUser&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;ApiUser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;categoryies&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Seq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;ApiCategory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Future&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Seq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;ApiCheckin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;createDBUser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;user&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;ApiUser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;friends&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Seq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;ApiUser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;],&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;checkins&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Seq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;ApiCheckin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;User&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;db&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;insert&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(...)&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;apiUser&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;api&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getSelfF&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;apiCategories&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;api&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getCategoriesF&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;apiFriends&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apiFriendsF&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;apiUser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;apiCheckins&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apiCheckinsF&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;apiUser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apiCategories&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;yield&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;createDBUser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;apiUser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apiFriends&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apiCheckins&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;There are some problems with this code.&lt;/p&gt;
+
+
+      &lt;a href="http://jliszka.github.io/2014/06/03/programming-with-futures.html">Read more&lt;/a>
+    
+   </content>
+ </entry>
+ 
+ <entry>
    <title>Good Tech Lead, Bad Tech Lead</title>
    <link href="http://jliszka.github.io/2014/01/30/good-tech-lead-bad-tech-lead.html"/>
    <updated>2014-01-30T00:00:00+00:00</updated>
    <id>http://jliszka.github.io/2014/01/30/good-tech-lead-bad-tech-lead</id>
    <content type="html">
     
-      &lt;p&gt;A brief guide to tech leadership at Foursquare, inspired by Ben Horowitz’s &lt;a href='http://benhorowitz.files.wordpress.com/2010/05/good-product-manager.pdf'&gt;Good Product Manager, Bad Product Manager&lt;/a&gt;. Cross-posted from &lt;a href='https://medium.com/p/948b2b806d86'&gt;Medium&lt;/a&gt;.&lt;/p&gt;
+      
+&lt;p&gt;A brief guide to tech leadership at Foursquare, inspired by Ben Horowitz’s
+&lt;a href=&quot;http://benhorowitz.files.wordpress.com/2010/05/good-product-manager.pdf&quot;&gt;Good Product Manager, Bad Product Manager&lt;/a&gt;.
+Cross-posted from &lt;a href=&quot;https://medium.com/p/948b2b806d86&quot;&gt;Medium&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h3 id='teamwork'&gt;Teamwork&lt;/h3&gt;
+&lt;h3 id=&quot;teamwork&quot;&gt;Teamwork&lt;/h3&gt;
 
-&lt;p&gt;Good tech leads act as a member of the team, and consider themselves successful when the team is successful. They take their share of unsexy grungy work and clear roadblocks so their team can operate at 100%. They work to broaden the technical capabilities of their team, making sure knowledge of critical systems is not concentrated in one or two minds.&lt;/p&gt;
+&lt;p&gt;Good tech leads act as a member of the team, and consider themselves successful when the team is successful. They take
+their share of unsexy grungy work and clear roadblocks so their team can operate at 100%. They work to broaden the
+technical capabilities of their team, making sure knowledge of critical systems is not concentrated in one or two minds.&lt;/p&gt;
 
-&lt;p&gt;Bad tech leads take the high-profile tasks for themselves and are motivated by being able to take credit for doing the work. They optimize locally, keeping team members working on projects that benefit the team at the expense of the engineering organization at large.&lt;/p&gt;
+&lt;p&gt;Bad tech leads take the high-profile tasks for themselves and are motivated by being able to take credit for doing the
+work. They optimize locally, keeping team members working on projects that benefit the team at the expense of the
+engineering organization at large.&lt;/p&gt;
 
-&lt;h3 id='technical_vision'&gt;Technical vision&lt;/h3&gt;
+&lt;h3 id=&quot;technical-vision&quot;&gt;Technical vision&lt;/h3&gt;
 
-&lt;p&gt;Good tech leads have an overall vision for the technical direction of the product and make sure the team understands it. They delegate feature areas to other team members and let them own their decisions. They recognize that their team members are smart, trust them, and rely on them to handle significant pieces of the project.&lt;/p&gt;
+&lt;p&gt;Good tech leads have an overall vision for the technical direction of the product and make sure the team understands it.
+They delegate feature areas to other team members and let them own their decisions. They recognize that their team
+members are smart, trust them, and rely on them to handle significant pieces of the project.&lt;/p&gt;
 
-&lt;p&gt;Bad tech leads resist explaining or clarifying the technical direction and dictate decisions instead. They keep critical institutional knowledge in their heads, failing to multiply their effectiveness by creating and disseminating helpful documentation.&lt;/p&gt;
+&lt;p&gt;Bad tech leads resist explaining or clarifying the technical direction and dictate decisions instead. They keep critical
+institutional knowledge in their heads, failing to multiply their effectiveness by creating and disseminating helpful
+documentation.&lt;/p&gt;
+
 
       &lt;a href="http://jliszka.github.io/2014/01/30/good-tech-lead-bad-tech-lead.html">Read more&lt;/a>
     
@@ -45,25 +108,36 @@
    <id>http://jliszka.github.io/2013/12/18/bayesian-networks-and-causality</id>
    <content type="html">
     
-      &lt;p&gt;Correlation does not imply causality—you&amp;#8217;ve heard it a thousand times. But causality does imply correlation. Being good Bayesians, we should know how to turn a statement like that around and find a way to infer causality from correlation.&lt;/p&gt;
+      
+&lt;p&gt;Correlation does not imply causality—you’ve heard it a thousand times. But causality does imply correlation. Being
+good Bayesians, we should know how to turn a statement like that around and find a way to infer causality from
+correlation.&lt;/p&gt;
 
-&lt;p&gt;The tool we&amp;#8217;re going to use to do this is called a &lt;a href='http://en.wikipedia.org/wiki/Graphical_model'&gt;probabilistic graphical model&lt;/a&gt;. A PGM is a graph that encodes the causal relationships between events. For example, you might construct this graph to model a chain of causes resulting in someone getting a college scholarship:&lt;/p&gt;
+&lt;p&gt;The tool we’re going to use to do this is called a &lt;a href=&quot;http://en.wikipedia.org/wiki/Graphical_model&quot;&gt;probabilistic graphical model&lt;/a&gt;.
+A PGM is a graph that encodes the causal relationships between events. For example, you might construct this
+graph to model a chain of causes resulting in someone getting a college scholarship:&lt;/p&gt;
 
-&lt;p&gt;&lt;img alt='A -&amp;gt; B -&amp;gt; C' src='/assets/img/pgm/sat.png' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/img/pgm/sat.png&quot; alt=&quot;A -&amp;gt; B -&amp;gt; C&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Or the relationship between diseases and their symptoms:&lt;/p&gt;
 
-&lt;p&gt;&lt;img alt='A &amp;lt;- B -&amp;gt; C' src='/assets/img/pgm/flu.png' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/img/pgm/flu.png&quot; alt=&quot;A &amp;lt;- B -&amp;gt; C&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Or the events surrounding a traffic jam:&lt;/p&gt;
 
-&lt;p&gt;&lt;img alt='A -&amp;gt; B &amp;lt;- C -&amp;gt; D' src='/assets/img/pgm/trafficjam.png' /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/img/pgm/trafficjam.png&quot; alt=&quot;A -&amp;gt; B &amp;lt;- C -&amp;gt; D&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Each node represents a random variable, and the arrows represent dependence relations between them. You can think of a node with incoming arrows as a probability distribution parameterized on some set of inputs; in other words, a function from some set of inputs to a probability distribution.&lt;/p&gt;
+&lt;p&gt;Each node represents a random variable, and the arrows represent dependence relations between them. You can think of
+a node with incoming arrows as a probability distribution parameterized on some set of inputs; in other words,
+a function from some set of inputs to a probability distribution.&lt;/p&gt;
 
-&lt;p&gt;PGMs with directed edges and no cycles are specifically called &lt;a href='http://en.wikipedia.org/wiki/Bayesian_network'&gt;Bayesian networks&lt;/a&gt;, and that&amp;#8217;s the kind of PGM I&amp;#8217;m going to focus on.&lt;/p&gt;
+&lt;p&gt;PGMs with directed edges and no cycles are specifically called &lt;a href=&quot;http://en.wikipedia.org/wiki/Bayesian_network&quot;&gt;Bayesian networks&lt;/a&gt;,
+and that’s the kind of PGM I’m going to focus on.&lt;/p&gt;
 
-&lt;p&gt;It&amp;#8217;s easy to translate a Bayesian network into code using this &lt;a href='https://github.com/jliszka/probability-monad'&gt;toy probability library&lt;/a&gt;. All we need are the observed frequencies for each node and its inputs. Let&amp;#8217;s try the traffic jam graph. I&amp;#8217;ll make up some numbers and we&amp;#8217;ll see how it works.&lt;/p&gt;
+&lt;p&gt;It’s easy to translate a Bayesian network into code using this &lt;a href=&quot;https://github.com/jliszka/probability-monad&quot;&gt;toy probability library&lt;/a&gt;.
+All we need are the observed frequencies for each node and its inputs.
+Let’s try the traffic jam graph. I’ll make up some numbers and we’ll see how it works.&lt;/p&gt;
+
 
       &lt;a href="http://jliszka.github.io/2013/12/18/bayesian-networks-and-causality.html">Read more&lt;/a>
     
@@ -77,11 +151,22 @@
    <id>http://jliszka.github.io/2013/11/22/unlikely-things-happen-all-the-time</id>
    <content type="html">
     
-      &lt;p&gt;Yesterday I received an unexpected media query from Jen Doll, a journalist at New York Magazine, reporting on the story where Frank Bruni found Courtney Love&amp;#8217;s iPhone in a taxi. She was musing about the statistical likelihood of an event like that, and somehow found &lt;a href='http://replyz.com/c/2552117-does-anyone-know-the-probability-of-getting-the-same-nyc-cab-driver-twice'&gt;this twitter thread&lt;/a&gt; where I had calculated the probability of getting the same cab driver twice. She wanted to know how I arrived at my figures and whether I had any additional insight on the question.&lt;/p&gt;
+      
+&lt;p&gt;Yesterday I received an unexpected media query from Jen Doll, a journalist at New York Magazine, reporting on the story where
+Frank Bruni found Courtney Love’s iPhone in a taxi. She was musing about the statistical likelihood of an event like
+that, and somehow found
+&lt;a href=&quot;http://replyz.com/c/2552117-does-anyone-know-the-probability-of-getting-the-same-nyc-cab-driver-twice&quot;&gt;this twitter thread&lt;/a&gt;
+where I had calculated the probability of getting the same cab driver twice.
+She wanted to know how I arrived at my figures and whether I had any additional insight on the question.&lt;/p&gt;
 
-&lt;p&gt;So of course I wrote her back a whole essay, and today &lt;a href='http://nymag.com/daily/intelligencer/2013/11/long-odds-of-getting-courtney-loves-taxi.html'&gt;there&amp;#8217;s this article&lt;/a&gt;. Her editors had cut it way down, &lt;a href='http://www.theatlantic.com/technology/archive/2013/11/english-has-a-new-preposition-because-internet/281601/'&gt;because journalism&lt;/a&gt;. But I had put all this work into it, so I thought I&amp;#8217;d post it here.&lt;/p&gt;
+&lt;p&gt;So of course I wrote her back a whole essay, and today
+&lt;a href=&quot;http://nymag.com/daily/intelligencer/2013/11/long-odds-of-getting-courtney-loves-taxi.html&quot;&gt;there’s this article&lt;/a&gt;.
+Her editors had cut it way down,
+&lt;a href=&quot;http://www.theatlantic.com/technology/archive/2013/11/english-has-a-new-preposition-because-internet/281601/&quot;&gt;because journalism&lt;/a&gt;.
+But I had put all this work into it, so I thought I’d post it here.&lt;/p&gt;
 
 &lt;p&gt;The text of my reply is below.&lt;/p&gt;
+
 
       &lt;a href="http://jliszka.github.io/2013/11/22/unlikely-things-happen-all-the-time.html">Read more&lt;/a>
     
@@ -95,19 +180,29 @@
    <id>http://jliszka.github.io/2013/11/14/the-foursquare-theorem</id>
    <content type="html">
     
-      &lt;p&gt;This has nothing to do with the &lt;a href='http://en.wikipedia.org/wiki/Four_square'&gt;playground game&lt;/a&gt;, the &lt;a href='http://www.foursquare.org/'&gt;church&lt;/a&gt;, or the &lt;a href='https://foursquare.com'&gt;mobile/social/local city guide&lt;/a&gt; that helps you make the most of where you are. (Disclosure: I work at Foursquare.)&lt;/p&gt;
+      
+&lt;p&gt;This has nothing to do with the &lt;a href=&quot;http://en.wikipedia.org/wiki/Four_square&quot;&gt;playground game&lt;/a&gt;, the
+&lt;a href=&quot;http://www.foursquare.org/&quot;&gt;church&lt;/a&gt;, or the &lt;a href=&quot;https://foursquare.com&quot;&gt;mobile/social/local city guide&lt;/a&gt; that helps you
+make the most of where you are. (Disclosure: I work at Foursquare.)&lt;/p&gt;
 
-&lt;p&gt;This is about &lt;a href='http://en.wikipedia.org/wiki/Lagrange%27s_four-square_theorem'&gt;Lagrange&amp;#8217;s four-square theorem&lt;/a&gt;, which states that every natural number can be expressed as the sum of four squares. For example, &lt;script type='math/tex; mode=display'&gt;
-%&lt;![CDATA[
+&lt;p&gt;This is about &lt;a href=&quot;http://en.wikipedia.org/wiki/Lagrange%27s_four-square_theorem&quot;&gt;Lagrange’s four-square theorem&lt;/a&gt;, which states
+that every natural number can be expressed as the sum of four squares. For example,
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;
+%&amp;lt;![CDATA[
 \newcommand\m[1]{\text{ }(\text{mod }#1)}
 123456789 = 2142^2 + 8673^2 + 6264^2 + 2100^2
-%]]&gt;
+%]]&amp;gt;
 &lt;/script&gt;&lt;/p&gt;
 
-&lt;p&gt;The proof given on the Wikipedia page is only an existence proof, but I was able to find a &lt;a href='http://www.alpertron.com.ar/4SQUARES.HTM'&gt;mostly constructive proof&lt;/a&gt; elsewhere online. I want to present an outline of the proof along with some code that carries out the construction. Here&amp;#8217;s a preview:&lt;/p&gt;
+&lt;p&gt;The proof given on the Wikipedia page is only an existence proof, but I was able to find a
+&lt;a href=&quot;http://www.alpertron.com.ar/4SQUARES.HTM&quot;&gt;mostly constructive proof&lt;/a&gt;
+elsewhere online. I want to present an outline of the proof along with some code that carries out the construction.
+Here’s a preview:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;*Main&amp;gt; foursquare 123456789
-(-2142,8673,6264,-2100)&lt;/code&gt;&lt;/pre&gt;
+(-2142,8673,6264,-2100)
+&lt;/code&gt;&lt;/pre&gt;
+
 
       &lt;a href="http://jliszka.github.io/2013/11/14/the-foursquare-theorem.html">Read more&lt;/a>
     
@@ -121,13 +216,20 @@
    <id>http://jliszka.github.io/2013/11/07/effective-peer-reviews</id>
    <content type="html">
     
-      &lt;p&gt;Peer reviews are the most effective kind of feedback — only your peers really know what it&amp;#8217;s like to work with you, and they have the most insightful, nuanced and helpful suggestions for improvement. Almost every tech company I can think of does them as part of their annual review process. The problem is that everyone hates writing them, because decent feedback takes a really long time to write, sometimes on the order of 4 or 5 hours for a single peer review.&lt;/p&gt;
+      
+&lt;p&gt;Peer reviews are the most effective kind of feedback — only your peers really know what it’s like to work with you, and
+they have the most insightful, nuanced and helpful suggestions for improvement. Almost every tech company I can think of
+does them as part of their annual review process. The problem is that everyone hates writing them, because decent
+feedback takes a really long time to write, sometimes on the order of 4 or 5 hours for a single peer review.&lt;/p&gt;
 
-&lt;p&gt;I&amp;#8217;d like to solve this problem. Most people think that there&amp;#8217;s a natural, unavoidable relationship between quality and time spent. But that overlooks an important point — the thing that makes writing peer reviews difficult is: writing itself.&lt;/p&gt;
+&lt;p&gt;I’d like to solve this problem. Most people think that there’s a natural, unavoidable relationship between quality and
+time spent. But that overlooks an important point — the thing that makes writing peer reviews difficult is: writing
+itself.&lt;/p&gt;
 
-&lt;h3 id='the_interview_method'&gt;The interview method&lt;/h3&gt;
+&lt;h3 id=&quot;the-interview-method&quot;&gt;The interview method&lt;/h3&gt;
 
 &lt;p&gt;Here are 5 easy steps to collecting insightful, critical, honest peer review feedback, in about an hour:&lt;/p&gt;
+
 
       &lt;a href="http://jliszka.github.io/2013/11/07/effective-peer-reviews.html">Read more&lt;/a>
     
@@ -141,36 +243,44 @@
    <id>http://jliszka.github.io/2013/10/31/infinite-lazy-polynomials</id>
    <content type="html">
     
-      &lt;blockquote class='quote'&gt;
+      
+&lt;blockquote class=&quot;quote&quot;&gt;
   &lt;p&gt;&quot;Never underestimate the insights encoded into the coefficients of a polynomial!&quot;&lt;/p&gt;
   —Steven Rudich
 &lt;/blockquote&gt;
-&lt;p&gt;In this post I&amp;#8217;m going to write a toy library for manipulating infinite lazy polynomials. I promise this will be fun.&lt;/p&gt;
 
-&lt;h3 id='representation'&gt;Representation&lt;/h3&gt;
+&lt;p&gt;In this post I’m going to write a toy library for manipulating infinite lazy polynomials. I promise this will be fun.&lt;/p&gt;
 
-&lt;p&gt;You might try representing a polynomial of infinite degree as an infinite stream of coefficients. But I think it would be easier to think about it in terms of a function &lt;script type='math/tex'&gt;c:\mathbb{N} \rightarrow \mathbb{R}&lt;/script&gt; that gives you the coefficient for a given power of &lt;script type='math/tex'&gt;x&lt;/script&gt; in the polynomial. So the polynomial represented by some function &lt;script type='math/tex'&gt;c&lt;/script&gt; would be&lt;/p&gt;
-&lt;script type='math/tex; mode=display'&gt;
+&lt;h3 id=&quot;representation&quot;&gt;Representation&lt;/h3&gt;
+
+&lt;p&gt;You might try representing a polynomial of infinite degree as an infinite stream of coefficients. But I think it would be
+easier to think about it in terms of a function &lt;script type=&quot;math/tex&quot;&gt;c:\mathbb{N} \rightarrow \mathbb{R}&lt;/script&gt; that gives you the coefficient
+for a given power of &lt;script type=&quot;math/tex&quot;&gt;x&lt;/script&gt; in the polynomial. So the polynomial represented by some function &lt;script type=&quot;math/tex&quot;&gt;c&lt;/script&gt; would be&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;
 %&lt;![CDATA[
 p_c(x) = c(0) + c(1)x + c(2)x^2 + c(3)x^3 + \ldots
 %]]&gt;
 &lt;/script&gt;
-&lt;p&gt;Here&amp;#8217;s the setup:&lt;/p&gt;
-&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;class&lt;/span&gt;&lt;span class='kd'&gt; &lt;/span&gt;&lt;span class='nc'&gt;Poly&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;coeffs&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt; &lt;span class='kt'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
 
-  &lt;span class='c1'&gt;// Memoizing coefficient accessor. Returns the coefficient for x^n.&lt;/span&gt;
-  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;apply&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt; &lt;span class='p'&gt;= &lt;/span&gt;&lt;span class='n'&gt;memo&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;getOrElseUpdate&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='k'&gt;this&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;coeffs&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='p'&gt;))&lt;/span&gt;
+&lt;p&gt;Here’s the setup:&lt;/p&gt;
 
-  &lt;span class='c1'&gt;// The memo table&lt;/span&gt;
-  &lt;span class='k'&gt;private&lt;/span&gt; &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;memo&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;scala&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;collection&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;mutable&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='nc'&gt;HashMap&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;, &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='p'&gt;]()&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Poly&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;coeffs&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Double&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
 
-  &lt;span class='k'&gt;override&lt;/span&gt; &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;toString&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-    &lt;span class='s'&gt;&amp;quot;{ %s, ... }&amp;quot;&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;format&lt;/span&gt;&lt;span class='p'&gt;((&lt;/span&gt;&lt;span class='mi'&gt;0&lt;/span&gt; &lt;span class='n'&gt;to&lt;/span&gt; &lt;span class='mi'&gt;10&lt;/span&gt;&lt;span class='p'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;i&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;df&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;format&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='k'&gt;this&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;i&lt;/span&gt;&lt;span class='p'&gt;))).&lt;/span&gt;&lt;span class='n'&gt;mkString&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='s'&gt;&amp;quot;, &amp;quot;&lt;/span&gt;&lt;span class='p'&gt;))&lt;/span&gt;
-  &lt;span class='p'&gt;}&lt;/span&gt;
-  &lt;span class='k'&gt;private&lt;/span&gt; &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;df&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='n'&gt;java&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;text&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='nc'&gt;DecimalFormat&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='s'&gt;&amp;quot;#.#######&amp;quot;&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;
-&lt;span class='p'&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The &lt;code&gt;Poly&lt;/code&gt; class just wraps a function of type &lt;code&gt;Int =&amp;gt; Double&lt;/code&gt;, memoizes it, and provides a &lt;code&gt;toString&lt;/code&gt; representation including the first so many coefficients.&lt;/p&gt;
+  &lt;span class=&quot;c1&quot;&gt;// Memoizing coefficient accessor. Returns the coefficient for x^n.&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Double&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getOrElseUpdate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;coeffs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+
+  &lt;span class=&quot;c1&quot;&gt;// The memo table&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memo&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;scala&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;collection&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mutable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;HashMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;, &lt;span class=&quot;kt&quot;&gt;Double&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]()&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;override&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;toString&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&amp;quot;{ %s, ... }&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;to&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;df&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mkString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;, &amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;df&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;java&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;DecimalFormat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;#.#######&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code&gt;Poly&lt;/code&gt; class just wraps a function of type &lt;code&gt;Int =&amp;gt; Double&lt;/code&gt;, memoizes it, and provides a &lt;code&gt;toString&lt;/code&gt;
+representation including the first so many coefficients.&lt;/p&gt;
 
 &lt;p&gt;Now we can create instances like this:&lt;/p&gt;
 
@@ -178,7 +288,8 @@ p_c(x) = c(0) + c(1)x + c(2)x^2 + c(3)x^3 + \ldots
 one: Poly = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 
 scala&amp;gt; val x = new Poly(n =&amp;gt; if (n == 1) 1 else 0)
-x: Poly = { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }&lt;/code&gt;&lt;/pre&gt;
+x: Poly = { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;You can access arbitrary coefficients by calling the &lt;code&gt;apply&lt;/code&gt; method.&lt;/p&gt;
 
@@ -189,9 +300,15 @@ scala&amp;gt; x(1)
 res1: Double = 1.0
 
 scala&amp;gt; x(12)
-res2: Double = 0.0&lt;/code&gt;&lt;/pre&gt;
+res2: Double = 0.0
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Just keep in mind that &lt;code&gt;p(n)&lt;/code&gt; is the coefficient of &lt;script type='math/tex'&gt;x^n&lt;/script&gt; in &lt;code&gt;p&lt;/code&gt;, not &lt;script type='math/tex'&gt;p(n)&lt;/script&gt; (i.e., &lt;script type='math/tex'&gt;p&lt;/script&gt; evaluated at &lt;script type='math/tex'&gt;n&lt;/script&gt;) as you might expect to see. I can get away with this because I&amp;#8217;m probably never going to evaluate these polynomials, I&amp;#8217;m just going to treat them formally, as mathematical objects in their own right. (To get my terminology straight, as some commenters have pointed out, these objects are called &lt;a href='http://en.wikipedia.org/wiki/Formal_power_series'&gt;formal power series&lt;/a&gt;.)&lt;/p&gt;
+&lt;p&gt;Just keep in mind that &lt;code&gt;p(n)&lt;/code&gt; is the coefficient of &lt;script type=&quot;math/tex&quot;&gt;x^n&lt;/script&gt; in &lt;code&gt;p&lt;/code&gt;, not &lt;script type=&quot;math/tex&quot;&gt;p(n)&lt;/script&gt; (i.e.,
+&lt;script type=&quot;math/tex&quot;&gt;p&lt;/script&gt; evaluated at &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt;) as you might expect to see. I can get away with this because I’m probably never
+going to evaluate these polynomials, I’m just going to treat them formally, as mathematical objects in their own right.
+(To get my terminology straight, as some commenters have pointed out, these objects are called
+&lt;a href=&quot;http://en.wikipedia.org/wiki/Formal_power_series&quot;&gt;formal power series&lt;/a&gt;.)&lt;/p&gt;
+
 
       &lt;a href="http://jliszka.github.io/2013/10/31/infinite-lazy-polynomials.html">Read more&lt;/a>
     
@@ -205,18 +322,30 @@ res2: Double = 0.0&lt;/code&gt;&lt;/pre&gt;
    <id>http://jliszka.github.io/2013/10/24/exact-numeric-nth-derivatives</id>
    <content type="html">
     
-      &lt;p&gt;Automatic differentiation is a well-studied technique for computing exact numeric derivatives. Dan Piponi has a &lt;a href='http://blog.sigfpe.com/2005/07/automatic-differentiation.html'&gt;great introduction on the subject&lt;/a&gt;, but to give you an overview, the idea is that you introduce an algebraic symbol &lt;script type='math/tex'&gt;\newcommand\e\epsilon\e&lt;/script&gt; such that &lt;script type='math/tex'&gt;\e \ne 0&lt;/script&gt; but &lt;script type='math/tex'&gt;\e^2 = 0&lt;/script&gt;. Formulas involving &lt;script type='math/tex'&gt;\e&lt;/script&gt; are called &lt;a href='http://en.wikipedia.org/wiki/Dual_number'&gt;dual numbers&lt;/a&gt; (e.g., &lt;script type='math/tex'&gt;1 + \e&lt;/script&gt;, &lt;script type='math/tex'&gt;3 - 5\e&lt;/script&gt;) in much the same way as complex numbers are formulas involving the algebraic symbol &lt;script type='math/tex'&gt;i&lt;/script&gt;, which has the property &lt;script type='math/tex'&gt;i^2 = -1&lt;/script&gt;.&lt;/p&gt;
+      
+&lt;p&gt;Automatic differentiation is a well-studied technique for computing exact numeric derivatives. Dan Piponi has a
+&lt;a href=&quot;http://blog.sigfpe.com/2005/07/automatic-differentiation.html&quot;&gt;great introduction on the subject&lt;/a&gt;, but to give you an
+overview, the idea is that you introduce an algebraic symbol &lt;script type=&quot;math/tex&quot;&gt;\newcommand\e\epsilon\e&lt;/script&gt; such that &lt;script type=&quot;math/tex&quot;&gt;\e \ne 0&lt;/script&gt; but
+&lt;script type=&quot;math/tex&quot;&gt;\e^2 = 0&lt;/script&gt;. Formulas involving &lt;script type=&quot;math/tex&quot;&gt;\e&lt;/script&gt; are called &lt;a href=&quot;http://en.wikipedia.org/wiki/Dual_number&quot;&gt;dual numbers&lt;/a&gt;
+(e.g., &lt;script type=&quot;math/tex&quot;&gt;1 + \e&lt;/script&gt;, &lt;script type=&quot;math/tex&quot;&gt;3 - 5\e&lt;/script&gt;) in much the same way as complex numbers are formulas involving the algebraic
+symbol &lt;script type=&quot;math/tex&quot;&gt;i&lt;/script&gt;, which has the property &lt;script type=&quot;math/tex&quot;&gt;i^2 = -1&lt;/script&gt;.&lt;/p&gt;
 
-&lt;p&gt;Then you teach the computer how to add, subtract, multiply and divide with dual numbers. So for example, &lt;script type='math/tex'&gt;(1 + \e)(3 - 5\e) = 3 + 3\e - 5\e - 5\e^2 = 3 - 2\e&lt;/script&gt; (since &lt;script type='math/tex'&gt;\e^2 = 0&lt;/script&gt;). The computer keeps everything in &amp;#8220;normal form,&amp;#8221; i.e., &lt;script type='math/tex'&gt;a + b\e&lt;/script&gt;, as you go along.&lt;/p&gt;
+&lt;p&gt;Then you teach the computer how to add, subtract, multiply and divide with dual numbers. So for example,
+&lt;script type=&quot;math/tex&quot;&gt;(1 + \e)(3 - 5\e) = 3 + 3\e - 5\e - 5\e^2 = 3 - 2\e&lt;/script&gt; (since &lt;script type=&quot;math/tex&quot;&gt;\e^2 = 0&lt;/script&gt;). The computer keeps
+everything in “normal form,” i.e., &lt;script type=&quot;math/tex&quot;&gt;a + b\e&lt;/script&gt;, as you go along.&lt;/p&gt;
 
-&lt;p&gt;In order to find the derivative of some function &lt;script type='math/tex'&gt;f&lt;/script&gt; at a point &lt;script type='math/tex'&gt;x&lt;/script&gt;, all you have to do is compute &lt;script type='math/tex'&gt;f(x + \e)&lt;/script&gt;. The answer you get (in normal form) is&lt;/p&gt;
-&lt;script type='math/tex; mode=display'&gt;
+&lt;p&gt;In order to find the derivative of some function &lt;script type=&quot;math/tex&quot;&gt;f&lt;/script&gt; at a point &lt;script type=&quot;math/tex&quot;&gt;x&lt;/script&gt;, all you have to do is
+compute &lt;script type=&quot;math/tex&quot;&gt;f(x + \e)&lt;/script&gt;. The answer you get (in normal form) is&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;
 %&lt;![CDATA[
-f(x + \e) = f(x) + f'(x)\e
+f(x + \e) = f(x) + f&#39;(x)\e
 %]]&gt;
 &lt;/script&gt;
-&lt;p&gt;So for example, let &lt;script type='math/tex'&gt;f(x) = x^2&lt;/script&gt; and let&amp;#8217;s find &lt;script type='math/tex'&gt;f'(3)&lt;/script&gt;. To do this, we compute &lt;script type='math/tex'&gt;f(3 + \e)&lt;/script&gt;:&lt;/p&gt;
-&lt;script type='math/tex; mode=display'&gt;
+
+&lt;p&gt;So for example, let &lt;script type=&quot;math/tex&quot;&gt;f(x) = x^2&lt;/script&gt; and let’s find &lt;script type=&quot;math/tex&quot;&gt;f&#39;(3)&lt;/script&gt;. To do this, we compute &lt;script type=&quot;math/tex&quot;&gt;f(3 + \e)&lt;/script&gt;:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;
 %&lt;![CDATA[
 \begin{align}
 f(3 + \e) &amp;= (3 + \e)^2 \\
@@ -225,17 +354,25 @@ f(3 + \e) &amp;= (3 + \e)^2 \\
 \end{align}
 %]]&gt;
 &lt;/script&gt;
-&lt;p&gt;We expected &lt;script type='math/tex'&gt;f(3 + \e) = f(3) + f'(3)\e&lt;/script&gt;. Equating these two results, we can conclude that &lt;script type='math/tex'&gt;f(3) = 9&lt;/script&gt; and &lt;script type='math/tex'&gt;f'(3) = 6&lt;/script&gt;. Which is true!&lt;/p&gt;
 
-&lt;p&gt;This works not just for simple polynomials, but for any compound or nested formula of any kind. Somehow dual numbers keep track of the derivative during the evaluation of the formula, respecting the chain rule, the product rule and all.&lt;/p&gt;
+&lt;p&gt;We expected &lt;script type=&quot;math/tex&quot;&gt;f(3 + \e) = f(3) + f&#39;(3)\e&lt;/script&gt;. Equating these two results, we can conclude that
+&lt;script type=&quot;math/tex&quot;&gt;f(3) = 9&lt;/script&gt; and &lt;script type=&quot;math/tex&quot;&gt;f&#39;(3) = 6&lt;/script&gt;. Which is true!&lt;/p&gt;
 
-&lt;p&gt;The reason this works becomes clearer when you consider the &lt;a href='http://en.wikipedia.org/wiki/Taylor_series'&gt;Taylor series&lt;/a&gt; expansion of a function:&lt;/p&gt;
-&lt;script type='math/tex; mode=display'&gt;
+&lt;p&gt;This works not just for simple polynomials, but for any compound or nested formula of any kind. Somehow dual numbers
+keep track of the derivative during the evaluation of the formula, respecting the chain rule, the product rule and all.&lt;/p&gt;
+
+&lt;p&gt;The reason this works becomes clearer when you consider the &lt;a href=&quot;http://en.wikipedia.org/wiki/Taylor_series&quot;&gt;Taylor series&lt;/a&gt;
+expansion of a function:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;
 %&lt;![CDATA[
-f(x + p) = f(x) + f'(x)p + \frac{f''(x)p^2}{2!} + \frac{f^{(3)}(x)p^3}{3!} + \ldots
+f(x + p) = f(x) + f&#39;(x)p + \frac{f&#39;&#39;(x)p^2}{2!} + \frac{f^{(3)}(x)p^3}{3!} + \ldots
 %]]&gt;
 &lt;/script&gt;
-&lt;p&gt;When you evaluate &lt;script type='math/tex'&gt;f(x + \e)&lt;/script&gt;, all the higher-order terms drop out (because &lt;script type='math/tex'&gt;\e^2 = 0&lt;/script&gt;) and all you&amp;#8217;re left with is &lt;script type='math/tex'&gt;f(x) + f'(x)\e&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;When you evaluate &lt;script type=&quot;math/tex&quot;&gt;f(x + \e)&lt;/script&gt;, all the higher-order terms drop out (because &lt;script type=&quot;math/tex&quot;&gt;\e^2 = 0&lt;/script&gt;)
+and all you’re left with is &lt;script type=&quot;math/tex&quot;&gt;f(x) + f&#39;(x)\e&lt;/script&gt;.&lt;/p&gt;
+
 
       &lt;a href="http://jliszka.github.io/2013/10/24/exact-numeric-nth-derivatives.html">Read more&lt;/a>
     
@@ -249,7 +386,8 @@ f(x + p) = f(x) + f'(x)p + \frac{f''(x)p^2}{2!} + \frac{f^{(3)}(x)p^3}{3!} + \ld
    <id>http://jliszka.github.io/2013/10/19/impossible-functions</id>
    <content type="html">
     
-      &lt;style type='text/css'&gt;
+      
+&lt;style type=&quot;text/css&quot;&gt;
 th {
   padding: 5px;
   border: 1px solid #ccc;
@@ -261,13 +399,20 @@ tbody tr:nth-child(even) {
   background: #fff;
 }
 &lt;/style&gt;
-&lt;p&gt;I claim to have a function &lt;code&gt;H&lt;/code&gt; that maps any integer-valued function you give it to a different integer. That is, an injection from &lt;code&gt;Int =&amp;gt; Int&lt;/code&gt; to &lt;code&gt;Int&lt;/code&gt; that returns a different &lt;code&gt;Int&lt;/code&gt; for every function you give it.&lt;/p&gt;
 
-&lt;p&gt;This is clearly impossible, since there are way more functions from integers to integers than there are integers. But I demand proof in the form of witnesses &lt;code&gt;f: Int =&amp;gt; Int&lt;/code&gt;, &lt;code&gt;g: Int =&amp;gt; Int&lt;/code&gt; and &lt;code&gt;n: Int&lt;/code&gt; such that &lt;code&gt;H(f) == H(g)&lt;/code&gt; and &lt;code&gt;f(n) != g(n)&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;I claim to have a function &lt;code&gt;H&lt;/code&gt; that maps any integer-valued function you give it to a different integer. That is,
+an injection from &lt;code&gt;Int =&amp;gt; Int&lt;/code&gt; to &lt;code&gt;Int&lt;/code&gt; that returns a different &lt;code&gt;Int&lt;/code&gt; for every function you give it.&lt;/p&gt;
 
-&lt;p&gt;Your job is to write a function &lt;code&gt;solve&lt;/code&gt; that takes a single argument &lt;code&gt;H: (Int =&amp;gt; Int) =&amp;gt; Int&lt;/code&gt; and returns &lt;code&gt;f&lt;/code&gt;, &lt;code&gt;g&lt;/code&gt; and &lt;code&gt;n&lt;/code&gt; as described above.&lt;/p&gt;
+&lt;p&gt;This is clearly impossible, since there are way more functions from integers to integers than there are integers. But I
+demand proof in the form of witnesses &lt;code&gt;f: Int =&amp;gt; Int&lt;/code&gt;, &lt;code&gt;g: Int =&amp;gt; Int&lt;/code&gt; and &lt;code&gt;n: Int&lt;/code&gt; such that
+&lt;code&gt;H(f) == H(g)&lt;/code&gt; and &lt;code&gt;f(n) != g(n)&lt;/code&gt;.&lt;/p&gt;
 
-&lt;p&gt;One approach is to put together a mathematical proof that such an injection is impossible and try to extract a program from that proof à la the &lt;a href='http://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence'&gt;Curry-Howard isomorphism&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Your job is to write a function &lt;code&gt;solve&lt;/code&gt; that takes a single argument &lt;code&gt;H: (Int =&amp;gt; Int) =&amp;gt; Int&lt;/code&gt; and returns
+&lt;code&gt;f&lt;/code&gt;, &lt;code&gt;g&lt;/code&gt; and &lt;code&gt;n&lt;/code&gt; as described above.&lt;/p&gt;
+
+&lt;p&gt;One approach is to put together a mathematical proof that such an injection is impossible and try to extract a program
+from that proof à la the &lt;a href=&quot;http://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence&quot;&gt;Curry-Howard isomorphism&lt;/a&gt;.&lt;/p&gt;
+
 
       &lt;a href="http://jliszka.github.io/2013/10/19/impossible-functions.html">Read more&lt;/a>
     
@@ -281,7 +426,8 @@ tbody tr:nth-child(even) {
    <id>http://jliszka.github.io/2013/10/10/understanding-a-b-test-analysis</id>
    <content type="html">
     
-      &lt;style type='text/css'&gt;
+      
+&lt;style type=&quot;text/css&quot;&gt;
 th {
   padding: 5px;
   border: 1px solid #ccc;
@@ -299,17 +445,49 @@ tbody tr:nth-child(even) {
   color: #51f;
 }
 &lt;/style&gt;
-&lt;p&gt;This is a continuation of my &lt;a href='/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html'&gt;previous post on the Central Limit Theorem&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;Say you&amp;#8217;re designing a new feature for your website and you can&amp;#8217;t decide which shade of blue to use. So you let your users decide by trying both — some users see &lt;span class='blue1'&gt;this shade&lt;/span&gt; and some users get &lt;span class='blue2'&gt;this one&lt;/span&gt;. Whichever group of users spends more time on the site will determine which color you end up going with.&lt;/p&gt;
+&lt;p&gt;This is a continuation of my &lt;a href=&quot;/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html&quot;&gt;previous post on the Central Limit Theorem&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Say you’re designing a new feature for your website and you can’t decide which shade of blue to use. So you let your
+users decide by trying both — some users see &lt;span class=&quot;blue1&quot;&gt;this shade&lt;/span&gt; and some users get
+&lt;span class=&quot;blue2&quot;&gt;this one&lt;/span&gt;. Whichever group of users spends more time on the site will determine which color
+you end up going with.&lt;/p&gt;
 
 &lt;p&gt;You run your experiment for a little while and collect the following data:&lt;/p&gt;
-&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Group&lt;/th&gt;&lt;th&gt;Shade of blue&lt;/th&gt;&lt;th&gt;# of users&lt;/th&gt;&lt;th&gt;Average time on site&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;A&lt;/td&gt;&lt;td style='text-align: left;'&gt;&lt;span class='blue1'&gt;this one&lt;/span&gt;&lt;/td&gt;&lt;td style='text-align: left;'&gt;1,028&lt;/td&gt;&lt;td style='text-align: left;'&gt;91.4 seconds&lt;/td&gt;
-&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: left;'&gt;B&lt;/td&gt;&lt;td style='text-align: left;'&gt;&lt;span class='blue2'&gt;this one&lt;/span&gt;&lt;/td&gt;&lt;td style='text-align: left;'&gt;1,015&lt;/td&gt;&lt;td style='text-align: left;'&gt;103.8 seconds&lt;/td&gt;
-&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;p&gt;Looks like group B did better! But it&amp;#8217;s a small difference, how can you be sure it&amp;#8217;s significant? In other words, assuming that the shade of blue had no effect on the amount of time a user spends on the site, what is the probability that you would have observed a difference of 11.4 seconds? In &lt;em&gt;other&lt;/em&gt; other words, given the distribution of the amount of time different users spend on the site, if you draw 2 samples of 1,000 or so from this distribution, what is the probability that you would see a difference of 21.4 (or more) in the averages of the samples?&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Group&lt;/th&gt;
+      &lt;th&gt;Shade of blue&lt;/th&gt;
+      &lt;th&gt;# of users&lt;/th&gt;
+      &lt;th&gt;Average time on site&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;A&lt;/td&gt;
+      &lt;td&gt;&lt;span class=&quot;blue1&quot;&gt;this one&lt;/span&gt;&lt;/td&gt;
+      &lt;td&gt;1,028&lt;/td&gt;
+      &lt;td&gt;91.4 seconds&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;B&lt;/td&gt;
+      &lt;td&gt;&lt;span class=&quot;blue2&quot;&gt;this one&lt;/span&gt;&lt;/td&gt;
+      &lt;td&gt;1,015&lt;/td&gt;
+      &lt;td&gt;103.8 seconds&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Looks like group B did better! But it’s a small difference, how can you be sure it’s significant? In other words, assuming that
+the shade of blue had no effect on the amount of time a user spends on the site, what is the probability that you would
+have observed a difference of 11.4 seconds? In &lt;em&gt;other&lt;/em&gt; other words, given the distribution of the amount of
+time different users spend on the site, if you draw 2 samples of 1,000 or so from this distribution, what is the
+probability that you would see a difference of 21.4 (or more) in the averages of the samples?&lt;/p&gt;
 
 &lt;p&gt;Well, you would expect that that depends a lot on the distribution. Here is the distribution you observed:&lt;/p&gt;
+
 
       &lt;a href="http://jliszka.github.io/2013/10/10/understanding-a-b-test-analysis.html">Read more&lt;/a>
     
@@ -323,13 +501,30 @@ tbody tr:nth-child(even) {
    <id>http://jliszka.github.io/2013/10/01/how-traffic-actually-works</id>
    <content type="html">
     
-      &lt;p&gt;Every so often &lt;a href='http://www.smartmotorist.com/traffic-and-safety-guideline/traffic-jams.html'&gt;this article&lt;/a&gt; makes the rounds and it annoys me. That isn&amp;#8217;t how traffic works and the proposed solutions won&amp;#8217;t fix anything. Maybe you can eliminate the annoying stop-and-go, but no one gets home any faster. In fact you can prove that you and everyone behind you get home strictly later than if you had just gone along with the stop-and-go traffic.&lt;/p&gt;
+      
+&lt;p&gt;Every so often &lt;a href=&quot;http://www.smartmotorist.com/traffic-and-safety-guideline/traffic-jams.html&quot;&gt;this article&lt;/a&gt; makes the
+rounds and it annoys me. That isn’t how traffic works and the proposed solutions won’t fix anything. Maybe you can
+eliminate the annoying stop-and-go, but no one gets home any faster. In fact you can prove that you and everyone behind you
+get home strictly later than if you had just gone along with the stop-and-go traffic.&lt;/p&gt;
 
-&lt;h3 id='the_facts'&gt;The facts&lt;/h3&gt;
+&lt;h3 id=&quot;the-facts&quot;&gt;The facts&lt;/h3&gt;
 
-&lt;p&gt;Here&amp;#8217;s how traffic works. First, we know from &lt;a href='http://www.fhwa.dot.gov/publications/research/operations/tft/chap2.pdf'&gt;empirical studies&lt;/a&gt; that drivers tend to maintain a minimum following distance, measured in seconds. It varies per driver, but typically it&amp;#8217;s somewhere between 1.5 and 2 seconds. That works out to a maximum theoretical flow rate of between 1,800 and 2,400 vehicles per lane per hour passing by a given point on the highway. Studies of actual highway traffic have measured flow rates as high as 2,000 vehicles per lane per hour, which works out to a following distance of 1.8 seconds. (I&amp;#8217;m just going to call it 2 seconds for the sake of round numbers.)&lt;/p&gt;
+&lt;p&gt;Here’s how traffic works. First, we know from &lt;a href=&quot;http://www.fhwa.dot.gov/publications/research/operations/tft/chap2.pdf&quot;&gt;empirical studies&lt;/a&gt;
+that drivers tend to maintain a minimum following distance, measured in seconds. It varies per driver, but typically
+it’s somewhere between 1.5 and 2 seconds. That works out to a maximum theoretical flow rate of between 1,800 and 2,400
+vehicles per lane per hour passing by a given point on the highway. Studies of actual highway traffic have measured flow
+rates as high as 2,000 vehicles per lane per hour, which works out to a following distance of 1.8 seconds. (I’m just
+going to call it 2 seconds for the sake of round numbers.)&lt;/p&gt;
 
-&lt;p&gt;The important fact: &lt;strong&gt;there is a limit to the number of cars that can pass by a given point on the highway in a given amount of time, and that limit is one car every 2 seconds, per lane&lt;/strong&gt;. So imagine you are in heavy traffic during rush hour. There are a certain number of cars in line in front of you. Let&amp;#8217;s pick a point on the road to call the front of the line — say, the point at which you plan to exit the highway. The line gets shorter by one car every 2 seconds. If there are 1,000 cars in front of you, it&amp;#8217;s going to take a minimum of 2,000 seconds for you to get to the front of the line. It doesn&amp;#8217;t matter whether people are kind and let cars merge in front of them, zipper-style. It doesn&amp;#8217;t matter how much stop-and-go there is. The simple fact is that it takes 2 seconds per car for you to get to the front of the line, and there are some cars in front of you that have to get there before you do.&lt;/p&gt;
+&lt;p&gt;The important fact: &lt;strong&gt;there is a limit to the number of cars that can pass by a given point on the highway in a given
+amount of time, and that limit is one car every 2 seconds, per lane&lt;/strong&gt;. So imagine you are in heavy traffic during
+rush hour. There are a certain number of cars in line in front of you. Let’s pick a  point on the road to call the front
+of the line — say, the point at which you plan to exit the highway. The line gets shorter by one car every 2 seconds. If
+there are 1,000 cars in front of you, it’s going to take a minimum of 2,000 seconds for you to get to the front of the
+line. It doesn’t matter whether people are kind and let cars merge in front of them, zipper-style. It doesn’t matter how
+much stop-and-go there is. The simple fact is that it takes 2 seconds per car for you to get to the front of the line,
+and there are some cars in front of you that have to get there before you do.&lt;/p&gt;
+
 
       &lt;a href="http://jliszka.github.io/2013/10/01/how-traffic-actually-works.html">Read more&lt;/a>
     
@@ -343,34 +538,41 @@ tbody tr:nth-child(even) {
    <id>http://jliszka.github.io/2013/09/24/more-backwards-functions-unevaluating-polynomials</id>
    <content type="html">
     
-      &lt;p&gt;I have a function that evaluates polynomials with integer coefficients. To evaluate &lt;script type='math/tex; mode=display'&gt;
-%&lt;![CDATA[
+      
+&lt;p&gt;I have a function that evaluates polynomials with integer coefficients. To evaluate
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;
+%&amp;lt;![CDATA[
 f(x) = 6 + 5x + 2x^3
-%]]&gt;
-&lt;/script&gt; at &lt;script type='math/tex'&gt;f(8)&lt;/script&gt;, for example, you do this:&lt;/p&gt;
+%]]&amp;gt;
+&lt;/script&gt;
+at &lt;script type=&quot;math/tex&quot;&gt;f(8)&lt;/script&gt;, for example, you do this:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;scala&amp;gt; evalPoly(8, List(6, 5, 0, 2))
-res0: (Int, Int) = (8, 1070)&lt;/code&gt;&lt;/pre&gt;
+res0: (Int, Int) = (8, 1070)
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;For some reason it echoes the input back out to you. Here&amp;#8217;s the code you might write:&lt;/p&gt;
-&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;evalPoly&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;coeffs&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;])&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;eval&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;cs&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;])&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt; &lt;span class='p'&gt;= {&lt;/span&gt;
-    &lt;span class='n'&gt;cs&lt;/span&gt; &lt;span class='k'&gt;match&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-      &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='nc'&gt;Nil&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='mi'&gt;0&lt;/span&gt;
-      &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='n'&gt;h&lt;/span&gt; &lt;span class='o'&gt;::&lt;/span&gt; &lt;span class='n'&gt;t&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='n'&gt;x&lt;/span&gt; &lt;span class='o'&gt;*&lt;/span&gt; &lt;span class='n'&gt;eval&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;t&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='o'&gt;+&lt;/span&gt; &lt;span class='n'&gt;h&lt;/span&gt;
-    &lt;span class='p'&gt;}&lt;/span&gt;
-  &lt;span class='p'&gt;}&lt;/span&gt;
-  &lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;eval&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;coeffs&lt;/span&gt;&lt;span class='p'&gt;))&lt;/span&gt;
-&lt;span class='p'&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;For some reason it echoes the input back out to you. Here’s the code you might write:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;evalPoly&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coeffs&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;eval&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cs&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;cs&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;match&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Nil&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;h&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;eval&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;eval&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;coeffs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
 &lt;p&gt;This should not be surprising.&lt;/p&gt;
 
-&lt;p&gt;But I also have a function that un-evaluates polynomials. To un-evaluate &lt;script type='math/tex'&gt;f(8) = 1070&lt;/script&gt;, you do this:&lt;/p&gt;
+&lt;p&gt;But I also have a function that un-evaluates polynomials. To un-evaluate &lt;script type=&quot;math/tex&quot;&gt;f(8) = 1070&lt;/script&gt;, you do this:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;scala&amp;gt; unevalPoly(8, 1070)
-res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
+res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;and it echoes your input and gives you back the coefficients of the polynomial.&lt;/p&gt;
+
 
       &lt;a href="http://jliszka.github.io/2013/09/24/more-backwards-functions-unevaluating-polynomials.html">Read more&lt;/a>
     
@@ -384,38 +586,45 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
    <id>http://jliszka.github.io/2013/09/18/insertion-sort-is-dual-to-bubble-sort</id>
    <content type="html">
     
-      &lt;p&gt;I noticed recently that &lt;a href='http://en.wikipedia.org/wiki/insertion_sort'&gt;insertion sort&lt;/a&gt; is &lt;a href='http://en.wikipedia.org/wiki/Bubble_sort'&gt;bubble sort&lt;/a&gt; backwards. Or inside out. Or something.&lt;/p&gt;
+      
+&lt;p&gt;I noticed recently that &lt;a href=&quot;http://en.wikipedia.org/wiki/insertion_sort&quot;&gt;insertion sort&lt;/a&gt; is
+&lt;a href=&quot;http://en.wikipedia.org/wiki/Bubble_sort&quot;&gt;bubble sort&lt;/a&gt; backwards. Or inside out. Or something.&lt;/p&gt;
 
-&lt;p&gt;Both algorithms can be expressed as a main function that calls a recursive helper. Let&amp;#8217;s take a look at the main functions first.&lt;/p&gt;
+&lt;p&gt;Both algorithms can be expressed as a main function that calls a recursive helper. Let’s
+take a look at the main functions first.&lt;/p&gt;
 
-&lt;h3 id='the_main_functions'&gt;The main functions&lt;/h3&gt;
+&lt;h3 id=&quot;the-main-functions&quot;&gt;The main functions&lt;/h3&gt;
 
-&lt;p&gt;Here&amp;#8217;s the code:&lt;/p&gt;
-&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;insertionSort&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;:&lt;/span&gt; &lt;span class='kt'&gt;Ordered&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='p'&gt;]](&lt;/span&gt;&lt;span class='n'&gt;xs&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='p'&gt;])&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='p'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-  &lt;span class='n'&gt;xs&lt;/span&gt; &lt;span class='k'&gt;match&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-    &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='nc'&gt;Nil&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='nc'&gt;Nil&lt;/span&gt;
-    &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='n'&gt;h&lt;/span&gt; &lt;span class='o'&gt;::&lt;/span&gt; &lt;span class='n'&gt;t&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-      &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;s&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;insertionSort&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;t&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;
-      &lt;span class='n'&gt;insert&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;h&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;s&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;
-    &lt;span class='p'&gt;}&lt;/span&gt;
-  &lt;span class='p'&gt;}&lt;/span&gt;
-&lt;span class='p'&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Here’s the code:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;insertionSort&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;&amp;lt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Ordered&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]](&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;match&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Nil&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Nil&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;h&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;insertionSort&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;insert&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
 &lt;p&gt;&lt;code&gt;insertionSort&lt;/code&gt; sorts a list by inserting the head of the list into the recursively sorted tail, in such a way that it remains sorted.&lt;/p&gt;
-&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;bubbleSort&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;:&lt;/span&gt; &lt;span class='kt'&gt;Ordered&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='p'&gt;]](&lt;/span&gt;&lt;span class='n'&gt;xs&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='p'&gt;])&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='p'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-  &lt;span class='n'&gt;xs&lt;/span&gt; &lt;span class='k'&gt;match&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-    &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='nc'&gt;Nil&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='nc'&gt;Nil&lt;/span&gt;
-    &lt;span class='k'&gt;case&lt;/span&gt; &lt;span class='n'&gt;xs&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-      &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;h&lt;/span&gt;&lt;span class='p'&gt;,&lt;/span&gt; &lt;span class='n'&gt;t&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;bubble&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;xs&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;
-      &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;s&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;bubbleSort&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;t&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;
-      &lt;span class='n'&gt;h&lt;/span&gt; &lt;span class='o'&gt;::&lt;/span&gt; &lt;span class='n'&gt;s&lt;/span&gt;
-    &lt;span class='p'&gt;}&lt;/span&gt;
-  &lt;span class='p'&gt;}&lt;/span&gt;  
-&lt;span class='p'&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bubbleSort&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;&amp;lt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Ordered&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]](&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;match&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Nil&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Nil&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bubble&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bubbleSort&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;h&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;  
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
 &lt;p&gt;&lt;code&gt;bubbleSort&lt;/code&gt; sorts a list by bubbling the smallest element to the front of the list and recursively sorting the tail.&lt;/p&gt;
 
-&lt;p&gt;It&amp;#8217;s not obvious from the code that these functions are backwards versions of each other, but look at their data flow diagrams:&lt;/p&gt;
+&lt;p&gt;It’s not obvious from the code that these functions are backwards versions of each other,
+but look at their data flow diagrams:&lt;/p&gt;
+
 
       &lt;a href="http://jliszka.github.io/2013/09/18/insertion-sort-is-dual-to-bubble-sort.html">Read more&lt;/a>
     
@@ -429,21 +638,58 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
    <id>http://jliszka.github.io/2013/09/09/the-3-things-you-should-understand-about-quantum-computing</id>
    <content type="html">
     
-      &lt;p&gt;I&amp;#8217;m working on a post about probablistic graphical models, but it&amp;#8217;s not done yet, so in the meantime here&amp;#8217;s a post about quantum probability.&lt;/p&gt;
+      
+&lt;p&gt;I’m working on a post about probablistic graphical models, but it’s not done yet,
+so in the meantime here’s a post about quantum probability.&lt;/p&gt;
 
-&lt;h3 id='loaded_dice'&gt;Loaded dice&lt;/h3&gt;
+&lt;h3 id=&quot;loaded-dice&quot;&gt;Loaded dice&lt;/h3&gt;
 
-&lt;p&gt;Let&amp;#8217;s say you have a loaded die with the following probability distribution:&lt;/p&gt;
-&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th /&gt;&lt;th /&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;1&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;10%&lt;/td&gt;
-&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;2&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;20%&lt;/td&gt;
-&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;3&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;30%&lt;/td&gt;
-&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;4&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;10%&lt;/td&gt;
-&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;5&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;20%&lt;/td&gt;
-&lt;/tr&gt;&lt;tr&gt;&lt;td style='text-align: center;'&gt;&lt;strong&gt;6&lt;/strong&gt;&lt;/td&gt;&lt;td style='text-align: center;'&gt;10%&lt;/td&gt;
-&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
-&lt;p&gt;How many pieces of information are encoded in a loaded die like this? It&amp;#8217;s weird to think of a probability distribution encoding information, but think of it this way: if you sent me this die in the mail, I could roll it a bunch of times to discover the probability for each face of the die. If you control how the die is weighted, you could send me a message that way.&lt;/p&gt;
+&lt;p&gt;Let’s say you have a loaded die with the following probability distribution:&lt;/p&gt;
 
-&lt;p&gt;Anyway, the answer is that there are 5 pieces of information encoded in this distribution. (If you&amp;#8217;re not sure why it isn&amp;#8217;t 6, notice that once you specify 5 of the entries in the table, the 6th one is completely determined, since they all have to add up to 100%. So you can really only send me 5 numbers of your choosing this way.)&lt;/p&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt; &lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt; &lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;strong&gt;1&lt;/strong&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;10%&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;strong&gt;2&lt;/strong&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;20%&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;strong&gt;3&lt;/strong&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;30%&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;strong&gt;4&lt;/strong&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;10%&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;strong&gt;5&lt;/strong&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;20%&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;strong&gt;6&lt;/strong&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;10%&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;How many pieces of information are encoded in a loaded die like this? It’s weird to think of a probability distribution
+encoding information, but think of it this way: if you sent me this die in the mail, I could roll it a bunch of times
+to discover the probability for each face of the die. If you control how the die is weighted, you could send me a message
+that way.&lt;/p&gt;
+
+&lt;p&gt;Anyway, the answer is that there are 5 pieces of information encoded in this distribution.
+(If you’re not sure why it isn’t 6, notice that once you specify 5 of the entries in the table, the 6th one is completely
+determined, since they all have to add up to 100%. So you can really only send me 5 numbers of your choosing this way.)&lt;/p&gt;
+
 
       &lt;a href="http://jliszka.github.io/2013/09/09/the-3-things-you-should-understand-about-quantum-computing.html">Read more&lt;/a>
     
@@ -457,25 +703,34 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
    <id>http://jliszka.github.io/2013/09/03/fun-with-bayesian-priors</id>
    <content type="html">
     
-      &lt;p&gt;Say you have a biased coin, but you don&amp;#8217;t know what the &amp;#8220;true&amp;#8221; bias is. You flip the coin 10 times and observe 8 heads. What can you say now about the true bias?&lt;/p&gt;
+      
+&lt;p&gt;Say you have a biased coin, but you don’t know what the “true” bias is. You flip the coin
+10 times and observe 8 heads. What can you say now about the true bias?&lt;/p&gt;
 
-&lt;p&gt;It&amp;#8217;s easy to say that the most likely bias is 0.8. That&amp;#8217;s accurate, but maybe you also want to know what other biases are likely. How likely is it that you have a fair coin? Can you rule out having a bias as low as 0.4?&lt;/p&gt;
+&lt;p&gt;It’s easy to say that the most likely bias is 0.8. That’s accurate, but maybe you also want to know what other
+biases are likely. How likely is it that you have a fair coin? Can you rule out having a bias as low as 0.4?&lt;/p&gt;
 
-&lt;p&gt;This sounds like a classic problem in Bayesian inference, but I&amp;#8217;m going to take a different tack — simulation. To make this a little easier I&amp;#8217;ll use a &lt;a href='/2013/08/12/a-frequentist-approach-to-probability.html'&gt;Scala library based on the Monte Carlo method&lt;/a&gt; that I&amp;#8217;ve been working on as an exercise in trying to better understand &lt;a href='/2013/08/19/climbing-the-probability-distribution-ladder.html'&gt;some&lt;/a&gt; &lt;a href='/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html'&gt;ideas&lt;/a&gt; in probability and statistics.&lt;/p&gt;
+&lt;p&gt;This sounds like a classic problem in Bayesian inference, but I’m going to take a different tack — simulation.
+To make this a little easier I’ll use a &lt;a href=&quot;/2013/08/12/a-frequentist-approach-to-probability.html&quot;&gt;Scala library based on the Monte Carlo method&lt;/a&gt;
+that I’ve been working on as an exercise in trying to better understand &lt;a href=&quot;/2013/08/19/climbing-the-probability-distribution-ladder.html&quot;&gt;some&lt;/a&gt;
+&lt;a href=&quot;/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html&quot;&gt;ideas&lt;/a&gt; in probability and statistics.&lt;/p&gt;
 
-&lt;h3 id='the_simulation'&gt;The simulation&lt;/h3&gt;
+&lt;h3 id=&quot;the-simulation&quot;&gt;The simulation&lt;/h3&gt;
 
 &lt;p&gt;A single trial in the simulation will look like this:&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;Choose a bias at random&lt;/li&gt;
-
-&lt;li&gt;Flip a coin with that bias 10 times&lt;/li&gt;
+  &lt;li&gt;Choose a bias at random&lt;/li&gt;
+  &lt;li&gt;Flip a coin with that bias 10 times&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;After, say, 10,000 trials, you look at all the times you got 8 heads, and see what the bias happened to be in each of those trials. The percent of the time each bias comes up in this subset of trials gives the probability (the &amp;#8220;posterior&amp;#8221; probability) that that bias is the &amp;#8220;true&amp;#8221; bias.&lt;/p&gt;
+&lt;p&gt;After, say, 10,000 trials, you look at all the times you got 8 heads, and see what the bias happened to be in each of those
+trials. The percent of the time each bias comes up in this subset of trials gives the probability
+(the “posterior” probability) that that bias is the “true” bias.&lt;/p&gt;
 
-&lt;p&gt;When you start to code this up, one question jumps out: In step 1, when you choose a bias &amp;#8220;at random,&amp;#8221; what distribution do you draw it from?&lt;/p&gt;
+&lt;p&gt;When you start to code this up, one question jumps out:
+In step 1, when you choose a bias “at random,” what distribution do you draw it from?&lt;/p&gt;
+
 
       &lt;a href="http://jliszka.github.io/2013/09/03/fun-with-bayesian-priors.html">Read more&lt;/a>
     
@@ -489,22 +744,28 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
    <id>http://jliszka.github.io/2013/08/26/a-programmers-guide-to-the-central-limit-theorem</id>
    <content type="html">
     
-      &lt;p&gt;This post is a continuation of a series of posts about exploring probability distributions through code. The first post is &lt;a href='/2013/08/12/a-frequentist-approach-to-probability.html'&gt;here&lt;/a&gt;.&lt;/p&gt;
+      
+&lt;p&gt;This post is a continuation of a series of posts about exploring probability distributions through code. The first post
+is &lt;a href=&quot;/2013/08/12/a-frequentist-approach-to-probability.html&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;In this post I&amp;#8217;m going to look at the Central Limit Theorem.&lt;/p&gt;
+&lt;p&gt;In this post I’m going to look at the Central Limit Theorem.&lt;/p&gt;
 
-&lt;h3 id='sample_means'&gt;Sample means&lt;/h3&gt;
+&lt;h3 id=&quot;sample-means&quot;&gt;Sample means&lt;/h3&gt;
 
-&lt;p&gt;Suppose I have a random variable whose underlying distribution is unknown to me. I take sample of a reasonable size (say 100) and find the mean of the sample. What can I say about the relationship between the true mean and the mean of the sample?&lt;/p&gt;
+&lt;p&gt;Suppose I have a random variable whose underlying distribution is unknown to me. I take sample of a reasonable size (say 100)
+and find the mean of the sample. What can I say about the relationship between the true mean and the mean of the sample?&lt;/p&gt;
 
 &lt;p&gt;The most comprehensive answer to this is to look at the distribution of the sample mean.&lt;/p&gt;
-&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;sampleMean&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;d&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='p'&gt;],&lt;/span&gt; &lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt; &lt;span class='p'&gt;= &lt;/span&gt;&lt;span class='mi'&gt;100&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='p'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-  &lt;span class='n'&gt;d&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;repeat&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='p'&gt;).&lt;/span&gt;&lt;span class='n'&gt;map&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='k'&gt;_&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;sum&lt;/span&gt; &lt;span class='o'&gt;/&lt;/span&gt; &lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;
-&lt;span class='p'&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;This method takes a probability distribution and returns the distribution of means of samples from that distribution. You can specify the sample size, but by default we&amp;#8217;ll use 100.&lt;/p&gt;
 
-&lt;p&gt;Let&amp;#8217;s try it on some of the distributions we&amp;#8217;ve &lt;a href='/2013/08/19/climbing-the-probability-distribution-ladder.html'&gt;created&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sampleMean&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Distribution&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Double&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Distribution&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Double&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;repeat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This method takes a probability distribution and returns the distribution of means of samples from that distribution. You can
+specify the sample size, but by default we’ll use 100.&lt;/p&gt;
+
+&lt;p&gt;Let’s try it on some of the distributions we’ve &lt;a href=&quot;/2013/08/19/climbing-the-probability-distribution-ladder.html&quot;&gt;created&lt;/a&gt;.&lt;/p&gt;
+
 
       &lt;a href="http://jliszka.github.io/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html">Read more&lt;/a>
     
@@ -518,20 +779,27 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
    <id>http://jliszka.github.io/2013/08/19/climbing-the-probability-distribution-ladder</id>
    <content type="html">
     
-      &lt;p&gt;In the &lt;a href='/2013/08/12/a-frequentist-approach-to-probability.html'&gt;last post&lt;/a&gt; I created a simple library for constructing probability distributions, based on the &lt;a href='http://en.wikipedia.org/wiki/Monte_Carlo_method'&gt;Monte Carlo method&lt;/a&gt;. I started with the uniform distribution and derived the Bernoulli and normal distributions from it.&lt;/p&gt;
+      
+&lt;p&gt;In the &lt;a href=&quot;/2013/08/12/a-frequentist-approach-to-probability.html&quot;&gt;last post&lt;/a&gt; I created a simple library for constructing probability distributions, based on the
+&lt;a href=&quot;http://en.wikipedia.org/wiki/Monte_Carlo_method&quot;&gt;Monte Carlo method&lt;/a&gt;. I started with
+the uniform distribution and derived the Bernoulli and normal distributions from it.&lt;/p&gt;
 
-&lt;p&gt;In this post I&amp;#8217;ll construct some more common distributions in the same manner.&lt;/p&gt;
+&lt;p&gt;In this post I’ll construct some more common distributions in the same manner.&lt;/p&gt;
 
-&lt;h3 id='the_exponential_distribution'&gt;The exponential distribution&lt;/h3&gt;
+&lt;h3 id=&quot;the-exponential-distribution&quot;&gt;The exponential distribution&lt;/h3&gt;
 
-&lt;p&gt;If &lt;script type='math/tex'&gt;X&lt;/script&gt; is a uniformly distributed random variable, then &lt;script type='math/tex'&gt;-log(X)/\lambda&lt;/script&gt; is distributed according to the &lt;a href='http://en.wikipedia.org/wiki/Exponential_distribution'&gt;exponential distribution&lt;/a&gt;. The parameter &lt;script type='math/tex'&gt;\lambda&lt;/script&gt; is just a scaling factor. In code:&lt;/p&gt;
-&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;exponential&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;l&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='p'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-  &lt;span class='k'&gt;for&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-    &lt;span class='n'&gt;x&lt;/span&gt; &lt;span class='k'&gt;&amp;lt;-&lt;/span&gt; &lt;span class='n'&gt;uniform&lt;/span&gt;
-  &lt;span class='p'&gt;}&lt;/span&gt; &lt;span class='k'&gt;yield&lt;/span&gt; &lt;span class='n'&gt;math&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;log&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;x&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt; &lt;span class='o'&gt;*&lt;/span&gt; &lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='o'&gt;-&lt;/span&gt;&lt;span class='mi'&gt;1&lt;/span&gt;&lt;span class='o'&gt;/&lt;/span&gt;&lt;span class='n'&gt;l&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;
-&lt;span class='p'&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;If &lt;script type=&quot;math/tex&quot;&gt;X&lt;/script&gt; is a uniformly distributed random variable, then &lt;script type=&quot;math/tex&quot;&gt;-log(X)/\lambda&lt;/script&gt; is distributed according to
+the &lt;a href=&quot;http://en.wikipedia.org/wiki/Exponential_distribution&quot;&gt;exponential distribution&lt;/a&gt;.
+The parameter &lt;script type=&quot;math/tex&quot;&gt;\lambda&lt;/script&gt; is just a scaling factor. In code:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;exponential&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Double&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Distribution&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Double&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uniform&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;yield&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;math&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
 &lt;p&gt;It looks like this:&lt;/p&gt;
+
 
       &lt;a href="http://jliszka.github.io/2013/08/19/climbing-the-probability-distribution-ladder.html">Read more&lt;/a>
     
@@ -545,30 +813,38 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
    <id>http://jliszka.github.io/2013/08/12/a-frequentist-approach-to-probability</id>
    <content type="html">
     
-      &lt;p&gt;One thing that always confused me in my intro stats classes was the concept of a random variable. A random variable is not a variable like I&amp;#8217;m used to thinking about, like a thing that has one value at a time. A random variable is instead an object that you can sample values from, and the values you get will be distributed according to some underlying probability distribution.&lt;/p&gt;
+      
+&lt;p&gt;One thing that always confused me in my intro stats classes was the concept of a random variable.
+A random variable is not a variable like I’m used to thinking about, like a thing that has one value at a time.
+A random variable is instead an object that you can sample values from, and the
+values you get will be distributed according to some underlying probability distribution.&lt;/p&gt;
 
-&lt;p&gt;In that way it sort of acts like a container, where the only operation is to sample a value from the container. In Scala it might look something like:&lt;/p&gt;
-&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;trait&lt;/span&gt;&lt;span class='kd'&gt; &lt;/span&gt;&lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='p'&gt;]&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;get&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt;
-&lt;span class='p'&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;In that way it sort of acts like a container, where the only operation is to sample a value from the container.
+In Scala it might look something like:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;trait&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Distribution&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;A&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
 &lt;p&gt;The idea is that &lt;code&gt;get&lt;/code&gt; returns a different value (of type &lt;code&gt;A&lt;/code&gt;) from the distribution every time you call it.&lt;/p&gt;
 
-&lt;p&gt;I&amp;#8217;m going to add a &lt;code&gt;sample&lt;/code&gt; method that lets me draw a sample of any size I want from the distribution.&lt;/p&gt;
-&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;trait&lt;/span&gt;&lt;span class='kd'&gt; &lt;/span&gt;&lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='p'&gt;]&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;get&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt;
+&lt;p&gt;I’m going to add a &lt;code&gt;sample&lt;/code&gt; method that lets me draw a sample of any size I want from the distribution.&lt;/p&gt;
 
-  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;sample&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Int&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;List&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='p'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-    &lt;span class='nc'&gt;List&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;fill&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;n&lt;/span&gt;&lt;span class='p'&gt;)(&lt;/span&gt;&lt;span class='k'&gt;this&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;get&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;
-  &lt;span class='p'&gt;}&lt;/span&gt;
-&lt;span class='p'&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Now to create a simple distribution. Here&amp;#8217;s one whose samples are uniformly distributed between 0 and 1.&lt;/p&gt;
-&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;uniform&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;Double&lt;/span&gt;&lt;span class='p'&gt;]&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-  &lt;span class='k'&gt;private&lt;/span&gt; &lt;span class='k'&gt;val&lt;/span&gt; &lt;span class='n'&gt;rand&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='n'&gt;java&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;util&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='nc'&gt;Random&lt;/span&gt;&lt;span class='p'&gt;()&lt;/span&gt;
-  &lt;span class='k'&gt;override&lt;/span&gt; &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;get&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;rand&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;nextDouble&lt;/span&gt;&lt;span class='p'&gt;()&lt;/span&gt;
-&lt;span class='p'&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;trait&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Distribution&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;A&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sample&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nc&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fill&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now to create a simple distribution. Here’s one whose samples are uniformly distributed between 0 and 1.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uniform&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Distribution&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Double&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;java&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;util&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Random&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;override&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nextDouble&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
 &lt;p&gt;And sampling it gives&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;scala&amp;gt; uniform.sample(10).foreach(println)
@@ -581,19 +857,23 @@ res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))&lt;/code&gt;&lt;/pre&gt;
 0.8229649049912187
 0.7767540566158817
 0.4133782959276152
-0.8152378840945975&lt;/code&gt;&lt;/pre&gt;
+0.8152378840945975
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id='transforming_distributions'&gt;Transforming distributions&lt;/h3&gt;
+&lt;h3 id=&quot;transforming-distributions&quot;&gt;Transforming distributions&lt;/h3&gt;
 
-&lt;p&gt;Every good container should have a &lt;code&gt;map&lt;/code&gt; method. &lt;code&gt;map&lt;/code&gt; will transform values produced by the distribution according to some function you pass it.&lt;/p&gt;
-&lt;div class='highlight'&gt;&lt;pre&gt;&lt;code class='scala'&gt;&lt;span class='k'&gt;trait&lt;/span&gt;&lt;span class='kd'&gt; &lt;/span&gt;&lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;A&lt;/span&gt;&lt;span class='p'&gt;]&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-  &lt;span class='n'&gt;self&lt;/span&gt; &lt;span class='k'&gt;=&amp;gt;&lt;/span&gt;
-  &lt;span class='c1'&gt;// ...&lt;/span&gt;
-  &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;map&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;B&lt;/span&gt;&lt;span class='p'&gt;](&lt;/span&gt;&lt;span class='n'&gt;f&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;A&lt;/span&gt; &lt;span class='kt'&gt;=&amp;gt;&lt;/span&gt; &lt;span class='kt'&gt;B&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;&lt;span class='k'&gt;:&lt;/span&gt; &lt;span class='kt'&gt;Distribution&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;B&lt;/span&gt;&lt;span class='p'&gt;]&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='k'&gt;new&lt;/span&gt; &lt;span class='nc'&gt;Distribution&lt;/span&gt;&lt;span class='p'&gt;[&lt;/span&gt;&lt;span class='kt'&gt;B&lt;/span&gt;&lt;span class='p'&gt;]&lt;/span&gt; &lt;span class='p'&gt;{&lt;/span&gt;
-    &lt;span class='k'&gt;override&lt;/span&gt; &lt;span class='k'&gt;def&lt;/span&gt; &lt;span class='nf'&gt;get&lt;/span&gt; &lt;span class='k'&gt;=&lt;/span&gt; &lt;span class='n'&gt;f&lt;/span&gt;&lt;span class='p'&gt;(&lt;/span&gt;&lt;span class='n'&gt;self&lt;/span&gt;&lt;span class='p'&gt;.&lt;/span&gt;&lt;span class='n'&gt;get&lt;/span&gt;&lt;span class='p'&gt;)&lt;/span&gt;
-  &lt;span class='p'&gt;}&lt;/span&gt;
-&lt;span class='p'&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Every good container should have a &lt;code&gt;map&lt;/code&gt; method. &lt;code&gt;map&lt;/code&gt; will transform values produced by the distribution
+according to some function you pass it.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;trait&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Distribution&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;](&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Distribution&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Distribution&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;override&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
       &lt;a href="http://jliszka.github.io/2013/08/12/a-frequentist-approach-to-probability.html">Read more&lt;/a>
     
    </content>

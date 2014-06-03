@@ -101,10 +101,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -131,199 +127,634 @@
       <span>09 September 2013</span>
     </div>
     <div class="content">
-      <p>I&#8217;m working on a post about probablistic graphical models, but it&#8217;s not done yet, so in the meantime here&#8217;s a post about quantum probability.</p>
+      
+<p>I’m working on a post about probablistic graphical models, but it’s not done yet,
+so in the meantime here’s a post about quantum probability.</p>
 
-<h3 id='loaded_dice'>Loaded dice</h3>
+<h3 id="loaded-dice">Loaded dice</h3>
 
-<p>Let&#8217;s say you have a loaded die with the following probability distribution:</p>
-<table><thead><tr><th /><th /></tr></thead><tbody><tr><td style='text-align: center;'><strong>1</strong></td><td style='text-align: center;'>10%</td>
-</tr><tr><td style='text-align: center;'><strong>2</strong></td><td style='text-align: center;'>20%</td>
-</tr><tr><td style='text-align: center;'><strong>3</strong></td><td style='text-align: center;'>30%</td>
-</tr><tr><td style='text-align: center;'><strong>4</strong></td><td style='text-align: center;'>10%</td>
-</tr><tr><td style='text-align: center;'><strong>5</strong></td><td style='text-align: center;'>20%</td>
-</tr><tr><td style='text-align: center;'><strong>6</strong></td><td style='text-align: center;'>10%</td>
-</tr></tbody></table>
-<p>How many pieces of information are encoded in a loaded die like this? It&#8217;s weird to think of a probability distribution encoding information, but think of it this way: if you sent me this die in the mail, I could roll it a bunch of times to discover the probability for each face of the die. If you control how the die is weighted, you could send me a message that way.</p>
+<p>Let’s say you have a loaded die with the following probability distribution:</p>
 
-<p>Anyway, the answer is that there are 5 pieces of information encoded in this distribution. (If you&#8217;re not sure why it isn&#8217;t 6, notice that once you specify 5 of the entries in the table, the 6th one is completely determined, since they all have to add up to 100%. So you can really only send me 5 numbers of your choosing this way.)</p>
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center"><strong>1</strong></td>
+      <td style="text-align: center">10%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>2</strong></td>
+      <td style="text-align: center">20%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>3</strong></td>
+      <td style="text-align: center">30%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>4</strong></td>
+      <td style="text-align: center">10%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>5</strong></td>
+      <td style="text-align: center">20%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>6</strong></td>
+      <td style="text-align: center">10%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>How many pieces of information are encoded in a loaded die like this? It’s weird to think of a probability distribution
+encoding information, but think of it this way: if you sent me this die in the mail, I could roll it a bunch of times
+to discover the probability for each face of the die. If you control how the die is weighted, you could send me a message
+that way.</p>
+
+<p>Anyway, the answer is that there are 5 pieces of information encoded in this distribution.
+(If you’re not sure why it isn’t 6, notice that once you specify 5 of the entries in the table, the 6th one is completely
+determined, since they all have to add up to 100%. So you can really only send me 5 numbers of your choosing this way.)</p>
+
 <!-- more -->
-<h3 id='joint_probability_distributions'>Joint probability distributions</h3>
 
-<p>How many pieces of information can you encode in 2 loaded dice? Obviously it&#8217;s 10, you think, since each die can encode 5 pieces of information.</p>
+<h3 id="joint-probability-distributions">Joint probability distributions</h3>
 
-<p>But here&#8217;s a (wrong) argument that it&#8217;s 35. Instead of rolling each die separately to discover the probability distribution of each one, suppose I roll them together to discover their joint probability distribution. I&#8217;ll get something like this:</p>
-<table><thead><tr><th /><th /><th /><th /><th /><th /><th /></tr></thead><tbody><tr><td style='text-align: left;' /><td style='text-align: center;'><strong>1</strong></td><td style='text-align: center;'><strong>2</strong></td><td style='text-align: center;'><strong>3</strong></td><td style='text-align: center;'><strong>4</strong></td><td style='text-align: center;'><strong>5</strong></td><td style='text-align: center;'><strong>6</strong></td>
-</tr><tr><td style='text-align: left;'><strong>1</strong></td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>5%</td>
-</tr><tr><td style='text-align: left;'><strong>2</strong></td><td style='text-align: center;'>2%</td><td style='text-align: center;'>2%</td><td style='text-align: center;'>2%</td><td style='text-align: center;'>2%</td><td style='text-align: center;'>2%</td><td style='text-align: center;'>10%</td>
-</tr><tr><td style='text-align: left;'><strong>3</strong></td><td style='text-align: center;'>3%</td><td style='text-align: center;'>3%</td><td style='text-align: center;'>3%</td><td style='text-align: center;'>3%</td><td style='text-align: center;'>3%</td><td style='text-align: center;'>15%</td>
-</tr><tr><td style='text-align: left;'><strong>4</strong></td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>5%</td>
-</tr><tr><td style='text-align: left;'><strong>5</strong></td><td style='text-align: center;'>2%</td><td style='text-align: center;'>2%</td><td style='text-align: center;'>2%</td><td style='text-align: center;'>2%</td><td style='text-align: center;'>2%</td><td style='text-align: center;'>10%</td>
-</tr><tr><td style='text-align: left;'><strong>6</strong></td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>5%</td>
-</tr></tbody></table>
-<p>Naïvely there are 35 pieces of information here (35 independent numbers that determine the 36th number, since they all add up to 100%). However, if you&#8217;re clever enough you can &#8220;factor&#8221; this table and conclude that the first die has the distribution described above, and the second die has the following probabililty distribution:</p>
-<table><thead><tr><th /><th /></tr></thead><tbody><tr><td style='text-align: center;'><strong>1</strong></td><td style='text-align: center;'>10%</td>
-</tr><tr><td style='text-align: center;'><strong>2</strong></td><td style='text-align: center;'>10%</td>
-</tr><tr><td style='text-align: center;'><strong>3</strong></td><td style='text-align: center;'>10%</td>
-</tr><tr><td style='text-align: center;'><strong>4</strong></td><td style='text-align: center;'>10%</td>
-</tr><tr><td style='text-align: center;'><strong>5</strong></td><td style='text-align: center;'>10%</td>
-</tr><tr><td style='text-align: center;'><strong>6</strong></td><td style='text-align: center;'>50%</td>
-</tr></tbody></table>
-<p>You can see that the 6 x 6 table above is the outer product of the two single-column tables. So there really are only 10 numbers that determine that entire table.</p>
+<p>How many pieces of information can you encode in 2 loaded dice? Obviously it’s 10, you think, since each die can encode
+5 pieces of information.</p>
 
-<p>That&#8217;s the nature of classical probability — joint probability distributions of independent events always &#8220;factor&#8221; into individual probability distributions for each event. You can&#8217;t encode any 35 numbers you like into the joint probability distribution of two dice, because it might not factor.</p>
+<p>But here’s a (wrong) argument that it’s 35. Instead of rolling each die separately to discover the probability distribution
+of each one, suppose I roll them together to discover their joint probability distribution. I’ll get something like this:</p>
 
-<p>&#8230; unless your dice happen to be quantum dice.</p>
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> </td>
+      <td style="text-align: center"><strong>1</strong></td>
+      <td style="text-align: center"><strong>2</strong></td>
+      <td style="text-align: center"><strong>3</strong></td>
+      <td style="text-align: center"><strong>4</strong></td>
+      <td style="text-align: center"><strong>5</strong></td>
+      <td style="text-align: center"><strong>6</strong></td>
+    </tr>
+    <tr>
+      <td><strong>1</strong></td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">5%</td>
+    </tr>
+    <tr>
+      <td><strong>2</strong></td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">10%</td>
+    </tr>
+    <tr>
+      <td><strong>3</strong></td>
+      <td style="text-align: center">3%</td>
+      <td style="text-align: center">3%</td>
+      <td style="text-align: center">3%</td>
+      <td style="text-align: center">3%</td>
+      <td style="text-align: center">3%</td>
+      <td style="text-align: center">15%</td>
+    </tr>
+    <tr>
+      <td><strong>4</strong></td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">5%</td>
+    </tr>
+    <tr>
+      <td><strong>5</strong></td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">10%</td>
+    </tr>
+    <tr>
+      <td><strong>6</strong></td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">5%</td>
+    </tr>
+  </tbody>
+</table>
 
-<h3 id='quantum_dice'>Quantum dice</h3>
+<p>Naïvely there are 35 pieces of information here (35 independent numbers that determine the 36th number, since they
+all add up to 100%). However, if you’re clever enough you can “factor” this table and conclude that the first die
+has the distribution described above, and the second die has the following probabililty distribution:</p>
 
-<p>With quantum dice, you <em>can</em> actually construct a joint probability distribution that doesn&#8217;t factor. For example:</p>
-<table><thead><tr><th /><th /><th /><th /><th /><th /><th /></tr></thead><tbody><tr><td style='text-align: left;' /><td style='text-align: center;'><strong>1</strong></td><td style='text-align: center;'><strong>2</strong></td><td style='text-align: center;'><strong>3</strong></td><td style='text-align: center;'><strong>4</strong></td><td style='text-align: center;'><strong>5</strong></td><td style='text-align: center;'><strong>6</strong></td>
-</tr><tr><td style='text-align: left;'><strong>1</strong></td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>5%</td>
-</tr><tr><td style='text-align: left;'><strong>2</strong></td><td style='text-align: center;'>2%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>2%</td><td style='text-align: center;'>2%</td><td style='text-align: center;'>2%</td><td style='text-align: center;'>10%</td>
-</tr><tr><td style='text-align: left;'><strong>3</strong></td><td style='text-align: center;'>3%</td><td style='text-align: center;'>3%</td><td style='text-align: center;'>5%</td><td style='text-align: center;'>3%</td><td style='text-align: center;'>3%</td><td style='text-align: center;'>15%</td>
-</tr><tr><td style='text-align: left;'><strong>4</strong></td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>5%</td>
-</tr><tr><td style='text-align: left;'><strong>5</strong></td><td style='text-align: center;'>2%</td><td style='text-align: center;'>2%</td><td style='text-align: center;'>2%</td><td style='text-align: center;'>2%</td><td style='text-align: center;'>2%</td><td style='text-align: center;'>10%</td>
-</tr><tr><td style='text-align: left;'><strong>6</strong></td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>1%</td><td style='text-align: center;'>5%</td>
-</tr></tbody></table>
-<p>Notice the 0% in the (2, 2) cell. This table won&#8217;t factor because in order for that entry to be 0%, one of the dice has to have a 0% chance of landing on a 2, which means that entire row (or column) would be 0%.</p>
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center"><strong>1</strong></td>
+      <td style="text-align: center">10%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>2</strong></td>
+      <td style="text-align: center">10%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>3</strong></td>
+      <td style="text-align: center">10%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>4</strong></td>
+      <td style="text-align: center">10%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>5</strong></td>
+      <td style="text-align: center">10%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>6</strong></td>
+      <td style="text-align: center">50%</td>
+    </tr>
+  </tbody>
+</table>
 
-<p>But think of the implications of a distribution like this. It means if you roll a 2 with one of the dice, you are guaranteed not to roll a 2 with the other — no matter what order you roll them in, or even you fly one of the dice to the opposite side of the world and roll them at the same time.</p>
+<p>You can see that the 6 x 6 table above is the outer product of the two single-column tables.
+So there really are only 10 numbers that determine that entire table.</p>
 
-<p>It&#8217;s almost as if there&#8217;s a tiny mechanism inside each of the dice that detects when it has landed on a certain face, and transmits a message to the other die that causes it to adjust some tiny internal servos that change how it&#8217;s weighted.</p>
+<p>That’s the nature of classical probability — joint probability distributions of independent events always “factor” into
+individual probability distributions for each event.
+You can’t encode any 35 numbers you like into the joint probability distribution of two dice, because it might not factor.</p>
 
-<p>Except that it has been demonstrated in a lab that if that were the case, that message would have to travel faster than the speed of light. In quantum mechanical terms, the two dice are &#8220;entangled.&#8221;</p>
+<p>… unless your dice happen to be quantum dice.</p>
 
-<h3 id='3_things_that_make_quantum_computation_possible'>3 things that make quantum computation possible</h3>
+<h3 id="quantum-dice">Quantum dice</h3>
 
-<p>It&#8217;s kind of irrelevant to the field of quantum computation what mechanism produces this weird behavior. The important things are:</p>
+<p>With quantum dice, you <em>can</em> actually construct a joint probability distribution that doesn’t factor. For example:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> </td>
+      <td style="text-align: center"><strong>1</strong></td>
+      <td style="text-align: center"><strong>2</strong></td>
+      <td style="text-align: center"><strong>3</strong></td>
+      <td style="text-align: center"><strong>4</strong></td>
+      <td style="text-align: center"><strong>5</strong></td>
+      <td style="text-align: center"><strong>6</strong></td>
+    </tr>
+    <tr>
+      <td><strong>1</strong></td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">5%</td>
+    </tr>
+    <tr>
+      <td><strong>2</strong></td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">10%</td>
+    </tr>
+    <tr>
+      <td><strong>3</strong></td>
+      <td style="text-align: center">3%</td>
+      <td style="text-align: center">3%</td>
+      <td style="text-align: center">5%</td>
+      <td style="text-align: center">3%</td>
+      <td style="text-align: center">3%</td>
+      <td style="text-align: center">15%</td>
+    </tr>
+    <tr>
+      <td><strong>4</strong></td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">5%</td>
+    </tr>
+    <tr>
+      <td><strong>5</strong></td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">2%</td>
+      <td style="text-align: center">10%</td>
+    </tr>
+    <tr>
+      <td><strong>6</strong></td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">1%</td>
+      <td style="text-align: center">5%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Notice the 0% in the (2, 2) cell. This table won’t factor because in order for that entry to be 0%, one of the dice has to have a 0% chance
+of landing on a 2, which means that entire row (or column) would be 0%.</p>
+
+<p>But think of the implications of a distribution like this. It means if you roll a 2 with one of the dice, you are guaranteed not to roll a
+2 with the other — no matter what order you roll them in, or even you fly one of the dice to the opposite side of the world
+and roll them at the same time.</p>
+
+<p>It’s almost as if there’s a tiny mechanism inside each of the dice that detects when it
+has landed on a certain face, and transmits a message to the other die that causes it to adjust some tiny internal servos
+that change how it’s weighted.</p>
+
+<p>Except that it has been demonstrated in a lab that if that were the case, that message would have to travel faster than
+the speed of light. In quantum mechanical terms, the two dice are “entangled.”</p>
+
+<h3 id="things-that-make-quantum-computation-possible">3 things that make quantum computation possible</h3>
+
+<p>It’s kind of irrelevant to the field of quantum computation what mechanism produces this weird behavior.
+The important things are:</p>
 
 <p><strong>1. You can encode 35 numbers in the joint probability distribution of two quantum dice.</strong></p>
 
-<p>In reality, you deal with quantum bits (qubits), not quantum dice. A 10-qubit quantum computer has <script type='math/tex'>2^{10}-1</script> slots to store values. (Think about the joint probability distribution table for 10 quantum bits — it has <script type='math/tex'>2^{10}</script> entries, one for each possible outcome, the last one of which is constrained by all the others such that they add up to 100%.) Compare this with 10 classical bits, which provides only 10 slots to store either a 0 or a 1. This is where quantum computers get their reputation for the ability to store a huge amount of data.</p>
+<p>In reality, you deal with quantum bits (qubits), not quantum dice.
+A 10-qubit quantum computer has <script type="math/tex">2^{10}-1</script> slots to store values.
+(Think about the joint probability distribution table for 10 quantum bits — it has <script type="math/tex">2^{10}</script> entries,
+one for each possible outcome, the last one of which is constrained by all the others such that they add up to 100%.)
+Compare this with 10 classical bits, which provides only 10 slots to store either a 0 or a 1.
+This is where quantum computers get their reputation for the ability to store a huge amount of data.</p>
 
 <p><strong>2. A quantum computer performs operations on the entire joint probability distribution at once.</strong></p>
 
-<p>I don&#8217;t really understand the mechanics of how this is actually done in a lab, but suffice it to say that in order to produce crazy non-factoring joint probabilty distributions like the one above, you essentially apply matrix operations called quantum gates on joint probability distribution tables. Each gate works in constant time, regardless of the size of the table. This is where quantum computers get their reputation for massively parallel processing.</p>
+<p>I don’t really understand the mechanics of how this is actually done in a lab, but suffice it to say that in order
+to produce crazy non-factoring joint probabilty distributions like the one above, you essentially apply matrix operations
+called quantum gates on joint probability distribution tables. Each gate works in constant time, regardless of the size of the table.
+This is where quantum computers get their reputation for massively parallel processing.</p>
 
 <p><strong>3. Quantum probabilities are not restricted to real numbers between 0 and 1.</strong></p>
 
-<p>Instead they are restricted to <em>complex</em> numbers with modulus between 0 and 1. This allows interference effects to happen, which is what makes any interesting quantum algorithms possible. More on this later.</p>
+<p>Instead they are restricted to <em>complex</em> numbers with modulus between 0 and 1.
+This allows interference effects to happen, which is what makes any interesting
+quantum algorithms possible. More on this later.</p>
 
-<h3 id='the_catch'>The catch</h3>
+<h3 id="the-catch">The catch</h3>
 
-<p>The annoying thing about quantum computers is that you can&#8217;t actually &#8220;roll the dice&#8221; as many times as you want to discover what the entire joint probability distribution looks like. As soon as you roll them once (i.e., perform a measurement), the entire thing collapses into a single classical state — the dice show a 3 and a 4 (for example), and the entangled state you worked so hard to construct is gone. In its place you have this:</p>
-<table><thead><tr><th /><th /><th /><th /><th /><th /><th /></tr></thead><tbody><tr><td style='text-align: left;' /><td style='text-align: center;'><strong>1</strong></td><td style='text-align: center;'><strong>2</strong></td><td style='text-align: center;'><strong>3</strong></td><td style='text-align: center;'><strong>4</strong></td><td style='text-align: center;'><strong>5</strong></td><td style='text-align: center;'><strong>6</strong></td>
-</tr><tr><td style='text-align: left;'><strong>1</strong></td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td>
-</tr><tr><td style='text-align: left;'><strong>2</strong></td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td>
-</tr><tr><td style='text-align: left;'><strong>3</strong></td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td>
-</tr><tr><td style='text-align: left;'><strong>4</strong></td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>100%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td>
-</tr><tr><td style='text-align: left;'><strong>5</strong></td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td>
-</tr><tr><td style='text-align: left;'><strong>6</strong></td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td><td style='text-align: center;'>0%</td>
-</tr></tbody></table>
-<p>So even though quantum computers can technically represent a huge amount of information in a tiny number of qubits, you can&#8217;t get at most of it! The way some quantum algorithms work is by contriving a joint probability distribution where most of the probability is concentrated in the &#8220;answer&#8221; you want to get out. When you perform the measurement, you can then observe (with high likelihood) where all the probability ended up. In a 10 qubit computer, for example, that measurement gives you a single 10-bit result.</p>
+<p>The annoying thing about quantum computers is that you can’t actually “roll the dice” as many times as you want
+to discover what the entire joint probability distribution looks like. As soon as you roll them once (i.e., perform a
+measurement), the entire thing collapses into a single classical state — the dice show a 3 and a 4 (for example), and the entangled
+state you worked so hard to construct is gone. In its place you have this:</p>
 
-<h3 id='demo_time'>Demo time</h3>
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> </td>
+      <td style="text-align: center"><strong>1</strong></td>
+      <td style="text-align: center"><strong>2</strong></td>
+      <td style="text-align: center"><strong>3</strong></td>
+      <td style="text-align: center"><strong>4</strong></td>
+      <td style="text-align: center"><strong>5</strong></td>
+      <td style="text-align: center"><strong>6</strong></td>
+    </tr>
+    <tr>
+      <td><strong>1</strong></td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+    </tr>
+    <tr>
+      <td><strong>2</strong></td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+    </tr>
+    <tr>
+      <td><strong>3</strong></td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+    </tr>
+    <tr>
+      <td><strong>4</strong></td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">100%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+    </tr>
+    <tr>
+      <td><strong>5</strong></td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+    </tr>
+    <tr>
+      <td><strong>6</strong></td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+      <td style="text-align: center">0%</td>
+    </tr>
+  </tbody>
+</table>
 
-<p>I actually have some code for this. It&#8217;s mostly cribbed from <a href='http://sigfpe.wordpress.com/2007/03/04/monads-vector-spaces-and-quantum-mechanics-pt-ii/'>sigfpe&#8217;s vector space monad</a>. I put it together while taking the <a href='https://class.coursera.org/qcomp-2012-001/class/index'>Quantum Computation Coursera</a>, just so I wouldn&#8217;t have to do all the math by hand. It turned out to be pretty useful! Here&#8217;s a quick demo:</p>
+<p>So even though quantum computers can technically represent a huge amount of information in a tiny number of qubits, you
+can’t get at most of it!
+The way some quantum algorithms work is by contriving
+a joint probability distribution where most of the probability is concentrated in the “answer” you want to get out.
+When you perform the measurement, you can then observe (with high likelihood) where all the probability ended up.
+In a 10 qubit computer, for example, that measurement gives you a single 10-bit result.</p>
+
+<h3 id="demo-time">Demo time</h3>
+
+<p>I actually have some code for this. It’s mostly cribbed from
+<a href="http://sigfpe.wordpress.com/2007/03/04/monads-vector-spaces-and-quantum-mechanics-pt-ii/">sigfpe’s vector space monad</a>. I put it together while
+taking the <a href="https://class.coursera.org/qcomp-2012-001/class/index">Quantum Computation Coursera</a>,
+just so I wouldn’t have to do all the math by hand. It turned out to be pretty useful! Here’s a quick demo:</p>
 
 <pre><code>scala&gt; s0
-res0: Q[Basis.Std] = 1.0|0&gt;</code></pre>
+res0: Q[Basis.Std] = 1.0|0&gt;
+</code></pre>
 
 <p>This is a very simple quantum state equivalent to the following probability distribution table:</p>
-<table><thead><tr><th /><th /></tr></thead><tbody><tr><td style='text-align: center;'><strong>0</strong></td><td style='text-align: center;'>100%</td>
-</tr><tr><td style='text-align: center;'><strong>1</strong></td><td style='text-align: center;'>0%</td>
-</tr></tbody></table><script type='math/tex'>\newcommand{\ket}[1]{\left| #1 \right>}</script>
-<p>State labels are written using <em>ket</em> notaton. <script type='math/tex'>\ket{0}</script> refers to the 0 row in the table above. The number in front of the label represents the probability for that row in the table — actually, it&#8217;s a probability amplitude, which is a complex number whose squared absolute value gives the classical probability of that state. This will make more sense in a second.</p>
 
-<p>But first, let&#8217;s apply a quantum gate to this state:</p>
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center"><strong>0</strong></td>
+      <td style="text-align: center">100%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>1</strong></td>
+      <td style="text-align: center">0%</td>
+    </tr>
+  </tbody>
+</table>
+
+<script type="math/tex">\newcommand{\ket}[1]{\left| #1 \right>}</script>
+
+<p>State labels are written using <em>ket</em> notaton. <script type="math/tex">\ket{0}</script> refers to the 0 row in the table above. The number
+in front of the label represents the probability for that row in the table — actually, it’s a probability amplitude, which is a complex
+number whose squared absolute value gives the classical probability of that state. This will make more sense in a second.</p>
+
+<p>But first, let’s apply a quantum gate to this state:</p>
 
 <pre><code>scala&gt; s0 &gt;&gt;= H
-res1: Q[Basis.Std] = 0.707107|0&gt; + 0.707107|1&gt;</code></pre>
+res1: Q[Basis.Std] = 0.707107|0&gt; + 0.707107|1&gt;
+</code></pre>
 
-<p>This is <script type='math/tex'>\frac{1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1}</script>. It corresponds to the following (classical) probability distribution table:</p>
-<table><thead><tr><th /><th /></tr></thead><tbody><tr><td style='text-align: center;'><strong>0</strong></td><td style='text-align: center;'>50%</td>
-</tr><tr><td style='text-align: center;'><strong>1</strong></td><td style='text-align: center;'>50%</td>
-</tr></tbody></table>
-<p>since <script type='math/tex'>|\frac{1}{\sqrt{2}}|^2 = \frac{1}{2}</script>.</p>
+<p>This is <script type="math/tex">\frac{1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1}</script>. It corresponds to the following (classical)
+probability distribution table:</p>
 
-<p>Notice that <script type='math/tex'>\frac{1}{\sqrt{2}}\ket{0} - \frac{1}{\sqrt{2}}\ket{1}</script> corresponds to the same table, and so does <script type='math/tex'>\frac{-i}{\sqrt{2}}\ket{0} - \frac{1}{\sqrt{2}}\ket{1}</script>, since <script type='math/tex'>|\frac{-i}{\sqrt{2}}|^2 = |\frac{-1}{\sqrt{2}}|^2 = \frac{1}{2}</script>.</p>
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center"><strong>0</strong></td>
+      <td style="text-align: center">50%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>1</strong></td>
+      <td style="text-align: center">50%</td>
+    </tr>
+  </tbody>
+</table>
 
-<p>One qubit only gets you so far. So let&#8217;s create a 2 qubit state.</p>
+<table>
+  <tbody>
+    <tr>
+      <td>since <script type="math/tex"></script></td>
+      <td>\frac{1}{\sqrt{2}}</td>
+      <td>^2 = \frac{1}{2}&lt;/script&gt;.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Notice that <script type="math/tex">\frac{1}{\sqrt{2}}\ket{0} - \frac{1}{\sqrt{2}}\ket{1}</script> corresponds to the same table,
+and so does <script type="math/tex">\frac{-i}{\sqrt{2}}\ket{0} - \frac{1}{\sqrt{2}}\ket{1}</script>, since
+<script type="math/tex">|\frac{-i}{\sqrt{2}}|^2 = |\frac{-1}{\sqrt{2}}|^2 = \frac{1}{2}</script>.</p>
+
+<p>One qubit only gets you so far. So let’s create a 2 qubit state.</p>
 
 <pre><code>scala&gt; tensor(s0, s0)
-res2: Q[T[Basis.Std,Basis.Std]] = 1.0|00&gt;</code></pre>
+res2: Q[T[Basis.Std,Basis.Std]] = 1.0|00&gt;
+</code></pre>
 
 <p>The state label now contains 2 bits. This state corresponds to this table:</p>
-<table><thead><tr><th /><th /></tr></thead><tbody><tr><td style='text-align: center;'><strong>00</strong></td><td style='text-align: center;'>100%</td>
-</tr><tr><td style='text-align: center;'><strong>01</strong></td><td style='text-align: center;'>0%</td>
-</tr><tr><td style='text-align: center;'><strong>10</strong></td><td style='text-align: center;'>0%</td>
-</tr><tr><td style='text-align: center;'><strong>11</strong></td><td style='text-align: center;'>0%</td>
-</tr></tbody></table>
-<p>Now we&#8217;ll apply the H gate to both qubits:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center"><strong>00</strong></td>
+      <td style="text-align: center">100%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>01</strong></td>
+      <td style="text-align: center">0%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>10</strong></td>
+      <td style="text-align: center">0%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>11</strong></td>
+      <td style="text-align: center">0%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Now we’ll apply the H gate to both qubits:</p>
 
 <pre><code>scala&gt; tensor(s0, s0) &gt;&gt;= lift12(H, H)
-res3: Q[T[Basis.Std,Basis.Std]] = 0.5|00&gt; + 0.5|01&gt; + 0.5|10&gt; + 0.5|11&gt;</code></pre>
+res3: Q[T[Basis.Std,Basis.Std]] = 0.5|00&gt; + 0.5|01&gt; + 0.5|10&gt; + 0.5|11&gt;
+</code></pre>
 
 <p>Or just to the first qubit:</p>
 
 <pre><code>scala&gt; tensor(s0, s0) &gt;&gt;= lift1(H)
-res4: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|10&gt;</code></pre>
+res4: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|10&gt;
+</code></pre>
 
-<p>There are some gates that operate on two qubits at once. The CNOT gate, for example, flips the second qubit only if the first qubit is a 1.</p>
+<p>There are some gates that operate on two qubits at once. The CNOT gate, for example, flips the second qubit only if the
+first qubit is a 1.</p>
 
 <pre><code>scala&gt; val s = tensor(s0, s0) &gt;&gt;= lift1(H) &gt;&gt;= cnot
-s: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|11&gt;</code></pre>
+s: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|11&gt;
+</code></pre>
 
 <p>That corresponds to this table:</p>
-<table><thead><tr><th /><th /></tr></thead><tbody><tr><td style='text-align: center;'><strong>00</strong></td><td style='text-align: center;'>50%</td>
-</tr><tr><td style='text-align: center;'><strong>01</strong></td><td style='text-align: center;'>0%</td>
-</tr><tr><td style='text-align: center;'><strong>10</strong></td><td style='text-align: center;'>0%</td>
-</tr><tr><td style='text-align: center;'><strong>11</strong></td><td style='text-align: center;'>50%</td>
-</tr></tbody></table>
-<p>There, wait! We now have a pair of entangled qubits. They&#8217;re like 2 quantum coins that always land both heads or both tails, even if you flip them at the exact same time on opposite sides of the Earth. This is called the <a href='http://en.wikipedia.org/wiki/Bell_state'>Bell state</a> and comes up all the time in quantum algorithms.</p>
 
-<p>Let&#8217;s see what happens when we measure the first qubit:</p>
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center"> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center"><strong>00</strong></td>
+      <td style="text-align: center">50%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>01</strong></td>
+      <td style="text-align: center">0%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>10</strong></td>
+      <td style="text-align: center">0%</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>11</strong></td>
+      <td style="text-align: center">50%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>There, wait! We now have a pair of entangled qubits. They’re like 2 quantum coins that always land both heads or both
+tails, even if you flip them at the exact same time on opposite sides of the Earth.
+This is called the <a href="http://en.wikipedia.org/wiki/Bell_state">Bell state</a> and comes up all the time in quantum algorithms.</p>
+
+<p>Let’s see what happens when we measure the first qubit:</p>
 
 <pre><code>scala&gt; val (m, s2) = s.measure(_._1)
 m: Basis.Std = |1&gt;
-s2: Q[T[Basis.Std,Basis.Std]] = 1.0|11&gt;</code></pre>
+s2: Q[T[Basis.Std,Basis.Std]] = 1.0|11&gt;
+</code></pre>
 
-<p>The result of the measurement is 2 things: the outcome of the measurement itself — <code>m</code>, <script type='math/tex'>\ket{1}</script> — and the new state of the system — <code>s2</code>, <script type='math/tex'>1.0\ket{11}</script>. The measurement gave us one of the possible states, at random, according to its probability amplitude. The act of measuring changes the state, eliminating all states that are inconsistent with that outcome. So now if we measure the second qubit, we are guaranteed to get <script type='math/tex'>\ket{1}</script>.</p>
+<p>The result of the measurement is 2 things: the outcome of the measurement itself — <code>m</code>, <script type="math/tex">\ket{1}</script> — and the new state of the
+system — <code>s2</code>, <script type="math/tex">1.0\ket{11}</script>. The measurement gave us one of the possible states, at random, according to
+its probability amplitude. The act of measuring changes the state, eliminating all states that are inconsistent with that outcome.
+So now if we measure the second qubit, we are guaranteed to get <script type="math/tex">\ket{1}</script>.</p>
 
-<p>Here&#8217;s another example of that.</p>
+<p>Here’s another example of that.</p>
 
 <pre><code>scala&gt; val s = tensor(s0, s0) &gt;&gt;= lift12(H, H)
 s: Q[T[Basis.Std,Basis.Std]] = 0.5|00&gt; + 0.5|01&gt; + 0.5|10&gt; + 0.5|11&gt;
 
 scala&gt; val (m, s2) = s.measure(_._2)
 m: Basis.Std = |0&gt;
-s2: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|10&gt;</code></pre>
+s2: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|10&gt;
+</code></pre>
 
-<p>This time we measured the second qubit, getting <script type='math/tex'>\ket{0}</script>, and you can see that the only states remaining are the ones where the second qubit is 0.</p>
+<p>This time we measured the second qubit, getting <script type="math/tex">\ket{0}</script>, and you can see that the only states remaining are
+the ones where the second qubit is 0.</p>
 
-<h3 id='interference'>Interference</h3>
+<h3 id="interference">Interference</h3>
 
-<p>I&#8217;m going to quickly show you how interference effects work. Suppose I have a quantum gate that performs the following transformation on states: <script type='math/tex; mode=display'>
-%<![CDATA[
+<p>I’m going to quickly show you how interference effects work. Suppose I have a quantum gate
+that performs the following transformation on states:
+<script type="math/tex; mode=display">
+%&lt;![CDATA[
 \ket{0} \rightarrow \frac{1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1} \\
 \ket{1} \rightarrow \frac{-1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1} \\
-%]]>
+%]]&gt;
 </script></p>
 
-<p>I&#8217;m going to call this gate <code>sqrtNot</code> for reasons that will soon become apparent. Let&#8217;s see it in action.</p>
+<p>I’m going to call this gate <code>sqrtNot</code> for reasons that will soon become apparent. Let’s see it in action.</p>
 
 <pre><code>scala&gt; s0 &gt;&gt;= sqrtNot
-res0: Q[Basis.Std] = 0.707107|0&gt; + 0.707107|1&gt;</code></pre>
+res0: Q[Basis.Std] = 0.707107|0&gt; + 0.707107|1&gt;
+</code></pre>
 
-<p>OK, we&#8217;ve turned a pure <script type='math/tex'>\ket{0}</script> state into an even mix of <script type='math/tex'>\ket{0}</script> and <script type='math/tex'>\ket{1}</script>. In other words, we took a coin that always lands heads and &#8220;randomized&#8221; it into a completely fair coin.</p>
+<p>OK, we’ve turned a pure <script type="math/tex">\ket{0}</script> state into an even mix of <script type="math/tex">\ket{0}</script> and <script type="math/tex">\ket{1}</script>.
+In other words, we took a coin that always lands heads and “randomized” it into a completely fair coin.</p>
 
-<p>Now let&#8217;s run it through the <code>sqrtNot</code> gate again and see what happens.</p>
+<p>Now let’s run it through the <code>sqrtNot</code> gate again and see what happens.</p>
 
 <pre><code>scala&gt; s0 &gt;&gt;= sqrtNot &gt;&gt;= sqrtNot
-res1: Q[Basis.Std] = 1.0|1&gt;</code></pre>
+res1: Q[Basis.Std] = 1.0|1&gt;
+</code></pre>
 
-<p>Weird! We now have a coin that always lands tails. (That&#8217;s why it&#8217;s called <code>sqrtNot</code> — applying it twice inverts the state.) How does that work? Let&#8217;s do the math.</p>
-<script type='math/tex; mode=display'>
+<p>Weird! We now have a coin that always lands tails. (That’s why it’s called <code>sqrtNot</code> — applying it twice inverts
+the state.) How does that work? Let’s do the math.</p>
+
+<script type="math/tex; mode=display">
 %<![CDATA[
 \begin{align}
     \text{sqrtNot}(\frac{1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1})
@@ -333,31 +764,43 @@ res1: Q[Basis.Std] = 1.0|1&gt;</code></pre>
 \end{align}
 %]]>
 </script>
-<p>The <script type='math/tex'>\ket{0}</script> got cancelled out. That would never happen in classical probability!</p>
 
-<p>Let&#8217;s keep going:</p>
+<p>The <script type="math/tex">\ket{0}</script> got cancelled out. That would never happen in classical probability!</p>
+
+<p>Let’s keep going:</p>
 
 <pre><code>scala&gt; s0 &gt;&gt;= sqrtNot &gt;&gt;= sqrtNot &gt;&gt;= sqrtNot
 res2: Q[Basis.Std] = -0.707107|0&gt; + 0.707107|1&gt;
 
 scala&gt; s0 &gt;&gt;= sqrtNot &gt;&gt;= sqrtNot &gt;&gt;= sqrtNot &gt;&gt;= sqrtNot
-res3: Q[Basis.Std] = -1.0|0&gt;</code></pre>
+res3: Q[Basis.Std] = -1.0|0&gt;
+</code></pre>
 
-<p>And we&#8217;re back to a coin that always lands heads. (We flipped the sign, but remember only the squared absolute value really matters.)</p>
+<p>And we’re back to a coin that always lands heads. (We flipped the sign, but remember only the squared absolute value really matters.)</p>
 
-<p>For kicks, let&#8217;s see what happens when we introduce another qubit into the mix:</p>
+<p>For kicks, let’s see what happens when we introduce another qubit into the mix:</p>
 
 <pre><code>scala&gt; bell
-res4: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|11&gt;</code></pre>
+res4: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|11&gt;
+</code></pre>
 
-<p>These qubits happen to be entangled, but that shouldn&#8217;t affect our application of <code>sqrtNot</code> to the first qubit, should it?</p>
+<p>These qubits happen to be entangled, but that shouldn’t affect our application of <code>sqrtNot</code> to the first
+qubit, should it?</p>
 
 <pre><code>scala&gt; bell &gt;&gt;= lift1(sqrtNot)
-res5: Q[T[Basis.Std,Basis.Std]] = 0.5|00&gt; + -0.5|01&gt; + 0.5|10&gt; + 0.5|11&gt;</code></pre>
+res5: Q[T[Basis.Std,Basis.Std]] = 0.5|00&gt; + -0.5|01&gt; + 0.5|10&gt; + 0.5|11&gt;
+</code></pre>
 
-<p>Oops! The interference effects disappeared. The first qubit now behaves like a classical fair coin — no matter what we do to it, we can&#8217;t recover those interference effects and get things to cancel. I think this is called decoherence (although some sources I&#8217;ve read says this is not the same as decoherence) and is what makes building actual quantum computers difficult — preventing stray particles from coming in, accidentally getting entangled with the qubits in your quantum computer, and flying off to Pluto where you can&#8217;t do anything to unentangle it.</p>
+<p>Oops! The interference effects disappeared. The first qubit now behaves like a classical fair coin — no matter what
+we do to it, we can’t recover those interference effects and get things to cancel. I think this is called
+decoherence (although some sources I’ve read says this is not the same as decoherence) and is what makes building
+actual quantum computers difficult — preventing stray particles from coming in, accidentally getting entangled with
+the qubits in your quantum computer, and flying off to Pluto where you can’t do anything to unentangle it.</p>
 
-<p>Anyway, this is kind of fun to play with! If you&#8217;re interested in checking it out, the code is available <a href='https://github.com/jliszka/quantum-probability-monad'>on github</a>.</p>
+<p>Anyway, this is kind of fun to play with! If you’re interested in checking it out, the code is available
+<a href="https://github.com/jliszka/quantum-probability-monad">on github</a>.</p>
+
+
     </div>
 
     
@@ -444,6 +887,8 @@ res5: Q[T[Basis.Std,Basis.Std]] = 0.5|00&gt; + -0.5|01&gt; + 0.5|10&gt; + 0.5|11
     <h4>Recent posts</h4>
     <ul>
       
+        <li><a href="/2014/06/03/programming-with-futures.html">Future programming patterns and anti-patterns</a></li>
+      
         <li><a href="/2014/01/30/good-tech-lead-bad-tech-lead.html">Good Tech Lead, Bad Tech Lead</a></li>
       
         <li><a href="/2013/12/18/bayesian-networks-and-causality.html">Bayesian networks and causality</a></li>
@@ -451,8 +896,6 @@ res5: Q[T[Basis.Std,Basis.Std]] = 0.5|00&gt; + -0.5|01&gt; + 0.5|10&gt; + 0.5|11
         <li><a href="/2013/11/22/unlikely-things-happen-all-the-time.html">Unlikely things happen all the time</a></li>
       
         <li><a href="/2013/11/14/the-foursquare-theorem.html">The Foursquare Theorem</a></li>
-      
-        <li><a href="/2013/11/07/effective-peer-reviews.html">Painless, effective peer reviews</a></li>
       
     </ul>
 

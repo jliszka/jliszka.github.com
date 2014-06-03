@@ -101,10 +101,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -131,28 +127,57 @@
       <span>22 November 2013</span>
     </div>
     <div class="content">
-      <p>Yesterday I received an unexpected media query from Jen Doll, a journalist at New York Magazine, reporting on the story where Frank Bruni found Courtney Love&#8217;s iPhone in a taxi. She was musing about the statistical likelihood of an event like that, and somehow found <a href='http://replyz.com/c/2552117-does-anyone-know-the-probability-of-getting-the-same-nyc-cab-driver-twice'>this twitter thread</a> where I had calculated the probability of getting the same cab driver twice. She wanted to know how I arrived at my figures and whether I had any additional insight on the question.</p>
+      
+<p>Yesterday I received an unexpected media query from Jen Doll, a journalist at New York Magazine, reporting on the story where
+Frank Bruni found Courtney Love’s iPhone in a taxi. She was musing about the statistical likelihood of an event like
+that, and somehow found
+<a href="http://replyz.com/c/2552117-does-anyone-know-the-probability-of-getting-the-same-nyc-cab-driver-twice">this twitter thread</a>
+where I had calculated the probability of getting the same cab driver twice.
+She wanted to know how I arrived at my figures and whether I had any additional insight on the question.</p>
 
-<p>So of course I wrote her back a whole essay, and today <a href='http://nymag.com/daily/intelligencer/2013/11/long-odds-of-getting-courtney-loves-taxi.html'>there&#8217;s this article</a>. Her editors had cut it way down, <a href='http://www.theatlantic.com/technology/archive/2013/11/english-has-a-new-preposition-because-internet/281601/'>because journalism</a>. But I had put all this work into it, so I thought I&#8217;d post it here.</p>
+<p>So of course I wrote her back a whole essay, and today
+<a href="http://nymag.com/daily/intelligencer/2013/11/long-odds-of-getting-courtney-loves-taxi.html">there’s this article</a>.
+Her editors had cut it way down,
+<a href="http://www.theatlantic.com/technology/archive/2013/11/english-has-a-new-preposition-because-internet/281601/">because journalism</a>.
+But I had put all this work into it, so I thought I’d post it here.</p>
 
 <p>The text of my reply is below.</p>
-<!-- more --><hr />
+
+<!-- more -->
+
+<hr />
+
 <p>Hi Jen,</p>
 
-<p>According to <a href='http://en.wikipedia.org/wiki/Taxicabs_of_New_York_City'>Wikipedia</a>, there are 13,237 taxi medallions in the city. I also found <a href='http://www.pbs.org/wnet/taxidreams/data/'>estimates</a> for the number of drivers at 40,000 or so. I think that only includes yellow cab drivers. So the answer changes depending on whether you want to know the probability of getting in the same taxi or getting the same driver.</p>
+<p>According to <a href="http://en.wikipedia.org/wiki/Taxicabs_of_New_York_City">Wikipedia</a>, there are 13,237 taxi medallions in
+the city. I also found <a href="http://www.pbs.org/wnet/taxidreams/data/">estimates</a> for the number of drivers at 40,000 or so.
+I think that only includes yellow cab drivers. So the answer changes depending on whether you want to know the
+probability of getting in the same taxi or getting the same driver.</p>
 
-<p>The algorithm I used is analogous to the <a href='http://en.wikipedia.org/wiki/Birthday_problem'>Birthday problem</a>. The question there is, given 365 days in a year, and there are 23 people in a room, each of which has one birthday, what is the probability that 2 of them have the same birthday? The analogous question with taxis is, given 40,000 drivers (or 13,237 taxis), and 250 rides, each of which is with one driver (or taxi), what is the probability that 2 rides are with the same driver (or taxi).</p>
+<p>The algorithm I used is analogous to the <a href="http://en.wikipedia.org/wiki/Birthday_problem">Birthday problem</a>. The question
+there is, given 365 days in a year, and there are 23 people in a room, each of which has one birthday, what is the
+probability that 2 of them have the same birthday? The analogous question with taxis is, given 40,000 drivers (or 13,237
+taxis), and 250 rides, each of which is with one driver (or taxi), what is the probability that 2 rides are with the
+same driver (or taxi).</p>
 
-<p>In general, if you have <script type='math/tex'>n</script> buckets and <script type='math/tex'>k</script> things, and each thing is equally likely to go into any bucket, the probability that some bucket has at more than one thing in it is</p>
-<script type='math/tex; mode=display'>
+<p>In general, if you have <script type="math/tex">n</script> buckets and <script type="math/tex">k</script> things, and each thing is equally likely to go into any
+bucket, the probability that some bucket has at more than one thing in it is</p>
+
+<script type="math/tex; mode=display">
 %<![CDATA[
 P(n, k) = 1 - \frac{n!}{n^k(n - k)!}
 %]]>
 </script>
-<p>You can apply this to taxi rides assuming that you&#8217;re equally likely to encounter any given driver or taxi, which is probably not true in reality. Some drivers probably have &#8220;beats&#8221; that they usually drive around, some drivers work more hours than others, some cars break down and are not in circulation all the time, etc. All of these exceptions serve to increase the probability of getting the same driver or taxi twice, so the formula gives a lower bound on the true probability.</p>
+
+<p>You can apply this to taxi rides assuming that you’re equally likely to encounter any given driver or taxi, which is
+probably not true in reality. Some drivers probably have “beats” that they usually drive around, some drivers work more
+hours than others, some cars break down and are not in circulation all the time, etc. All of these exceptions serve to
+increase the probability of getting the same driver or taxi twice, so the formula gives a lower bound on the true
+probability.</p>
 
 <p>Here are some specific values for the formula, relevant to the question:</p>
-<script type='math/tex; mode=display'>
+
+<script type="math/tex; mode=display">
 %<![CDATA[
 \begin{align}
 &P(13237, 53) = 10\% \\
@@ -165,36 +190,57 @@ P(n, k) = 1 - \frac{n!}{n^k(n - k)!}
 \end{align}
 %]]>
 </script>
-<p>So if you&#8217;ve taken 246 taxi rides, it&#8217;s more than 90% likely that you&#8217;ve been in the same taxi twice.</p>
 
-<p>As far as the probability of getting in a cab that Courtney Love just got out of, you&#8217;d have to know how often Courtney Love rides taxis. Guessing that it&#8217;s maybe something like 2 rides per day, and that there are about <a href='http://www.faresharenyc.com/data-analysis/'>456,000 taxi rides per day</a> in the city, the probability that your ride (or Frank Bruni&#8217;s ride) is the one right after hers on a given day is 2 in 456,000, or 0.00044%.</p>
+<p>So if you’ve taken 246 taxi rides, it’s more than 90% likely that you’ve been in the same taxi twice.</p>
 
-<p>But don&#8217;t let that obscure the fact that unlikely things happen every day! There are so many unlikely things that could happen, and so many days that they could happen on, that some of them are bound to happen eventually. Looking at it another way, the probability that you were dealt a particular hand of 5 cards is 1 in 2,598,960. But that doesn&#8217;t make the fact that you were dealt that hand impossible or surprising in some way. After all, you have to be dealt <em>some</em> hand of 5 cards, and <em>someone</em> has to get into the cab after Courtney Love.</p>
+<p>As far as the probability of getting in a cab that Courtney Love just got out of, you’d have to know how often Courtney
+Love rides taxis. Guessing that it’s maybe something like 2 rides per day, and that there are about
+<a href="http://www.faresharenyc.com/data-analysis/">456,000 taxi rides per day</a> in the city, the probability that your ride
+(or Frank Bruni’s ride) is the one right after hers on a given day is 2 in 456,000, or 0.00044%.</p>
 
-<p>It would be equally surprising if Kim Kardashian got into a cab and found Jimmy Fallon&#8217;s FitBit, or any other combination of celebrities you could imagine finding each other&#8217;s lost items in taxis, or bumping into each other in odd ways.</p>
+<p>But don’t let that obscure the fact that unlikely things happen every day! There are so many unlikely things that could
+happen, and so many days that they could happen on, that some of them are bound to happen eventually. Looking at it
+another way, the probability that you were dealt a particular hand of 5 cards is 1 in 2,598,960. But that doesn’t make
+the fact that you were dealt that hand impossible or surprising in some way. After all, you have to be dealt <em>some</em> hand
+of 5 cards, and <em>someone</em> has to get into the cab after Courtney Love.</p>
 
-<p>This is the heart of the Birthday paradox: it seems surprising that if you have 23 people in a room, the probability that 2 of them share a birthday is 50%. But there are so many ways that 2 of 23 people can share a birthday — any of the 253 pairs of people can share any of 365 birthdays — and that counterbalances the low probability of 2 particular people sharing a particular birthday.</p>
+<p>It would be equally surprising if Kim Kardashian got into a cab and found Jimmy Fallon’s FitBit, or any other
+combination of celebrities you could imagine finding each other’s lost items in taxis, or bumping into each other in odd
+ways.</p>
 
-<p>Having said that, there are <a href='https://twitter.com/ninanyc'>two</a> <a href='https://twitter.com/lankybutmacho'>people</a> who work with me at Foursquare who share the unlikely birthday of Feb. 29th. I don&#8217;t know how to explain that!</p>
+<p>This is the heart of the Birthday paradox: it seems surprising that if you have 23 people in a room, the probability
+that 2 of them share a birthday is 50%. But there are so many ways that 2 of 23 people can share a birthday — any of the
+253 pairs of people can share any of 365 birthdays — and that counterbalances the low probability of 2 particular people
+sharing a particular birthday.</p>
 
-<p>Regards,<br /> Jason <hr /></p>
+<p>Having said that, there are <a href="https://twitter.com/ninanyc">two</a> <a href="https://twitter.com/lankybutmacho">people</a> who work with
+me at Foursquare who share the unlikely birthday of Feb. 29th. I don’t know how to explain that!</p>
 
-<p>Here&#8217;s the Scala one-liner I used to do the calculation:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>birthday</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>k</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='mi'>1</span> <span class='o'>-</span> <span class='p'>(</span><span class='n'>n</span><span class='o'>-</span><span class='n'>k</span><span class='o'>+</span><span class='mi'>1</span> <span class='n'>to</span> <span class='n'>n</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>toDouble</span> <span class='o'>/</span> <span class='n'>n</span><span class='p'>).</span><span class='n'>product</span>
-</code></pre></div>
-<p>The one thing I was trying to get across (and probably failed at) is that there&#8217;s a difference between</p>
+<p>Regards,<br />
+Jason</p>
+<hr />
 
-<p>&#8220;What is the probability of something like this happening?&#8221;</p>
+<p>Here’s the Scala one-liner I used to do the calculation:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">birthday</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">k</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="o">(</span><span class="n">n</span><span class="o">-</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span> <span class="n">to</span> <span class="n">n</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">toDouble</span> <span class="o">/</span> <span class="n">n</span><span class="o">).</span><span class="n">product</span></code></pre></div>
+
+<p>The one thing I was trying to get across (and probably failed at) is that there’s a difference between</p>
+
+<p>“What is the probability of something like this happening?”</p>
 
 <p>and</p>
 
-<p>&#8220;What is the probability of <em>this particular thing</em> happening?&#8221;</p>
+<p>“What is the probability of <em>this particular thing</em> happening?”</p>
 
-<p>It&#8217;s natural to ask the second question, because that&#8217;s what&#8217;s visible — we can ask about the things that did happen, but don&#8217;t think to ask about the myriad things that didn&#8217;t. You could ask what the probability that Frank Bruni gets into the cab after Courtney Love, but we&#8217;d be having the same conversation if it were any other pair of celebrities.</p>
+<p>It’s natural to ask the second question, because
+that’s what’s visible — we can ask about the things that did happen, but don’t think to ask about the myriad things
+that didn’t. You could ask what the probability that Frank Bruni gets into the cab after Courtney Love, but we’d be
+having the same conversation if it were any other pair of celebrities.</p>
 
-<p>Anyway, there&#8217;s not much more to it, just thought I&#8217;d share!</p>
+<p>Anyway, there’s not much more to it, just thought I’d share!</p>
 
-<p>One question though: what&#8217;s the probability of being quoted in the same article as Courtney Love?</p>
+<p>One question though: what’s the probability of being quoted in the same article as Courtney Love?</p>
+
     </div>
 
     
@@ -281,6 +327,8 @@ P(n, k) = 1 - \frac{n!}{n^k(n - k)!}
     <h4>Recent posts</h4>
     <ul>
       
+        <li><a href="/2014/06/03/programming-with-futures.html">Future programming patterns and anti-patterns</a></li>
+      
         <li><a href="/2014/01/30/good-tech-lead-bad-tech-lead.html">Good Tech Lead, Bad Tech Lead</a></li>
       
         <li><a href="/2013/12/18/bayesian-networks-and-causality.html">Bayesian networks and causality</a></li>
@@ -288,8 +336,6 @@ P(n, k) = 1 - \frac{n!}{n^k(n - k)!}
         <li><a href="/2013/11/22/unlikely-things-happen-all-the-time.html">Unlikely things happen all the time</a></li>
       
         <li><a href="/2013/11/14/the-foursquare-theorem.html">The Foursquare Theorem</a></li>
-      
-        <li><a href="/2013/11/07/effective-peer-reviews.html">Painless, effective peer reviews</a></li>
       
     </ul>
 

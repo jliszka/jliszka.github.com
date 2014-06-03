@@ -101,10 +101,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -128,71 +124,322 @@
       <h1>Independence </h1>
     </div>
     <div class="date">
-      <span>29 May 2014</span>
+      <span>03 June 2014</span>
     </div>
     <div class="content">
-      <h3 id='an_empirical_test_for_independence'>An empirical test for independence</h3>
+      
+<h3 id="an-empirical-test-for-independence">An empirical test for independence</h3>
 
-<p>So that&#8217;s it! These rules make intuitive sense, but I think it would be fun to put them to an empirical test of some sort. Since the rules make assertions about the independence of two events, we should find a test that determines independence in a joint probability distribution.</p>
+<p>So that’s it! These rules make intuitive sense, but I think it would be fun to put them to an empirical test of some
+sort. Since the rules make assertions about the independence of two events, we should find a test that determines independence
+in a joint probability distribution.</p>
 
-<p>A good test to use is the <a href='http://en.wikipedia.org/wiki/G-test'>G-test</a>. This test evaluates joint probability distribution of two events by comparing it to a joint probability distribution of independent events. The difference between these two distributions is a score that represents the likelihood that the two events in question are independent.</p>
+<p>A good test to use is the <a href="http://en.wikipedia.org/wiki/G-test">G-test</a>.
+This test evaluates joint probability distribution of two events
+by comparing it to a joint probability distribution of independent events.
+The difference between these two distributions is a score that represents the likelihood that the two events in question
+are independent.</p>
 
-<p>Let&#8217;s first see what a joint probability distribution of two independent events looks like.</p>
+<p>Let’s first see what a joint probability distribution of two independent events looks like.</p>
 
-<p>Here&#8217;s event A:</p>
-<table><thead><tr><th /><th /></tr></thead><tbody><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'>20%</td>
-</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;'>80%</td>
-</tr></tbody></table>
-<p>Here&#8217;s event B:</p>
-<table><thead><tr><th /><th /></tr></thead><tbody><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'>60%</td>
-</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;'>40%</td>
-</tr></tbody></table>
-<p>And here&#8217;s their joint probability distribution. The row labels are for event A and the column labels are for event B.</p>
-<table><thead><tr><th /><th /><th /><th /></tr></thead><tbody><tr><td style='text-align: left;' /><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;' />
-</tr><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'>12%</td><td style='text-align: left;'>8%</td><td style='text-align: left;'>20%</td>
-</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;'>48%</td><td style='text-align: left;'>32%</td><td style='text-align: left;'>80%</td>
-</tr><tr><td style='text-align: left;' /><td style='text-align: left;'>60%</td><td style='text-align: left;'>40%</td>
-</tr></tbody></table>
+<p>Here’s event A:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>T</strong></td>
+      <td>20%</td>
+    </tr>
+    <tr>
+      <td><strong>F</strong></td>
+      <td>80%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Here’s event B:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>T</strong></td>
+      <td>60%</td>
+    </tr>
+    <tr>
+      <td><strong>F</strong></td>
+      <td>40%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>And here’s their joint probability distribution. The row labels are for event A and the column labels are for event B.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th> </th>
+      <th> </th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> </td>
+      <td><strong>T</strong></td>
+      <td><strong>F</strong></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><strong>T</strong></td>
+      <td>12%</td>
+      <td>8%</td>
+      <td>20%</td>
+    </tr>
+    <tr>
+      <td><strong>F</strong></td>
+      <td>48%</td>
+      <td>32%</td>
+      <td>80%</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>60%</td>
+      <td>40%</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
 <p>You can see that this table is just the outer product of the individual probability distributions for A and B.</p>
 
 <p>Suppose we observe a joint probability distribution that looks like this:</p>
-<table><thead><tr><th /><th /><th /></tr></thead><tbody><tr><td style='text-align: left;' /><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'><strong>F</strong></td>
-</tr><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'>20%</td><td style='text-align: left;'>30%</td>
-</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;'>40%</td><td style='text-align: left;'>10%</td>
-</tr></tbody></table>
-<p>The goal now is to reverse the process — we need to find a way to &#8220;factor&#8221; this joint probability distribution into two individual probability distributions. It&#8217;s impossible to do this exactly, but we can find something that&#8217;s close.</p>
 
-<p>Let&#8217;s start by looking at the row and column totals.</p>
-<table><thead><tr><th /><th /><th /><th /></tr></thead><tbody><tr><td style='text-align: left;' /><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;' />
-</tr><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'>20%</td><td style='text-align: left;'>30%</td><td style='text-align: left;'>50%</td>
-</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;'>40%</td><td style='text-align: left;'>10%</td><td style='text-align: left;'>50%</td>
-</tr><tr><td style='text-align: left;' /><td style='text-align: left;'>60%</td><td style='text-align: left;'>40%</td>
-</tr></tbody></table>
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th> </th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> </td>
+      <td><strong>T</strong></td>
+      <td><strong>F</strong></td>
+    </tr>
+    <tr>
+      <td><strong>T</strong></td>
+      <td>20%</td>
+      <td>30%</td>
+    </tr>
+    <tr>
+      <td><strong>F</strong></td>
+      <td>40%</td>
+      <td>10%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The goal now is to reverse the process — we need to find a way to
+“factor” this joint probability distribution into two individual probability distributions.
+It’s impossible to do this exactly, but we can find something that’s close.</p>
+
+<p>Let’s start by looking at the row and column totals.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th> </th>
+      <th> </th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> </td>
+      <td><strong>T</strong></td>
+      <td><strong>F</strong></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><strong>T</strong></td>
+      <td>20%</td>
+      <td>30%</td>
+      <td>50%</td>
+    </tr>
+    <tr>
+      <td><strong>F</strong></td>
+      <td>40%</td>
+      <td>10%</td>
+      <td>50%</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>60%</td>
+      <td>40%</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
 <p>Now erase the inside of the table</p>
-<table><thead><tr><th /><th /><th /><th /></tr></thead><tbody><tr><td style='text-align: left;' /><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;' />
-</tr><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;' /><td style='text-align: left;' /><td style='text-align: left;'>50%</td>
-</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;' /><td style='text-align: left;' /><td style='text-align: left;'>50%</td>
-</tr><tr><td style='text-align: left;' /><td style='text-align: left;'>60%</td><td style='text-align: left;'>40%</td>
-</tr></tbody></table>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th> </th>
+      <th> </th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> </td>
+      <td><strong>T</strong></td>
+      <td><strong>F</strong></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><strong>T</strong></td>
+      <td> </td>
+      <td> </td>
+      <td>50%</td>
+    </tr>
+    <tr>
+      <td><strong>F</strong></td>
+      <td> </td>
+      <td> </td>
+      <td>50%</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>60%</td>
+      <td>40%</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
 <p>and multiply to figure out what the value is in each cell.</p>
-<table><thead><tr><th /><th /><th /><th /></tr></thead><tbody><tr><td style='text-align: left;' /><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;' />
-</tr><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'>30%</td><td style='text-align: left;'>20%</td><td style='text-align: left;'>50%</td>
-</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;'>30%</td><td style='text-align: left;'>20%</td><td style='text-align: left;'>50%</td>
-</tr><tr><td style='text-align: left;' /><td style='text-align: left;'>60%</td><td style='text-align: left;'>40%</td>
-</tr></tbody></table>
-<p>This is the &#8220;expected&#8221; probability distribution. Now we find the difference between the expected probability distribution and the actual probability distribution we observed.</p>
-<table><thead><tr><th /><th /><th /></tr></thead><tbody><tr><td style='text-align: left;' /><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'><strong>F</strong></td>
-</tr><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'>-10%</td><td style='text-align: left;'>10%</td>
-</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;'>10%</td><td style='text-align: left;'>-10%</td>
-</tr></tbody></table>
-<p>It might seem like a coincidence, but these numbers must have the same absolute value — the columns and rows must still add up to the same thing as they did before, so altering the (T, T) cell in the expected distribution by some amount will alter the (T, F) and (F, T) cells by the same amount (in the opposite direction), which in turn force the (F, F) cell to change by the same amount as well.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th> </th>
+      <th> </th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> </td>
+      <td><strong>T</strong></td>
+      <td><strong>F</strong></td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><strong>T</strong></td>
+      <td>30%</td>
+      <td>20%</td>
+      <td>50%</td>
+    </tr>
+    <tr>
+      <td><strong>F</strong></td>
+      <td>30%</td>
+      <td>20%</td>
+      <td>50%</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>60%</td>
+      <td>40%</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This is the “expected” probability distribution.
+Now we find the difference between the expected probability distribution and the actual probability distribution we observed.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th> </th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> </td>
+      <td><strong>T</strong></td>
+      <td><strong>F</strong></td>
+    </tr>
+    <tr>
+      <td><strong>T</strong></td>
+      <td>-10%</td>
+      <td>10%</td>
+    </tr>
+    <tr>
+      <td><strong>F</strong></td>
+      <td>10%</td>
+      <td>-10%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>It might seem like a coincidence, but these numbers must have the same absolute value — the columns and rows must still add up
+to the same thing as they did before, so altering the (T, T) cell in the expected distribution by some amount will alter the (T, F) and (F, T) cells
+by the same amount (in the opposite direction), which in turn force the (F, F) cell to change by the same amount as well.</p>
 
 <p>Now square each of these numbers and divide by the expected probability distribution.</p>
-<table><thead><tr><th /><th /><th /></tr></thead><tbody><tr><td style='text-align: left;' /><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'><strong>F</strong></td>
-</tr><tr><td style='text-align: left;'><strong>T</strong></td><td style='text-align: left;'>1%/30%</td><td style='text-align: left;'>1%/20%</td>
-</tr><tr><td style='text-align: left;'><strong>F</strong></td><td style='text-align: left;'>1%/30%</td><td style='text-align: left;'>1%/20%</td>
-</tr></tbody></table>
-<p>The sum of these numbers, times the total number of observations, is the <script type='math/tex'>\chi^2</script> statistic. The construction of this statistic is somewhat arbitrary, but it&#8217;s done this way on purpose to make the analysis easier.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th> </th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> </td>
+      <td><strong>T</strong></td>
+      <td><strong>F</strong></td>
+    </tr>
+    <tr>
+      <td><strong>T</strong></td>
+      <td>1%/30%</td>
+      <td>1%/20%</td>
+    </tr>
+    <tr>
+      <td><strong>F</strong></td>
+      <td>1%/30%</td>
+      <td>1%/20%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The sum of these numbers, times the total number of observations, is the <script type="math/tex">\chi^2</script> statistic. The construction
+of this statistic is somewhat arbitrary, but it’s done this way on purpose to make the analysis easier.</p>
 
 <pre><code>x is normally distributed around 0 with stdev = sqrt(pq(1-pq)) / sqrt(n)
 x/sqrt(pq(1-pq)/n) is normally distributed
@@ -208,38 +455,42 @@ nx^2/pq(1-pq) is a chi2 distribution with df=1
 = nx^2 / pq(1-pq)
 
 O log (O / E)
-N p(x) log (p(x) / q(x))</code></pre>
+N p(x) log (p(x) / q(x))
+</code></pre>
 
-<p>Given two events that are actually independent, by how much do we expect this statistic to vary? It&#8217;s easy to model:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>chi2dist</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>p</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>,</span> <span class='n'>q</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='k'>val</span> <span class='n'>d</span> <span class='k'>=</span> <span class='k'>for</span> <span class='p'>{</span>
-    <span class='n'>a</span> <span class='k'>&lt;-</span> <span class='n'>tf</span><span class='p'>(</span><span class='n'>p</span><span class='p'>)</span>
-    <span class='n'>b</span> <span class='k'>&lt;-</span> <span class='n'>tf</span><span class='p'>(</span><span class='n'>q</span><span class='p'>)</span>
-  <span class='p'>}</span> <span class='k'>yield</span> <span class='n'>a</span> <span class='o'>&amp;&amp;</span> <span class='n'>b</span>
-  <span class='n'>d</span><span class='p'>.</span><span class='n'>repeat</span><span class='p'>(</span><span class='n'>n</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>count</span><span class='p'>(</span><span class='k'>_</span> <span class='o'>==</span> <span class='kc'>true</span><span class='p'>).</span><span class='n'>toDouble</span> <span class='o'>/</span> <span class='n'>n</span> <span class='o'>-</span> <span class='n'>p</span><span class='o'>*</span><span class='n'>q</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>x</span> <span class='k'>=&gt;</span> <span class='n'>x</span> <span class='o'>/</span> <span class='n'>math</span><span class='p'>.</span><span class='n'>sqrt</span><span class='p'>(</span><span class='n'>p</span> <span class='o'>*</span> <span class='n'>q</span> <span class='o'>*</span> <span class='p'>(</span><span class='mi'>1</span> <span class='o'>-</span> <span class='n'>p</span> <span class='o'>*</span> <span class='n'>q</span><span class='p'>)</span> <span class='o'>/</span> <span class='n'>n</span><span class='p'>))</span>
-<span class='p'>}</span>
+<p>Given two events that are actually independent, by how much do we expect this statistic to vary? It’s easy
+to model:</p>
 
-<span class='k'>def</span> <span class='nf'>chi2dist2</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>p</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>,</span> <span class='n'>q</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='k'>val</span> <span class='n'>d</span> <span class='k'>=</span> <span class='k'>for</span> <span class='p'>{</span>
-    <span class='n'>a</span> <span class='k'>&lt;-</span> <span class='n'>tf</span><span class='p'>(</span><span class='n'>p</span><span class='p'>)</span>
-    <span class='n'>b</span> <span class='k'>&lt;-</span> <span class='n'>tf</span><span class='p'>(</span><span class='n'>q</span><span class='p'>)</span>
-  <span class='p'>}</span> <span class='k'>yield</span> <span class='n'>a</span> <span class='o'>&amp;&amp;</span> <span class='n'>b</span>
-  <span class='n'>d</span><span class='p'>.</span><span class='n'>repeat</span><span class='p'>(</span><span class='n'>n</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>count</span><span class='p'>(</span><span class='k'>_</span> <span class='o'>==</span> <span class='kc'>true</span><span class='p'>).</span><span class='n'>toDouble</span> <span class='o'>/</span> <span class='n'>n</span> <span class='o'>-</span> <span class='n'>p</span><span class='o'>*</span><span class='n'>q</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>x</span> <span class='k'>=&gt;</span> <span class='n'>x</span> <span class='o'>/</span> <span class='n'>math</span><span class='p'>.</span><span class='n'>sqrt</span><span class='p'>(</span><span class='n'>p</span> <span class='o'>*</span> <span class='n'>q</span> <span class='o'>*</span> <span class='p'>(</span><span class='mi'>1</span> <span class='o'>-</span> <span class='n'>p</span><span class='p'>)</span> <span class='o'>*</span> <span class='p'>(</span><span class='mi'>1</span> <span class='o'>-</span> <span class='n'>q</span><span class='p'>)</span> <span class='o'>/</span> <span class='n'>n</span><span class='p'>))</span>
-<span class='p'>}</span>
+<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">chi2dist</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">q</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="n">tf</span><span class="o">(</span><span class="n">p</span><span class="o">)</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">tf</span><span class="o">(</span><span class="n">q</span><span class="o">)</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">&amp;&amp;</span> <span class="n">b</span>
+  <span class="n">d</span><span class="o">.</span><span class="n">repeat</span><span class="o">(</span><span class="n">n</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">count</span><span class="o">(</span><span class="k">_</span> <span class="o">==</span> <span class="kc">true</span><span class="o">).</span><span class="n">toDouble</span> <span class="o">/</span> <span class="n">n</span> <span class="o">-</span> <span class="n">p</span><span class="o">*</span><span class="n">q</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="o">(</span><span class="n">p</span> <span class="o">*</span> <span class="n">q</span> <span class="o">*</span> <span class="o">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span> <span class="o">*</span> <span class="n">q</span><span class="o">)</span> <span class="o">/</span> <span class="n">n</span><span class="o">))</span>
+<span class="o">}</span>
 
-<span class='k'>def</span> <span class='nf'>chi2test</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>k</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>p</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>,</span> <span class='n'>q</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
+<span class="k">def</span> <span class="n">chi2dist2</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">q</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+    <span class="n">a</span> <span class="k">&lt;-</span> <span class="n">tf</span><span class="o">(</span><span class="n">p</span><span class="o">)</span>
+    <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">tf</span><span class="o">(</span><span class="n">q</span><span class="o">)</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">&amp;&amp;</span> <span class="n">b</span>
+  <span class="n">d</span><span class="o">.</span><span class="n">repeat</span><span class="o">(</span><span class="n">n</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">count</span><span class="o">(</span><span class="k">_</span> <span class="o">==</span> <span class="kc">true</span><span class="o">).</span><span class="n">toDouble</span> <span class="o">/</span> <span class="n">n</span> <span class="o">-</span> <span class="n">p</span><span class="o">*</span><span class="n">q</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="o">(</span><span class="n">p</span> <span class="o">*</span> <span class="n">q</span> <span class="o">*</span> <span class="o">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="o">)</span> <span class="o">*</span> <span class="o">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">q</span><span class="o">)</span> <span class="o">/</span> <span class="n">n</span><span class="o">))</span>
+<span class="o">}</span>
 
-<span class='p'>}</span>
+<span class="k">def</span> <span class="n">chi2test</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">k</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">q</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
 
-<span class='k'>def</span> <span class='nf'>chi2test</span><span class='p'>(</span><span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>a</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>b</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>,</span> <span class='n'>c</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='k'>val</span> <span class='n'>d</span> <span class='k'>=</span> <span class='k'>for</span> <span class='p'>{</span>
-    <span class='n'>p</span> <span class='k'>&lt;-</span> <span class='n'>uniform</span>
-    <span class='n'>q</span> <span class='k'>&lt;-</span> <span class='n'>uniform</span>
-    <span class='p'>(</span><span class='n'>aa</span><span class='p'>,</span> <span class='n'>bb</span><span class='p'>,</span> <span class='n'>cc</span><span class='p'>)</span> <span class='k'>&lt;-</span> <span class='p'>(</span><span class='n'>tf</span><span class='p'>(</span><span class='n'>p</span><span class='p'>)</span> <span class='n'>zip</span> <span class='n'>tf</span><span class='p'>(</span><span class='n'>q</span><span class='p'>)).</span><span class='n'>repeat</span><span class='p'>(</span><span class='n'>n</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>abs</span> <span class='k'>=&gt;</span> <span class='p'>(</span><span class='n'>abs</span><span class='p'>.</span><span class='n'>count</span><span class='p'>(</span><span class='k'>_</span> <span class='o'>==</span> <span class='p'>(</span><span class='kc'>true</span><span class='p'>,</span> <span class='kc'>true</span><span class='p'>)),</span> <span class='n'>abs</span><span class='p'>.</span><span class='n'>count</span><span class='p'>(</span><span class='k'>_</span> <span class='o'>==</span> <span class='p'>(</span><span class='kc'>true</span><span class='p'>,</span> <span class='kc'>false</span><span class='p'>)),</span> <span class='n'>abs</span><span class='p'>.</span><span class='n'>count</span><span class='p'>(</span><span class='k'>_</span> <span class='o'>==</span> <span class='p'>(</span><span class='kc'>false</span><span class='p'>,</span> <span class='kc'>true</span><span class='p'>))))</span>
-  <span class='p'>}</span> <span class='k'>yield</span> <span class='p'>(</span><span class='n'>aa</span><span class='p'>,</span> <span class='n'>bb</span><span class='p'>,</span> <span class='n'>cc</span><span class='p'>,</span> <span class='n'>p</span><span class='p'>,</span> <span class='n'>q</span><span class='p'>)</span>
-  <span class='n'>d</span><span class='p'>.</span><span class='n'>filter</span><span class='p'>(</span><span class='n'>x</span> <span class='k'>=&gt;</span> <span class='n'>x</span><span class='p'>.</span><span class='n'>_1</span> <span class='o'>==</span> <span class='n'>a</span> <span class='o'>&amp;&amp;</span> <span class='n'>x</span><span class='p'>.</span><span class='n'>_2</span> <span class='o'>==</span> <span class='n'>b</span> <span class='o'>&amp;&amp;</span> <span class='n'>x</span><span class='p'>.</span><span class='n'>_3</span> <span class='o'>==</span> <span class='n'>c</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>x</span> <span class='k'>=&gt;</span> <span class='p'>(</span><span class='n'>x</span><span class='p'>.</span><span class='n'>_4</span><span class='p'>,</span> <span class='n'>x</span><span class='p'>.</span><span class='n'>_5</span><span class='p'>))</span>
-<span class='p'>}</span>
-</code></pre></div>
+<span class="o">}</span>
+
+<span class="k">def</span> <span class="n">chi2test</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">c</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+    <span class="n">p</span> <span class="k">&lt;-</span> <span class="n">uniform</span>
+    <span class="n">q</span> <span class="k">&lt;-</span> <span class="n">uniform</span>
+    <span class="o">(</span><span class="n">aa</span><span class="o">,</span> <span class="n">bb</span><span class="o">,</span> <span class="n">cc</span><span class="o">)</span> <span class="k">&lt;-</span> <span class="o">(</span><span class="n">tf</span><span class="o">(</span><span class="n">p</span><span class="o">)</span> <span class="n">zip</span> <span class="n">tf</span><span class="o">(</span><span class="n">q</span><span class="o">)).</span><span class="n">repeat</span><span class="o">(</span><span class="n">n</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">abs</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="n">abs</span><span class="o">.</span><span class="n">count</span><span class="o">(</span><span class="k">_</span> <span class="o">==</span> <span class="o">(</span><span class="kc">true</span><span class="o">,</span> <span class="kc">true</span><span class="o">)),</span> <span class="n">abs</span><span class="o">.</span><span class="n">count</span><span class="o">(</span><span class="k">_</span> <span class="o">==</span> <span class="o">(</span><span class="kc">true</span><span class="o">,</span> <span class="kc">false</span><span class="o">)),</span> <span class="n">abs</span><span class="o">.</span><span class="n">count</span><span class="o">(</span><span class="k">_</span> <span class="o">==</span> <span class="o">(</span><span class="kc">false</span><span class="o">,</span> <span class="kc">true</span><span class="o">))))</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="o">(</span><span class="n">aa</span><span class="o">,</span> <span class="n">bb</span><span class="o">,</span> <span class="n">cc</span><span class="o">,</span> <span class="n">p</span><span class="o">,</span> <span class="n">q</span><span class="o">)</span>
+  <span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span><span class="o">.</span><span class="n">_1</span> <span class="o">==</span> <span class="n">a</span> <span class="o">&amp;&amp;</span> <span class="n">x</span><span class="o">.</span><span class="n">_2</span> <span class="o">==</span> <span class="n">b</span> <span class="o">&amp;&amp;</span> <span class="n">x</span><span class="o">.</span><span class="n">_3</span> <span class="o">==</span> <span class="n">c</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="n">x</span><span class="o">.</span><span class="n">_4</span><span class="o">,</span> <span class="n">x</span><span class="o">.</span><span class="n">_5</span><span class="o">))</span>
+<span class="o">}</span></code></pre></div>
+
+
     </div>
 
     
@@ -304,6 +555,8 @@ N p(x) log (p(x) / q(x))</code></pre>
     <h4>Recent posts</h4>
     <ul>
       
+        <li><a href="/2014/06/03/programming-with-futures.html">Future programming patterns and anti-patterns</a></li>
+      
         <li><a href="/2014/01/30/good-tech-lead-bad-tech-lead.html">Good Tech Lead, Bad Tech Lead</a></li>
       
         <li><a href="/2013/12/18/bayesian-networks-and-causality.html">Bayesian networks and causality</a></li>
@@ -311,8 +564,6 @@ N p(x) log (p(x) / q(x))</code></pre>
         <li><a href="/2013/11/22/unlikely-things-happen-all-the-time.html">Unlikely things happen all the time</a></li>
       
         <li><a href="/2013/11/14/the-foursquare-theorem.html">The Foursquare Theorem</a></li>
-      
-        <li><a href="/2013/11/07/effective-peer-reviews.html">Painless, effective peer reviews</a></li>
       
     </ul>
 

@@ -101,10 +101,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -131,21 +127,29 @@
       <span>19 August 2013</span>
     </div>
     <div class="content">
-      <p>In the <a href='/2013/08/12/a-frequentist-approach-to-probability.html'>last post</a> I created a simple library for constructing probability distributions, based on the <a href='http://en.wikipedia.org/wiki/Monte_Carlo_method'>Monte Carlo method</a>. I started with the uniform distribution and derived the Bernoulli and normal distributions from it.</p>
+      
+<p>In the <a href="/2013/08/12/a-frequentist-approach-to-probability.html">last post</a> I created a simple library for constructing probability distributions, based on the
+<a href="http://en.wikipedia.org/wiki/Monte_Carlo_method">Monte Carlo method</a>. I started with
+the uniform distribution and derived the Bernoulli and normal distributions from it.</p>
 
-<p>In this post I&#8217;ll construct some more common distributions in the same manner.</p>
+<p>In this post I’ll construct some more common distributions in the same manner.</p>
 
-<h3 id='the_exponential_distribution'>The exponential distribution</h3>
+<h3 id="the-exponential-distribution">The exponential distribution</h3>
 
-<p>If <script type='math/tex'>X</script> is a uniformly distributed random variable, then <script type='math/tex'>-log(X)/\lambda</script> is distributed according to the <a href='http://en.wikipedia.org/wiki/Exponential_distribution'>exponential distribution</a>. The parameter <script type='math/tex'>\lambda</script> is just a scaling factor. In code:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>exponential</span><span class='p'>(</span><span class='n'>l</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Double</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='k'>for</span> <span class='p'>{</span>
-    <span class='n'>x</span> <span class='k'>&lt;-</span> <span class='n'>uniform</span>
-  <span class='p'>}</span> <span class='k'>yield</span> <span class='n'>math</span><span class='p'>.</span><span class='n'>log</span><span class='p'>(</span><span class='n'>x</span><span class='p'>)</span> <span class='o'>*</span> <span class='p'>(</span><span class='o'>-</span><span class='mi'>1</span><span class='o'>/</span><span class='n'>l</span><span class='p'>)</span>
-<span class='p'>}</span>
-</code></pre></div>
+<p>If <script type="math/tex">X</script> is a uniformly distributed random variable, then <script type="math/tex">-log(X)/\lambda</script> is distributed according to
+the <a href="http://en.wikipedia.org/wiki/Exponential_distribution">exponential distribution</a>.
+The parameter <script type="math/tex">\lambda</script> is just a scaling factor. In code:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">exponential</span><span class="o">(</span><span class="n">l</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">x</span> <span class="k">&lt;-</span> <span class="n">uniform</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="o">(</span><span class="n">x</span><span class="o">)</span> <span class="o">*</span> <span class="o">(-</span><span class="mi">1</span><span class="o">/</span><span class="n">l</span><span class="o">)</span>
+<span class="o">}</span></code></pre></div>
+
 <p>It looks like this:</p>
+
 <!-- more -->
+
 <pre><code>scala&gt; exponential(1).bucketedHist(0, 8, 16, roundDown = true)
  0.0 39.40% #######################################
  0.5 23.15% #######################
@@ -163,21 +167,32 @@
  6.5  0.07% 
  7.0  0.03% 
  7.5  0.03% 
- 8.0  0.01% </code></pre>
+ 8.0  0.01% 
+</code></pre>
 
-<p>It seems backwards that the exponential distribution is implemented using a logarithm. It probably has something to do with this particular technique of constructing distributions. I&#8217;m describing where to put each piece of probability mass (here, by taking the log of each sample) rather than describing how much probability mass lives at each value of <script type='math/tex'>x</script> (for the exponential distribution, <script type='math/tex'>\lambda e^{-\lambda x}</script> lives at <script type='math/tex'>x</script>, so from that definition it&#8217;s clear why it&#8217;s called the exponential distribution).</p>
+<p>It seems backwards that the exponential distribution is implemented using a logarithm. It probably has something
+to do with this particular technique of constructing distributions. I’m describing where to put each piece of probability mass
+(here, by taking the log of each sample) rather than describing how much probability mass lives at each value of <script type="math/tex">x</script>
+(for the exponential distribution, <script type="math/tex">\lambda e^{-\lambda x}</script> lives at <script type="math/tex">x</script>, so from that definition it’s
+clear why it’s called the exponential distribution).</p>
 
-<p>This distribution is the continuous analog of the geometric distribution, and plays an interesting role on the construction of the Poisson distribution, both of which I&#8217;ll get to in a minute.</p>
+<p>This distribution is the continuous analog of the geometric distribution, and plays an interesting role on the construction
+of the Poisson distribution, both of which I’ll get to in a minute.</p>
 
-<h3 id='the_pareto_distribution'>The Pareto distribution</h3>
+<h3 id="the-pareto-distribution">The Pareto distribution</h3>
 
-<p>You can construct the <a href='http://en.wikipedia.org/wiki/Pareto_distribution'>Pareto distribution</a> from the uniform distribution in a similar way. If <script type='math/tex'>X</script> is a uniformly distributed random variable, then <script type='math/tex'>x_m X^{-1/\alpha}</script> is a Pareto-distributed random variable. The parameter <script type='math/tex'>x_m</script> is the minimum value the distribution can take, and <script type='math/tex'>\alpha</script> is a factor that determines how spread out the distribution is. In code:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>pareto</span><span class='p'>(</span><span class='n'>a</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>,</span> <span class='n'>xm</span><span class='k'>:</span> <span class='kt'>Double</span> <span class='p'>= </span><span class='mf'>1.0</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Double</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='k'>for</span> <span class='p'>{</span>
-    <span class='n'>x</span> <span class='k'>&lt;-</span> <span class='n'>uniform</span>
-  <span class='p'>}</span> <span class='k'>yield</span> <span class='n'>xm</span> <span class='o'>*</span> <span class='n'>math</span><span class='p'>.</span><span class='n'>pow</span><span class='p'>(</span><span class='n'>x</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='o'>/</span><span class='n'>a</span><span class='p'>)</span>
-<span class='p'>}</span>
-</code></pre></div>
+<p>You can construct the <a href="http://en.wikipedia.org/wiki/Pareto_distribution">Pareto distribution</a>
+from the uniform distribution in a similar way.
+If <script type="math/tex">X</script> is a uniformly distributed random variable, then <script type="math/tex">x_m X^{-1/\alpha}</script> is a Pareto-distributed random variable.
+The parameter <script type="math/tex">x_m</script> is the minimum value the distribution can take, and <script type="math/tex">\alpha</script> is a factor that determines
+how spread out the distribution is. In code:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">pareto</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">xm</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">x</span> <span class="k">&lt;-</span> <span class="n">uniform</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">xm</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">a</span><span class="o">)</span>
+<span class="o">}</span></code></pre></div>
+
 <p>It looks like this:</p>
 
 <pre><code>scala&gt; pareto(1).bucketedHist(1, 10, 18, roundDown = true)
@@ -199,16 +214,19 @@
  8.5  0.83% 
  9.0  0.68% 
  9.5  0.56% 
-10.0  0.39% </code></pre>
+10.0  0.39% 
+</code></pre>
 
-<p>Hm, the implementations of <code>pareto</code> and <code>exponential</code> look pretty similar. It&#8217;s more obvious if I rewrite <code>exponential</code> slightly, moving the product inside the log.</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>exponential</span><span class='p'>(</span><span class='n'>l</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Double</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='k'>for</span> <span class='p'>{</span>
-    <span class='n'>x</span> <span class='k'>&lt;-</span> <span class='n'>uniform</span>
-  <span class='p'>}</span> <span class='k'>yield</span> <span class='n'>math</span><span class='p'>.</span><span class='n'>log</span><span class='p'>(</span><span class='n'>math</span><span class='p'>.</span><span class='n'>pow</span><span class='p'>(</span><span class='n'>x</span><span class='p'>,</span> <span class='o'>-</span><span class='mi'>1</span><span class='o'>/</span><span class='n'>l</span><span class='p'>))</span>
-<span class='p'>}</span>
-</code></pre></div>
-<p>And now it looks like <code>exponential</code> is just the log of <code>pareto</code>. Let&#8217;s check.</p>
+<p>Hm, the implementations of <code>pareto</code> and <code>exponential</code> look pretty similar.
+It’s more obvious if I rewrite <code>exponential</code> slightly, moving the product inside the log.</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">exponential</span><span class="o">(</span><span class="n">l</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">x</span> <span class="k">&lt;-</span> <span class="n">uniform</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="o">(</span><span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">l</span><span class="o">))</span>
+<span class="o">}</span></code></pre></div>
+
+<p>And now it looks like <code>exponential</code> is just the log of <code>pareto</code>. Let’s check.</p>
 
 <pre><code>scala&gt; pareto(1).map(math.log).bucketedHist(0, 8, 16, roundDown = true)
  0.0 38.76% ######################################
@@ -227,42 +245,54 @@
  6.5  0.04% 
  7.0  0.02% 
  7.5  0.04% 
- 8.0  0.04% </code></pre>
+ 8.0  0.04% 
+</code></pre>
 
-<p>Yep, pretty close! But you wouldn&#8217;t know how closely they are related by looking at the probabily density functions.</p>
+<p>Yep, pretty close! But you wouldn’t know how closely they are related by looking at the probabily density functions.</p>
 
 <p>Pareto:</p>
-<script type='math/tex; mode=display'>
+
+<script type="math/tex; mode=display">
 %<![CDATA[
 f_\alpha(x) = \frac{\alpha}{x^{\alpha+1}}
 %]]>
 </script>
+
 <p>Exponential:</p>
-<script type='math/tex; mode=display'>
+
+<script type="math/tex; mode=display">
 %<![CDATA[
 f_\lambda(x) = \lambda e^{-\lambda x}
 %]]>
 </script>
+
 <p>Hm, interesting!</p>
 
-<p>Anyway, this distribution shows up a lot in &#8220;rich get richer&#8221; scenarios — distribution of income, the population of cities, file sizes on your computer, etc. But I don&#8217;t have a good explanation as to why.</p>
+<p>Anyway, this distribution shows up a lot in “rich get richer” scenarios — distribution of income, the population of cities,
+file sizes on your computer, etc. But I don’t have a good explanation as to why.</p>
 
-<h3 id='the_chisquared_distribution'>The chi-squared distribution</h3>
+<h3 id="the-chi-squared-distribution">The chi-squared distribution</h3>
 
-<p>A <a href='http://en.wikipedia.org/wiki/Chi-squared_distribution'>chi-squared distribution</a> can be constructed by squaring and then summing several normal distributions. It is parameterized by the number of degrees of freedom, <code>df</code>, which just indicates how many squared normal distributions to sum up. Here&#8217;s the code:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>chi2</span><span class='p'>(</span><span class='n'>df</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Double</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='n'>normal</span><span class='p'>.</span><span class='n'>map</span><span class='p'>(</span><span class='n'>x</span> <span class='k'>=&gt;</span> <span class='n'>x</span><span class='o'>*</span><span class='n'>x</span><span class='p'>).</span><span class='n'>repeat</span><span class='p'>(</span><span class='n'>df</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>sum</span><span class='p'>)</span>
-<span class='p'>}</span>
-</code></pre></div>
+<p>A <a href="http://en.wikipedia.org/wiki/Chi-squared_distribution">chi-squared distribution</a>
+can be constructed by squaring and then summing several normal distributions.
+It is parameterized by the number of degrees of freedom, <code>df</code>, which just indicates how many squared normal distributions
+to sum up. Here’s the code:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">chi2</span><span class="o">(</span><span class="n">df</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="n">normal</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="o">).</span><span class="n">repeat</span><span class="o">(</span><span class="n">df</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">sum</span><span class="o">)</span>
+<span class="o">}</span></code></pre></div>
+
 <p>Its probability density function is a lot easier to understand, though:</p>
-<script type='math/tex; mode=display'>
+
+<script type="math/tex; mode=display">
 %<![CDATA[
 f_k(x) = \frac{x^{(k/2)-1}e^{-x/2}}{2^{k/2}\Gamma(\frac{k}{2})}
 %]]>
 </script>
-<p>Just kidding! This is gross. I&#8217;m not going to even get into what <script type='math/tex'>\Gamma</script> is.</p>
 
-<p>OK here&#8217;s what it looks like for different degrees of freedom:</p>
+<p>Just kidding! This is gross. I’m not going to even get into what <script type="math/tex">\Gamma</script> is.</p>
+
+<p>OK here’s what it looks like for different degrees of freedom:</p>
 
 <pre><code>scala&gt; chi2(1).bucketedHist(0, 10, 10, roundDown = true)
  0.0 68.20% ####################################################################
@@ -293,23 +323,31 @@ scala&gt; chi2(5).bucketedHist(0, 15, 15, roundDown = true)
 12.0  1.22% #
 13.0  0.85% 
 14.0  0.59% 
-15.0  0.00% </code></pre>
+15.0  0.00% 
+</code></pre>
 
-<p>This distribution is useful in <a href='http://en.wikipedia.org/wiki/Pearson%27s_chi-squared_test'>analyzing</a> whether an observed sample is likely to have been drawn from a given theoretical distribution, where you construct a &#8220;test statistic&#8221; by summing the squares of the deviations of the observed values from their theoretical values. It&#8217;s this sum of squared differences that makes the chi-squared distribution an appropriate tool here. Why the chi-squared distribution is the sum of squared <em>normal</em> distributions is a topic for another post.</p>
+<p>This distribution is useful in <a href="http://en.wikipedia.org/wiki/Pearson%27s_chi-squared_test">analyzing</a>
+whether an observed sample is likely to have been drawn from a given theoretical
+distribution, where you construct a “test statistic” by summing the squares of the deviations of the observed values
+from their theoretical values. It’s this sum of squared differences that makes the chi-squared distribution an appropriate
+tool here. Why the chi-squared distribution is the sum of squared <em>normal</em> distributions is a topic for another post.</p>
 
-<h3 id='students_tdistribution'>Student&#8217;s <em>t</em>-distribution</h3>
+<h3 id="students-t-distribution">Student’s <em>t</em>-distribution</h3>
 
-<p>If <script type='math/tex'>Z</script> is a normally distributed random variable and <script type='math/tex'>V</script> is a chi-squared random variable with <script type='math/tex'>k</script> degrees of freedom, then <script type='math/tex'>Z / \sqrt{V/k}</script> is a random variable distributed according to the <a href='http://en.wikipedia.org/wiki/Student&apos;s_t-distribution'>Student&#8217;s <em>t</em>-distribution</a>.</p>
+<p>If <script type="math/tex">Z</script> is a normally distributed random variable and <script type="math/tex">V</script> is a chi-squared random variable with
+<script type="math/tex">k</script> degrees of freedom, then <script type="math/tex">Z / \sqrt{V/k}</script> is a random variable distributed according to the
+<a href="http://en.wikipedia.org/wiki/Student's_t-distribution">Student’s <em>t</em>-distribution</a>.</p>
 
-<p>Here&#8217;s the code:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>students_t</span><span class='p'>(</span><span class='n'>k</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Double</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='k'>for</span> <span class='p'>{</span>
-    <span class='n'>z</span> <span class='k'>&lt;-</span> <span class='n'>normal</span>
-    <span class='n'>v</span> <span class='k'>&lt;-</span> <span class='n'>chi2</span><span class='p'>(</span><span class='n'>k</span><span class='p'>)</span>
-  <span class='p'>}</span> <span class='k'>yield</span> <span class='n'>z</span> <span class='o'>/</span> <span class='n'>math</span><span class='p'>.</span><span class='n'>sqrt</span><span class='p'>(</span><span class='n'>v</span> <span class='o'>/</span> <span class='n'>k</span><span class='p'>)</span>
-<span class='p'>}</span>
-</code></pre></div>
-<p>The closed-form probability density function is too gross to even consider. Here&#8217;s a plot though:</p>
+<p>Here’s the code:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">students_t</span><span class="o">(</span><span class="n">k</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">z</span> <span class="k">&lt;-</span> <span class="n">normal</span>
+    <span class="n">v</span> <span class="k">&lt;-</span> <span class="n">chi2</span><span class="o">(</span><span class="n">k</span><span class="o">)</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">z</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="o">(</span><span class="n">v</span> <span class="o">/</span> <span class="n">k</span><span class="o">)</span>
+<span class="o">}</span></code></pre></div>
+
+<p>The closed-form probability density function is too gross to even consider. Here’s a plot though:</p>
 
 <pre><code>scala&gt; students_t(3).bucketedHist(-5, 5, 20)
 -5.0  0.12% 
@@ -332,21 +370,36 @@ scala&gt; chi2(5).bucketedHist(0, 15, 15, roundDown = true)
  3.5  0.62% 
  4.0  0.49% 
  4.5  0.26% 
- 5.0  0.14% </code></pre>
+ 5.0  0.14% 
+</code></pre>
 
-<p>This distribution arises by modeling the location of the true mean of a distribution with unknown mean and unknown standard deviation, when all you have is a small sample from the distribution. <script type='math/tex'>k</script> represents the sample size. <script type='math/tex'>Z</script> represents the distribution of the sample mean around the true mean (why it&#8217;s a normal distribution is a subject for another post). <script type='math/tex'>V/k</script> represents the variance of the sample — as the sum of squared differences of samples from the sample mean, it is naturally modeled as a chi-squared distribution. Its square root represents the standard deviation of the sample. So basically we&#8217;re scaling a normal distribution (representing the sample mean) by the standard deviation of the sample.</p>
+<p>This distribution arises by modeling the location of the true mean of a distribution with unknown mean and unknown
+standard deviation, when all you have is a small sample from the distribution. <script type="math/tex">k</script> represents the sample size.
+<script type="math/tex">Z</script> represents the distribution of the sample mean around the true mean (why it’s a normal distribution is a
+subject for another post). <script type="math/tex">V/k</script> represents the variance of the sample — as the sum of squared differences of samples
+from the sample mean, it is naturally modeled as a chi-squared distribution. Its square root represents the standard
+deviation of the sample. So basically we’re scaling a normal distribution (representing the sample mean) by the
+standard deviation of the sample.</p>
 
-<p>It looks a lot like the normal distribution, and in fact as the degrees of freedom goes up, it becomes a better and better approximation to it. At smaller degrees of freedom, though, there is more probability mass in the tails (it has &#8220;fatter tails&#8221; as some people say).</p>
+<p>It looks a lot like the normal distribution, and in fact as the degrees of freedom goes up, it becomes a better and
+better approximation to it. At smaller degrees of freedom, though, there is more probability mass in the tails (it has
+“fatter tails” as some people say).</p>
 
-<h3 id='the_geometric_distribution'>The geometric distribution</h3>
+<h3 id="the-geometric-distribution">The geometric distribution</h3>
 
-<p>The <a href='http://en.wikipedia.org/wiki/Geometric_distribution'>geometric distribution</a> is a discrete distribution that can be constructed from the Bernoulli distribution (essentially a biased coin flip). Although recall that the Bernoulli distribution itself can be <a href='/2013/08/12/a-frequentist-approach-to-probability.html'>constructed from the uniform distribution</a> pretty easily.</p>
+<p>The <a href="http://en.wikipedia.org/wiki/Geometric_distribution">geometric distribution</a> is a discrete distribution
+that can be constructed from the Bernoulli distribution (essentially a biased coin flip).
+Although recall that the Bernoulli distribution itself can be <a href="/2013/08/12/a-frequentist-approach-to-probability.html">constructed from the uniform distribution</a>
+pretty easily.</p>
 
-<p>The geometric distribution describes the number of failures you will see before seeing your first success in repeated Bernoulli trials with bias <code>p</code>. In other words, if I flip a coin repeatedly, how many tails will I see before get my first head?</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>geometric</span><span class='p'>(</span><span class='n'>p</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Int</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='n'>bernoulli</span><span class='p'>(</span><span class='n'>p</span><span class='p'>).</span><span class='n'>until</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>headOption</span> <span class='o'>==</span> <span class='nc'>Some</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>)).</span><span class='n'>map</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>size</span> <span class='o'>-</span> <span class='mi'>1</span><span class='p'>)</span>
-<span class='p'>}</span>
-</code></pre></div>
+<p>The geometric distribution describes the number of failures
+you will see before seeing your first success in repeated Bernoulli trials with bias <code>p</code>.
+In other words, if I flip a coin repeatedly, how many tails will I see before get my first head?</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">geometric</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="n">bernoulli</span><span class="o">(</span><span class="n">p</span><span class="o">).</span><span class="n">until</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">headOption</span> <span class="o">==</span> <span class="nc">Some</span><span class="o">(</span><span class="mi">1</span><span class="o">)).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span>
+<span class="o">}</span></code></pre></div>
+
 <pre><code>scala&gt; geometric(0.5).hist
  0 49.56% #################################################
  1 25.83% #########################
@@ -360,19 +413,25 @@ scala&gt; chi2(5).bucketedHist(0, 15, 15, roundDown = true)
  9  0.10% 
 10  0.04% 
 11  0.04% 
-12  0.02% </code></pre>
+12  0.02% 
+</code></pre>
 
-<p>Half the time heads comes up on the 1st flip, a quarter of the time it comes up on the 2nd flip, an eighth of the time it comes up on the 3rd flip, etc. <script type='math/tex'>\frac{1}{2}, \frac{1}{4}, \frac{1}{8}, ..., (\frac{1}{2})^n</script> is a geometric sequence and that&#8217;s where this distribution gets its name. If you used a biased coin, you would get a different (but still geometric) sequence.</p>
+<p>Half the time heads comes up on the 1st flip, a quarter of the time it comes up on the 2nd flip, an eighth of the time it comes
+up on the 3rd flip, etc. <script type="math/tex">\frac{1}{2}, \frac{1}{4}, \frac{1}{8}, ..., (\frac{1}{2})^n</script> is a geometric sequence
+and that’s where this distribution gets its name.
+If you used a biased coin, you would get a different (but still geometric) sequence.</p>
 
-<h3 id='the_binomial_distribution'>The binomial distribution</h3>
+<h3 id="the-binomial-distribution">The binomial distribution</h3>
 
-<p>The <a href='http://en.wikipedia.org/wiki/Binomial_distribution'>binomial distribution</a> can be modeled as the number of successes you will see in <code>n</code> Bernoulli trials with bias <code>p</code>.</p>
+<p>The <a href="http://en.wikipedia.org/wiki/Binomial_distribution">binomial distribution</a> can be modeled as the number of successes
+you will see in <code>n</code> Bernoulli trials with bias <code>p</code>.</p>
 
-<p>For example: I flip a fair coin 20 times, how many times will it come up heads? Let&#8217;s see:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>binomial</span><span class='p'>(</span><span class='n'>p</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>,</span> <span class='n'>n</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Int</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='n'>tf</span><span class='p'>(</span><span class='n'>p</span><span class='p'>).</span><span class='n'>repeat</span><span class='p'>(</span><span class='n'>n</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>count</span><span class='p'>(</span><span class='k'>_</span> <span class='o'>==</span> <span class='kc'>true</span><span class='p'>))</span>
-<span class='p'>}</span>
-</code></pre></div>
+<p>For example: I flip a fair coin 20 times, how many times will it come up heads? Let’s see:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">binomial</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="n">tf</span><span class="o">(</span><span class="n">p</span><span class="o">).</span><span class="n">repeat</span><span class="o">(</span><span class="n">n</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">count</span><span class="o">(</span><span class="k">_</span> <span class="o">==</span> <span class="kc">true</span><span class="o">))</span>
+<span class="o">}</span></code></pre></div>
+
 <pre><code>scala&gt; binomial(0.5, 20).hist
  2  0.02% 
  3  0.11% 
@@ -390,78 +449,113 @@ scala&gt; chi2(5).bucketedHist(0, 15, 15, roundDown = true)
 15  1.51% #
 16  0.48% 
 17  0.13% 
-18  0.03% </code></pre>
+18  0.03% 
+</code></pre>
 
-<p>10 is the most likely result, as you would expect, although other outcomes are possible too. This distribution spells out exactly how probable each outcome is.</p>
+<p>10 is the most likely result, as you would expect, although other outcomes are possible too. This distribution spells out
+exactly how probable each outcome is.</p>
 
-<p>This distribution also looks a lot like the normal distribution, and in fact as <code>n</code> increases, the binomial distribution better approximates the normal distribution.</p>
+<p>This distribution also looks a lot like the normal distribution, and in fact as <code>n</code> increases, the binomial distribution
+better approximates the normal distribution.</p>
 
 <p>The probability density function involves some combinatorics, which is not entirely surprising.</p>
-<script type='math/tex; mode=display'>
+
+<script type="math/tex; mode=display">
 %<![CDATA[
 f(k) = {n \choose k}p^k(1-p)^{n-k}
 %]]>
 </script>
-<h3 id='the_negative_binomial_distribution'>The negative binomial distribution</h3>
 
-<p>The <a href='http://en.wikipedia.org/wiki/Negative_binomial_distribution'>negative binomial distribution</a> is a relative of the binomial distribution. It counts the number of successes you will see in repeated Bernoulli trials (with bias <code>p</code>) before you see <code>r</code> failures.</p>
+<h3 id="the-negative-binomial-distribution">The negative binomial distribution</h3>
 
-<p>Here&#8217;s the code:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>negativeBinomial</span><span class='p'>(</span><span class='n'>p</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>,</span> <span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Int</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='n'>tf</span><span class='p'>(</span><span class='n'>p</span><span class='p'>).</span><span class='n'>until</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>count</span><span class='p'>(</span><span class='k'>_</span> <span class='o'>==</span> <span class='kc'>false</span><span class='p'>)</span> <span class='o'>==</span> <span class='n'>r</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>size</span> <span class='o'>-</span> <span class='n'>r</span><span class='p'>)</span>
-<span class='p'>}</span>
-</code></pre></div>
+<p>The <a href="http://en.wikipedia.org/wiki/Negative_binomial_distribution">negative binomial distribution</a> is a relative of the
+binomial distribution. It counts the number of successes you will see in repeated Bernoulli trials (with bias <code>p</code>)
+before you see <code>r</code> failures.</p>
+
+<p>Here’s the code:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">negativeBinomial</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="n">tf</span><span class="o">(</span><span class="n">p</span><span class="o">).</span><span class="n">until</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">count</span><span class="o">(</span><span class="k">_</span> <span class="o">==</span> <span class="kc">false</span><span class="o">)</span> <span class="o">==</span> <span class="n">r</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="n">r</span><span class="o">)</span>
+<span class="o">}</span></code></pre></div>
+
 <p>Straightforward stuff at this point.</p>
 
-<h3 id='the_poisson_distribution'>The Poisson distribution</h3>
+<h3 id="the-poisson-distribution">The Poisson distribution</h3>
 
-<p>A <a href='http://en.wikipedia.org/wiki/Poisson_distribution'>Poisson distribution</a> with parameter <script type='math/tex'>\lambda</script> gives the distribution of the number of discrete events that will occur during a given time period if <script type='math/tex'>\lambda</script> events are expected to occur on average.</p>
+<p>A <a href="http://en.wikipedia.org/wiki/Poisson_distribution">Poisson distribution</a> with parameter <script type="math/tex">\lambda</script> gives the
+distribution of the number of discrete events that will occur during a given time period if <script type="math/tex">\lambda</script> events
+are expected to occur on average.</p>
 
-<p>Wikipedia gives the following <a href='http://en.wikipedia.org/wiki/Poisson_distribution#Generating_Poisson-distributed_random_variables'>algorithm</a> for generating values from a Poisson distribution:</p>
+<p>Wikipedia gives the following <a href="http://en.wikipedia.org/wiki/Poisson_distribution#Generating_Poisson-distributed_random_variables">algorithm</a>
+for generating values from a Poisson distribution:</p>
 
-<p>Sample values from a uniform distribution one at a time until their cumulative product is less than <script type='math/tex'>e^{-\lambda}</script>. The number of samples this requires (minus 1) will be Poisson-distributed.</p>
+<p>Sample values from a uniform distribution one at a time until their cumulative product is less than <script type="math/tex">e^{-\lambda}</script>.
+The number of samples this requires (minus 1) will be Poisson-distributed.</p>
 
 <p>In code:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>poisson</span><span class='p'>(</span><span class='n'>lambda</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Int</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='k'>val</span> <span class='n'>m</span> <span class='k'>=</span> <span class='n'>math</span><span class='p'>.</span><span class='n'>exp</span><span class='p'>(</span><span class='o'>-</span><span class='n'>lambda</span><span class='p'>)</span>
-  <span class='n'>uniform</span><span class='p'>.</span><span class='n'>until</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>product</span> <span class='o'>&lt;</span> <span class='n'>m</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>size</span> <span class='o'>-</span> <span class='mi'>1</span><span class='p'>)</span>
-<span class='p'>}</span>
-</code></pre></div>
-<p>To me this obscures what&#8217;s really going on. If you take the negative log of everything, this algorithm becomes:</p>
 
-<p>Sample values from a uniform distribution, take the negative log, and keep a running sum until the sum is greater than <script type='math/tex'>\lambda</script>. The number of samples this requires (minus 1) will be Poisson-distributed.</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>poisson</span><span class='p'>(</span><span class='n'>lambda</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Int</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='k'>val</span> <span class='n'>d</span> <span class='k'>=</span> <span class='n'>uniform</span><span class='p'>.</span><span class='n'>map</span><span class='p'>(</span><span class='n'>x</span> <span class='k'>=&gt;</span> <span class='o'>-</span><span class='n'>math</span><span class='p'>.</span><span class='n'>log</span><span class='p'>(</span><span class='n'>x</span><span class='p'>))</span>
-  <span class='n'>d</span><span class='p'>.</span><span class='n'>until</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>sum</span> <span class='o'>&gt;</span> <span class='n'>lambda</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>size</span> <span class='o'>-</span> <span class='mi'>1</span><span class='p'>)</span>
-<span class='p'>}</span>
-</code></pre></div>
-<p>This sounds more complicated until you remember that the negative log of the uniform distribution is the exponential distribution.</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>poisson</span><span class='p'>(</span><span class='n'>lambda</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Int</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='k'>val</span> <span class='n'>d</span> <span class='k'>=</span> <span class='n'>exponential</span><span class='p'>(</span><span class='mi'>1</span><span class='p'>)</span>
-  <span class='n'>d</span><span class='p'>.</span><span class='n'>until</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>sum</span> <span class='o'>&gt;</span> <span class='n'>lambda</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>size</span> <span class='o'>-</span> <span class='mi'>1</span><span class='p'>)</span>
-<span class='p'>}</span>
-</code></pre></div>
-<p>Now this is what the Poisson distribution is really about. Why? The time between events in a Poisson process follows the exponential distribution. So if you wanted to know how many events will happen in, say <script type='math/tex'>\lambda</script> seconds, you could add up inter-event timings drawn from the exponential distribution (which has mean 1) until you get to <script type='math/tex'>\lambda</script>. That&#8217;s exactly what the code above does.</p>
+<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">poisson</span><span class="o">(</span><span class="n">lambda</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">m</span> <span class="k">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="o">(-</span><span class="n">lambda</span><span class="o">)</span>
+  <span class="n">uniform</span><span class="o">.</span><span class="n">until</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">product</span> <span class="o">&lt;</span> <span class="n">m</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span>
+<span class="o">}</span></code></pre></div>
 
-<p>But why does the exponential distribution model the time between events in the first place? In a rigorous sense, the exponential distribution is the most natural choice. First of all, it produces values between 0 and <script type='math/tex'>\infty</script> (in the parlance, it has &#8220;support&#8221; <script type='math/tex'>[0, \infty)</script>), which makes sense for modeling timings between events — you don&#8217;t want any negative values, but otherwise there is no limit to the amount of time that could elapse between events.</p>
+<p>To me this obscures what’s really going on. If you take the negative log of everything, this algorithm becomes:</p>
 
-<p>And second, of all the distributions with support <script type='math/tex'>[0, \infty)</script>, the exponential distribution is the one that makes the fewest additional assumptions — that is, it contains the least extra information, which is the same as saying that it has the highest <a href='http://en.wikipedia.org/wiki/Maximum_entropy_probability_distribution'>entropy</a>.</p>
+<p>Sample values from a uniform distribution, take the negative log, and keep a running sum until
+the sum is greater than <script type="math/tex">\lambda</script>. The number of samples this requires (minus 1) will be Poisson-distributed.</p>
 
-<p>Anyway, with a little rewriting, you can see how the negative binomial distribution is sort of the discrete counterpart to the Poisson distribution. Here is <code>negativeBinomial</code> rewritten to show the similarity:</p>
-<div class='highlight'><pre><code class='scala'><span class='k'>def</span> <span class='nf'>negativeBinomial</span><span class='p'>(</span><span class='n'>p</span><span class='k'>:</span> <span class='kt'>Double</span><span class='p'>,</span> <span class='n'>r</span><span class='k'>:</span> <span class='kt'>Int</span><span class='p'>)</span><span class='k'>:</span> <span class='kt'>Distribution</span><span class='p'>[</span><span class='kt'>Int</span><span class='p'>]</span> <span class='k'>=</span> <span class='p'>{</span>
-  <span class='k'>val</span> <span class='n'>d</span> <span class='k'>=</span> <span class='n'>tf</span><span class='p'>(</span><span class='n'>p</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='n'>b</span> <span class='k'>=&gt;</span> <span class='k'>if</span> <span class='p'>(</span><span class='n'>b</span><span class='p'>)</span> <span class='mi'>0</span> <span class='k'>else</span> <span class='mi'>1</span><span class='p'>)</span>
-  <span class='n'>d</span><span class='p'>.</span><span class='n'>until</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>sum</span> <span class='o'>==</span> <span class='n'>r</span><span class='p'>).</span><span class='n'>map</span><span class='p'>(</span><span class='k'>_</span><span class='p'>.</span><span class='n'>size</span> <span class='o'>-</span> <span class='n'>r</span><span class='p'>)</span>
-<span class='p'>}</span>
-</code></pre></div>
-<p>If you squint, sorta? If you squint even harder, or you are drunk, you can probably even convince yourself that <code>if (b) 0 else 1</code> is a discrete analog of <code>-math.log(x)</code>.</p>
+<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">poisson</span><span class="o">(</span><span class="n">lambda</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="n">uniform</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="o">(</span><span class="n">x</span><span class="o">))</span>
+  <span class="n">d</span><span class="o">.</span><span class="n">until</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">sum</span> <span class="o">&gt;</span> <span class="n">lambda</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span>
+<span class="o">}</span></code></pre></div>
 
-<h3 id='conclusion'>Conclusion</h3>
+<p>This sounds more complicated until you remember that the negative log of the uniform distribution is the exponential
+distribution.</p>
 
-<p>Obviously there is a lot more to say about each of these distributions, but I hope this has removed some of the mystery around how various probability distributions arise and how they are related to one another.</p>
+<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">poisson</span><span class="o">(</span><span class="n">lambda</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="n">exponential</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+  <span class="n">d</span><span class="o">.</span><span class="n">until</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">sum</span> <span class="o">&gt;</span> <span class="n">lambda</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span>
+<span class="o">}</span></code></pre></div>
 
-<p>All of this is going somewhere, I promise! In the next post I&#8217;ll take a look at the Central Limit Theorem, which sounds scary but I promise you is not.</p>
+<p>Now this is what the Poisson distribution is really about. Why? The time between events in a Poisson process follows
+the exponential distribution. So if you wanted to know how many events will happen in, say <script type="math/tex">\lambda</script> seconds,
+you could add up inter-event timings drawn from the exponential distribution (which has mean 1) until you get to <script type="math/tex">\lambda</script>.
+That’s exactly what the code above does.</p>
 
-<p>The code in this post is available on <a href='http://github.com/jliszka/probability-monad'>github</a>.</p>
+<p>But why does the exponential distribution model the time between events in the first place?
+In a rigorous sense, the exponential distribution is the most natural choice.
+First of all, it produces values between 0 and <script type="math/tex">\infty</script> (in the parlance, it has “support” <script type="math/tex">[0, \infty)</script>),
+which makes sense for modeling timings between events — you don’t want any negative values, but otherwise there is no limit
+to the amount of time that could elapse between events.</p>
+
+<p>And second, of all the distributions with support
+<script type="math/tex">[0, \infty)</script>, the exponential distribution is the one that makes the fewest additional assumptions —
+that is, it contains the least extra information, which is the same as saying that it has the highest
+<a href="http://en.wikipedia.org/wiki/Maximum_entropy_probability_distribution">entropy</a>.</p>
+
+<p>Anyway, with a little rewriting, you can see how the negative binomial distribution is sort of the discrete counterpart to the
+Poisson distribution. Here is <code>negativeBinomial</code> rewritten to show the similarity:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">negativeBinomial</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="n">tf</span><span class="o">(</span><span class="n">p</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">b</span> <span class="k">=&gt;</span> <span class="k">if</span> <span class="o">(</span><span class="n">b</span><span class="o">)</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span><span class="o">)</span>
+  <span class="n">d</span><span class="o">.</span><span class="n">until</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">sum</span> <span class="o">==</span> <span class="n">r</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="n">r</span><span class="o">)</span>
+<span class="o">}</span></code></pre></div>
+
+<p>If you squint, sorta? If you squint even harder, or you are drunk, you can probably even convince yourself that
+<code>if (b) 0 else 1</code> is a discrete analog of <code>-math.log(x)</code>.</p>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>Obviously there is a lot more to say about each of these distributions, but I hope this has removed
+some of the mystery around how various probability distributions arise and how they are related to
+one another.</p>
+
+<p>All of this is going somewhere, I promise!
+In the next post I’ll take a look at the Central Limit Theorem, which sounds scary but I promise you is not.</p>
+
+<p>The code in this post is available on <a href="http://github.com/jliszka/probability-monad">github</a>.</p>
+
+
     </div>
 
     
@@ -546,6 +640,8 @@ f(k) = {n \choose k}p^k(1-p)^{n-k}
     <h4>Recent posts</h4>
     <ul>
       
+        <li><a href="/2014/06/03/programming-with-futures.html">Future programming patterns and anti-patterns</a></li>
+      
         <li><a href="/2014/01/30/good-tech-lead-bad-tech-lead.html">Good Tech Lead, Bad Tech Lead</a></li>
       
         <li><a href="/2013/12/18/bayesian-networks-and-causality.html">Bayesian networks and causality</a></li>
@@ -553,8 +649,6 @@ f(k) = {n \choose k}p^k(1-p)^{n-k}
         <li><a href="/2013/11/22/unlikely-things-happen-all-the-time.html">Unlikely things happen all the time</a></li>
       
         <li><a href="/2013/11/14/the-foursquare-theorem.html">The Foursquare Theorem</a></li>
-      
-        <li><a href="/2013/11/07/effective-peer-reviews.html">Painless, effective peer reviews</a></li>
       
     </ul>
 
