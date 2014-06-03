@@ -1,14 +1,15 @@
 ---
 layout: post
-title: "Programming with Futures"
+title: "Future programming patterns and anti-patterns"
 description: ""
 category: 
 tags: []
 ---
 {% include JB/setup %}
 
-Twitter's Future library is a beautiful abstraction for dealing with concurrency. However, there are a few
-code patterns that seem innocuous and even natural but can cause real trouble in production systems.
+Twitter's Future library is a beautiful abstraction for dealing with concurrency. However, there are
+code patterns that seem natural or innocuous but can cause real trouble in production systems. This short
+article outlines a few of the easiest traps to fall into.
 
 ### An example
 
@@ -57,7 +58,7 @@ apiCheckinsF(apiUser, apiCategories).map(apiCheckins =>
 The problem here is that ```createDBUser``` makes a blocking call to the database.
 You should never do blocking work in ```map``` on a Future.
 Every Future runs in a thread pool that is (hopefully) tuned for a particular purpose.
-Code inside the ```map``` runs on the thread that completes the Future. 
+Code inside the ```map``` (generally) runs on the thread that completes the Future.
 So you're putting work in a thread pool that wasn't designed to handle that work.
 
 Furthermore, when you're dealing with Futures composed from other Futures, it's often hard to tell by inspection which
@@ -65,7 +66,7 @@ Future will be the last to complete (and whose thread pool will run the ```map``
 It's frequently not the "outermost" Future. For example:
 
 {% highlight scala %}
-val outermostFuture1: Future[Int] = {
+val outermostFuture: Future[Int] = {
   val runsInThreadPoolA: Future[Int] = ...
   val runsInThreadPoolB: Future[Int] = ...
   for {
@@ -74,21 +75,7 @@ val outermostFuture1: Future[Int] = {
   } yield a+b
 }
 
-outermostFuture1.map(i => /* where do I run?? */)
-{% endhighlight %}
-
-It doesn't even have to be deterministic:
-
-{% highlight scala %}
-val outermostFuture2: Future[Int] = {
-  val runsInThreadPoolA: Future[Int] = ...
-  val runsInThreadPoolB: Future[Int] = ...
-  for {
-    (a, b) <- Future.join(runsInThreadPoolA, runsInThreadPoolB)
-  } yield a+b
-}
-
-outermostFuture2.map(i => /* where do I run?? */)
+outermostFuture.map(i => /* where do I run?? */)
 {% endhighlight %}
 
 It's also possible that the Future completes *before* you call ```map``` — in which case the work inside the ```map```
@@ -96,14 +83,14 @@ happens in the main thread. This is bad if your callers expect you to to return 
 
 {% highlight scala %}
 def thisActuallyBlocks(a: Int): Future[Int] = {
-  val anIntF: Future[Int] = computeSomethingF(a)
+  val anIntF: Future[Int] = Future.value(a)
   // ... some more stuff ...
   anIntF.map(i => somethingThatBlocks(i))
 }
 {% endhighlight %}
 
 It's also possible to cause a deadlock (and yes we've seen this in production) if the code inside the ```map```
-calls ```Await``` on another thread in the same thread pool — but again, it's hard to know what thread pool that is.
+calls ```Await``` on another thread in the same thread pool — but again, it's hard to know which thread pool that is.
 
 So instead, set up your own thread pool for blocking work:
 
@@ -140,6 +127,10 @@ which is safe.
 
 So ALWAYS ```yield``` a plain value or a simple computation. If you have blocking work, wrap it in a ThreadPool-backed
 Future and ```flatMap``` it.
+
+It's worth noting that in the Scala-native Future library (```scala.concurrent.Future```), you must supply an implicit
+or explicit execution context when you create a Future. That way, you do have control over where your code executes, so
+the above warnings about ```map``` do not apply.
 
 ### Anti-pattern #2: Too much parallelism
 
@@ -181,6 +172,11 @@ object future {
 The ```par``` parameter lets you specify how much work you want done in parallel. For example, if you specify 5, it will
 take 5 items from the list, do them all in parallel, and wait for them to complete before moving on to the next 5 items.
 
+This can be mitigated a different way, by configuring a thread pool with a maximum number of threads, and making sure
+that all database or network calls go through this pool. This has the advantage of limiting parallelism application-wide,
+rather than just at a given call site. It still might be a good idea to limit parallelism at an individual call
+site to prevent it from crowding out other work.
+
 ### Anti-pattern #3: Not enough parallelism
 
 This code invokes ```api.getSelfF()``` and ```api.getCategoriesF()``` sequentially when they could be run in parallel:
@@ -196,7 +192,9 @@ for {
 It desugars to
 
 {% highlight scala %}
-api.getSelfF().flatMap(apiUser => api.getCategoriesF().flatMap(apiCategories => ...))
+api.getSelfF().flatMap(apiUser =>
+  api.getCategoriesF().flatMap(apiCategories => 
+    ...))
 {% endhighlight %}
 
 So one waits for the other even though it doesn't need to. The fix is to invoke the methods outside of the
@@ -239,7 +237,7 @@ for {
 {% endhighlight %}
 
 The ```join``` method runs multiple Futures in parallel and collects their results in a tuple.
-It's also nice that the ```join``` explicitly documents that the two calls will happen in parallel.
+It also explicitly documents that the two calls will happen in parallel.
 
 ### Conclusion
 
@@ -285,5 +283,6 @@ Things to note here:
 2. All the work is set up ahead of time via ```val```s and nested methods.
 3. Everything is "glued" together with a ```for```-comprehension at the end.
 4. Parallelism and dependencies are made explicit in the ```for```-comprehension.
+5. Blocking work is explicitly wrapped in a thread pool.
 
 
