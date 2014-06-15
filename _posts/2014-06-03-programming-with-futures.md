@@ -14,7 +14,7 @@ article outlines a few of the easiest traps to fall into.
 ### An example
 
 Below is a method from a fictional web application that registers a user by calling the Foursquare API
-to get the user's profile info, the their friend graph and their recent check-ins.
+to get the user's profile info, their friend graph and their recent check-ins.
 
 {% highlight scala %}
 def registerUser(token: String): Future[User] = {
