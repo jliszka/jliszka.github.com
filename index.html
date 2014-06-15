@@ -189,7 +189,7 @@ article outlines a few of the easiest traps to fall into.</p>
 <h3 id="an-example">An example</h3>
 
 <p>Below is a method from a fictional web application that registers a user by calling the Foursquare API
-to get the user’s profile info, the their friend graph and their recent check-ins.</p>
+to get the user’s profile info, their friend graph and their recent check-ins.</p>
 
 <div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">registerUser</span><span class="o">(</span><span class="n">token</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">api</span> <span class="k">=</span> <span class="nc">FoursquareApi</span><span class="o">(</span><span class="n">token</span><span class="o">)</span>

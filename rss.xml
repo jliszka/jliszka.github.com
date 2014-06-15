@@ -5,8 +5,8 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2014-06-03T14:12:37+00:00</lastBuildDate>
-        <pubDate>2014-06-03T14:12:37+00:00</pubDate>
+        <lastBuildDate>2014-06-15T01:37:46+00:00</lastBuildDate>
+        <pubDate>2014-06-15T01:37:46+00:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -22,7 +22,7 @@ article outlines a few of the easiest traps to fall into.&lt;/p&gt;
 &lt;h3 id=&quot;an-example&quot;&gt;An example&lt;/h3&gt;
 
 &lt;p&gt;Below is a method from a fictional web application that registers a user by calling the Foursquare API
-to get the user’s profile info, the their friend graph and their recent check-ins.&lt;/p&gt;
+to get the user’s profile info, their friend graph and their recent check-ins.&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;registerUser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;token&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Future&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;User&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;api&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;FoursquareApi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;token&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
