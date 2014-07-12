@@ -105,10 +105,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -145,6 +141,8 @@ Realizing abstract structures in code makes them more concrete and makes it easi
 
 <h2 id="archive">Archive</h2>
 <ul class="posts">
+  
+    <li><span>12 Jul 2014</span> &raquo; <a href="/2014/07/12/is-the-nba-draft-rigged.html">Is the NBA draft rigged?</a></li>
   
     <li><span>03 Jun 2014</span> &raquo; <a href="/2014/06/03/programming-with-futures.html">Programming with futures: patterns and anti-patterns</a></li>
   
@@ -186,6 +184,22 @@ Realizing abstract structures in code makes them more concrete and makes it easi
 
 <h2 id="recent-posts">Recent Posts</h2>
 <div class="post-content-truncate">
+
+  
+    <h2 class="title">Is the NBA draft rigged?</h2>
+    
+<blockquote class="twitter-tweet" lang="en"><p>Had a chat with <a href="https://twitter.com/jliszka">@jliszka</a> about Bayes&#39; rule, the &#39;14 draft lottery, &amp; the chances the NBA is rigged. Now I don&#39;t believe in anything anymore.</p>&mdash; harryh (@harryh) <a href="https://twitter.com/harryh/statuses/487722129681838080">July 11, 2014</a></blockquote>
+<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p>This conversation basically consisted of Harry mentioning that the Cleveland Cavaliers got the first pick in the draft,
+even though the lottery gave them only a 1.7% chance of drawing that slot, then wondering aloud how he should update his
+prior on whether the NBA draft is rigged given this information, and then me breaking out my <a href="/2013/09/03/fun-with-bayesian-priors.html">probability monad</a>,
+because there’s no problem that can’t be solved with more monads.</p>
+
+
+    <a href="/2014/07/12/is-the-nba-draft-rigged.html">Read more</a>
+    <hr />
+  
 
   
     <h2 class="title">Programming with futures: patterns and anti-patterns</h2>
@@ -537,75 +551,6 @@ from that proof à la the <a href="http://en.wikipedia.org/wiki/Curry%E2%80%93Ho
 
 
     <a href="/2013/10/19/impossible-functions.html">Read more</a>
-    <hr />
-  
-
-  
-    <h2 class="title">Understanding A/B test analysis</h2>
-    
-<style type="text/css">
-th {
-  padding: 5px;
-  border: 1px solid #ccc;
-}
-tbody tr:nth-child(odd) {
-  background: #eee;
-}
-tbody tr:nth-child(even) {
-  background: #fff;
-}
-.blue1 {
-  color: #16f;
-}
-.blue2 {
-  color: #51f;
-}
-</style>
-
-<p>This is a continuation of my <a href="/2013/08/26/a-programmers-guide-to-the-central-limit-theorem.html">previous post on the Central Limit Theorem</a>.</p>
-
-<p>Say you’re designing a new feature for your website and you can’t decide which shade of blue to use. So you let your
-users decide by trying both — some users see <span class="blue1">this shade</span> and some users get
-<span class="blue2">this one</span>. Whichever group of users spends more time on the site will determine which color
-you end up going with.</p>
-
-<p>You run your experiment for a little while and collect the following data:</p>
-
-<table>
-  <thead>
-    <tr>
-      <th>Group</th>
-      <th>Shade of blue</th>
-      <th># of users</th>
-      <th>Average time on site</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>A</td>
-      <td><span class="blue1">this one</span></td>
-      <td>1,028</td>
-      <td>91.4 seconds</td>
-    </tr>
-    <tr>
-      <td>B</td>
-      <td><span class="blue2">this one</span></td>
-      <td>1,015</td>
-      <td>103.8 seconds</td>
-    </tr>
-  </tbody>
-</table>
-
-<p>Looks like group B did better! But it’s a small difference, how can you be sure it’s significant? In other words, assuming that
-the shade of blue had no effect on the amount of time a user spends on the site, what is the probability that you would
-have observed a difference of 11.4 seconds? In <em>other</em> other words, given the distribution of the amount of
-time different users spend on the site, if you draw 2 samples of 1,000 or so from this distribution, what is the
-probability that you would see a difference of 21.4 (or more) in the averages of the samples?</p>
-
-<p>Well, you would expect that that depends a lot on the distribution. Here is the distribution you observed:</p>
-
-
-    <a href="/2013/10/10/understanding-a-b-test-analysis.html">Read more</a>
     <hr />
   
 
