@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Lognormal or power law?</title>
+    <title>Is the NBA draft rigged?</title>
     <meta name="description" content="">
     <meta name="author" content="Jason Liszka">
 
@@ -133,13 +133,77 @@
 <div class="row-fluid post-full">
   <div class="span9 offset1 post-content">
     <div class="page-header">
-      <h1>Lognormal or power law? </h1>
+      <h1>Is the NBA draft rigged? </h1>
     </div>
     <div class="date">
-      <span>15 June 2014</span>
+      <span>12 July 2014</span>
     </div>
     <div class="content">
       
+<blockquote class="twitter-tweet" lang="en"><p>Had a chat with <a href="https://twitter.com/jliszka">@jliszka</a> about Bayes&#39; rule, the &#39;14 draft lottery, &amp; the chances the NBA is rigged. Now I don&#39;t believe in anything anymore.</p>&mdash; harryh (@harryh) <a href="https://twitter.com/harryh/statuses/487722129681838080">July 11, 2014</a></blockquote>
+<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p>This conversation basically consisted of Harry mentioning that the Cavs got the first pick in the draft, even though
+the standings at the end of the season gave them only a 1.7% probability of drawing that slot, then wondering
+aloud how he should update his prior on whether the NBA draft is rigged given this information, and then me whipping
+out my <a href="/2013/09/03/fun-with-bayesian-priors.html">probability monad</a>, because there’s no problem that can’t be solved with more monads.</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">isTheNBADraftRigged</span><span class="o">(</span><span class="n">prior</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">rigged</span> <span class="k">=</span> <span class="n">tf</span><span class="o">(</span><span class="n">prior</span><span class="o">)</span>
+  <span class="k">def</span> <span class="n">cavsGetFirstPick</span><span class="o">(</span><span class="n">rigged</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span> <span class="k">=</span> <span class="n">rigged</span> <span class="k">match</span> <span class="o">{</span>
+    <span class="k">case</span> <span class="kc">true</span> <span class="k">=&gt;</span> <span class="n">always</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+    <span class="k">case</span> <span class="kc">false</span> <span class="k">=&gt;</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.017</span><span class="o">)</span>
+  <span class="o">}</span>
+  <span class="n">rigged</span><span class="o">.</span><span class="n">posterior</span><span class="o">(</span><span class="n">cavsGetFirstPick</span><span class="o">)(</span><span class="k">_</span> <span class="o">==</span> <span class="kc">true</span><span class="o">).</span><span class="n">pr</span><span class="o">(</span><span class="k">_</span> <span class="o">==</span> <span class="kc">true</span><span class="o">)</span>
+<span class="o">}</span></code></pre></div>
+
+<p>This code produces the posterior distribution given a prior (<code>rigged</code>), some experiment that depends on the value of
+the prior distribution (<code>cavsGetFirstPick</code>), and what was observed (that the Cavs indeed got the first pick).</p>
+
+<p>Harry said his prior for the NBA draft being rigged was 5% and said to assume that if the draft is rigged, the Cavs have
+a 100% chance of getting the first pick.</p>
+
+<pre><code>scala&gt; isTheNBADraftRigged(0.05)
+res0: Double = 0.755
+</code></pre>
+
+<p><strong>Me:</strong> OK you should now believe there’s a 75% chance that the draft is rigged.</p>
+
+<p><strong>Harry:</strong> Head asplode.</p>
+
+<p><strong>Harry:</strong> OK, what if my prior is only 1%?</p>
+
+<p><strong>Me:</strong></p>
+
+<pre><code>scala&gt; isTheNBADraftRigged(0.01)
+res1: Double = 0.369
+</code></pre>
+
+<p><strong>Harry:</strong> Are you telling me that even if I thought there was only a 1% chance that the draft was rigged, I should now
+believe that that probability is now better than 1 in 3?</p>
+
+<p><strong>Me:</strong> Yes.</p>
+
+<p><strong>Harry:</strong> I don’t believe in anything anymore.</p>
+
+<h3 id="math">Math</h3>
+
+<p>Simulation is overkill. It’s easy enough to compute the posterior probability directly via Bayes’ Theorem.</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+P(A|B) = P(A)\frac{P(B|A)}{P(B)} \\
+%]]>
+</script>
+
+<p>Let A = “the NBA draft is rigged” and B = “the Cavs get the first pick” and compute:</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+P(A|B) = 0.05 \cdot \frac{1.0}{0.05 \cdot 1.0 + 0.95 \cdot 0.017} = 0.756
+%]]>
+</script>
+
 
     </div>
 
@@ -149,13 +213,29 @@
 
 
   <div style="float: right; margin-top: 5px">
-  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/lognormal-or-power-law.html" data-text="Lognormal or power law?" data-via="jliszka">Tweet</a>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/is-the-nba-draft-rigged.html" data-text="Is the NBA draft rigged?" data-via="jliszka">Tweet</a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
 
 
 
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-tags"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="/tags.html#probability-ref">probability <span>8</span></a></li>
+    
+  
+
+
+
+    </ul>
     
     <div style="clear: both"></div>
 

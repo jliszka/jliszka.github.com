@@ -1,0 +1,553 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>A numerical simulation of the Quantum Eraser</title>
+    <meta name="description" content="">
+    <meta name="author" content="Jason Liszka">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/themes/twitter/bootstrap/css/bootstrap.2.2.2.min.css" rel="stylesheet">
+    <link href="/assets/themes/twitter/css/style.css?body=1&amp;v=2" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/twitter/css/pygment.css" rel="stylesheet" type="text/css" media="all">
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+
+    <!-- atom & rss feed -->
+    <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-narrow">
+          <div class="row-fluid">
+            <div class="span9 offset1">
+              <a class="brand" href="/">A Gentleman and a Scala</a>
+              <ul class="nav">
+                
+                
+                
+
+
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+
+
+
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-narrow">
+
+      <div class="content">
+        
+<div class="row-fluid">
+  <div class="span9 offset1 post-content post-spacer"></div>
+</div>
+<div class="row-fluid post-full">
+  <div class="span9 offset1 post-content">
+    <div class="page-header">
+      <h1>A numerical simulation of the Quantum Eraser </h1>
+    </div>
+    <div class="date">
+      <span>08 July 2014</span>
+    </div>
+    <div class="content">
+      
+<p>The Quantum Eraser is a variation on the classic Double-Slit Experiment from quantum mechanics. If you ever have any
+doubt about the weirdness of quantum mechanics (“oh, there’s probably some classical explanation for all of this”), this
+experiment is designed to remove it. Here’s a great introduction to it by (name):</p>
+
+<p>(youtube embed)</p>
+
+<p>Basically, it’s the Double-Slit Experiment, but with two photons instead of one. They are entangled in such a way
+that they both have the same polarization (either horizontal or vertical, but we don’t know which). One photon goes
+through the slit where it hits a detector that measures its polarization and the position at which it hits the screen.
+The second photon does not go through the slits; instead, its polarization is measured.</p>
+
+<p>Behind each slit is a filter that alters the polarization of the photon. One slit’s filter changes …</p>
+
+<p>If you know the polarization of both photons, you can infer which slit the photon went through. This “erases” the
+interference pattern, even if the polarization of the second photon is measured <em>after</em> the first photon passes through
+the filters. If you only measure the polarization of one of the photons, the interference pattern returns.</p>
+
+<p>OK so let’s simulate it using my toy quantum computing library. See earlier post here.</p>
+
+<p>Let’s start by simulating the vanilla Double-Slit Experiment and see if we can reproduce the interference pattern.
+Then we’ll add in the second entangled photon and the filters and try to reproduce the Quantum Eraser effect.</p>
+
+<!-- more -->
+
+<h3 id="the-double-slit-experiment">The Double-Slit Experiment</h3>
+
+<p>First let’s set up the geometry of the experiment. We’ll</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">class</span> <span class="nc">DoubleSlit</span><span class="o">(</span>
+    <span class="n">distanceBetweenSlits</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span>
+    <span class="n">distanceToScreen</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span>
+    <span class="n">nDetectors</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
+    <span class="n">distanceBetweenDetectors</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span> <span class="o">{</span>
+
+  <span class="c1">// ...</span>
+<span class="o">}</span></code></pre></div>
+
+<p>Now let’s model the quantum state.
+We have a single particle passing through one of two slits and hitting a screen behind the barrier at some position.
+The particle could hit the screen at any continuous position, but for the sake of simplicity, we’ll imagine that instead
+we have an array of detectors, and the particle will hit one of the detectors. We can model the quantum state as follows:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">sealed</span> <span class="k">trait</span> <span class="nc">Slit</span>
+<span class="k">case</span> <span class="k">object</span> <span class="nc">A</span> <span class="k">extends</span> <span class="nc">Slit</span>
+<span class="k">case</span> <span class="k">object</span> <span class="nc">B</span> <span class="k">extends</span> <span class="nc">Slit</span>
+
+<span class="k">case</span> <span class="k">class</span> <span class="nc">State</span><span class="o">(</span><span class="n">slit</span><span class="k">:</span> <span class="kt">Slit</span><span class="o">,</span> <span class="n">detector</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">override</span> <span class="k">def</span> <span class="n">toString</span> <span class="k">=</span> <span class="n">s</span><span class="s">&quot;$slit $detector&quot;</span>
+<span class="o">}</span></code></pre></div>
+
+<script type="math/tex">\newcommand{\ket}[1]{\left| \text{#1} \right>}</script>
+
+<p>The quantum state <script type="math/tex">\ket{A 2}</script> means the particle went through slit A and hit detector 2. But more realistically
+we’ll have something like</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\frac{1}{\sqrt 2}\ket{A 2} + \frac{1}{\sqrt 2}\ket{B 2}
+%]]>
+</script>
+
+<p>meaning the particle is in a superposition of having gone through <em>both</em> slits and hitting detector 2.</p>
+
+<p>For a given particle we emit, we’re going to assume an equal likelihood of it going through either slit and hitting
+any detector.</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">val</span> <span class="n">initialState</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">State</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">ws</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+    <span class="n">slit</span> <span class="k">&lt;-</span> <span class="nc">Seq</span><span class="o">(</span><span class="n">A</span><span class="o">,</span> <span class="n">B</span><span class="o">)</span>
+    <span class="n">detector</span> <span class="k">&lt;-</span> <span class="o">-</span><span class="n">nDetectors</span> <span class="n">to</span> <span class="n">nDetectors</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="o">{</span>
+    <span class="nc">State</span><span class="o">(</span><span class="n">slit</span><span class="o">,</span> <span class="n">detector</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">one</span>
+  <span class="o">}</span>
+  
+  <span class="n">W</span><span class="o">(</span><span class="n">ws</span><span class="k">:</span> <span class="k">_</span><span class="kt">*</span><span class="o">).</span><span class="n">normalize</span>
+<span class="o">}</span></code></pre></div>
+
+<p>But the quantum state will evolve over time as the photon travels from the emitter to the detector. This evolution
+happens in two ways. The first is that over time, the phase rotates with a frequency proportional to the energy of the
+system (provided the energy does not change with time—in our case, this energy is proportional to the frequency of the
+photon). Since the units in our geeometry are somewhat arbitrary, I’m just going to say that the phase rotates one
+radian for each unit of distance traveled.</p>
+
+<p>The second thing that happens is that the amplitude decreases inversely proportional to the square of the distance traveled.</p>
+
+<p>We can model these as a quantum transformation as follows:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">evolve</span><span class="o">(</span><span class="n">state</span><span class="k">:</span> <span class="kt">State</span><span class="o">)</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">State</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">slitHeight</span> <span class="k">=</span> <span class="n">state</span><span class="o">.</span><span class="n">slit</span> <span class="k">match</span> <span class="o">{</span>
+    <span class="k">case</span> <span class="n">A</span> <span class="k">=&gt;</span> <span class="n">distanceBetweenSlits</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="k">case</span> <span class="n">B</span> <span class="k">=&gt;</span> <span class="o">-</span><span class="n">distanceBetweenSlits</span> <span class="o">/</span> <span class="mi">2</span>
+  <span class="o">}</span>
+
+  <span class="k">val</span> <span class="n">height</span> <span class="k">=</span> <span class="n">state</span><span class="o">.</span><span class="n">detector</span> <span class="o">*</span> <span class="n">distanceBetweenDetectors</span> <span class="o">-</span> <span class="n">slitHeight</span>
+  <span class="k">val</span> <span class="n">r2</span> <span class="k">=</span> <span class="n">height</span><span class="o">*</span><span class="n">height</span> <span class="o">+</span> <span class="n">distanceToScreen</span><span class="o">*</span><span class="n">distanceToScreen</span>
+  <span class="k">val</span> <span class="n">distance</span> <span class="k">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="o">(</span><span class="n">r2</span><span class="o">)</span>
+  <span class="k">val</span> <span class="n">amplitude</span> <span class="k">=</span> <span class="o">(</span><span class="n">one</span> <span class="o">/</span> <span class="n">r2</span><span class="o">).</span><span class="n">rot</span><span class="o">(</span><span class="n">distance</span><span class="o">)</span>
+  <span class="n">W</span><span class="o">(</span><span class="n">state</span> <span class="o">-&gt;</span> <span class="n">amplitude</span><span class="o">)</span>
+<span class="o">}</span></code></pre></div>
+
+<p>So now we can modify our state as follows:</p>
+
+<div class="highlight"><pre><code class="scala"><span class="k">val</span> <span class="n">state</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">State</span><span class="o">]</span> <span class="k">=</span> <span class="n">initialState</span> <span class="o">&gt;&gt;=</span> <span class="n">evolve</span></code></pre></div>
+
+<p>That’s actually all the code we need to get this to work. Let’s try it out:</p>
+
+<pre><code>scala&gt; val s = new DoubleSlit(25, 100, 32, 5).state
+s: W[State, Complex] = 0.010789 + -0.093368i|A -10&gt; + 0.026710 + 0.085728i|A -11&gt; + -0.046715 + -0.071815i|A -12&gt; + ...
+</code></pre>
+
+<p>OK, we got… a new state. Let’s take a measurement:</p>
+
+<pre><code>scala&gt; s.measure(_.detector)
+res0: s.Measurement[Int, State, Complex] = Measurement(outcome = 5, newState = 0.724131 + 0.182787i|A 5&gt; + 0.664932 + -0.009378i|B 5&gt;)
+</code></pre>
+
+<p>Our particle happened to hit detector 5, and we have a new state showing the superposition of having gone through both slits.</p>
+
+<p>We want to get a sense for what this is going to look like when we emit many photons. I could take 10,000 measurements
+and build a histogram of the results, which is how you’d do it in a lab. But I have access to the complete quantum state
+of the system (which you do not have in a lab), so I can cheat a little and figure out directly what the probability of
+each outcome will be. Here’s the complete state if we only care about which detector it hits:</p>
+
+<pre><code>scala&gt; s.map(_.detector)
+res1: W[Int,Complex] = -0.063645 + -0.019737i|-32&gt; + 0.058462 + -0.056740i|-31&gt; + 0.022027 + 0.093957i|-30&gt; + ...
+</code></pre>
+
+<p>The probabilty is just going to be the square of the amplitude of each outcome. Here’s the whole (classical) distribution:</p>
+
+<pre><code>scala&gt; s.map(_.detector).toDist
+res2: List[(Int, Double)] = List((-32,8.787696172597845E-4), (-31,0.0014035428136468845), ...)
+</code></pre>
+
+<p>Let’s just put that in a histogram:</p>
+
+<pre><code>scala&gt; s.map(_.detector).hist
+-32
+-31 #
+-30 ##
+-29 ###
+-28 ####
+-27 #####
+-26 #######
+-25 #########
+-24 ###########
+-23 ############
+-22 #############
+-21 #############
+-20 ###########
+-19 ########
+-18 ####
+-17 #
+-16
+-15 ####
+-14 #############
+-13 #########################
+-12 ###################################
+-11 ####################################
+-10 ########################
+ -9 ######
+ -8
+ -7 #################
+ -6 #############################################
+ -5 ########################################################
+ -4 ##################################
+ -3 ####
+ -2 ######
+ -1 ##########################################
+  0 ################################################################
+  1 ##########################################
+  2 ######
+  3 ####
+  4 ##################################
+  5 ########################################################
+  6 #############################################
+  7 #################
+  8
+  9 ######
+ 10 ########################
+ 11 ####################################
+ 12 ###################################
+ 13 #########################
+ 14 #############
+ 15 ####
+ 16
+ 17 #
+ 18 ####
+ 19 ########
+ 20 ###########
+ 21 #############
+ 22 #############
+ 23 ############
+ 24 ###########
+ 25 #########
+ 26 #######
+ 27 #####
+ 28 ####
+ 29 ###
+ 30 ##
+ 31 #
+ 32
+</code></pre>
+
+<p>Yeah, there it is. That totally worked. Now if we measure which slit the photon went through, the effect should
+disappear:</p>
+
+<pre><code>scala&gt; s.measure(_.slit).newState.map(_.detector).hist
+-32 ##
+-31 ##
+-30 ##
+-29 ##
+-28 ###
+-27 ###
+-26 ###
+-25 ####
+-24 ####
+-23 ####
+-22 #####
+-21 ######
+-20 ######
+-19 #######
+-18 ########
+-17 ########
+-16 #########
+-15 ##########
+-14 ############
+-13 #############
+-12 ##############
+-11 ################
+-10 #################
+ -9 ###################
+ -8 ####################
+ -7 ######################
+ -6 ########################
+ -5 ##########################
+ -4 ###########################
+ -3 #############################
+ -2 ##############################
+ -1 ################################
+  0 #################################
+  1 #################################
+  2 ##################################
+  3 ##################################
+  4 #################################
+  5 #################################
+  6 ################################
+  7 ##############################
+  8 #############################
+  9 ###########################
+ 10 ##########################
+ 11 ########################
+ 12 ######################
+ 13 ####################
+ 14 ###################
+ 15 #################
+ 16 ################
+ 17 ##############
+ 18 #############
+ 19 ############
+ 20 ##########
+ 21 #########
+ 22 ########
+ 23 ########
+ 24 #######
+ 25 ######
+ 26 ######
+ 27 #####
+ 28 ####
+ 29 ####
+ 30 ####
+ 31 ###
+ 32 ###
+</code></pre>
+
+<p>Beautiful.</p>
+
+<h3 id="the-quantum-eraser">The Quantum Eraser</h3>
+
+
+    </div>
+
+    
+
+  
+
+
+  <div style="float: right; margin-top: 5px">
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/a-numerical-simulation-of-the-quantum-eraser.html" data-text="A numerical simulation of the Quantum Eraser" data-via="jliszka">Tweet</a>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+</div>
+
+
+
+
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-tags"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="/tags.html#probability-ref">probability <span>8</span></a></li>
+     
+    	<li><a href="/tags.html#quantum computing-ref">quantum computing <span>1</span></a></li>
+    
+  
+
+
+
+    </ul>
+    
+    <div style="clear: both"></div>
+
+    <hr>
+    <div class="navigation">
+    
+    
+      <div style="clear: both"></div>
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'jliszka'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+
+  <div class="span2 sidebar">
+    <a href="/"><div id="photo"></div></a>
+    <div id="bio">
+      <b>Jason Liszka</b><br/>
+      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+    </div>
+    <h4>Popular posts</h4>
+    <ul>
+      <li><a href="/2013/10/01/how-traffic-actually-works.html">How traffic actually works</a></li>
+      <li><a href="/2013/08/12/a-frequentist-approach-to-probability.html">A frequentist approach to probability</a></li>
+      <li><a href="/2013/10/24/exact-numeric-nth-derivatives.html">Exact numeric nth derivatives</a></li>
+      <li><a href="/2013/10/31/infinite-lazy-polynomials.html">Infinite lazy polynomials</a></li>
+    </ul>
+
+    <h4>Recent posts</h4>
+    <ul>
+      
+        <li><a href="/2014/06/03/programming-with-futures.html">Programming with futures: patterns and anti-patterns</a></li>
+      
+        <li><a href="/2014/01/30/good-tech-lead-bad-tech-lead.html">Good Tech Lead, Bad Tech Lead</a></li>
+      
+        <li><a href="/2013/12/18/bayesian-networks-and-causality.html">Bayesian networks and causality</a></li>
+      
+        <li><a href="/2013/11/22/unlikely-things-happen-all-the-time.html">Unlikely things happen all the time</a></li>
+      
+        <li><a href="/2013/11/14/the-foursquare-theorem.html">The Foursquare Theorem</a></li>
+      
+    </ul>
+
+    <a href="https://twitter.com/jliszka" class="twitter-follow-button" data-show-count="false" data-size="large" data-show-screen-name="false">Follow @jliszka</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+  </div>
+</div>
+
+
+      </div>
+      <hr>
+      <footer>
+        <p>&copy; 2014 Jason Liszka
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </footer>
+
+    </div>
+
+    
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-42567355-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+  </body>
+</html>
+
