@@ -10,7 +10,7 @@ tags: ["probability"]
 <blockquote class="twitter-tweet" lang="en"><p>Had a chat with <a href="https://twitter.com/jliszka">@jliszka</a> about Bayes&#39; rule, the &#39;14 draft lottery, &amp; the chances the NBA is rigged. Now I don&#39;t believe in anything anymore.</p>&mdash; harryh (@harryh) <a href="https://twitter.com/harryh/statuses/487722129681838080">July 11, 2014</a></blockquote>
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-This conversation basically consisted of Harry mentioning that the Cleveland Cavaliers got the first pick in the draft,
+This chat basically consisted of Harry mentioning that the Cleveland Cavaliers got the first pick in the draft,
 even though the lottery gave them only a 1.7% chance of drawing that slot, then wondering aloud how he should update his
 prior on whether the NBA draft is rigged given this information, and then me breaking out my [probability monad]({{ site.posts[-4].url }}),
 because there's no problem that can't be solved with more monads.
@@ -69,23 +69,24 @@ Let A = "the NBA draft is rigged" and B = "the Cavs get the first pick" and comp
 P(A|B) = 0.05 \cdot \frac{1.0}{0.05 \cdot 1.0 + 0.95 \cdot 0.017} = 0.756
 {% endmath %}
 
-### Unlikely things
+### Mental math
 
-That said, unlikely things happen all the time, and it usually doesn't mean something is rigged. Suppose you and I are
-playing 5-card stud, and I deal us the following hands:
+There's another way to do this calculation that is slightly more conducive to mental math (or maybe just calculator
+math). The trick is to do everything in terms of the odds ratio. So instead of saying your prior is 5%, you'd say that
+the prior odds ratio is 1 : 19. Then you find the likelihood ratio, which is the ratio of the probability of the outcome
+(the Cavs get the first pick) under both hypotheses (the draft is rigged, the draft is not rigged), which is 100 : 1.7.
+Then you just multiply the ratios together, and you get the posterior odds ratio. Plugging that into my calculator, I
+get 3.1, which is 75.6%.
 
-{% math %}
-3\clubsuit \text{ 9}\heartsuit \text{ J}\clubsuit \text{ J}\heartsuit \text{ A}\diamondsuit \\
-2\heartsuit \text{ 5}\clubsuit \text{ 5}\spadesuit \text{ 8}\clubsuit \text{ Q}\heartsuit
-{% endmath %}
-
-The chances that we were dealt those exact hands are 1 in 4 trillion, but that doesn't mean I'm cheating. But you might
-have other suspicions if I dealt this instead:
+In math, it's
 
 {% math %}
-3\clubsuit \text{ 9}\heartsuit \text{ J}\clubsuit \text{ J}\heartsuit \text{ A}\diamondsuit \\
-10\clubsuit \text{ J}\clubsuit \text{ Q}\clubsuit \text{ K}\clubsuit \text{ A}\clubsuit
+\begin{align}
+O(A|B) &= O(A) \cdot \frac{P(B|A)}{P(B|\lnot A)} \\
+&= \frac{1}{19} \cdot \frac{100}{1.7} \\
+&= 3.1
+\end{align}
 {% endmath %}
 
-What's the difference between these two scenarios? Both deals are equally unlikely, but why does one of them make you
-think I'm cheating? The difference is that if I were cheating, I would almost certainly deal myself a good hand.
+
+
