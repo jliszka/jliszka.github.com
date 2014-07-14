@@ -575,20 +575,21 @@ scala&gt; prior.bucketedHist(0, 1, 10)
 
 <p>It’s pretty easy to use Bayes’ theorem to analyze that last example, so let’s walk through it and compare.</p>
 
-<p>Here’s the formula applied to this example:
+<p>Here’s the formula applied to this example:</p>
+
 <script type="math/tex; mode=display">
-%&lt;![CDATA[
+%<![CDATA[
 \begin{align}
-  P(A|B) &amp;= \frac{P(B|A)P(A)}{P(B)}
+  P(A|B) &= \frac{P(B|A)P(A)}{P(B)}
   \\ P(\text{fair coin}|\text{8 heads})
-     &amp;= \frac{P(\text{8 heads}|\text{fair coin})P(\text{fair coin})}{P(\text{8 heads})}
-  \\ &amp;= \frac{P(\text{8 heads}|\text{fair coin})P(\text{fair coin})}{P(\text{8 heads}|\text{fair coin})P(\text{fair coin}) + P(\text{8 heads}|\text{biased coin})P(\text{biased coin})}
-  \\ &amp;= \frac{ {10 \choose 8} (\frac{1}{2})^{10} \cdot \frac{1}{2}}
+     &= \frac{P(\text{8 heads}|\text{fair coin})P(\text{fair coin})}{P(\text{8 heads})}
+  \\ &= \frac{P(\text{8 heads}|\text{fair coin})P(\text{fair coin})}{P(\text{8 heads}|\text{fair coin})P(\text{fair coin}) + P(\text{8 heads}|\text{biased coin})P(\text{biased coin})}
+  \\ &= \frac{ {10 \choose 8} (\frac{1}{2})^{10} \cdot \frac{1}{2}}
           { {10 \choose 8} (\frac{1}{2})^{10} \cdot \frac{1}{2} + {10 \choose 8} (\frac{9}{10})^8 (\frac{1}{10})^2 \cdot \frac{1}{2}}
-  \\ &amp;= \frac{0.022}{0.022 + 0.097} = 0.18
+  \\ &= \frac{0.022}{0.022 + 0.097} = 0.18
 \end{align}
-%]]&gt;
-</script></p>
+%]]>
+</script>
 
 <p>So we got the same result. Written out, you can see the correspondence between Bayes’ Theorem and our simulation.
 <script type="math/tex">P(\text{fair coin})</script> and <script type="math/tex">P(\text{biased coin})</script> in the denominator play the same role as our prior
