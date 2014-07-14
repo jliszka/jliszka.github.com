@@ -451,6 +451,7 @@ Now after flipping the coin 10 times and observing 8 heads, the posterior become
 It's pretty easy to use Bayes' theorem to analyze that last example, so let's walk through it and compare.
 
 Here's the formula applied to this example:
+
 {% math %}
 \begin{align}
   P(A|B) &= \frac{P(B|A)P(A)}{P(B)}
