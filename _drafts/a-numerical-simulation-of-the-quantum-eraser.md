@@ -112,7 +112,7 @@ Or in code,
 val BBO = (h⊗v >< h) + (v⊗h >< v)
 {% endhighlight %}
 
-```><``` computes the outer product and ⊗ is the tensor product (which you can also type as ```*```, but for
+```><``` computes the outer product, and ⊗ is the tensor product (which you can also type as ```*```, but for
 the purposes of this article I thought it would be good to make a visual distinction between the tensor product and
 scalar multiplication).
 
@@ -139,24 +139,25 @@ So passing our emitted photon through the BBO crystal gives us
     scala> emit >>= BBO
     res3: Q[T[Polarization, Polarization]] = 0.7071068|H,V> + 0.7071068|V,H>
 
-Now we let the second photon pass through one of the two slits:
+Now we let the second photon pass through one of the two slits.
 
 {% highlight scala %}
 val ab: Q[Slit] = (a + b) * rhalf
 def slit[S <: Basis](s: S): Q[T[S, Slit]] = pure(s) ⊗ ab
 {% endhighlight %}
 
-This will add a superposition of going through slits A and B to the quantum state. We'll apply it to the second photon
-using ```lift2```:
+This will add a superposition of going through slits {%m%}A{%em%} and {%m%}B{%em%} to the quantum state. We'll apply it
+to the second photon using ```lift2```:
 
     scala> emit >>= BBO >>= lift2(slit)
     res4: Q[T[Polarization, T[Polarization, Slit]]] = 0.5|H,V,A> + 0.5|H,V,B> + 0.5|V,H,A> + 0.5|V,H,B>
 
-OK, the last thing to do is to let the second photon travel to the detector. The quantum state will evolve over time as
-the photon travels from the emitter to the detector. This evolution happens in two ways. The first is that the phase
-rotates with a frequency proportional to the energy of the system (provided the energy does not change with time—in our
-case, this energy is proportional to the frequency of the photon, which is constant). Since the units in our geometry
-are somewhat arbitrary, I'm just going to say that the phase rotates one radian for each unit of distance traveled.
+OK, the last thing to do is to let the second photon travel to the detector array. The quantum state will evolve over
+time as the photon travels from the emitter to the detectors. This evolution happens in two ways.
+
+The first is that the phase rotates with a frequency proportional to the energy of the system (which is just
+proportional to the frequency of the photon). Since the units in our geometry are somewhat arbitrary,
+I'm just going to say that the phase rotates one radian for each unit of distance traveled.
 
 The second thing that happens is that the amplitude decreases in proportion to the square of the distance traveled.
 
@@ -178,7 +179,7 @@ def evolve(slit: Slit): Q[Detector] = {
     val height = detector * distanceBetweenDetectors - slitHeight
     val r2 = height*height + distanceToScreen*distanceToScreen
     val distance = math.sqrt(r2)
-    val amplitude = (one / r2).rot(distance)
+    val amplitude = (e ^ (distance * i)) / r2
     pure(Detector(detector)) * amplitude
   }
 
