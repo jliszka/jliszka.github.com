@@ -232,7 +232,7 @@ spontaneously turns the photon into an entangled pair of photons with orthogonal
 
 <div class="highlight"><pre><code class="scala"><span class="k">val</span> <span class="nc">BBO</span> <span class="k">=</span> <span class="o">(</span><span class="n">h</span><span class="o">⊗</span><span class="n">v</span> <span class="o">&gt;&lt;</span> <span class="n">h</span><span class="o">)</span> <span class="o">+</span> <span class="o">(</span><span class="n">v</span><span class="o">⊗</span><span class="n">h</span> <span class="o">&gt;&lt;</span> <span class="n">v</span><span class="o">)</span></code></pre></div>
 
-<p><code>&gt;&lt;</code> computes the outer product and ⊗ is the tensor product (which you can also type as <code>*</code>, but for
+<p><code>&gt;&lt;</code> computes the outer product, and ⊗ is the tensor product (which you can also type as <code>*</code>, but for
 the purposes of this article I thought it would be good to make a visual distinction between the tensor product and
 scalar multiplication).</p>
 
@@ -263,23 +263,24 @@ res2: Q[T[Polarization, Polarization]] = |V,H&gt;
 res3: Q[T[Polarization, Polarization]] = 0.7071068|H,V&gt; + 0.7071068|V,H&gt;
 </code></pre>
 
-<p>Now we let the second photon pass through one of the two slits:</p>
+<p>Now we let the second photon pass through one of the two slits.</p>
 
 <div class="highlight"><pre><code class="scala"><span class="k">val</span> <span class="n">ab</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">Slit</span><span class="o">]</span> <span class="k">=</span> <span class="o">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">)</span> <span class="o">*</span> <span class="n">rhalf</span>
 <span class="k">def</span> <span class="n">slit</span><span class="o">[</span><span class="kt">S</span> <span class="k">&lt;:</span> <span class="kt">Basis</span><span class="o">](</span><span class="n">s</span><span class="k">:</span> <span class="kt">S</span><span class="o">)</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">T</span><span class="o">[</span><span class="kt">S</span>, <span class="kt">Slit</span><span class="o">]]</span> <span class="k">=</span> <span class="n">pure</span><span class="o">(</span><span class="n">s</span><span class="o">)</span> <span class="o">⊗</span> <span class="n">ab</span></code></pre></div>
 
-<p>This will add a superposition of going through slits A and B to the quantum state. We’ll apply it to the second photon
-using <code>lift2</code>:</p>
+<p>This will add a superposition of going through slits <script type="math/tex">A</script> and <script type="math/tex">B</script> to the quantum state. We’ll apply it
+to the second photon using <code>lift2</code>:</p>
 
 <pre><code>scala&gt; emit &gt;&gt;= BBO &gt;&gt;= lift2(slit)
 res4: Q[T[Polarization, T[Polarization, Slit]]] = 0.5|H,V,A&gt; + 0.5|H,V,B&gt; + 0.5|V,H,A&gt; + 0.5|V,H,B&gt;
 </code></pre>
 
-<p>OK, the last thing to do is to let the second photon travel to the detector. The quantum state will evolve over time as
-the photon travels from the emitter to the detector. This evolution happens in two ways. The first is that the phase
-rotates with a frequency proportional to the energy of the system (provided the energy does not change with time—in our
-case, this energy is proportional to the frequency of the photon, which is constant). Since the units in our geometry
-are somewhat arbitrary, I’m just going to say that the phase rotates one radian for each unit of distance traveled.</p>
+<p>OK, the last thing to do is to let the second photon travel to the detector array. The quantum state will evolve over
+time as the photon travels from the emitter to the detectors. This evolution happens in two ways.</p>
+
+<p>The first is that the phase rotates with a frequency proportional to the energy of the system (which is just
+proportional to the frequency of the photon). Since the units in our geometry are somewhat arbitrary,
+I’m just going to say that the phase rotates one radian for each unit of distance traveled.</p>
 
 <p>The second thing that happens is that the amplitude decreases in proportion to the square of the distance traveled.</p>
 
@@ -300,7 +301,7 @@ are somewhat arbitrary, I’m just going to say that the phase rotates one radia
     <span class="k">val</span> <span class="n">height</span> <span class="k">=</span> <span class="n">detector</span> <span class="o">*</span> <span class="n">distanceBetweenDetectors</span> <span class="o">-</span> <span class="n">slitHeight</span>
     <span class="k">val</span> <span class="n">r2</span> <span class="k">=</span> <span class="n">height</span><span class="o">*</span><span class="n">height</span> <span class="o">+</span> <span class="n">distanceToScreen</span><span class="o">*</span><span class="n">distanceToScreen</span>
     <span class="k">val</span> <span class="n">distance</span> <span class="k">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="o">(</span><span class="n">r2</span><span class="o">)</span>
-    <span class="k">val</span> <span class="n">amplitude</span> <span class="k">=</span> <span class="o">(</span><span class="n">one</span> <span class="o">/</span> <span class="n">r2</span><span class="o">).</span><span class="n">rot</span><span class="o">(</span><span class="n">distance</span><span class="o">)</span>
+    <span class="k">val</span> <span class="n">amplitude</span> <span class="k">=</span> <span class="o">(</span><span class="n">e</span> <span class="o">^</span> <span class="o">(</span><span class="n">distance</span> <span class="o">*</span> <span class="n">i</span><span class="o">))</span> <span class="o">/</span> <span class="n">r2</span>
     <span class="n">pure</span><span class="o">(</span><span class="nc">Detector</span><span class="o">(</span><span class="n">detector</span><span class="o">))</span> <span class="o">*</span> <span class="n">amplitude</span>
   <span class="o">}</span>
 
