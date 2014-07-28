@@ -170,7 +170,9 @@ This is a very simple quantum state equivalent to the following probability dist
 | **0** | 100% |
 | **1** | 0% |
 
-{%m%}\newcommand{\ket}[1]{\left| #1 \right>}{%em%}
+{%m%}
+\newcommand{\ket}[1]{\lvert #1 \rangle}
+{%em%}
 State labels are written using _ket_ notaton. {%m%}\ket{0}{%em%} refers to the 0 row in the table above. The number
 in front of the label represents the probability for that row in the table — actually, it's a probability amplitude, which is a complex
 number whose squared absolute value gives the classical probability of that state. This will make more sense in a second.
@@ -188,7 +190,7 @@ probability distribution table:
 | **0** | 50% |
 | **1** | 50% |
 
-since {%m%}|\frac{1}{\sqrt{2}}|^2 = \frac{1}{2}{%em%}.
+since {%m%}\left\lvert\frac{1}{\sqrt{2}}\right\rvert^2 = \frac{1}{2}{%em%}.
 
 Notice that {%m%}\frac{1}{\sqrt{2}}\ket{0} - \frac{1}{\sqrt{2}}\ket{1}{%em%} corresponds to the same table,
 and so does {%m%}\frac{-i}{\sqrt{2}}\ket{0} - \frac{1}{\sqrt{2}}\ket{1}{%em%}, since
@@ -196,7 +198,7 @@ and so does {%m%}\frac{-i}{\sqrt{2}}\ket{0} - \frac{1}{\sqrt{2}}\ket{1}{%em%}, s
 
 One qubit only gets you so far. So let's create a 2 qubit state.
 
-    scala> tensor(s0, s0)
+    scala> s0 * s0
     res2: Q[T[Basis.Std,Basis.Std]] = 1.0|00>
 
 The state label now contains 2 bits. This state corresponds to this table:
@@ -210,18 +212,18 @@ The state label now contains 2 bits. This state corresponds to this table:
 
 Now we'll apply the H gate to both qubits:
 
-    scala> tensor(s0, s0) >>= lift12(H, H)
+    scala> (s0 * s0) >>= lift12(H, H)
     res3: Q[T[Basis.Std,Basis.Std]] = 0.5|00> + 0.5|01> + 0.5|10> + 0.5|11>
 
 Or just to the first qubit:
 
-    scala> tensor(s0, s0) >>= lift1(H)
+    scala> (s0 * s0) >>= lift1(H)
     res4: Q[T[Basis.Std,Basis.Std]] = 0.707107|00> + 0.707107|10>
 
 There are some gates that operate on two qubits at once. The CNOT gate, for example, flips the second qubit only if the
 first qubit is a 1.
 
-    scala> val s = tensor(s0, s0) >>= lift1(H) >>= cnot
+    scala> val s = (s0 * s0) >>= lift1(H) >>= cnot
     s: Q[T[Basis.Std,Basis.Std]] = 0.707107|00> + 0.707107|11>
 
 That corresponds to this table:
@@ -239,7 +241,7 @@ This is called the [Bell state](http://en.wikipedia.org/wiki/Bell_state) and com
 
 Let's see what happens when we measure the first qubit:
 
-    scala> val (m, s2) = s.measure(_._1)
+    scala> val Measurement(m, s2) = s.measure(_._1)
     m: Basis.Std = |1>
     s2: Q[T[Basis.Std,Basis.Std]] = 1.0|11>
 
@@ -250,10 +252,10 @@ So now if we measure the second qubit, we are guaranteed to get {%m%}\ket{1}{%em
 
 Here's another example of that.
 
-    scala> val s = tensor(s0, s0) >>= lift12(H, H)
+    scala> val s = (s0 * s0) >>= lift12(H, H)
     s: Q[T[Basis.Std,Basis.Std]] = 0.5|00> + 0.5|01> + 0.5|10> + 0.5|11>
 
-    scala> val (m, s2) = s.measure(_._2)
+    scala> val Measurement(m, s2) = s.measure(_._2)
     m: Basis.Std = |0>
     s2: Q[T[Basis.Std,Basis.Std]] = 0.707107|00> + 0.707107|10>
 
@@ -290,7 +292,7 @@ the state.) How does that work? Let's do the math.
     \text{sqrtNot}(\frac{1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1})
     &= \frac{1}{\sqrt{2}}(\frac{1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1}) + \frac{1}{\sqrt{2}}(\frac{-1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1})
     \\ &= \frac{1}{2}\ket{0} + \frac{1}{2}\ket{1} - \frac{1}{2}\ket{0} + \frac{1}{2}\ket{1}
-    \\ &= 1\ket{1}
+    \\ &= \ket{1}
 \end{align}
 {% endmath %}
 

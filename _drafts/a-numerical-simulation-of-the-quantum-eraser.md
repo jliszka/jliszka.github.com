@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "A numerical simulation of the Quantum Eraser"
+title: "The Quantum Eraser"
 description: ""
 category: 
 tags: [ "probability", "quantum computing" ]
@@ -138,6 +138,9 @@ So passing our emitted photon through the BBO crystal gives us
 
     scala> emit >>= BBO
     res3: Q[T[Polarization, Polarization]] = 0.7071068|H,V> + 0.7071068|V,H>
+
+These photons are entangled: if we measure the polarization of one photon, we will get a random result, either {%m%}H{%em%}
+or {%m%}V{%em%}. But then the _other_ photon is guaranteed to have the opposite polarization.
 
 Now we let the second photon pass through one of the two slits.
 
@@ -324,14 +327,16 @@ Let's apply this filter to the second photon just after it goes through the slit
 
 It's not immediately obvious here, but given this state, if you know the polarizations of both photons, you can tell
 which slit the second photon went through. It becomes clearer if you write the polarization of the second photon in the
-{%m%}R-L{%em%} basis:
+{%m%}R-L{%em%} basis. The state of the system is:
 
 {% math %}
 \frac{\ket{H,L,A} + \ket{H,R,B} + \ket{V,L,B} + \ket{V,R,A}}{2}
 {% endmath %}
 
-This can also be demonstrated by using the inner product (```<>```, meant to evoke {%m%}\braket{a}{b}{%em%}, the inner
-product in [Dirac notation](https://en.wikipedia.org/wiki/Bra%E2%80%93ket_notation)) to ask the state what the
+So if you measure the first photon's polarization to be {%m%}V{%em%} and the second photon's polarization to be {%m%}R{%em%},
+the second photon must have gone through slit {%m%}A{%em%}.
+
+This can also be demonstrated by using the inner product to ask the state what the
 probability of collaping into some other state is:
 
     scala> s <> (h ⊗ (right ⊗ a))
@@ -339,6 +344,8 @@ probability of collaping into some other state is:
 
     scala> s <> (h ⊗ (right ⊗ b))
     res2: Complex = 0.5
+
+```s1 <> s2``` is the inner product, {%m%}\braket{s_1}{s_2}{%em%}.
 
 So if you measure the first photon's polarization to be {%m%}H{%em%} and the second photon's polarization to be {%m%}R{%em%},
 the only possibility is that the second photon went through slit {%m%}B{%em%}.
@@ -424,8 +431,8 @@ We do this by applying a [diagonal polarizing filter](https://en.wikipedia.org/w
 _first_ photon.
 
 A polarizing filter allows the component of an incoming photon's polarization that is in line with the filter's
-polarization to pass through. In other words, the filter "projects" the photon's polarization onto the vector
-representing the filter's polarization.
+polarization angle to pass through. In other words, the resulting photon's polarization is the projection of its
+original polarization onto the vector representing the filter's polarization angle.
 
 This can be accomplished by applying the transformation {%m%}\ket{\psi}\bra{\psi}{%em%}, where {%m%}\psi{%em%} is the
 polarization of the filter. Applying this to an incoming photon with polarization {%m%}\phi{%em%}, we get
@@ -527,8 +534,7 @@ So now the second photon always has a horizontal polarization, so there's no way
 
 The kicker is that nothing in this setup makes reference to how far away the diagonal polarizing filter is from the rest
 of the experiment apparatus. You can put it miles or light-years away, and interference pattern will still return—even
-though, paradoxically, the effect of the filter takes place _after_ the second photon passes through one (or both) of
-the slits.
+though, paradoxically, the first photon doesn't encounter the filter until _after_ the second photon reaches a detector!
 
 If you want to play around with this yourself, clone
 [this github project](https://github.com/jliszka/quantum-probability-monad)
