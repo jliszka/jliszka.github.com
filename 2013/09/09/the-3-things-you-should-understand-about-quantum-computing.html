@@ -569,7 +569,9 @@ res0: Q[Basis.Std] = 1.0|0&gt;
   </tbody>
 </table>
 
-<script type="math/tex">\newcommand{\ket}[1]{\left| #1 \right>}</script>
+<script type="math/tex">
+\newcommand{\ket}[1]{\lvert #1 \rangle}
+</script>
 
 <p>State labels are written using <em>ket</em> notaton. <script type="math/tex">\ket{0}</script> refers to the 0 row in the table above. The number
 in front of the label represents the probability for that row in the table — actually, it’s a probability amplitude, which is a complex
@@ -603,15 +605,7 @@ probability distribution table:</p>
   </tbody>
 </table>
 
-<table>
-  <tbody>
-    <tr>
-      <td>since <script type="math/tex"></script></td>
-      <td>\frac{1}{\sqrt{2}}</td>
-      <td>^2 = \frac{1}{2}&lt;/script&gt;.</td>
-    </tr>
-  </tbody>
-</table>
+<p>since <script type="math/tex">\left\lvert\frac{1}{\sqrt{2}}\right\rvert^2 = \frac{1}{2}</script>.</p>
 
 <p>Notice that <script type="math/tex">\frac{1}{\sqrt{2}}\ket{0} - \frac{1}{\sqrt{2}}\ket{1}</script> corresponds to the same table,
 and so does <script type="math/tex">\frac{-i}{\sqrt{2}}\ket{0} - \frac{1}{\sqrt{2}}\ket{1}</script>, since
@@ -619,7 +613,7 @@ and so does <script type="math/tex">\frac{-i}{\sqrt{2}}\ket{0} - \frac{1}{\sqrt{
 
 <p>One qubit only gets you so far. So let’s create a 2 qubit state.</p>
 
-<pre><code>scala&gt; tensor(s0, s0)
+<pre><code>scala&gt; s0 * s0
 res2: Q[T[Basis.Std,Basis.Std]] = 1.0|00&gt;
 </code></pre>
 
@@ -654,20 +648,20 @@ res2: Q[T[Basis.Std,Basis.Std]] = 1.0|00&gt;
 
 <p>Now we’ll apply the H gate to both qubits:</p>
 
-<pre><code>scala&gt; tensor(s0, s0) &gt;&gt;= lift12(H, H)
+<pre><code>scala&gt; (s0 * s0) &gt;&gt;= lift12(H, H)
 res3: Q[T[Basis.Std,Basis.Std]] = 0.5|00&gt; + 0.5|01&gt; + 0.5|10&gt; + 0.5|11&gt;
 </code></pre>
 
 <p>Or just to the first qubit:</p>
 
-<pre><code>scala&gt; tensor(s0, s0) &gt;&gt;= lift1(H)
+<pre><code>scala&gt; (s0 * s0) &gt;&gt;= lift1(H)
 res4: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|10&gt;
 </code></pre>
 
 <p>There are some gates that operate on two qubits at once. The CNOT gate, for example, flips the second qubit only if the
 first qubit is a 1.</p>
 
-<pre><code>scala&gt; val s = tensor(s0, s0) &gt;&gt;= lift1(H) &gt;&gt;= cnot
+<pre><code>scala&gt; val s = (s0 * s0) &gt;&gt;= lift1(H) &gt;&gt;= cnot
 s: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|11&gt;
 </code></pre>
 
@@ -706,7 +700,7 @@ This is called the <a href="http://en.wikipedia.org/wiki/Bell_state">Bell state<
 
 <p>Let’s see what happens when we measure the first qubit:</p>
 
-<pre><code>scala&gt; val (m, s2) = s.measure(_._1)
+<pre><code>scala&gt; val Measurement(m, s2) = s.measure(_._1)
 m: Basis.Std = |1&gt;
 s2: Q[T[Basis.Std,Basis.Std]] = 1.0|11&gt;
 </code></pre>
@@ -718,10 +712,10 @@ So now if we measure the second qubit, we are guaranteed to get <script type="ma
 
 <p>Here’s another example of that.</p>
 
-<pre><code>scala&gt; val s = tensor(s0, s0) &gt;&gt;= lift12(H, H)
+<pre><code>scala&gt; val s = (s0 * s0) &gt;&gt;= lift12(H, H)
 s: Q[T[Basis.Std,Basis.Std]] = 0.5|00&gt; + 0.5|01&gt; + 0.5|10&gt; + 0.5|11&gt;
 
-scala&gt; val (m, s2) = s.measure(_._2)
+scala&gt; val Measurement(m, s2) = s.measure(_._2)
 m: Basis.Std = |0&gt;
 s2: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|10&gt;
 </code></pre>
@@ -764,7 +758,7 @@ the state.) How does that work? Let’s do the math.</p>
     \text{sqrtNot}(\frac{1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1})
     &= \frac{1}{\sqrt{2}}(\frac{1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1}) + \frac{1}{\sqrt{2}}(\frac{-1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1})
     \\ &= \frac{1}{2}\ket{0} + \frac{1}{2}\ket{1} - \frac{1}{2}\ket{0} + \frac{1}{2}\ket{1}
-    \\ &= 1\ket{1}
+    \\ &= \ket{1}
 \end{align}
 %]]>
 </script>

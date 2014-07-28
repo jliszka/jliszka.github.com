@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>A numerical simulation of the Quantum Eraser</title>
+    <title>The Quantum Eraser</title>
     <meta name="description" content="">
     <meta name="author" content="Jason Liszka">
 
@@ -125,10 +125,10 @@
 <div class="row-fluid post-full">
   <div class="span9 offset1 post-content">
     <div class="page-header">
-      <h1>A numerical simulation of the Quantum Eraser </h1>
+      <h1>The Quantum Eraser </h1>
     </div>
     <div class="date">
-      <span>27 July 2014</span>
+      <span>28 July 2014</span>
     </div>
     <div class="content">
       
@@ -262,6 +262,9 @@ res2: Q[T[Polarization, Polarization]] = |V,H&gt;
 <pre><code>scala&gt; emit &gt;&gt;= BBO
 res3: Q[T[Polarization, Polarization]] = 0.7071068|H,V&gt; + 0.7071068|V,H&gt;
 </code></pre>
+
+<p>These photons are entangled: if we measure the polarization of one photon, we will get a random result, either <script type="math/tex">H</script>
+or <script type="math/tex">V</script>. But then the <em>other</em> photon is guaranteed to have the opposite polarization.</p>
 
 <p>Now we let the second photon pass through one of the two slits.</p>
 
@@ -453,7 +456,7 @@ s: Q[T[Polarization, T[Polarization, Slit]]] = 0.3535534|H,H,A&gt; + 0.3535534|H
 
 <p>It’s not immediately obvious here, but given this state, if you know the polarizations of both photons, you can tell
 which slit the second photon went through. It becomes clearer if you write the polarization of the second photon in the
-<script type="math/tex">R-L</script> basis:</p>
+<script type="math/tex">R-L</script> basis. The state of the system is:</p>
 
 <script type="math/tex; mode=display">
 %<![CDATA[
@@ -461,8 +464,10 @@ which slit the second photon went through. It becomes clearer if you write the p
 %]]>
 </script>
 
-<p>This can also be demonstrated by using the inner product (<code>&lt;&gt;</code>, meant to evoke <script type="math/tex">\braket{a}{b}</script>, the inner
-product in <a href="https://en.wikipedia.org/wiki/Bra%E2%80%93ket_notation">Dirac notation</a>) to ask the state what the
+<p>So if you measure the first photon’s polarization to be <script type="math/tex">V</script> and the second photon’s polarization to be <script type="math/tex">R</script>,
+the second photon must have gone through slit <script type="math/tex">A</script>.</p>
+
+<p>This can also be demonstrated by using the inner product to ask the state what the
 probability of collaping into some other state is:</p>
 
 <pre><code>scala&gt; s &lt;&gt; (h ⊗ (right ⊗ a))
@@ -471,6 +476,8 @@ res1: Complex = 0
 scala&gt; s &lt;&gt; (h ⊗ (right ⊗ b))
 res2: Complex = 0.5
 </code></pre>
+
+<p><code>s1 &lt;&gt; s2</code> is the inner product, <script type="math/tex">\braket{s_1}{s_2}</script>.</p>
 
 <p>So if you measure the first photon’s polarization to be <script type="math/tex">H</script> and the second photon’s polarization to be <script type="math/tex">R</script>,
 the only possibility is that the second photon went through slit <script type="math/tex">B</script>.</p>
@@ -557,8 +564,8 @@ We do this by applying a <a href="https://en.wikipedia.org/wiki/Polarizers#Linea
 <em>first</em> photon.</p>
 
 <p>A polarizing filter allows the component of an incoming photon’s polarization that is in line with the filter’s
-polarization to pass through. In other words, the filter “projects” the photon’s polarization onto the vector
-representing the filter’s polarization.</p>
+polarization angle to pass through. In other words, the resulting photon’s polarization is the projection of its
+original polarization onto the vector representing the filter’s polarization angle.</p>
 
 <p>This can be accomplished by applying the transformation <script type="math/tex">\ket{\psi}\bra{\psi}</script>, where <script type="math/tex">\psi</script> is the
 polarization of the filter. Applying this to an incoming photon with polarization <script type="math/tex">\phi</script>, we get
@@ -660,8 +667,7 @@ res0: Q[T[Polarization, T[Polarization, Slit]]] = 0.5|H,H,A&gt; + 0.5|H,H,B&gt; 
 
 <p>The kicker is that nothing in this setup makes reference to how far away the diagonal polarizing filter is from the rest
 of the experiment apparatus. You can put it miles or light-years away, and interference pattern will still return—even
-though, paradoxically, the effect of the filter takes place <em>after</em> the second photon passes through one (or both) of
-the slits.</p>
+though, paradoxically, the first photon doesn’t encounter the filter until <em>after</em> the second photon reaches a detector!</p>
 
 <p>If you want to play around with this yourself, clone
 <a href="https://github.com/jliszka/quantum-probability-monad">this github project</a>
@@ -676,7 +682,7 @@ and try out the
 
 
   <div style="float: right; margin-top: 5px">
-  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/a-numerical-simulation-of-the-quantum-eraser.html" data-text="A numerical simulation of the Quantum Eraser" data-via="jliszka">Tweet</a>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/a-numerical-simulation-of-the-quantum-eraser.html" data-text="The Quantum Eraser" data-via="jliszka">Tweet</a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
