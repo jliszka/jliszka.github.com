@@ -139,8 +139,8 @@ So passing our emitted photon through the BBO crystal gives us
     scala> emit >>= BBO
     res3: Q[T[Polarization, Polarization]] = 0.7071068|H,V> + 0.7071068|V,H>
 
-These photons are entangled: if we measure the polarization of one photon, we will get a random result, either {%m%}H{%em%}
-or {%m%}V{%em%}. But then the _other_ photon is guaranteed to have the opposite polarization.
+Now we have two entangled photons—if we measure the polarization of one photon, we will get a random result, either {%m%}H{%em%}
+or {%m%}V{%em%}, but then the _other_ photon is guaranteed to have the opposite polarization.
 
 Now we let the second photon pass through one of the two slits.
 
