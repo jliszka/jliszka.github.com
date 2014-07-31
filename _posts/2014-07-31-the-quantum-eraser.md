@@ -1,13 +1,13 @@
 ---
 layout: post
-title: "The Quantum Eraser"
+title: "The quantum eraser demystified"
 description: ""
 category: 
 tags: [ "probability", "quantum computing" ]
 ---
 {% include JB/setup %}
 
-The [Quantum Eraser](https://en.wikipedia.org/wiki/Quantum_eraser_experiment) is a variation on the classic
+The [quantum eraser](https://en.wikipedia.org/wiki/Quantum_eraser_experiment) is a variation on the classic
 [double-slit experiment](https://en.wikipedia.org/wiki/Double_slit_experiment).
 If you ever have any doubt about the weirdness of quantum mechanics ("oh, there's probably some classical explanation
 for all of this"), this experiment is designed to remove it.
@@ -31,7 +31,7 @@ case object Horizontal extends Polarization("H")
 case object Vertical extends Polarization("V")
 {% endhighlight %}
 
-```Horizontal``` and ```Vertical``` are our basis vectors. We'll also define pure states of these basis labels:
+```Horizontal``` and ```Vertical``` are our basis labels. We'll also define pure states of these basis labels:
 
 {% highlight scala %}
 val h: Q[Polarization] = pure(Horizontal)
@@ -122,7 +122,7 @@ To see how this expression works, consider what happens when we apply it to {%m%
 \ket{H,V}\braket{H}{H} + \ket{V,H}\braket{V}{H}
 {% endmath %}
 
-Since {%m%}H{%em%} and {%m%}V{%em%} are orthogonal basis vectors, their inner product, {%m%}\braket{V}{H}{%em%}, is
+Since {%m%}H{%em%} and {%m%}V{%em%} are orthogonal, their inner product, {%m%}\braket{V}{H}{%em%}, is
 {%m%}0{%em%}, while the inner product of a basis vector with itself is {%m%}1{%em%}. So the expression evaluates to
 {%m%}\ket{H,V}{%em%}.
 
