@@ -31,7 +31,7 @@ case object Horizontal extends Polarization("H")
 case object Vertical extends Polarization("V")
 {% endhighlight %}
 
-```Horizontal``` and ```Vertical``` are our basis vectors. We'll also define pure states of these basis vectors:
+```Horizontal``` and ```Vertical``` are our basis vectors. We'll also define pure states of these basis labels:
 
 {% highlight scala %}
 val h: Q[Polarization] = pure(Horizontal)
@@ -422,7 +422,7 @@ OK, moving on. Now let's let the second photon evolve as it makes its way to the
      31 ####
      32 ####
 
-Alright, that worked too! Knowing which slit the photon with through destroys the interference pattern.
+All right, that worked too! Knowing which slit the photon went through destroyed the interference pattern.
 
 ### Stage 3: The Quantum Eraser
 
@@ -451,7 +451,7 @@ val polarizer = (diag >< diag)
 Now let's apply it to the first photon:
 
     scala> val stage3 = emit >>= BBO >>= lift2(slit) >>= lift2(QWP) >>= lift2(lift2(evolve)) >>= lift1(polarizer)
-    stage3: Q[T[Polarization, T[Polarization, Detector]]] = 0.1368746 + 0.0516075i|H,H,-1> + 0.0877065 + -0.0664507i|H,H,-10> + -0.0020936 + 0.1345861i|H,H,-11> + -0.0871585 + -0.1012174i|H,H,-12> + 0.10845 + 0.0320193i|H,H,-13> + ...
+    stage3: Q[T[Polarization, T[Polarization, Detector]]] = 0.0978235 + 0.0368836i|H,H,-1> + 0.0626834 + -0.047492i|H,H,-10> + -0.0014963 + 0.0961879i|H,H,-11> + -0.0622917 + -0.0723395i|H,H,-12> + 0.0775086 + 0.022884i|H,H,-13> + ...
 
     scala> stage3.plotMeasurements(10000, _._2._2)
     -32
@@ -526,7 +526,7 @@ Let's back up and look at the state of the system with the polarizing filter in 
 to the detector:
 
     scala> emit >>= BBO >>= lift2(slit) >>= lift2(QWP) >>= lift1(polarizer)
-    res0: Q[T[Polarization, T[Polarization, Slit]]] = 0.5|H,H,A> + 0.5|H,H,B> + 0.5|V,H,A> + 0.5|V,H,B>
+    res0: Q[T[Polarization, T[Polarization, Slit]]] = 0.3535534|H,H,A> + 0.3535534|H,H,B> + 0.3535534|V,H,A> + 0.3535534|V,H,B>
 
 So now the second photon always has a horizontal polarization, so there's no way to tell which slit it went through.
 
@@ -535,6 +535,125 @@ So now the second photon always has a horizontal polarization, so there's no way
 The kicker is that nothing in this setup makes reference to how far away the diagonal polarizing filter is from the rest
 of the experiment apparatus. You can put it miles or light-years away, and interference pattern will still return—even
 though, paradoxically, the first photon doesn't encounter the filter until _after_ the second photon reaches a detector!
+
+### No coincidence
+
+You might have noticed something weird about the last state we looked at:
+
+{% math %}
+\frac{\ket{H,H,A} + \ket{H,H,B} + \ket{V,H,A} + \ket{V,H,B}}{2 \sqrt 2}
+{% endmath %}
+
+The probabilities don't add up to {%m%}1{%em%}! In fact they add up to {%m%}\tfrac 1 2{%em%}. This makes sense, though,
+because the polarizing filter is absorbing or reflecting half of the photons that encounter it.
+
+What do the other half look like? Let's find out by rotating the polarizing filter by 90 degrees:
+
+{% highlight scala %}
+val diag2: Q[Polarization] = (h - v) * rhalf
+val polarizer2 = (diag2 >< diag2)
+{% endhighlight %}
+
+Here's the state of the system before the second photon propagates to the detector array:
+
+    scala> emit >>= BBO >>= lift2(slit) >>= lift2(QWP) >>= lift1(polarizer2)
+    res1: Q[T[Polarization, T[Polarization, Slit]]] = -0.3535534i|H,V,A> + 0.3535534i|H,V,B> + 0.3535534i|V,V,A> + -0.3535534i|V,V,B>
+
+This is
+
+{% math %}
+\frac{\ket{H,V,B} - \ket{H,V,A} + \ket{V,V,A} - \ket{V,V,B}}{2i \sqrt 2}
+{% endmath %}
+
+And here's the what we get on the detector array:
+
+    scala> val stage3a = emit >>= BBO >>= lift2(slit) >>= lift2(QWP) >>= lift2(lift2(evolve)) >>= lift1(polarizer2)
+    stage3a: Q[T[Polarization, T[Polarization, Detector]]] = 0.0690531 + 0.028105i|H,V,-1> + -0.0458759 + 0.0518947i|H,V,-10> + -0.0104604 + -0.0282059i|H,V,-11> + 0.0005241 + -0.0155768i|H,V,-12> + 0.0385772 + 0.0237449i|H,V,-13> + ...
+
+    scala> stage3a.plotMeasurements(10000, _._2._2)
+    -32 ####
+    -31 ###
+    -30 ####
+    -29 ###
+    -28 ##
+    -27 ##
+    -26 #
+    -25 #
+    -24
+    -23
+    -22
+    -21 #
+    -20 #####
+    -19 #########
+    -18 #############
+    -17 ################
+    -16 ###################
+    -15 ###################
+    -14 #############
+    -13 #######
+    -12
+    -11 ##
+    -10 ###############
+     -9 ###############################
+     -8 ########################################
+     -7 ##########################
+     -6 ########
+     -5
+     -4 ######################
+     -3 ################################################
+     -2 #############################################
+     -1 ##################
+      0
+      1 ################
+      2 ##############################################
+      3 ##################################################
+      4 ######################
+      5 #
+      6 #######
+      7 #############################
+      8 #########################################
+      9 #################################
+     10 ##############
+     11 ###
+     12
+     13 ######
+     14 ##############
+     15 ####################
+     16 #####################
+     17 #################
+     18 #############
+     19 #######
+     20 ######
+     21 #
+     22
+     23
+     24
+     25 #
+     26 #
+     27 ##
+     28 ##
+     29 ###
+     30 ####
+     31 ###
+     32 ####
+
+This pattern is the exact opposite of the interference pattern we got in stage 3. In fact, if you combine the two
+together, you get exactly the pattern from stage 2—the one with no interference. So the interference was always there,
+you just have to know which set of photons to look at.
+
+In fact, when you actually perform the experiment described in stage 3, the first photon only sometimes reaches its
+detector (due to the filter), whereas the second photon almost always reaches the detector array, and you have to take
+care to only count the trials where both photons are detected, using something called a coincidence counter circuit. If
+you counted every photon that reached the detector array, you would in fact always observe no interference, but if you
+looked at only the instances where the first photon was detected, you would see the interference pattern.
+
+So that resolves the paradox. You cannot use the quantum eraser effect to send information faster than the speed of
+light, or backwards in time—you generate photons on Earth and I stand on Neptune and use my filter selectively on the
+incoming photons, and you observe interference or no interference back on Earth, and I send you Morse code that way or
+whatever. I have to _classically_ transmit the information as to whether the photon made it through my filter in order
+for you to know which photons to pick out to see the interference pattern.
+
+Whew, close one!
 
 If you want to play around with this yourself, clone
 [this github project](https://github.com/jliszka/quantum-probability-monad)
