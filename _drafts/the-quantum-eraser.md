@@ -327,13 +327,13 @@ Let's apply this filter to the second photon just after it goes through the slit
 
 It's not immediately obvious here, but given this state, if you know the polarizations of both photons, you can tell
 which slit the second photon went through. It becomes clearer if you write the polarization of the second photon in the
-{%m%}R-L{%em%} basis. The state of the system is:
+{%m%}R-L{%em%} basis. Then state of the system is:
 
 {% math %}
 \frac{\ket{H,L,A} + \ket{H,R,B} + \ket{V,L,B} + \ket{V,R,A}}{2}
 {% endmath %}
 
-So if you measure the first photon's polarization to be {%m%}V{%em%} and the second photon's polarization to be {%m%}R{%em%},
+So, for example, if you measure the first photon's polarization to be {%m%}V{%em%} and the second photon's polarization to be {%m%}R{%em%},
 the second photon must have gone through slit {%m%}A{%em%}.
 
 This can also be demonstrated by using the inner product to ask the state what the
