@@ -3,7 +3,7 @@ layout: post
 title: "The quantum eraser demystified"
 description: ""
 category: 
-tags: [ "probability", "quantum computing" ]
+tags: [ "quantum computing" ]
 ---
 {% include JB/setup %}
 
@@ -37,6 +37,11 @@ case object Vertical extends Polarization("V")
 val h: Q[Polarization] = pure(Horizontal)
 val v: Q[Polarization] = pure(Vertical)
 {% endhighlight %}
+
+```pure``` creates a basis vector whose only component is the provided basis label:
+
+    scala> val h = pure(Horizontal)
+    h: Q[Polarization] = |H>
 
 We also need to represent which slit the photon went through (this is only intermediate information and
 won't show up in the final state we will construct).
@@ -645,17 +650,19 @@ In fact, when you actually perform the experiment described in stage 3, the firs
 detector (due to the filter), whereas the second photon almost always reaches the detector array, and you have to take
 care to only count the trials where both photons are detected, using something called a coincidence counter circuit. If
 you counted every photon that reached the detector array, you would in fact always observe no interference, but if you
-looked at only the instances where the first photon was detected, you would see the interference pattern.
+looked at only the instances where both photons were detected, you would see the interference pattern.
 
 So that resolves the paradox. You cannot use the quantum eraser effect to send information faster than the speed of
 light, or backwards in time—you generate photons on Earth and I stand on Neptune and use my filter selectively on the
 incoming photons, and you observe interference or no interference back on Earth, and I send you Morse code that way or
 whatever. I have to _classically_ transmit the information as to whether the photon made it through my filter in order
-for you to know which photons to pick out to see the interference pattern.
+for you to know which photons to pick out to see the interference pattern. Whew!
 
-Whew, close one!
+I still don't fully understand what's going on here—like why does knowledge of which way the photon went destroy the
+interference pattern? What is it in the math that makes that happen? But I guess I can play around with it more and try
+to get an intuition for what's going on.
 
-If you want to play around with this yourself, clone
+If you want to play around with it yourself, clone
 [this github project](https://github.com/jliszka/quantum-probability-monad)
 and try out the
 [quantum eraser example](https://github.com/jliszka/quantum-probability-monad/blob/master/src/main/scala/org/jliszka/quantum/Examples.scala#L171).
