@@ -25,6 +25,16 @@ w = 3x - y + 2z
 
 with {%m%}x{%em%}, {%m%}y{%em%}, and {%m%}z{%em%} being basis vectors in each of the 3 dimensions.
 
+But generalize this notion a bit and imagine vectors over an arbitrary basis. A basis is just a collection of
+symbols that we declare to be unit vectors that are orthogonal to each other. And a vector in that basis is
+just a linear combination of the basis vectors.
+
+Let's invent a basis: 
+
+{% math %}
+v = 
+{% endmath %}
+
 ### Measurement
 
 ### Inner product
