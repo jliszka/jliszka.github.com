@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>The Quantum Eraser</title>
+    <title>The quantum eraser demystified</title>
     <meta name="description" content="">
     <meta name="author" content="Jason Liszka">
 
@@ -101,10 +101,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -125,14 +121,14 @@
 <div class="row-fluid post-full">
   <div class="span9 offset1 post-content">
     <div class="page-header">
-      <h1>The Quantum Eraser </h1>
+      <h1>The quantum eraser demystified </h1>
     </div>
     <div class="date">
-      <span>30 July 2014</span>
+      <span>31 July 2014</span>
     </div>
     <div class="content">
       
-<p>The <a href="https://en.wikipedia.org/wiki/Quantum_eraser_experiment">Quantum Eraser</a> is a variation on the classic
+<p>The <a href="https://en.wikipedia.org/wiki/Quantum_eraser_experiment">quantum eraser</a> is a variation on the classic
 <a href="https://en.wikipedia.org/wiki/Double_slit_experiment">double-slit experiment</a>.
 If you ever have any doubt about the weirdness of quantum mechanics (“oh, there’s probably some classical explanation
 for all of this”), this experiment is designed to remove it.</p>
@@ -154,10 +150,16 @@ earlier post <a href="/2013/09/09/the-3-things-you-should-understand-about-quant
 <span class="k">case</span> <span class="k">object</span> <span class="nc">Horizontal</span> <span class="k">extends</span> <span class="nc">Polarization</span><span class="o">(</span><span class="s">&quot;H&quot;</span><span class="o">)</span>
 <span class="k">case</span> <span class="k">object</span> <span class="nc">Vertical</span> <span class="k">extends</span> <span class="nc">Polarization</span><span class="o">(</span><span class="s">&quot;V&quot;</span><span class="o">)</span></code></pre></div>
 
-<p><code>Horizontal</code> and <code>Vertical</code> are our basis vectors. We’ll also define pure states of these basis labels:</p>
+<p><code>Horizontal</code> and <code>Vertical</code> are our basis labels. We’ll also define pure states of these basis labels:</p>
 
 <div class="highlight"><pre><code class="scala"><span class="k">val</span> <span class="n">h</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">Polarization</span><span class="o">]</span> <span class="k">=</span> <span class="n">pure</span><span class="o">(</span><span class="nc">Horizontal</span><span class="o">)</span>
 <span class="k">val</span> <span class="n">v</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">Polarization</span><span class="o">]</span> <span class="k">=</span> <span class="n">pure</span><span class="o">(</span><span class="nc">Vertical</span><span class="o">)</span></code></pre></div>
+
+<p><code>pure</code> creates a basis vector whose only component is the provided basis label:</p>
+
+<pre><code>scala&gt; val h = pure(Horizontal)
+h: Q[Polarization] = |H&gt;
+</code></pre>
 
 <p>We also need to represent which slit the photon went through (this is only intermediate information and
 won’t show up in the final state we will construct).</p>
@@ -244,7 +246,7 @@ scalar multiplication).</p>
 %]]>
 </script>
 
-<p>Since <script type="math/tex">H</script> and <script type="math/tex">V</script> are orthogonal basis vectors, their inner product, <script type="math/tex">\braket{V}{H}</script>, is
+<p>Since <script type="math/tex">H</script> and <script type="math/tex">V</script> are orthogonal, their inner product, <script type="math/tex">\braket{V}{H}</script>, is
 <script type="math/tex">0</script>, while the inner product of a basis vector with itself is <script type="math/tex">1</script>. So the expression evaluates to
 <script type="math/tex">\ket{H,V}</script>.</p>
 
@@ -456,7 +458,7 @@ s: Q[T[Polarization, T[Polarization, Slit]]] = 0.3535534|H,H,A&gt; + 0.3535534|H
 
 <p>It’s not immediately obvious here, but given this state, if you know the polarizations of both photons, you can tell
 which slit the second photon went through. It becomes clearer if you write the polarization of the second photon in the
-<script type="math/tex">R-L</script> basis. The state of the system is:</p>
+<script type="math/tex">R-L</script> basis. Then state of the system is:</p>
 
 <script type="math/tex; mode=display">
 %<![CDATA[
@@ -464,7 +466,7 @@ which slit the second photon went through. It becomes clearer if you write the p
 %]]>
 </script>
 
-<p>So if you measure the first photon’s polarization to be <script type="math/tex">V</script> and the second photon’s polarization to be <script type="math/tex">R</script>,
+<p>So, for example, if you measure the first photon’s polarization to be <script type="math/tex">V</script> and the second photon’s polarization to be <script type="math/tex">R</script>,
 the second photon must have gone through slit <script type="math/tex">A</script>.</p>
 
 <p>This can also be demonstrated by using the inner product to ask the state what the
@@ -782,17 +784,19 @@ you just have to know which set of photons to look at.</p>
 detector (due to the filter), whereas the second photon almost always reaches the detector array, and you have to take
 care to only count the trials where both photons are detected, using something called a coincidence counter circuit. If
 you counted every photon that reached the detector array, you would in fact always observe no interference, but if you
-looked at only the instances where the first photon was detected, you would see the interference pattern.</p>
+looked at only the instances where both photons were detected, you would see the interference pattern.</p>
 
 <p>So that resolves the paradox. You cannot use the quantum eraser effect to send information faster than the speed of
 light, or backwards in time—you generate photons on Earth and I stand on Neptune and use my filter selectively on the
 incoming photons, and you observe interference or no interference back on Earth, and I send you Morse code that way or
 whatever. I have to <em>classically</em> transmit the information as to whether the photon made it through my filter in order
-for you to know which photons to pick out to see the interference pattern.</p>
+for you to know which photons to pick out to see the interference pattern. Whew!</p>
 
-<p>Whew, close one!</p>
+<p>I still don’t fully understand what’s going on here—like why does knowledge of which way the photon went destroy the
+interference pattern? What is it in the math that makes that happen? But I guess I can play around with it more and try
+to get an intuition for what’s going on.</p>
 
-<p>If you want to play around with this yourself, clone
+<p>If you want to play around with it yourself, clone
 <a href="https://github.com/jliszka/quantum-probability-monad">this github project</a>
 and try out the
 <a href="https://github.com/jliszka/quantum-probability-monad/blob/master/src/main/scala/org/jliszka/quantum/Examples.scala#L171">quantum eraser example</a>.</p>
@@ -805,7 +809,7 @@ and try out the
 
 
   <div style="float: right; margin-top: 5px">
-  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/the-quantum-eraser.html" data-text="The Quantum Eraser" data-via="jliszka">Tweet</a>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/2014/07/31/the-quantum-eraser.html" data-text="The quantum eraser demystified" data-via="jliszka">Tweet</a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
@@ -821,9 +825,7 @@ and try out the
 
   
      
-    	<li><a href="/tags.html#probability-ref">probability <span>9</span></a></li>
-     
-    	<li><a href="/tags.html#quantum computing-ref">quantum computing <span>1</span></a></li>
+    	<li><a href="/tags.html#quantum computing-ref">quantum computing <span>2</span></a></li>
     
   
 
@@ -835,6 +837,8 @@ and try out the
 
     <hr>
     <div class="navigation">
+    
+      <span class="prev"><a href="/2014/07/12/is-the-nba-draft-rigged.html" title="Is the NBA draft rigged?">&larr; Is the NBA draft rigged?</a></span>
     
     
       <div style="clear: both"></div>
@@ -879,6 +883,8 @@ and try out the
     <h4>Recent posts</h4>
     <ul>
       
+        <li><a href="/2014/07/31/the-quantum-eraser.html">The quantum eraser demystified</a></li>
+      
         <li><a href="/2014/07/12/is-the-nba-draft-rigged.html">Is the NBA draft rigged?</a></li>
       
         <li><a href="/2014/06/03/programming-with-futures.html">Programming with futures: patterns and anti-patterns</a></li>
@@ -886,8 +892,6 @@ and try out the
         <li><a href="/2014/01/30/good-tech-lead-bad-tech-lead.html">Good Tech Lead, Bad Tech Lead</a></li>
       
         <li><a href="/2013/12/18/bayesian-networks-and-causality.html">Bayesian networks and causality</a></li>
-      
-        <li><a href="/2013/11/22/unlikely-things-happen-all-the-time.html">Unlikely things happen all the time</a></li>
       
     </ul>
 

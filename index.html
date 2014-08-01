@@ -101,10 +101,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -141,6 +137,8 @@ Realizing abstract structures in code makes them more concrete and makes it easi
 
 <h2 id="archive">Archive</h2>
 <ul class="posts">
+  
+    <li><span>31 Jul 2014</span> &raquo; <a href="/2014/07/31/the-quantum-eraser.html">The quantum eraser demystified</a></li>
   
     <li><span>12 Jul 2014</span> &raquo; <a href="/2014/07/12/is-the-nba-draft-rigged.html">Is the NBA draft rigged?</a></li>
   
@@ -184,6 +182,26 @@ Realizing abstract structures in code makes them more concrete and makes it easi
 
 <h2 id="recent-posts">Recent Posts</h2>
 <div class="post-content-truncate">
+
+  
+    <h2 class="title">The quantum eraser demystified</h2>
+    
+<p>The <a href="https://en.wikipedia.org/wiki/Quantum_eraser_experiment">quantum eraser</a> is a variation on the classic
+<a href="https://en.wikipedia.org/wiki/Double_slit_experiment">double-slit experiment</a>.
+If you ever have any doubt about the weirdness of quantum mechanics (“oh, there’s probably some classical explanation
+for all of this”), this experiment is designed to remove it.</p>
+
+<p>The experiment involves two entangled polarized photons. The first goes straight to a detector, and the second passes
+through a barrier with two slits before reaching a detector.</p>
+
+<p>The experiment proceeds in three stages. I’m going to simulate each stage using my
+<a href="https://github.com/jliszka/quantum-probability-monad">toy quantum computing library</a> (see
+earlier post <a href="/2013/09/09/the-3-things-you-should-understand-about-quantum-computing.html">here</a>), and we’ll see what happens!</p>
+
+
+    <a href="/2014/07/31/the-quantum-eraser.html">Read more</a>
+    <hr />
+  
 
   
     <h2 class="title">Is the NBA draft rigged?</h2>
@@ -517,40 +535,6 @@ and all you’re left with is <script type="math/tex">f(x) + f'(x)\e</script>.</
 
 
     <a href="/2013/10/24/exact-numeric-nth-derivatives.html">Read more</a>
-    <hr />
-  
-
-  
-    <h2 class="title">Impossible functions</h2>
-    
-<style type="text/css">
-th {
-  padding: 5px;
-  border: 1px solid #ccc;
-}
-tbody tr:nth-child(odd) {
-  background: #eee;
-}
-tbody tr:nth-child(even) {
-  background: #fff;
-}
-</style>
-
-<p>I claim to have a function <code>H</code> that maps any integer-valued function you give it to a different integer. That is,
-an injection from <code>Int =&gt; Int</code> to <code>Int</code> that returns a different <code>Int</code> for every function you give it.</p>
-
-<p>This is clearly impossible, since there are way more functions from integers to integers than there are integers. But I
-demand proof in the form of witnesses <code>f: Int =&gt; Int</code>, <code>g: Int =&gt; Int</code> and <code>n: Int</code> such that
-<code>H(f) == H(g)</code> and <code>f(n) != g(n)</code>.</p>
-
-<p>Your job is to write a function <code>solve</code> that takes a single argument <code>H: (Int =&gt; Int) =&gt; Int</code> and returns
-<code>f</code>, <code>g</code> and <code>n</code> as described above.</p>
-
-<p>One approach is to put together a mathematical proof that such an injection is impossible and try to extract a program
-from that proof à la the <a href="http://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence">Curry-Howard isomorphism</a>.</p>
-
-
-    <a href="/2013/10/19/impossible-functions.html">Read more</a>
     <hr />
   
 

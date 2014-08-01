@@ -4,13 +4,39 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2014-07-30T22:46:19+00:00</updated>
+ <updated>2014-08-01T13:52:43+00:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
    <email>jliszka@alumni.cmu.edu</email>
  </author>
 
+ 
+ <entry>
+   <title>The quantum eraser demystified</title>
+   <link href="http://jliszka.github.io/2014/07/31/the-quantum-eraser.html"/>
+   <updated>2014-07-31T00:00:00+00:00</updated>
+   <id>http://jliszka.github.io/2014/07/31/the-quantum-eraser</id>
+   <content type="html">
+    
+      
+&lt;p&gt;The &lt;a href=&quot;https://en.wikipedia.org/wiki/Quantum_eraser_experiment&quot;&gt;quantum eraser&lt;/a&gt; is a variation on the classic
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Double_slit_experiment&quot;&gt;double-slit experiment&lt;/a&gt;.
+If you ever have any doubt about the weirdness of quantum mechanics (“oh, there’s probably some classical explanation
+for all of this”), this experiment is designed to remove it.&lt;/p&gt;
+
+&lt;p&gt;The experiment involves two entangled polarized photons. The first goes straight to a detector, and the second passes
+through a barrier with two slits before reaching a detector.&lt;/p&gt;
+
+&lt;p&gt;The experiment proceeds in three stages. I’m going to simulate each stage using my
+&lt;a href=&quot;https://github.com/jliszka/quantum-probability-monad&quot;&gt;toy quantum computing library&lt;/a&gt; (see
+earlier post &lt;a href=&quot;/2013/09/09/the-3-things-you-should-understand-about-quantum-computing.html&quot;&gt;here&lt;/a&gt;), and we’ll see what happens!&lt;/p&gt;
+
+
+      &lt;a href="http://jliszka.github.io/2014/07/31/the-quantum-eraser.html">Read more&lt;/a>
+    
+   </content>
+ </entry>
  
  <entry>
    <title>Is the NBA draft rigged?</title>
