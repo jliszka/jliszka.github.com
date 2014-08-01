@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Is the NBA draft rigged?</title>
+    <title>Quantum mechanics for dummies</title>
     <meta name="description" content="">
     <meta name="author" content="Jason Liszka">
 
@@ -125,100 +125,54 @@
 <div class="row-fluid post-full">
   <div class="span9 offset1 post-content">
     <div class="page-header">
-      <h1>Is the NBA draft rigged? </h1>
+      <h1>Quantum mechanics for dummies </h1>
     </div>
     <div class="date">
-      <span>12 July 2014</span>
+      <span>01 August 2014</span>
     </div>
     <div class="content">
       
-<blockquote class="twitter-tweet" lang="en"><p>Had a chat with <a href="https://twitter.com/jliszka">@jliszka</a> about Bayes&#39; rule, the &#39;14 draft lottery, &amp; the chances the NBA is rigged. Now I don&#39;t believe in anything anymore.</p>&mdash; harryh (@harryh) <a href="https://twitter.com/harryh/statuses/487722129681838080">July 11, 2014</a></blockquote>
-<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<h3 id="state-vectors">State vectors</h3>
 
-<p>This chat basically consisted of Harry mentioning that the Cleveland Cavaliers got the first pick in the draft,
-even though the lottery gave them only a 1.7% chance of drawing that slot, then wondering aloud how he should update his
-prior on whether the NBA draft is rigged given this information, and then me breaking out my <a href="/2013/09/03/fun-with-bayesian-priors.html">probability monad</a>,
-because there’s no problem that can’t be solved with more monads.</p>
-
-<!-- more -->
-
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">isTheNBADraftRigged</span><span class="o">(</span><span class="n">prior</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
-  <span class="k">val</span> <span class="n">rigged</span> <span class="k">=</span> <span class="n">tf</span><span class="o">(</span><span class="n">prior</span><span class="o">)</span>
-  <span class="k">def</span> <span class="n">cavsGetFirstPick</span><span class="o">(</span><span class="n">rigged</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span> <span class="k">=</span> <span class="n">rigged</span> <span class="k">match</span> <span class="o">{</span>
-    <span class="k">case</span> <span class="kc">true</span> <span class="k">=&gt;</span> <span class="n">always</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
-    <span class="k">case</span> <span class="kc">false</span> <span class="k">=&gt;</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.017</span><span class="o">)</span>
-  <span class="o">}</span>
-  <span class="n">rigged</span><span class="o">.</span><span class="n">posterior</span><span class="o">(</span><span class="n">cavsGetFirstPick</span><span class="o">)(</span><span class="k">_</span> <span class="o">==</span> <span class="kc">true</span><span class="o">).</span><span class="n">pr</span><span class="o">(</span><span class="k">_</span> <span class="o">==</span> <span class="kc">true</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
-
-<p>This code generates the posterior distribution given a prior (<code>rigged</code>), some experiment that depends on the value of
-the prior distribution (<code>cavsGetFirstPick</code>), and what was observed (that the Cavs indeed got the first pick).</p>
-
-<p>Harry said his prior for the NBA draft being rigged was 5% and said to assume that if the draft is rigged, then the
-Cavs have a 100% chance of getting the first pick.</p>
-
-<pre><code>scala&gt; isTheNBADraftRigged(0.05)
-res0: Double = 0.755
-</code></pre>
-
-<p><strong>Me:</strong> You should now believe there’s a 75% chance that the draft is rigged.</p>
-
-<p><strong>Harry:</strong> Head asplode.</p>
-
-<p><strong>Harry:</strong> OK, what if my prior is only 1%?</p>
-
-<p><strong>Me:</strong></p>
-
-<pre><code>scala&gt; isTheNBADraftRigged(0.01)
-res1: Double = 0.369
-</code></pre>
-
-<p><strong>Harry:</strong> Are you telling me that even if I thought there was only a 1% chance that the draft was rigged, I should now
-believe that that probability is now better than 1 in 3?</p>
-
-<p><strong>Me:</strong> Yes.</p>
-
-<p><strong>Harry:</strong> I don’t believe in anything anymore.</p>
-
-<h3 id="math">Math</h3>
-
-<p>Simulation is overkill. It’s easy enough to compute the posterior probability directly via Bayes’ Theorem.</p>
+<p>The state of a quantum system is represented by a vector. You’re probably familiar with vectors in 2-space or 3-space:</p>
 
 <script type="math/tex; mode=display">
 %<![CDATA[
-P(A|B) = P(A)\frac{P(B|A)}{P(B)} \\
+v = \begin{pmatrix} 1 \\ 3 \end{pmatrix} \\
+w = \begin{pmatrix} 3 \\ -1 \\ 2 \end{pmatrix}
 %]]>
 </script>
 
-<p>Let A = “the NBA draft is rigged” and B = “the Cavs get the first pick” and compute:</p>
+<p>which is really</p>
 
 <script type="math/tex; mode=display">
 %<![CDATA[
-P(A|B) = 0.05 \cdot \frac{1.0}{0.05 \cdot 1.0 + 0.95 \cdot 0.017} = 0.756
+v = x + 3y \\
+w = 3x - y + 2z
 %]]>
 </script>
 
-<h3 id="mental-math">Mental math</h3>
+<p>with <script type="math/tex">x</script>, <script type="math/tex">y</script>, and <script type="math/tex">z</script> being basis vectors in each of the 3 dimensions.</p>
 
-<p>There’s another way to do this calculation that is slightly more conducive to mental math (or maybe just calculator
-math). The trick is to do everything in terms of the odds ratio. So instead of saying your prior is 5%, you’d say that
-the prior odds ratio is 1 : 19. Then you find the likelihood ratio, which is the ratio of the probability of the outcome
-(the Cavs get the first pick) under both hypotheses (the draft is rigged, the draft is not rigged), which is 100 : 1.7.
-Then you just multiply the ratios together, and you get the posterior odds ratio. Plugging that into my calculator, I
-get 3.1, which is 75.6%.</p>
+<p>But generalize this notion a bit and imagine vectors over an arbitrary basis. A basis is just a collection of
+symbols that we declare to be unit vectors that are orthogonal to each other. And a vector in that basis is
+just a linear combination of the basis vectors.</p>
 
-<p>In math, it’s</p>
+<p>Let’s invent a basis: </p>
 
 <script type="math/tex; mode=display">
 %<![CDATA[
-\begin{align}
-O(A|B) &= O(A) \cdot \frac{P(B|A)}{P(B|\lnot A)} \\
-&= \frac{1}{19} \cdot \frac{100}{1.7} \\
-&= 3.1
-\end{align}
+v = 
 %]]>
 </script>
 
+<h3 id="measurement">Measurement</h3>
+
+<h3 id="inner-product">Inner product</h3>
+
+<h3 id="tensor-product">Tensor product</h3>
+
+<h3 id="outer-product">Outer product</h3>
 
     </div>
 
@@ -228,39 +182,19 @@ O(A|B) &= O(A) \cdot \frac{P(B|A)}{P(B|\lnot A)} \\
 
 
   <div style="float: right; margin-top: 5px">
-  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/2014/07/12/is-the-nba-draft-rigged.html" data-text="Is the NBA draft rigged?" data-via="jliszka">Tweet</a>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/quantum-mechanics-primer.html" data-text="Quantum mechanics for dummies" data-via="jliszka">Tweet</a>
   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 </div>
 
 
 
 
-  
-    <ul class="tag_box inline">
-      <li><i class="icon-tags"></i></li>
-      
-      
-
-
-  
-     
-    	<li><a href="/tags.html#probability-ref">probability <span>9</span></a></li>
-    
-  
-
-
-
-    </ul>
     
     <div style="clear: both"></div>
 
     <hr>
     <div class="navigation">
     
-      <span class="prev"><a href="/2014/06/03/programming-with-futures.html" title="Programming with futures: patterns and anti-patterns">&larr; Programming with futures: patterns and anti-patterns</a></span>
-    
-    
-      <span class="next"><a href="/2014/07/31/the-quantum-eraser.html" title="The quantum eraser demystified">The quantum eraser demystified &rarr;</a></span>
     
       <div style="clear: both"></div>
     </div>
