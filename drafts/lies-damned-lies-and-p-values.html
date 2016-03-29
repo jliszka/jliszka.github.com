@@ -105,6 +105,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -138,7 +142,7 @@
 <p>multiple experiments at once: genetics testing. just as cheap to run 1000 experiments as 1 experiment.
 what is the probability you will find a significant result at random?</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Patient</span><span class="o">(</span><span class="n">hasDisease</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span> <span class="n">genes</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">])</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Patient</span><span class="o">(</span><span class="n">hasDisease</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span> <span class="n">genes</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">])</span>
 
 <span class="k">def</span> <span class="n">genes</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="n">uniform</span><span class="o">.</span><span class="n">repeat</span><span class="o">(</span><span class="n">n</span><span class="o">)</span>
 <span class="k">def</span> <span class="n">patient</span><span class="o">(</span><span class="n">diseasePrevalence</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">genePrevalence</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Double</span><span class="o">])</span> <span class="k">=</span> <span class="o">{</span>
@@ -184,7 +188,7 @@ all the true and obvious facts have been discovered already. new hypotheses are 
 
 <p>http://www.newyorker.com/reporting/2010/12/13/101213fa_fact_lehrer</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">meanstdev</span><span class="o">(</span><span class="n">xs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Double</span><span class="o">])</span><span class="k">:</span> <span class="o">(</span><span class="kt">Double</span><span class="o">,</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">meanstdev</span><span class="o">(</span><span class="n">xs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Double</span><span class="o">])</span><span class="k">:</span> <span class="o">(</span><span class="kt">Double</span><span class="o">,</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">n</span> <span class="k">=</span> <span class="n">xs</span><span class="o">.</span><span class="n">size</span>
   <span class="k">val</span> <span class="n">mean</span> <span class="k">=</span> <span class="n">xs</span><span class="o">.</span><span class="n">sum</span> <span class="o">/</span> <span class="n">n</span>
   <span class="k">val</span> <span class="n">stdev</span> <span class="k">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="o">(</span><span class="n">xs</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="n">mean</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="o">).</span><span class="n">sum</span> <span class="o">/</span> <span class="n">n</span><span class="o">)</span>
@@ -211,7 +215,7 @@ all the true and obvious facts have been discovered already. new hypotheses are 
 
     </div>
 
-    
+  
 
   
 
@@ -240,7 +244,7 @@ all the true and obvious facts have been discovered already. new hypotheses are 
 
 
     </ul>
-    
+  
     <div style="clear: both"></div>
 
     <hr>
@@ -276,7 +280,7 @@ all the true and obvious facts have been discovered already. new hypotheses are 
     <a href="/"><div id="photo"></div></a>
     <div id="bio">
       <b>Jason Liszka</b><br/>
-      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
     </div>
     <h4>Popular posts</h4>
     <ul>
@@ -311,7 +315,7 @@ all the true and obvious facts have been discovered already. new hypotheses are 
       </div>
       <hr>
       <footer>
-        <p>&copy; 2014 Jason Liszka
+        <p>&copy; 2016 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

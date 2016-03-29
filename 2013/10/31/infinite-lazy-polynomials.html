@@ -105,6 +105,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -153,7 +157,7 @@ p_c(x) = c(0) + c(1)x + c(2)x^2 + c(3)x^3 + \ldots
 
 <p>Here’s the setup:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
 
   <span class="c1">// Memoizing coefficient accessor. Returns the coefficient for x^n.</span>
   <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="n">memo</span><span class="o">.</span><span class="n">getOrElseUpdate</span><span class="o">(</span><span class="n">n</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="n">coeffs</span><span class="o">(</span><span class="n">n</span><span class="o">))</span>
@@ -203,7 +207,7 @@ going to evaluate these polynomials, I’m just going to treat them formally, as
 
 <p><code>Poly</code>s aren’t that useful until we can do arithmetic to them. Let’s add support for addition, subtraction and negation:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// ...</span>
 
   <span class="k">def</span> <span class="o">+(</span><span class="n">that</span><span class="k">:</span> <span class="kt">Poly</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">n</span> <span class="k">=&gt;</span> <span class="k">this</span><span class="o">(</span><span class="n">n</span><span class="o">)</span> <span class="o">+</span> <span class="n">that</span><span class="o">(</span><span class="n">n</span><span class="o">))</span>
@@ -215,7 +219,7 @@ going to evaluate these polynomials, I’m just going to treat them formally, as
 
 <p>It just goes elementwise. Multiplication and division by a constant are also easy:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// ...</span>
 
   <span class="k">def</span> <span class="o">*(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">n</span> <span class="k">=&gt;</span> <span class="k">this</span><span class="o">(</span><span class="n">n</span><span class="o">)</span> <span class="o">*</span> <span class="n">x</span><span class="o">)</span>
@@ -237,7 +241,7 @@ all pairs of powers that add up to <script type="math/tex">n</script>. In math:<
 
 <p>In code:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// ...</span>
 
   <span class="k">def</span> <span class="o">*(</span><span class="n">that</span><span class="k">:</span> <span class="kt">Poly</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">n</span> <span class="k">=&gt;</span>
@@ -262,7 +266,7 @@ res2: Poly = { -12, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 <p>I’m going to get tired of typing <code>one*4</code> every time I mean <code>4</code>, so before I go any further I’m going to add some
 implicit conversions from <code>Int</code> and <code>Double</code> to <code>Poly</code>:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">implicit</span> <span class="k">def</span> <span class="n">intToPoly</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="n">one</span> <span class="o">*</span> <span class="n">i</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">implicit</span> <span class="k">def</span> <span class="n">intToPoly</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="n">one</span> <span class="o">*</span> <span class="n">i</span>
 <span class="k">implicit</span> <span class="k">def</span> <span class="n">doubleToPoly</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="n">one</span> <span class="o">*</span> <span class="n">d</span></code></pre></div>
 
 <p>The compiler will insert these methods any time they would help get the expression to typecheck. So now I can do</p>
@@ -278,7 +282,7 @@ res1: Poly = { -49, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 
 <p>I’m also going to throw in exponentiation as repeated multiplication.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// ...</span>
 
   <span class="k">private</span> <span class="k">val</span> <span class="n">powMemo</span> <span class="k">=</span> <span class="n">scala</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">mutable</span><span class="o">.</span><span class="nc">HashMap</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">Poly</span><span class="o">]()</span>
@@ -347,7 +351,7 @@ q(x) = 1 - \frac{p(x)}{a}
 
 <p>all of which we know how to compute. Here’s the code:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// ...</span>
 
   <span class="k">def</span> <span class="o">/(</span><span class="n">that</span><span class="k">:</span> <span class="kt">Poly</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="k">this</span> <span class="o">*</span> <span class="n">that</span><span class="o">.</span><span class="n">inv</span>
@@ -419,7 +423,7 @@ p(x)^r = a^r(1 + q(x))^r
 
 <p>Here’s the code:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// ...</span>
 
   <span class="k">def</span> <span class="o">**(</span><span class="n">r</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="o">{</span>
@@ -485,7 +489,7 @@ e^{p(x)} = e^{a + q(x)} = e^a e^{q(x)}
 
 <p>In code:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// ...</span>
 
   <span class="k">def</span> <span class="n">exp</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="o">{</span>
@@ -523,7 +527,7 @@ q(x) = \frac{p(x)}{a} - 1
 
 <p>Here’s the code:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// ...</span>
 
   <span class="k">def</span> <span class="n">log</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="o">{</span>
@@ -698,7 +702,7 @@ f(c + x) = f(c) + f'(c)x + \frac{f''(c)}{2!}x^2 + \frac{f^{(3)}(c)}{3!}x^3 + \ld
 <p>That means if you want to find the derivatives of a function at a point, you can write the function as a <code>Poly =&gt; Poly</code>,
 evaluate it at <code>c + x</code>, and read the derivatives right off the coefficients.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">derivatives</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=&gt;</span> <span class="nc">Poly</span><span class="o">,</span> <span class="n">c</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Stream</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">derivatives</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=&gt;</span> <span class="nc">Poly</span><span class="o">,</span> <span class="n">c</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Stream</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">fact</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">(</span><span class="mi">1</span> <span class="n">to</span> <span class="n">n</span><span class="o">).</span><span class="n">product</span>
   <span class="k">val</span> <span class="n">fc</span> <span class="k">=</span> <span class="n">f</span><span class="o">(</span><span class="n">c</span> <span class="o">+</span> <span class="n">x</span><span class="o">)</span>
   <span class="nc">Stream</span><span class="o">.</span><span class="n">from</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="n">fc</span><span class="o">(</span><span class="n">i</span><span class="o">)</span> <span class="o">*</span> <span class="n">fact</span><span class="o">(</span><span class="n">i</span><span class="o">))</span>
@@ -770,7 +774,7 @@ supply references where I could find them, but please send me links to relevant 
 
     </div>
 
-    
+  
 
   
 
@@ -801,7 +805,7 @@ supply references where I could find them, but please send me links to relevant 
 
 
     </ul>
-    
+  
     <div style="clear: both"></div>
 
     <hr>
@@ -841,7 +845,7 @@ supply references where I could find them, but please send me links to relevant 
     <a href="/"><div id="photo"></div></a>
     <div id="bio">
       <b>Jason Liszka</b><br/>
-      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
     </div>
     <h4>Popular posts</h4>
     <ul>
@@ -876,7 +880,7 @@ supply references where I could find them, but please send me links to relevant 
       </div>
       <hr>
       <footer>
-        <p>&copy; 2014 Jason Liszka
+        <p>&copy; 2016 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

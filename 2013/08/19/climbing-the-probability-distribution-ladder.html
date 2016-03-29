@@ -105,6 +105,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -144,7 +148,7 @@ the uniform distribution and derived the Bernoulli and normal distributions from
 the <a href="http://en.wikipedia.org/wiki/Exponential_distribution">exponential distribution</a>.
 The parameter <script type="math/tex">\lambda</script> is just a scaling factor. In code:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">exponential</span><span class="o">(</span><span class="n">l</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">exponential</span><span class="o">(</span><span class="n">l</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">x</span> <span class="k">&lt;-</span> <span class="n">uniform</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="o">(</span><span class="n">x</span><span class="o">)</span> <span class="o">*</span> <span class="o">(-</span><span class="mi">1</span><span class="o">/</span><span class="n">l</span><span class="o">)</span>
@@ -191,7 +195,7 @@ If <script type="math/tex">X</script> is a uniformly distributed random variable
 The parameter <script type="math/tex">x_m</script> is the minimum value the distribution can take, and <script type="math/tex">\alpha</script> is a factor that determines
 how spread out the distribution is. In code:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">pareto</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">xm</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">pareto</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">xm</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">x</span> <span class="k">&lt;-</span> <span class="n">uniform</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">xm</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">a</span><span class="o">)</span>
@@ -224,7 +228,7 @@ how spread out the distribution is. In code:</p>
 <p>Hm, the implementations of <code>pareto</code> and <code>exponential</code> look pretty similar.
 It’s more obvious if I rewrite <code>exponential</code> slightly, moving the product inside the log.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">exponential</span><span class="o">(</span><span class="n">l</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">exponential</span><span class="o">(</span><span class="n">l</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">x</span> <span class="k">&lt;-</span> <span class="n">uniform</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="o">(</span><span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">l</span><span class="o">))</span>
@@ -282,7 +286,7 @@ can be constructed by squaring and then summing several normal distributions.
 It is parameterized by the number of degrees of freedom, <code>df</code>, which just indicates how many squared normal distributions
 to sum up. Here’s the code:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">chi2</span><span class="o">(</span><span class="n">df</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">chi2</span><span class="o">(</span><span class="n">df</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">normal</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="o">).</span><span class="n">repeat</span><span class="o">(</span><span class="n">df</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">sum</span><span class="o">)</span>
 <span class="o">}</span></code></pre></div>
 
@@ -344,7 +348,7 @@ tool here. Why the chi-squared distribution is the sum of squared <em>normal</em
 
 <p>Here’s the code:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">students_t</span><span class="o">(</span><span class="n">k</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">students_t</span><span class="o">(</span><span class="n">k</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">z</span> <span class="k">&lt;-</span> <span class="n">normal</span>
     <span class="n">v</span> <span class="k">&lt;-</span> <span class="n">chi2</span><span class="o">(</span><span class="n">k</span><span class="o">)</span>
@@ -400,7 +404,7 @@ pretty easily.</p>
 you will see before seeing your first success in repeated Bernoulli trials with bias <code>p</code>.
 In other words, if I flip a coin repeatedly, how many tails will I see before get my first head?</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">geometric</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">geometric</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">bernoulli</span><span class="o">(</span><span class="n">p</span><span class="o">).</span><span class="n">until</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">headOption</span> <span class="o">==</span> <span class="nc">Some</span><span class="o">(</span><span class="mi">1</span><span class="o">)).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span>
 <span class="o">}</span></code></pre></div>
 
@@ -432,7 +436,7 @@ you will see in <code>n</code> Bernoulli trials with bias <code>p</code>.</p>
 
 <p>For example: I flip a fair coin 20 times, how many times will it come up heads? Let’s see:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">binomial</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">binomial</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">tf</span><span class="o">(</span><span class="n">p</span><span class="o">).</span><span class="n">repeat</span><span class="o">(</span><span class="n">n</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">count</span><span class="o">(</span><span class="k">_</span> <span class="o">==</span> <span class="kc">true</span><span class="o">))</span>
 <span class="o">}</span></code></pre></div>
 
@@ -478,7 +482,7 @@ before you see <code>r</code> failures.</p>
 
 <p>Here’s the code:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">negativeBinomial</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">negativeBinomial</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">tf</span><span class="o">(</span><span class="n">p</span><span class="o">).</span><span class="n">until</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">count</span><span class="o">(</span><span class="k">_</span> <span class="o">==</span> <span class="kc">false</span><span class="o">)</span> <span class="o">==</span> <span class="n">r</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="n">r</span><span class="o">)</span>
 <span class="o">}</span></code></pre></div>
 
@@ -498,7 +502,7 @@ The number of samples this requires (minus 1) will be Poisson-distributed.</p>
 
 <p>In code:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">poisson</span><span class="o">(</span><span class="n">lambda</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">poisson</span><span class="o">(</span><span class="n">lambda</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">m</span> <span class="k">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="o">(-</span><span class="n">lambda</span><span class="o">)</span>
   <span class="n">uniform</span><span class="o">.</span><span class="n">until</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">product</span> <span class="o">&lt;</span> <span class="n">m</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span>
 <span class="o">}</span></code></pre></div>
@@ -508,7 +512,7 @@ The number of samples this requires (minus 1) will be Poisson-distributed.</p>
 <p>Sample values from a uniform distribution, take the negative log, and keep a running sum until
 the sum is greater than <script type="math/tex">\lambda</script>. The number of samples this requires (minus 1) will be Poisson-distributed.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">poisson</span><span class="o">(</span><span class="n">lambda</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">poisson</span><span class="o">(</span><span class="n">lambda</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="n">uniform</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="o">(</span><span class="n">x</span><span class="o">))</span>
   <span class="n">d</span><span class="o">.</span><span class="n">until</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">sum</span> <span class="o">&gt;</span> <span class="n">lambda</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span>
 <span class="o">}</span></code></pre></div>
@@ -516,7 +520,7 @@ the sum is greater than <script type="math/tex">\lambda</script>. The number of 
 <p>This sounds more complicated until you remember that the negative log of the uniform distribution is the exponential
 distribution.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">poisson</span><span class="o">(</span><span class="n">lambda</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">poisson</span><span class="o">(</span><span class="n">lambda</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="n">exponential</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
   <span class="n">d</span><span class="o">.</span><span class="n">until</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">sum</span> <span class="o">&gt;</span> <span class="n">lambda</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span>
 <span class="o">}</span></code></pre></div>
@@ -540,7 +544,7 @@ that is, it contains the least extra information, which is the same as saying th
 <p>Anyway, with a little rewriting, you can see how the negative binomial distribution is sort of the discrete counterpart to the
 Poisson distribution. Here is <code>negativeBinomial</code> rewritten to show the similarity:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">negativeBinomial</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">negativeBinomial</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="n">tf</span><span class="o">(</span><span class="n">p</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">b</span> <span class="k">=&gt;</span> <span class="k">if</span> <span class="o">(</span><span class="n">b</span><span class="o">)</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span><span class="o">)</span>
   <span class="n">d</span><span class="o">.</span><span class="n">until</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">sum</span> <span class="o">==</span> <span class="n">r</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="n">r</span><span class="o">)</span>
 <span class="o">}</span></code></pre></div>
@@ -562,7 +566,7 @@ In the next post I’ll take a look at the Central Limit Theorem, which sounds s
 
     </div>
 
-    
+  
 
   
 
@@ -591,7 +595,7 @@ In the next post I’ll take a look at the Central Limit Theorem, which sounds s
 
 
     </ul>
-    
+  
     <div style="clear: both"></div>
 
     <hr>
@@ -631,7 +635,7 @@ In the next post I’ll take a look at the Central Limit Theorem, which sounds s
     <a href="/"><div id="photo"></div></a>
     <div id="bio">
       <b>Jason Liszka</b><br/>
-      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
     </div>
     <h4>Popular posts</h4>
     <ul>
@@ -666,7 +670,7 @@ In the next post I’ll take a look at the Central Limit Theorem, which sounds s
       </div>
       <hr>
       <footer>
-        <p>&copy; 2014 Jason Liszka
+        <p>&copy; 2016 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

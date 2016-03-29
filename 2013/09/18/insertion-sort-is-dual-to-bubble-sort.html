@@ -105,6 +105,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -142,7 +146,7 @@ take a look at the main functions first.</p>
 
 <p>Here’s the code:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">insertionSort</span><span class="o">[</span><span class="kt">A</span> <span class="k">&lt;:</span> <span class="kt">Ordered</span><span class="o">[</span><span class="kt">A</span><span class="o">]](</span><span class="n">xs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">])</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">insertionSort</span><span class="o">[</span><span class="kt">A</span> <span class="k">&lt;:</span> <span class="kt">Ordered</span><span class="o">[</span><span class="kt">A</span><span class="o">]](</span><span class="n">xs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">])</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">xs</span> <span class="k">match</span> <span class="o">{</span>
     <span class="k">case</span> <span class="nc">Nil</span> <span class="k">=&gt;</span> <span class="nc">Nil</span>
     <span class="k">case</span> <span class="n">h</span> <span class="o">::</span> <span class="n">t</span> <span class="k">=&gt;</span> <span class="o">{</span>
@@ -154,7 +158,7 @@ take a look at the main functions first.</p>
 
 <p><code>insertionSort</code> sorts a list by inserting the head of the list into the recursively sorted tail, in such a way that it remains sorted.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">bubbleSort</span><span class="o">[</span><span class="kt">A</span> <span class="k">&lt;:</span> <span class="kt">Ordered</span><span class="o">[</span><span class="kt">A</span><span class="o">]](</span><span class="n">xs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">])</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">bubbleSort</span><span class="o">[</span><span class="kt">A</span> <span class="k">&lt;:</span> <span class="kt">Ordered</span><span class="o">[</span><span class="kt">A</span><span class="o">]](</span><span class="n">xs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">])</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">xs</span> <span class="k">match</span> <span class="o">{</span>
     <span class="k">case</span> <span class="nc">Nil</span> <span class="k">=&gt;</span> <span class="nc">Nil</span>
     <span class="k">case</span> <span class="n">xs</span> <span class="k">=&gt;</span> <span class="o">{</span>
@@ -188,7 +192,7 @@ And by assumption, the recursive call to
 
 <p>Here’s the code:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">insert</span><span class="o">[</span><span class="kt">A</span> <span class="k">&lt;:</span> <span class="kt">Ordered</span><span class="o">[</span><span class="kt">A</span><span class="o">]](</span><span class="n">x</span><span class="k">:</span> <span class="kt">A</span><span class="o">,</span> <span class="n">xs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">])</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">insert</span><span class="o">[</span><span class="kt">A</span> <span class="k">&lt;:</span> <span class="kt">Ordered</span><span class="o">[</span><span class="kt">A</span><span class="o">]](</span><span class="n">x</span><span class="k">:</span> <span class="kt">A</span><span class="o">,</span> <span class="n">xs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">])</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">xs</span> <span class="k">match</span> <span class="o">{</span>
     <span class="k">case</span> <span class="nc">Nil</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">::</span> <span class="nc">Nil</span>
     <span class="k">case</span> <span class="n">h</span> <span class="o">::</span> <span class="n">t</span> <span class="k">=&gt;</span> <span class="o">{</span>
@@ -201,7 +205,7 @@ And by assumption, the recursive call to
 
 <p><code>insert</code>’s job is to insert an item into an already-sorted list in such a way that the list remains sorted.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">bubble</span><span class="o">[</span><span class="kt">A</span> <span class="k">&lt;:</span> <span class="kt">Ordered</span><span class="o">[</span><span class="kt">A</span><span class="o">]](</span><span class="n">xs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">])</span><span class="k">:</span> <span class="o">(</span><span class="kt">A</span><span class="o">,</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">])</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">bubble</span><span class="o">[</span><span class="kt">A</span> <span class="k">&lt;:</span> <span class="kt">Ordered</span><span class="o">[</span><span class="kt">A</span><span class="o">]](</span><span class="n">xs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">])</span><span class="k">:</span> <span class="o">(</span><span class="kt">A</span><span class="o">,</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">])</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">xs</span> <span class="k">match</span> <span class="o">{</span>
     <span class="k">case</span> <span class="n">h</span> <span class="o">::</span> <span class="n">t</span> <span class="k">=&gt;</span> <span class="o">{</span>
       <span class="k">val</span> <span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">r</span><span class="o">)</span> <span class="k">=</span> <span class="n">bubble</span><span class="o">(</span><span class="n">t</span><span class="o">)</span>
@@ -221,7 +225,7 @@ arrows reversed and the boxes running backwards:</p>
 <p>The only thing left is this <code>sort</code> method, which takes 2 arguments and returns them in
 sorted order. Which I guess is the same if you run it backwards?</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">sort</span><span class="o">[</span><span class="kt">A</span> <span class="k">&lt;:</span> <span class="kt">Ordered</span><span class="o">[</span><span class="kt">A</span><span class="o">]](</span><span class="n">a</span><span class="k">:</span> <span class="kt">A</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">A</span><span class="o">)</span><span class="k">:</span> <span class="o">(</span><span class="kt">A</span><span class="o">,</span> <span class="kt">A</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">sort</span><span class="o">[</span><span class="kt">A</span> <span class="k">&lt;:</span> <span class="kt">Ordered</span><span class="o">[</span><span class="kt">A</span><span class="o">]](</span><span class="n">a</span><span class="k">:</span> <span class="kt">A</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">A</span><span class="o">)</span><span class="k">:</span> <span class="o">(</span><span class="kt">A</span><span class="o">,</span> <span class="kt">A</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">if</span> <span class="o">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="n">b</span><span class="o">)</span> <span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span> <span class="k">else</span> <span class="o">(</span><span class="n">b</span><span class="o">,</span> <span class="n">a</span><span class="o">)</span>
 <span class="o">}</span></code></pre></div>
 
@@ -279,7 +283,7 @@ run Dijkstra’s algorithm backwards? I don’t know!</p>
 
     </div>
 
-    
+  
 
   
 
@@ -310,7 +314,7 @@ run Dijkstra’s algorithm backwards? I don’t know!</p>
 
 
     </ul>
-    
+  
     <div style="clear: both"></div>
 
     <hr>
@@ -350,7 +354,7 @@ run Dijkstra’s algorithm backwards? I don’t know!</p>
     <a href="/"><div id="photo"></div></a>
     <div id="bio">
       <b>Jason Liszka</b><br/>
-      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
     </div>
     <h4>Popular posts</h4>
     <ul>
@@ -385,7 +389,7 @@ run Dijkstra’s algorithm backwards? I don’t know!</p>
       </div>
       <hr>
       <footer>
-        <p>&copy; 2014 Jason Liszka
+        <p>&copy; 2016 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

@@ -105,6 +105,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -366,7 +370,7 @@ going to store the cell values as a <code>List[List[Double]]</code> or anything.
 <code>get(r: Int, c: Int): Double</code> that returns the value in the specified cell. Also I’ll memoize it, so yeah, I guess I
 am storing the cell values somewhere. But this technique makes all the matrix operations easier to write.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">Dual</span><span class="o">(</span><span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">Dual</span><span class="o">(</span><span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
   <span class="n">self</span> <span class="k">=&gt;</span>
 
   <span class="c1">// Cell value accessor</span>
@@ -382,7 +386,7 @@ am storing the cell values somewhere. But this technique makes all the matrix op
 
 <p>Now the usual matrix operations.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">Dual</span><span class="o">(</span><span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">Dual</span><span class="o">(</span><span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// ...</span>
 
   <span class="k">def</span> <span class="o">+(</span><span class="n">other</span><span class="k">:</span> <span class="kt">Dual</span><span class="o">)</span><span class="k">:</span> <span class="kt">Dual</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Dual</span><span class="o">(</span><span class="n">rank</span><span class="o">)</span> <span class="o">{</span>
@@ -437,7 +441,7 @@ D</script>, where <script type="math/tex">D</script> is a nilpotent matrix, mean
 
 <p>where <script type="math/tex">N = \frac{-1}{a}D</script>. Here’s the code:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">Dual</span><span class="o">(</span><span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">Dual</span><span class="o">(</span><span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// ...</span>
 
   <span class="k">def</span> <span class="o">/(</span><span class="n">other</span><span class="k">:</span> <span class="kt">Dual</span><span class="o">)</span><span class="k">:</span> <span class="kt">Dual</span> <span class="o">=</span> <span class="n">self</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">inv</span>
@@ -461,7 +465,7 @@ D</script>, where <script type="math/tex">D</script> is a nilpotent matrix, mean
 
 <p>Finally, some utility methods:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">Dual</span><span class="o">(</span><span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">Dual</span><span class="o">(</span><span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// ...</span>
 
   <span class="k">def</span> <span class="n">pow</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Dual</span> <span class="o">=</span> <span class="o">{</span>
@@ -479,7 +483,7 @@ D</script>, where <script type="math/tex">D</script> is a nilpotent matrix, mean
 
 <p>Now we need concrete classes representing 1 and <script type="math/tex">\e</script>:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">class</span> <span class="nc">I</span><span class="o">(</span><span class="k">override</span> <span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Dual</span><span class="o">(</span><span class="n">rank</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">I</span><span class="o">(</span><span class="k">override</span> <span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Dual</span><span class="o">(</span><span class="n">rank</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">c</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">r</span> <span class="o">==</span> <span class="n">c</span><span class="o">)</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">0</span>
 <span class="o">}</span>
 
@@ -562,7 +566,7 @@ are certainly ways to do this! But maybe it’s a topic for another post.</p>
 
     </div>
 
-    
+  
 
   
 
@@ -591,7 +595,7 @@ are certainly ways to do this! But maybe it’s a topic for another post.</p>
 
 
     </ul>
-    
+  
     <div style="clear: both"></div>
 
     <hr>
@@ -631,7 +635,7 @@ are certainly ways to do this! But maybe it’s a topic for another post.</p>
     <a href="/"><div id="photo"></div></a>
     <div id="bio">
       <b>Jason Liszka</b><br/>
-      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
     </div>
     <h4>Popular posts</h4>
     <ul>
@@ -666,7 +670,7 @@ are certainly ways to do this! But maybe it’s a topic for another post.</p>
       </div>
       <hr>
       <footer>
-        <p>&copy; 2014 Jason Liszka
+        <p>&copy; 2016 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

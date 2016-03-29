@@ -105,6 +105,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -187,7 +191,7 @@ Repeat this procedure until <script type="math/tex">a'^2 + b'^2 + c'^2 + d'^2 = 
 
 <p>The whole flow of the program looks like this:</p>
 
-<div class="highlight"><pre><code class="haskell"><span class="nf">foursquare</span> <span class="n">n</span> <span class="ow">=</span> <span class="n">factor</span> <span class="n">n</span> <span class="o">|&gt;</span> <span class="n">map</span> <span class="n">foursquare&#39;</span> <span class="o">|&gt;</span> <span class="n">foldl1</span> <span class="n">combine</span>
+<div class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="nf">foursquare</span> <span class="n">n</span> <span class="ow">=</span> <span class="n">factor</span> <span class="n">n</span> <span class="o">|&gt;</span> <span class="n">map</span> <span class="n">foursquare&#39;</span> <span class="o">|&gt;</span> <span class="n">foldl1</span> <span class="n">combine</span>
   <span class="kr">where</span>
     <span class="n">foursquare&#39;</span> <span class="n">p</span>
       <span class="o">|</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -217,7 +221,7 @@ of functions than to have to read all my expressions inside out.</p>
 <p>Factoring is probably the second Haskell program you ever wrote (the first probably also beginning with “factor”).
 Here it is from scratch, for fun:</p>
 
-<div class="highlight"><pre><code class="haskell"><span class="nf">nats</span> <span class="ow">=</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="p">]</span>
+<div class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="nf">nats</span> <span class="ow">=</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="p">]</span>
 <span class="nf">divides</span> <span class="n">a</span> <span class="n">b</span> <span class="ow">=</span> <span class="n">b</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">0</span>
 <span class="nf">sieve</span> <span class="p">(</span><span class="n">h</span><span class="kt">:</span><span class="n">t</span><span class="p">)</span> <span class="ow">=</span> <span class="n">h</span> <span class="kt">:</span> <span class="n">sieve</span> <span class="p">(</span><span class="n">filter</span> <span class="p">(</span><span class="n">not</span> <span class="o">.</span> <span class="n">divides</span> <span class="n">h</span><span class="p">)</span> <span class="n">t</span><span class="p">)</span>
 <span class="nf">primes</span> <span class="ow">=</span> <span class="n">sieve</span> <span class="p">(</span><span class="n">tail</span> <span class="n">nats</span><span class="p">)</span>
@@ -232,7 +236,7 @@ Here it is from scratch, for fun:</p>
 
 <p><code>combine</code> is a straighforward realization of <a href="http://en.wikipedia.org/wiki/Euler%27s_four-square_identity">Euler’s four-square identity</a>:</p>
 
-<div class="highlight"><pre><code class="haskell"><span class="nf">combine</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="p">(</span><span class="n">a&#39;</span><span class="p">,</span> <span class="n">b&#39;</span><span class="p">,</span> <span class="n">c&#39;</span><span class="p">,</span> <span class="n">d&#39;</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+<div class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="nf">combine</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="p">(</span><span class="n">a&#39;</span><span class="p">,</span> <span class="n">b&#39;</span><span class="p">,</span> <span class="n">c&#39;</span><span class="p">,</span> <span class="n">d&#39;</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
   <span class="kr">where</span>
     <span class="n">w</span> <span class="ow">=</span> <span class="n">a</span><span class="o">*</span><span class="n">a&#39;</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">b&#39;</span> <span class="o">+</span> <span class="n">c</span><span class="o">*</span><span class="n">c&#39;</span> <span class="o">+</span> <span class="n">d</span><span class="o">*</span><span class="n">d&#39;</span>
     <span class="n">x</span> <span class="ow">=</span> <span class="n">a</span><span class="o">*</span><span class="n">b&#39;</span> <span class="o">-</span> <span class="n">b</span><span class="o">*</span><span class="n">a&#39;</span> <span class="o">-</span> <span class="n">c</span><span class="o">*</span><span class="n">d&#39;</span> <span class="o">+</span> <span class="n">d</span><span class="o">*</span><span class="n">c&#39;</span>
@@ -241,14 +245,14 @@ Here it is from scratch, for fun:</p>
 
 <p>I’m also going to need modular exponentiation, to compute <script type="math/tex">a^n \m p</script>:</p>
 
-<div class="highlight"><pre><code class="haskell"><span class="nf">modexp</span> <span class="n">a</span> <span class="mi">0</span> <span class="n">p</span> <span class="ow">=</span> <span class="mi">1</span>
+<div class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="nf">modexp</span> <span class="n">a</span> <span class="mi">0</span> <span class="n">p</span> <span class="ow">=</span> <span class="mi">1</span>
 <span class="nf">modexp</span> <span class="n">a</span> <span class="n">n</span> <span class="n">p</span> <span class="ow">=</span>
   <span class="kr">let</span> <span class="n">a2</span> <span class="ow">=</span> <span class="n">modexp</span> <span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="n">a</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="n">p</span><span class="p">)</span> <span class="p">(</span><span class="n">n</span> <span class="p">`</span><span class="n">div</span><span class="p">`</span> <span class="mi">2</span><span class="p">)</span> <span class="n">p</span>
   <span class="kr">in</span> <span class="kr">if</span> <span class="n">n</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="kr">then</span> <span class="n">a2</span> <span class="kr">else</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">a</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="n">p</span></code></pre></div>
 
 <p>And a helper for finding the sum of squares of 4 numbers:</p>
 
-<div class="highlight"><pre><code class="haskell"><span class="nf">sumOfSquares</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="ow">=</span>  <span class="n">a</span><span class="o">*</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">b</span> <span class="o">+</span> <span class="n">c</span><span class="o">*</span><span class="n">c</span> <span class="o">+</span> <span class="n">d</span><span class="o">*</span><span class="n">d</span></code></pre></div>
+<div class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="nf">sumOfSquares</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="ow">=</span>  <span class="n">a</span><span class="o">*</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">b</span> <span class="o">+</span> <span class="n">c</span><span class="o">*</span><span class="n">c</span> <span class="o">+</span> <span class="n">d</span><span class="o">*</span><span class="n">d</span></code></pre></div>
 
 <p>Before we go on, let’s check that <code>combine</code> works.</p>
 
@@ -276,7 +280,7 @@ Here it is from scratch, for fun:</p>
 
 <p>Now to fill in the missing parts of <code>foursquare'</code>. Here’s the first clause:</p>
 
-<div class="highlight"><pre><code class="haskell"><span class="nf">foursquare&#39;</span> <span class="n">p</span>
+<div class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="nf">foursquare&#39;</span> <span class="n">p</span>
   <span class="o">|</span> <span class="n">p</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">=</span>
     <span class="kr">let</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">undefined</span>
     <span class="kr">in</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">reduce</span></code></pre></div>
@@ -296,7 +300,7 @@ is always a prime number, so we can narrow down the search that way.</p>
 <p>The code is below. We’re just trying prime numbers <script type="math/tex">n</script> until one of them satisifies
 <script type="math/tex">(n^{(p-1)/4})^2 \equiv -1 \m p</script>.</p>
 
-<div class="highlight"><pre><code class="haskell"><span class="nf">foursquare&#39;</span> <span class="n">p</span>
+<div class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="nf">foursquare&#39;</span> <span class="n">p</span>
   <span class="o">|</span> <span class="n">p</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">=</span>
     <span class="kr">let</span>
       <span class="n">findSqrtMinus1</span> <span class="p">(</span><span class="n">n</span><span class="kt">:</span><span class="n">ps</span><span class="p">)</span> <span class="ow">=</span>
@@ -309,7 +313,7 @@ is always a prime number, so we can narrow down the search that way.</p>
 
 <p>Here’s the next clause of <code>foursquare'</code>:</p>
 
-<div class="highlight"><pre><code class="haskell"><span class="nf">foursquare&#39;</span> <span class="n">p</span>
+<div class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="nf">foursquare&#39;</span> <span class="n">p</span>
   <span class="o">|</span> <span class="n">p</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">=</span>
     <span class="kr">let</span> <span class="n">a</span> <span class="ow">=</span> <span class="n">undefined</span>
         <span class="n">b</span> <span class="ow">=</span> <span class="n">undefined</span>
@@ -338,7 +342,7 @@ has a square root mod <script type="math/tex">p</script> is pretty easy. It poin
 
 <p>Anyway, here’s the code:</p>
 
-<div class="highlight"><pre><code class="haskell"><span class="nf">foursquare&#39;</span> <span class="n">p</span>
+<div class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="nf">foursquare&#39;</span> <span class="n">p</span>
   <span class="o">|</span> <span class="n">p</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">=</span>
     <span class="kr">let</span>
       <span class="n">findNumberWithSqrt</span> <span class="p">(</span><span class="n">a</span><span class="kt">:</span><span class="n">ns</span><span class="p">)</span> <span class="ow">=</span>
@@ -368,7 +372,7 @@ are both even. Then we can divide through by 2 and get</p>
 
 <p>and we have the reduction we need. In code:</p>
 
-<div class="highlight"><pre><code class="haskell"><span class="nf">reduce</span> <span class="n">abcd</span><span class="o">@</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="ow">=</span>
+<div class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="nf">reduce</span> <span class="n">abcd</span><span class="o">@</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="ow">=</span>
   <span class="kr">let</span> <span class="n">k</span> <span class="ow">=</span> <span class="p">(</span><span class="n">sumOfSquares</span> <span class="n">abcd</span><span class="p">)</span> <span class="p">`</span><span class="n">div</span><span class="p">`</span> <span class="n">p</span>
   <span class="kr">in</span> <span class="kr">case</span> <span class="n">k</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">2</span> <span class="kr">of</span>
     <span class="mi">0</span> <span class="ow">-&gt;</span>
@@ -378,7 +382,7 @@ are both even. Then we can divide through by 2 and get</p>
 
 <p>making use of the convenience functions</p>
 
-<div class="highlight"><pre><code class="haskell"><span class="nf">sortWith</span> <span class="n">f</span> <span class="ow">=</span> <span class="n">sortBy</span> <span class="p">(</span><span class="nf">\</span><span class="n">a</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">compare</span> <span class="p">(</span><span class="n">f</span> <span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">f</span> <span class="n">b</span><span class="p">))</span>
+<div class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="nf">sortWith</span> <span class="n">f</span> <span class="ow">=</span> <span class="n">sortBy</span> <span class="p">(</span><span class="nf">\</span><span class="n">a</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">compare</span> <span class="p">(</span><span class="n">f</span> <span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">f</span> <span class="n">b</span><span class="p">))</span>
 <span class="nf">map4</span> <span class="n">f</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">f</span> <span class="n">a</span><span class="p">,</span> <span class="n">f</span> <span class="n">b</span><span class="p">,</span> <span class="n">f</span> <span class="n">c</span><span class="p">,</span> <span class="n">f</span> <span class="n">d</span><span class="p">)</span></code></pre></div>
 
 <p>If <script type="math/tex">k</script> is odd, we can replace each of the 4 numbers by their “absolute least residue” mod <script type="math/tex">k</script>.
@@ -407,7 +411,7 @@ reduction we need.</p>
 
 <p>Here’s the complete code for <code>reduce</code>:</p>
 
-<div class="highlight"><pre><code class="haskell"><span class="nf">reduce</span> <span class="n">abcd</span><span class="o">@</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+<div class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span class="nf">reduce</span> <span class="n">abcd</span><span class="o">@</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
   <span class="o">|</span> <span class="n">sumOfSquares</span> <span class="n">abcd</span> <span class="o">==</span> <span class="n">p</span> <span class="ow">=</span> <span class="n">abcd</span>
   <span class="o">|</span> <span class="n">otherwise</span> <span class="ow">=</span>
     <span class="kr">let</span> <span class="n">k</span> <span class="ow">=</span> <span class="p">(</span><span class="n">sumOfSquares</span> <span class="n">abcd</span><span class="p">)</span> <span class="p">`</span><span class="n">div</span><span class="p">`</span> <span class="n">p</span>
@@ -442,7 +446,7 @@ The code is available in <a href="https://gist.github.com/jliszka/7460817">this 
 
     </div>
 
-    
+  
 
   
 
@@ -455,7 +459,7 @@ The code is available in <a href="https://gist.github.com/jliszka/7460817">this 
 
 
 
-    
+  
     <div style="clear: both"></div>
 
     <hr>
@@ -495,7 +499,7 @@ The code is available in <a href="https://gist.github.com/jliszka/7460817">this 
     <a href="/"><div id="photo"></div></a>
     <div id="bio">
       <b>Jason Liszka</b><br/>
-      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
     </div>
     <h4>Popular posts</h4>
     <ul>
@@ -530,7 +534,7 @@ The code is available in <a href="https://gist.github.com/jliszka/7460817">this 
       </div>
       <hr>
       <footer>
-        <p>&copy; 2014 Jason Liszka
+        <p>&copy; 2016 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

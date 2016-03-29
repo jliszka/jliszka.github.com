@@ -105,6 +105,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -146,7 +150,7 @@ res0: (Int, Int) = (8, 1070)
 
 <p>For some reason it echoes the input back out to you. Here’s the code you might write:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">evalPoly</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">coeffs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">evalPoly</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">coeffs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">eval</span><span class="o">(</span><span class="n">cs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">{</span>
     <span class="n">cs</span> <span class="k">match</span> <span class="o">{</span>
       <span class="k">case</span> <span class="nc">Nil</span> <span class="k">=&gt;</span> <span class="mi">0</span>
@@ -175,7 +179,7 @@ always work. But how does it work even some of the time? How would you go about 
 <p>Having noticed that the input to <code>unevalPoly</code> is the output of <code>evalPoly</code>, and vice versa,
 one tack we can try is to write <code>evalPoly</code> backwards. First let me rewrite it slightly:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">evalPoly</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">coeffs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">evalPoly</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">coeffs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">eval</span><span class="o">(</span><span class="n">cs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">{</span>
     <span class="n">cs</span> <span class="k">match</span> <span class="o">{</span>
       <span class="k">case</span> <span class="nc">Nil</span> <span class="k">=&gt;</span> <span class="mi">0</span>
@@ -187,7 +191,7 @@ one tack we can try is to write <code>evalPoly</code> backwards. First let me re
 
 <p>I’ve just replaced <code>x * eval(t) + h</code> with a call to this function:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">plustimes</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">q</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">plustimes</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">q</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">n</span> <span class="o">*</span> <span class="n">q</span> <span class="o">+</span> <span class="n">r</span>
 <span class="o">}</span></code></pre></div>
 
@@ -198,7 +202,7 @@ I’ve threaded through <code>x</code> as a “context” variable because it is
 
 <p>Following the arrows backwards from the outputs to the inputs we can write the following code:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">unevalPoly</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">unevalPoly</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">uneval</span><span class="o">(</span><span class="n">y</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
     <span class="n">y</span> <span class="k">match</span> <span class="o">{</span>
       <span class="k">case</span> <span class="mi">0</span> <span class="k">=&gt;</span> <span class="nc">Nil</span>
@@ -217,7 +221,7 @@ destroy information. So given <code>m</code> and <code>n</code> and <code>m = n 
 <p>Well, if <code>r</code> happens to be less than <code>n</code>, this is just like doing long division — <code>q</code> and <code>r</code> are the quotient
 and remainder when dividing <code>m</code> by <code>n</code>:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">unplustimes</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">m</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">unplustimes</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">m</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">q</span> <span class="k">=</span> <span class="n">m</span> <span class="o">/</span> <span class="n">n</span>
   <span class="k">val</span> <span class="n">r</span> <span class="k">=</span> <span class="n">m</span> <span class="o">%</span> <span class="n">n</span>
   <span class="o">(</span><span class="n">q</span><span class="o">,</span> <span class="n">r</span><span class="o">)</span>
@@ -305,7 +309,7 @@ you should read my <a href="/2013/09/18/insertion-sort-is-dual-to-bubble-sort.ht
 
     </div>
 
-    
+  
 
   
 
@@ -336,7 +340,7 @@ you should read my <a href="/2013/09/18/insertion-sort-is-dual-to-bubble-sort.ht
 
 
     </ul>
-    
+  
     <div style="clear: both"></div>
 
     <hr>
@@ -376,7 +380,7 @@ you should read my <a href="/2013/09/18/insertion-sort-is-dual-to-bubble-sort.ht
     <a href="/"><div id="photo"></div></a>
     <div id="bio">
       <b>Jason Liszka</b><br/>
-      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
     </div>
     <h4>Popular posts</h4>
     <ul>
@@ -411,7 +415,7 @@ you should read my <a href="/2013/09/18/insertion-sort-is-dual-to-bubble-sort.ht
       </div>
       <hr>
       <footer>
-        <p>&copy; 2014 Jason Liszka
+        <p>&copy; 2016 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

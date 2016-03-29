@@ -105,6 +105,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -150,13 +154,13 @@ earlier post <a href="/2013/09/09/the-3-things-you-should-understand-about-quant
 
 <p>Let’s model the quantum state. Here’s how we’ll represent the polarization of a photon:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">sealed</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">Polarization</span><span class="o">(</span><span class="n">label</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Basis</span><span class="o">(</span><span class="n">label</span><span class="o">)</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">sealed</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">Polarization</span><span class="o">(</span><span class="n">label</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Basis</span><span class="o">(</span><span class="n">label</span><span class="o">)</span>
 <span class="k">case</span> <span class="k">object</span> <span class="nc">Horizontal</span> <span class="k">extends</span> <span class="nc">Polarization</span><span class="o">(</span><span class="s">&quot;H&quot;</span><span class="o">)</span>
 <span class="k">case</span> <span class="k">object</span> <span class="nc">Vertical</span> <span class="k">extends</span> <span class="nc">Polarization</span><span class="o">(</span><span class="s">&quot;V&quot;</span><span class="o">)</span></code></pre></div>
 
 <p><code>Horizontal</code> and <code>Vertical</code> are our basis labels. We’ll also define pure states of these basis labels:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">val</span> <span class="n">h</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">Polarization</span><span class="o">]</span> <span class="k">=</span> <span class="n">pure</span><span class="o">(</span><span class="nc">Horizontal</span><span class="o">)</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">h</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">Polarization</span><span class="o">]</span> <span class="k">=</span> <span class="n">pure</span><span class="o">(</span><span class="nc">Horizontal</span><span class="o">)</span>
 <span class="k">val</span> <span class="n">v</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">Polarization</span><span class="o">]</span> <span class="k">=</span> <span class="n">pure</span><span class="o">(</span><span class="nc">Vertical</span><span class="o">)</span></code></pre></div>
 
 <p><code>pure</code> creates a basis vector whose only component is the provided basis label:</p>
@@ -168,7 +172,7 @@ h: Q[Polarization] = |H&gt;
 <p>We also need to represent which slit the photon went through (this is only intermediate information and
 won’t show up in the final state we will construct).</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">sealed</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">Slit</span><span class="o">(</span><span class="n">label</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Basis</span><span class="o">(</span><span class="n">label</span><span class="o">)</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">sealed</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">Slit</span><span class="o">(</span><span class="n">label</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Basis</span><span class="o">(</span><span class="n">label</span><span class="o">)</span>
 <span class="k">case</span> <span class="k">object</span> <span class="nc">A</span> <span class="k">extends</span> <span class="nc">Slit</span><span class="o">(</span><span class="s">&quot;A&quot;</span><span class="o">)</span>
 <span class="k">case</span> <span class="k">object</span> <span class="nc">B</span> <span class="k">extends</span> <span class="nc">Slit</span><span class="o">(</span><span class="s">&quot;B&quot;</span><span class="o">)</span>
 
@@ -178,7 +182,7 @@ won’t show up in the final state we will construct).</p>
 <p>And finally, we’ll need to represent the position of the detector for the second photon. Instead of a single detector
 changing positions throughout the course of the experiment, we’ll model this as an array of detectors.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Detector</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Basis</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="n">toString</span><span class="o">)</span></code></pre></div>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Detector</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Basis</span><span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="n">toString</span><span class="o">)</span></code></pre></div>
 
 <script type="math/tex">
 \newcommand{\ket}[1]{\lvert #1 \rangle}
@@ -197,7 +201,7 @@ transformations corresponding to the events that take place during the course of
 
 <p>Here’s the initial state of the photon as it gets emitted from the laser:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">val</span> <span class="n">rhalf</span><span class="k">:</span> <span class="kt">Complex</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="o">(</span><span class="mf">0.5</span><span class="o">)</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">rhalf</span><span class="k">:</span> <span class="kt">Complex</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="o">(</span><span class="mf">0.5</span><span class="o">)</span>
 <span class="k">val</span> <span class="n">emit</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">Polarization</span><span class="o">]</span> <span class="k">=</span> <span class="o">(</span><span class="n">h</span> <span class="o">+</span> <span class="n">v</span><span class="o">)</span> <span class="o">*</span> <span class="n">rhalf</span></code></pre></div>
 
 <pre><code>scala&gt; emit
@@ -236,7 +240,7 @@ spontaneously turns the photon into an entangled pair of photons with orthogonal
 
 <p>Or in code,</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">val</span> <span class="nc">BBO</span> <span class="k">=</span> <span class="o">(</span><span class="n">h</span><span class="o">⊗</span><span class="n">v</span> <span class="o">&gt;&lt;</span> <span class="n">h</span><span class="o">)</span> <span class="o">+</span> <span class="o">(</span><span class="n">v</span><span class="o">⊗</span><span class="n">h</span> <span class="o">&gt;&lt;</span> <span class="n">v</span><span class="o">)</span></code></pre></div>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="nc">BBO</span> <span class="k">=</span> <span class="o">(</span><span class="n">h</span><span class="o">⊗</span><span class="n">v</span> <span class="o">&gt;&lt;</span> <span class="n">h</span><span class="o">)</span> <span class="o">+</span> <span class="o">(</span><span class="n">v</span><span class="o">⊗</span><span class="n">h</span> <span class="o">&gt;&lt;</span> <span class="n">v</span><span class="o">)</span></code></pre></div>
 
 <p><code>&gt;&lt;</code> computes the outer product, and ⊗ is the tensor product (which you can also type as <code>*</code>, but for
 the purposes of this article I thought it would be good to make a visual distinction between the tensor product and
@@ -274,7 +278,7 @@ or <script type="math/tex">V</script>, but then the <em>other</em> photon is gua
 
 <p>Now we let the second photon pass through one of the two slits.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">val</span> <span class="n">ab</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">Slit</span><span class="o">]</span> <span class="k">=</span> <span class="o">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">)</span> <span class="o">*</span> <span class="n">rhalf</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">ab</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">Slit</span><span class="o">]</span> <span class="k">=</span> <span class="o">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">)</span> <span class="o">*</span> <span class="n">rhalf</span>
 <span class="k">def</span> <span class="n">slit</span><span class="o">[</span><span class="kt">S</span> <span class="k">&lt;:</span> <span class="kt">Basis</span><span class="o">](</span><span class="n">s</span><span class="k">:</span> <span class="kt">S</span><span class="o">)</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">T</span><span class="o">[</span><span class="kt">S</span>, <span class="kt">Slit</span><span class="o">]]</span> <span class="k">=</span> <span class="n">pure</span><span class="o">(</span><span class="n">s</span><span class="o">)</span> <span class="o">⊗</span> <span class="n">ab</span></code></pre></div>
 
 <p>This will add a superposition of going through slits <script type="math/tex">A</script> and <script type="math/tex">B</script> to the quantum state. We’ll apply it
@@ -295,7 +299,7 @@ I’m just going to say that the phase rotates one radian for each unit of dista
 
 <p>We can model this as a quantum transformation as follows:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">evolve</span><span class="o">(</span><span class="n">slit</span><span class="k">:</span> <span class="kt">Slit</span><span class="o">)</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">Detector</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">evolve</span><span class="o">(</span><span class="n">slit</span><span class="k">:</span> <span class="kt">Slit</span><span class="o">)</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">Detector</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">distanceBetweenSlits</span> <span class="k">=</span> <span class="mf">25.0</span>
   <span class="k">val</span> <span class="n">distanceToScreen</span> <span class="k">=</span> <span class="mf">100.0</span>
   <span class="k">val</span> <span class="n">distanceBetweenDetectors</span> <span class="k">=</span> <span class="mf">5.0</span>
@@ -441,7 +445,7 @@ of <script type="math/tex">H</script> and <script type="math/tex">V</script> as 
 
 <p>Let’s code this up:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">val</span> <span class="n">right</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">Polarization</span><span class="o">]</span> <span class="k">=</span> <span class="o">(</span><span class="n">h</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">i</span><span class="o">)</span> <span class="o">*</span> <span class="n">rhalf</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">right</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">Polarization</span><span class="o">]</span> <span class="k">=</span> <span class="o">(</span><span class="n">h</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">i</span><span class="o">)</span> <span class="o">*</span> <span class="n">rhalf</span>
 <span class="k">val</span> <span class="n">left</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">Polarization</span><span class="o">]</span> <span class="k">=</span> <span class="o">(</span><span class="n">h</span> <span class="o">-</span> <span class="n">v</span><span class="o">*</span><span class="n">i</span><span class="o">)</span> <span class="o">*</span> <span class="n">rhalf</span>
 
 <span class="k">val</span> <span class="nc">QWP</span> <span class="k">=</span> <span class="o">(</span><span class="n">right</span><span class="o">⊗</span><span class="n">a</span> <span class="o">&gt;&lt;</span> <span class="n">h</span><span class="o">⊗</span><span class="n">a</span><span class="o">)</span> <span class="o">+</span> <span class="o">(</span><span class="n">left</span><span class="o">⊗</span><span class="n">a</span> <span class="o">&gt;&lt;</span> <span class="n">v</span><span class="o">⊗</span><span class="n">a</span><span class="o">)</span> <span class="o">+</span> <span class="o">(</span><span class="n">left</span><span class="o">⊗</span><span class="n">b</span> <span class="o">&gt;&lt;</span> <span class="n">h</span><span class="o">⊗</span><span class="n">b</span><span class="o">)</span> <span class="o">+</span> <span class="o">(</span><span class="n">right</span><span class="o">⊗</span><span class="n">b</span> <span class="o">&gt;&lt;</span> <span class="n">v</span><span class="o">⊗</span><span class="n">b</span><span class="o">)</span></code></pre></div>
@@ -582,7 +586,7 @@ the filter’s polarization. So the final polarization of the photon is that pro
 
 <p>In code, our diagonal polarizing filter will look like:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">val</span> <span class="n">diag</span> <span class="k">=</span> <span class="o">(</span><span class="n">h</span> <span class="o">+</span> <span class="n">v</span><span class="o">)</span> <span class="o">*</span> <span class="n">rhalf</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">diag</span> <span class="k">=</span> <span class="o">(</span><span class="n">h</span> <span class="o">+</span> <span class="n">v</span><span class="o">)</span> <span class="o">*</span> <span class="n">rhalf</span>
 <span class="k">val</span> <span class="n">polarizer</span> <span class="k">=</span> <span class="o">(</span><span class="n">diag</span> <span class="o">&gt;&lt;</span> <span class="n">diag</span><span class="o">)</span></code></pre></div>
 
 <p>Now let’s apply it to the first photon:</p>
@@ -690,7 +694,7 @@ because the polarizing filter is absorbing or reflecting half of the photons tha
 
 <p>What do the other half look like? Let’s find out by rotating the polarizing filter by 90 degrees:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">val</span> <span class="n">diag2</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">Polarization</span><span class="o">]</span> <span class="k">=</span> <span class="o">(</span><span class="n">h</span> <span class="o">-</span> <span class="n">v</span><span class="o">)</span> <span class="o">*</span> <span class="n">rhalf</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">diag2</span><span class="k">:</span> <span class="kt">Q</span><span class="o">[</span><span class="kt">Polarization</span><span class="o">]</span> <span class="k">=</span> <span class="o">(</span><span class="n">h</span> <span class="o">-</span> <span class="n">v</span><span class="o">)</span> <span class="o">*</span> <span class="n">rhalf</span>
 <span class="k">val</span> <span class="n">polarizer2</span> <span class="k">=</span> <span class="o">(</span><span class="n">diag2</span> <span class="o">&gt;&lt;</span> <span class="n">diag2</span><span class="o">)</span></code></pre></div>
 
 <p>Here’s the state of the system before the second photon propagates to the detector array:</p>
@@ -807,7 +811,7 @@ and try out the
 
     </div>
 
-    
+  
 
   
 
@@ -836,7 +840,7 @@ and try out the
 
 
     </ul>
-    
+  
     <div style="clear: both"></div>
 
     <hr>
@@ -874,7 +878,7 @@ and try out the
     <a href="/"><div id="photo"></div></a>
     <div id="bio">
       <b>Jason Liszka</b><br/>
-      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
     </div>
     <h4>Popular posts</h4>
     <ul>
@@ -909,7 +913,7 @@ and try out the
       </div>
       <hr>
       <footer>
-        <p>&copy; 2014 Jason Liszka
+        <p>&copy; 2016 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

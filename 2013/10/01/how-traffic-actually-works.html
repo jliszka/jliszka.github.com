@@ -105,6 +105,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -223,7 +227,7 @@ distance, and — catastrophe! — the flow rate decreases dramatically.</p>
 <p>Let’s see how well this model predicts reality. Here’s some code that determines the flow rate and the speed of traffic
 as a function of occupancy (cars per km), according to the following-distance model:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">traffic</span><span class="o">(</span><span class="n">carsPerKm</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">carLength</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">5.0</span><span class="o">,</span> <span class="n">secondsBetweenCars</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">1.8</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">traffic</span><span class="o">(</span><span class="n">carsPerKm</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">carLength</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">5.0</span><span class="o">,</span> <span class="n">secondsBetweenCars</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mf">1.8</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">metersPerSecondToKmPerHour</span> <span class="k">=</span> <span class="mf">3600.0</span> <span class="o">/</span> <span class="mf">1000.0</span>
   <span class="k">val</span> <span class="n">metersBetweenCars</span> <span class="k">=</span> <span class="mf">1000.0</span> <span class="o">/</span> <span class="n">carsPerKm</span> <span class="o">-</span> <span class="n">carLength</span>
   <span class="k">val</span> <span class="n">maxSpeed</span> <span class="k">=</span> <span class="n">min</span><span class="o">(</span><span class="mi">120</span><span class="o">,</span> <span class="o">(</span><span class="n">metersBetweenCars</span> <span class="o">/</span> <span class="n">secondsBetweenCars</span><span class="o">)</span> <span class="o">*</span> <span class="n">metersPerSecondToKmPerHour</span><span class="o">)</span>
@@ -308,7 +312,7 @@ everyone:</p>
 
     </div>
 
-    
+  
 
   
 
@@ -321,7 +325,7 @@ everyone:</p>
 
 
 
-    
+  
     <div style="clear: both"></div>
 
     <hr>
@@ -361,7 +365,7 @@ everyone:</p>
     <a href="/"><div id="photo"></div></a>
     <div id="bio">
       <b>Jason Liszka</b><br/>
-      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
     </div>
     <h4>Popular posts</h4>
     <ul>
@@ -396,7 +400,7 @@ everyone:</p>
       </div>
       <hr>
       <footer>
-        <p>&copy; 2014 Jason Liszka
+        <p>&copy; 2016 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

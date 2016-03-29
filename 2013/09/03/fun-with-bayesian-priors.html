@@ -105,6 +105,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -168,11 +172,11 @@ prior knowledge about the bias (commonly just called the “prior”).</p>
 
 <p>So first, we’ll need a case class that represents the outcome of one trial:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Trial</span><span class="o">(</span><span class="n">bias</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">heads</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span></code></pre></div>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Trial</span><span class="o">(</span><span class="n">bias</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">heads</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span></code></pre></div>
 
 <p>And here’s the simulation itself:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">val</span> <span class="n">experiment</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Trial</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">experiment</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Trial</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">bias</span> <span class="k">&lt;-</span> <span class="n">uniform</span>
     <span class="n">heads</span> <span class="k">&lt;-</span> <span class="n">binomial</span><span class="o">(</span><span class="n">bias</span><span class="o">,</span> <span class="mi">10</span><span class="o">)</span>
@@ -187,7 +191,7 @@ heads you will see in 10 coin flips when the probability of seeing a head on a s
 
 <p>Now let’s analyze the experiment. Remember we only care about the trials that resulted in 8 heads.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">val</span> <span class="n">posterior</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">posterior</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">experiment</span><span class="o">.</span><span class="n">given</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">heads</span> <span class="o">==</span> <span class="mi">8</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">bias</span><span class="o">)</span>
 <span class="o">}</span></code></pre></div>
 
@@ -225,7 +229,7 @@ heads you will see in 10 coin flips when the probability of seeing a head on a s
 the same way, only this time, instead of using <code>uniform</code> as the prior distribution for the bias, you can use
 <code>posterior</code>, essentially building on top of our new belief about what the bias is from the first experiment.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">val</span> <span class="n">experiment2</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">experiment2</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">bias</span> <span class="k">&lt;-</span> <span class="n">posterior</span>
     <span class="n">heads</span> <span class="k">&lt;-</span> <span class="n">binomial</span><span class="o">(</span><span class="n">bias</span><span class="o">,</span> <span class="mi">10</span><span class="o">)</span>
@@ -266,7 +270,7 @@ the same way, only this time, instead of using <code>uniform</code> as the prior
 <p>I’ve written almost the exact same code twice, so I basically have to do this now.
 Here’s my attempt, as an instance method of the <code>Distribution</code> interface:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
   <span class="c1">// ...</span>
   <span class="k">def</span> <span class="n">posterior</span><span class="o">[</span><span class="kt">B</span><span class="o">](</span><span class="n">experiment</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">B</span><span class="o">])</span>
                    <span class="o">(</span><span class="n">observed</span><span class="k">:</span> <span class="kt">B</span> <span class="o">=&gt;</span> <span class="nc">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
@@ -286,7 +290,7 @@ and which were not.</p>
 
 <p>So now our first two experiments become:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">val</span> <span class="n">p1</span> <span class="k">=</span> <span class="n">uniform</span><span class="o">.</span><span class="n">posterior</span><span class="o">(</span><span class="n">bias</span> <span class="k">=&gt;</span> <span class="n">binomial</span><span class="o">(</span><span class="n">bias</span><span class="o">,</span> <span class="mi">10</span><span class="o">))(</span><span class="k">_</span> <span class="o">==</span> <span class="mi">8</span><span class="o">)</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">p1</span> <span class="k">=</span> <span class="n">uniform</span><span class="o">.</span><span class="n">posterior</span><span class="o">(</span><span class="n">bias</span> <span class="k">=&gt;</span> <span class="n">binomial</span><span class="o">(</span><span class="n">bias</span><span class="o">,</span> <span class="mi">10</span><span class="o">))(</span><span class="k">_</span> <span class="o">==</span> <span class="mi">8</span><span class="o">)</span>
 <span class="k">val</span> <span class="n">p2</span> <span class="k">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">posterior</span><span class="o">(</span><span class="n">bias</span> <span class="k">=&gt;</span> <span class="n">binomial</span><span class="o">(</span><span class="n">bias</span><span class="o">,</span> <span class="mi">10</span><span class="o">))(</span><span class="k">_</span> <span class="o">==</span> <span class="mi">6</span><span class="o">)</span></code></pre></div>
 
 <p>Pretty clean!</p>
@@ -612,7 +616,7 @@ and the observed outcomes of experiments will be used to refine the output of th
 
     </div>
 
-    
+  
 
   
 
@@ -641,7 +645,7 @@ and the observed outcomes of experiments will be used to refine the output of th
 
 
     </ul>
-    
+  
     <div style="clear: both"></div>
 
     <hr>
@@ -681,7 +685,7 @@ and the observed outcomes of experiments will be used to refine the output of th
     <a href="/"><div id="photo"></div></a>
     <div id="bio">
       <b>Jason Liszka</b><br/>
-      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
     </div>
     <h4>Popular posts</h4>
     <ul>
@@ -716,7 +720,7 @@ and the observed outcomes of experiments will be used to refine the output of th
       </div>
       <hr>
       <footer>
-        <p>&copy; 2014 Jason Liszka
+        <p>&copy; 2016 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

@@ -105,6 +105,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -144,7 +148,7 @@ and find the mean of the sample. What can I say about the relationship between t
 
 <p>The most comprehensive answer to this is to look at the distribution of the sample mean.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">sampleMean</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">],</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">100</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">sampleMean</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">],</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">100</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">d</span><span class="o">.</span><span class="n">repeat</span><span class="o">(</span><span class="n">n</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">sum</span> <span class="o">/</span> <span class="n">n</span><span class="o">)</span>
 <span class="o">}</span></code></pre></div>
 
@@ -427,7 +431,7 @@ null hypothesis if you can show that there is less than, say, a 5% chance of los
 
 <p>You can model the distribution of outcomes for a single round of the game as follows:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="n">geometric</span><span class="o">(</span><span class="mf">0.5</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="mf">1.0</span><span class="o">)</span></code></pre></div>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="n">geometric</span><span class="o">(</span><span class="mf">0.5</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="mf">1.0</span><span class="o">)</span></code></pre></div>
 
 <p><code>geometric(0.5)</code> models your winnings and <code>- 1.0</code> represents the cost to play the round. The expected value
 and standard deviation of this distribution are:</p>
@@ -520,7 +524,7 @@ res3: Double = 0.4074
 
 <p>OK, let’s say instead we had observed 530 clicks out of 8100 visitors – it’s the same 6.5% success rate, just with 10 times as many samples.
 What does that do to our analysis? Well, first of all, we can expect the standard error
-to be much smaller, since we’re dividing by <script type="math/tex">\sqrt{8100} = 90</script> instead of <script type="math/tex">\sqrt{810} = 28.5</script>. </p>
+to be much smaller, since we’re dividing by <script type="math/tex">\sqrt{8100} = 90</script> instead of <script type="math/tex">\sqrt{810} = 28.5</script>.</p>
 
 <pre><code>scala&gt; d.stdev / 90
 res0: Double = 0.0026411931460171042
@@ -621,7 +625,7 @@ numbers will be completely meaningless!</p>
 
     </div>
 
-    
+  
 
   
 
@@ -650,7 +654,7 @@ numbers will be completely meaningless!</p>
 
 
     </ul>
-    
+  
     <div style="clear: both"></div>
 
     <hr>
@@ -690,7 +694,7 @@ numbers will be completely meaningless!</p>
     <a href="/"><div id="photo"></div></a>
     <div id="bio">
       <b>Jason Liszka</b><br/>
-      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
     </div>
     <h4>Popular posts</h4>
     <ul>
@@ -725,7 +729,7 @@ numbers will be completely meaningless!</p>
       </div>
       <hr>
       <footer>
-        <p>&copy; 2014 Jason Liszka
+        <p>&copy; 2016 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

@@ -105,6 +105,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -259,7 +263,7 @@ group, what is the probability that the two groups will be as far apart as 1.6%?
 
 <p>An easy way to answer that is just to <a href="/2013/08/12/a-frequentist-approach-to-probability.html">simulate it</a>.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">differenceOfMeans</span><span class="o">(</span><span class="n">bias</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">n1</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">n2</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">differenceOfMeans</span><span class="o">(</span><span class="n">bias</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">n1</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">n2</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">mean1</span> <span class="k">&lt;-</span> <span class="n">bernoulli</span><span class="o">(</span><span class="n">bias</span><span class="o">).</span><span class="n">repeat</span><span class="o">(</span><span class="n">n1</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">sum</span><span class="o">.</span><span class="n">toDouble</span> <span class="o">/</span> <span class="n">n1</span><span class="o">)</span>
     <span class="n">mean2</span> <span class="k">&lt;-</span> <span class="n">bernoulli</span><span class="o">(</span><span class="n">bias</span><span class="o">).</span><span class="n">repeat</span><span class="o">(</span><span class="n">n2</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">sum</span><span class="o">.</span><span class="n">toDouble</span> <span class="o">/</span> <span class="n">n2</span><span class="o">)</span>
@@ -401,7 +405,7 @@ in order to measure the same effect at the same significance level.</p>
 <p>Because I was born the way I was, I want to generalize <code>differenceOfMeans</code> to handle arbitrary probability distributions
 instead of just biased coin flips.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">differenceOfMeans2</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">],</span> <span class="n">n1</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">n2</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">differenceOfMeans2</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">],</span> <span class="n">n1</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">n2</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">mean1</span> <span class="k">&lt;-</span> <span class="n">d</span><span class="o">.</span><span class="n">repeat</span><span class="o">(</span><span class="n">n1</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">sum</span><span class="o">.</span><span class="n">toDouble</span> <span class="o">/</span> <span class="n">n1</span><span class="o">)</span>
     <span class="n">mean2</span> <span class="k">&lt;-</span> <span class="n">d</span><span class="o">.</span><span class="n">repeat</span><span class="o">(</span><span class="n">n2</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">sum</span><span class="o">.</span><span class="n">toDouble</span> <span class="o">/</span> <span class="n">n2</span><span class="o">)</span>
@@ -492,7 +496,7 @@ the underlying distribution.</p>
 
 <p>Let’s code it up and try it out.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">differenceOfMeansStderr</span><span class="o">(</span><span class="n">stdev</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">n1</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">n2</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">differenceOfMeansStderr</span><span class="o">(</span><span class="n">stdev</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">n1</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">n2</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="o">{</span>
   <span class="n">stdev</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="o">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">n1</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">n2</span><span class="o">)</span>
 <span class="o">}</span></code></pre></div>
 
@@ -573,7 +577,7 @@ provided you want a 5% significance level (about <script type="math/tex">2\bar{\
 
 <p>Let’s see if it holds up.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">numberOfTrials</span><span class="o">(</span><span class="n">stdev</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">delta</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">q</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">numberOfTrials</span><span class="o">(</span><span class="n">stdev</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">delta</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">q</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">{</span>
   <span class="o">((</span><span class="mi">4</span> <span class="o">*</span> <span class="n">stdev</span> <span class="o">*</span> <span class="n">stdev</span><span class="o">)</span> <span class="o">/</span> <span class="o">(</span><span class="n">delta</span> <span class="o">*</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">q</span> <span class="o">*</span> <span class="o">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">q</span><span class="o">))).</span><span class="n">toInt</span>
 <span class="o">}</span></code></pre></div>
 
@@ -638,7 +642,7 @@ of the underlying distributions.</p>
 
     </div>
 
-    
+  
 
   
 
@@ -667,7 +671,7 @@ of the underlying distributions.</p>
 
 
     </ul>
-    
+  
     <div style="clear: both"></div>
 
     <hr>
@@ -707,7 +711,7 @@ of the underlying distributions.</p>
     <a href="/"><div id="photo"></div></a>
     <div id="bio">
       <b>Jason Liszka</b><br/>
-      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
     </div>
     <h4>Popular posts</h4>
     <ul>
@@ -742,7 +746,7 @@ of the underlying distributions.</p>
       </div>
       <hr>
       <footer>
-        <p>&copy; 2014 Jason Liszka
+        <p>&copy; 2016 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

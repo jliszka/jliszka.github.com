@@ -1,0 +1,440 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Probability is in the process</title>
+    <meta name="description" content="">
+    <meta name="author" content="Jason Liszka">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/themes/twitter/bootstrap/css/bootstrap.2.2.2.min.css" rel="stylesheet">
+    <link href="/assets/themes/twitter/css/style.css?body=1&amp;v=2" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/twitter/css/pygment.css" rel="stylesheet" type="text/css" media="all">
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+
+    <!-- atom & rss feed -->
+    <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-narrow">
+          <div class="row-fluid">
+            <div class="span9 offset1">
+              <a class="brand" href="/">A Gentleman and a Scala</a>
+              <ul class="nav">
+                
+                
+                
+
+
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+
+
+
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-narrow">
+
+      <div class="content">
+        
+<div class="row-fluid">
+  <div class="span9 offset1 post-content post-spacer"></div>
+</div>
+<div class="row-fluid post-full">
+  <div class="span9 offset1 post-content">
+    <div class="page-header">
+      <h1>Probability is in the process </h1>
+    </div>
+    <div class="date">
+      <span>29 March 2016</span>
+    </div>
+    <div class="content">
+      
+<p>I came across an old post by Eliezer Yudkowsky on Less Wrong entitled <a href="http://lesswrong.com/lw/oj/probability_is_in_the_mind/">Probability is in the Mind</a>.
+It immediately struck me as, well, <em>more</em> wrong, and I want to explain why.</p>
+
+<p>A brief disclaimer: that article was published 8 years ago and he may have changed his thinking since then,
+but I’m purely out to address the idea, not the person. So here goes.</p>
+
+<p>First I’ll lay out his argument, which he does through a series of examples.</p>
+
+<blockquote>You have a coin.
+<br /><br />
+The coin is biased.
+<br /><br />
+You don't know which way it's biased or how much it's biased.  Someone just told you, "The coin is biased" and that's all they said.
+This is all the information you have, and the only information you have.
+<br /><br />
+You draw the coin forth, flip it, and slap it down.
+<br /><br />
+Now—before you remove your hand and look at the result—are you willing to say that you assign a 0.5 probability to the coin having come up heads?
+<br /><br />
+The frequentist says, "No. Saying 'probability 0.5' means that the coin has an inherent propensity to come up heads as often as tails, so that if we flipped the coin infinitely many times, the ratio of heads to tails would approach 1:1. But we know that the coin is biased, so it can have any probability of coming up heads except 0.5."
+</blockquote>
+
+<p>OK lemme stop right here. I think this mischaracterizes the frequentist’s take on this situation.
+First of all, it’s conflating two things: the probability that the coin comes up heads, and our estimate of the bias of the coin.
+Now sometimes those are the same thing! But in this case they are not. They <em>are</em> the same thing in the following procedure:</p>
+
+<ol>
+  <li>flip a coin with known bias <script type="math/tex">p</script></li>
+  <li>observe the outcome (heads or tails)</li>
+</ol>
+
+<p>In code this might be:</p>
+
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">flip</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">outcome</span> <span class="k">&lt;-</span> <span class="n">discrete</span><span class="o">(</span><span class="n">H</span> <span class="o">-&gt;</span> <span class="n">p</span><span class="o">,</span> <span class="n">T</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="o">))</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">outcome</span>
+<span class="o">}</span></code></pre></div>
+
+<p>In this case you should say that the probability of observing a head is <script type="math/tex">p</script>:</p>
+
+<pre><code>scala&gt; flip(0.3).pr(_ == H)
+res0: Double = 0.3023
+</code></pre>
+
+<p>(Note that <a href="https://github.com/jliszka/probability-monad">this probability library</a> estimates probabilities by simulating thousands of trials and reporting the proportion of the trials that matched the desired outcome. Which is all just to say that the probabilities it reports are not exact.)</p>
+
+<p>However, the example in the article goes like this:</p>
+
+<ol>
+  <li>flip a coin with an unknown bias</li>
+  <li>observe the outcome</li>
+</ol>
+
+<p>You might code this up as follows:</p>
+
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">flip</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">p</span> <span class="k">&lt;-</span> <span class="n">uniform</span>
+    <span class="n">outcome</span> <span class="k">&lt;-</span> <span class="n">discrete</span><span class="o">(</span><span class="n">H</span> <span class="o">-&gt;</span> <span class="n">p</span><span class="o">,</span> <span class="n">T</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="o">))</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">outcome</span>
+<span class="o">}</span></code></pre></div>
+
+<p>reasonably interpreting “unknown bias” as “a bias drawn at random from a uniform distribution on [0, 1].” Yes, this is a
+prior, and yes, frequentists do make use of priors.</p>
+
+<p>In this case you can assign a probability of 0.5 to the outcome of <code>flip</code> being heads:</p>
+
+<pre><code>scala&gt; flip.pr(_ == H)
+res1: Double = 0.4993
+</code></pre>
+
+<p>while saying nothing about the bias <code>p</code>. So if the question is, what’s the probability that the coin comes up heads,
+the frequentist will surely say 50%. If you ask the <em>different question</em> what is the bias of the coin, the frequentist will say
+“anything but 50%” without fear of contradicting herself.</p>
+
+<h2 id="probability-is-not-in-the-coin">Probability is not in the coin</h2>
+
+<p>The second thing I want to call out is the statement</p>
+
+<blockquote>The frequentist says, "No. Saying 'probability 0.5' means that the coin has an inherent propensity to come up heads as often as tails, so that if we flipped the coin infinitely many times, the ratio of heads to tails would approach 1:1."
+</blockquote>
+
+<p>Eliezer’s misreading is about what exactly gets repeated infinitely many times. He seems to believe it’s this:</p>
+
+<ol>
+  <li>you are given a coin with an unknown bias</li>
+  <li>repeat infinitely many times:
+    <ol>
+      <li>flip the coin and observe the outcome</li>
+    </ol>
+  </li>
+</ol>
+
+<p>But actually it’s this:</p>
+
+<ol>
+  <li>repeat infinitely many times:
+    <ol>
+      <li>you are given a coin with an unknown bias</li>
+      <li>flip the coin and observe the outcome</li>
+    </ol>
+  </li>
+</ol>
+
+<p>When frequentists say “probability 50%,” they’re not talking about an inherent property of a coin, they’re talking
+about an inherent property of a <em>procedure</em> involving a coin.
+Different procedures with the same coin will produce different outcomes.</p>
+
+<h2 id="incorporating-new-knowledge">Incorporating new knowledge</h2>
+
+<p>A bit later on, he says:</p>
+
+<blockquote>To make the coinflip experiment repeatable, as frequentists are wont to demand, we could build an automated coinflipper, and verify that the results were 50% heads and 50% tails.  But maybe a robot with extra-sensitive eyes and a good grasp of physics, watching the autoflipper prepare to flip, could predict the coin's fall in advance—not with certainty, but with 90% accuracy.  Then what would the <i>real</i> probability be?
+<br /><br />
+There is no "real probability".  The robot has one state of partial information.  You have a different state of partial information.  The coin itself has no mind, and doesn't assign a probability to anything; it just flips into the air, rotates a few times, bounces off some air molecules, and lands either heads or tails.
+</blockquote>
+
+<p>Again, this is a question of what we consider to be the procedure. If the procedure is</p>
+
+<ol>
+  <li>put the coin in the automated coin flipper</li>
+  <li>flip the coin and observe the outcome</li>
+</ol>
+
+<p>then you would have to say that the probability is 50%. But if instead you use the <em>different procedure</em>:</p>
+
+<ol>
+  <li>put the coin in the automated coin flipper</li>
+  <li>allow the robot to observe the coin and make a prediction</li>
+  <li>discard this trial unless the robot predicts heads</li>
+  <li>flip the coin and observe the outcome</li>
+</ol>
+
+<p>then you would say that the procedure will produce an outcome of heads 90% of the time. Yes, you have different
+information in the second procedure (which you could equivalently view as discarding some trials), but gathering that
+information (discarding trials) is <em>part of the procedure</em>.</p>
+
+<p>This idea gets distilled further through information-revealing games. A simple version (that I found in the comment section) goes as follows.
+You take 3 kings and an ace, shuffle them and place them face down in a row. Then you ask, what is the probability that the first card is the ace?
+Easy, 25%. But now you turn over the last card to reveal a king. <em>Now</em> what is the probability that first card is an ace? It’s 33%.
+How can this be?? Nothing changed about the cards, so why should the probability change? The probability must not be not be in the cards.</p>
+
+<p>But this situation does not confuse frequentists who think about probabilities in terms of procedures. Consider the following procedure:</p>
+
+<ol>
+  <li>shuffle the 4 cards and put them down in a row</li>
+  <li>turn over the last card</li>
+  <li>discard this trial unless the last card is a king</li>
+  <li>observe the first card</li>
+</ol>
+
+<p>Under this procedure, the first card is observed to be an ace 33% of the time. No contradiction.</p>
+
+<p>He goes on (interpreting a similar but slightly more complicated procedure):</p>
+
+<blockquote>As for the paradox, there isn't one.  The appearance of paradox comes from thinking that the probabilities must be properties of the cards themselves.  The ace I'm holding has to be either hearts or spades; but that doesn't mean that your knowledge about my cards must be the same as if you knew I was holding hearts, or knew I was holding spades.
+<br /><br />
+It may help to think of Bayes's Theorem:
+<br /><br />
+P(H|E) = P(E|H)P(H) / P(E)
+<br /><br />
+That last term, where you divide by P(E), is the part where you throw out all the possibilities that have been eliminated, and renormalize your probabilities over what remains.
+</blockquote>
+
+<p>Frequentists would agree with this! But they might reword it slightly:</p>
+
+<blockquote>As for the paradox, there isn't one. The appearance of paradox comes from thinking that the probabilities must be properties of the cards themselves. The ace I'm holding has to be either hearts or spades; but that doesn't mean that
+<span style="color: green">the trials you keep when I tell you I'm holding hearts are the same trials you keep in a different procedure where I tell you I'm holding spades</span>.
+<br /><br />
+It may help to think of Bayes's Theorem:
+<br /><br />
+P(H|E) = P(E|H)P(H) / P(E)
+<br /><br />
+That last term, where you divide by P(E), is the part where you throw out all the
+<span style="color: green">trials that don't match the stated outcome in the procedure</span>.
+</blockquote>
+
+<p><strong>Information gathering in the Bayesian regime is equivalent to discarding trials in the frequentist regime.</strong></p>
+
+<p>Anyway, after thoroughly debunking the idea that probability is not in the coin (something frequentists would wholeheartedly agree with him on),
+in a rare misstep of logic, succumbing to a false dilemma, he concludes that probability must be in the mind.
+However, he has overlooked one place probability could live: in the process.</p>
+
+<p>Both ways of thinking about probability will lead you to the same answers (well, most of the time). But personally I like
+the frequentist approach because it takes the human observer out of the equation.</p>
+
+
+    </div>
+
+  
+
+  
+
+
+  <div style="float: right; margin-top: 5px">
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/probability-is-in-the-process.html" data-text="Probability is in the process" data-via="jliszka">Tweet</a>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+</div>
+
+
+
+
+  
+    <div style="clear: both"></div>
+
+    <hr>
+    <div class="navigation">
+    
+    
+      <div style="clear: both"></div>
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'jliszka'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+
+  <div class="span2 sidebar">
+    <a href="/"><div id="photo"></div></a>
+    <div id="bio">
+      <b>Jason Liszka</b><br/>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
+    </div>
+    <h4>Popular posts</h4>
+    <ul>
+      <li><a href="/2013/10/01/how-traffic-actually-works.html">How traffic actually works</a></li>
+      <li><a href="/2013/08/12/a-frequentist-approach-to-probability.html">A frequentist approach to probability</a></li>
+      <li><a href="/2013/10/24/exact-numeric-nth-derivatives.html">Exact numeric nth derivatives</a></li>
+      <li><a href="/2013/10/31/infinite-lazy-polynomials.html">Infinite lazy polynomials</a></li>
+    </ul>
+
+    <h4>Recent posts</h4>
+    <ul>
+      
+        <li><a href="/2014/07/31/the-quantum-eraser.html">The quantum eraser demystified</a></li>
+      
+        <li><a href="/2014/07/12/is-the-nba-draft-rigged.html">Is the NBA draft rigged?</a></li>
+      
+        <li><a href="/2014/06/03/programming-with-futures.html">Programming with futures: patterns and anti-patterns</a></li>
+      
+        <li><a href="/2014/01/30/good-tech-lead-bad-tech-lead.html">Good Tech Lead, Bad Tech Lead</a></li>
+      
+        <li><a href="/2013/12/18/bayesian-networks-and-causality.html">Bayesian networks and causality</a></li>
+      
+    </ul>
+
+    <a href="https://twitter.com/jliszka" class="twitter-follow-button" data-show-count="false" data-size="large" data-show-screen-name="false">Follow @jliszka</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+  </div>
+</div>
+
+
+      </div>
+      <hr>
+      <footer>
+        <p>&copy; 2016 Jason Liszka
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </footer>
+
+    </div>
+
+    
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-42567355-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+  </body>
+</html>
+

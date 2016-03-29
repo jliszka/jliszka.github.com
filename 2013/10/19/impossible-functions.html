@@ -105,6 +105,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -286,13 +290,13 @@ them both to <script type="math/tex">k</script>. This completes the proof. Now a
 
 <p>Let’s start with the easy parts. Here’s the function that constructs the diagonal <script type="math/tex">d</script> from <script type="math/tex">H^{-1}</script>.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">diag</span><span class="o">(</span><span class="n">hinv</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="o">(</span><span class="nc">Int</span> <span class="k">=&gt;</span> <span class="nc">Int</span><span class="o">))</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Int</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">diag</span><span class="o">(</span><span class="n">hinv</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="o">(</span><span class="nc">Int</span> <span class="k">=&gt;</span> <span class="nc">Int</span><span class="o">))</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Int</span> <span class="k">=</span> <span class="o">{</span>
   <span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">hinv</span><span class="o">(</span><span class="n">n</span><span class="o">)(</span><span class="n">n</span><span class="o">)</span> <span class="o">+</span> <span class="mi">1</span>
 <span class="o">}</span></code></pre></div>
 
 <p>And here’s the overall solution. It mirrors the proof pretty directly, but it depends on <code>invert</code> which we have yet to write.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">solve</span><span class="o">(</span><span class="n">H</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span> <span class="o">=&gt;</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nc">Int</span><span class="o">)</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span> <span class="o">=&gt;</span> <span class="kt">Int</span><span class="o">,</span> <span class="nc">Int</span> <span class="k">=&gt;</span> <span class="nc">Int</span><span class="o">,</span> <span class="nc">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">solve</span><span class="o">(</span><span class="n">H</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span> <span class="o">=&gt;</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nc">Int</span><span class="o">)</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span> <span class="o">=&gt;</span> <span class="kt">Int</span><span class="o">,</span> <span class="nc">Int</span> <span class="k">=&gt;</span> <span class="nc">Int</span><span class="o">,</span> <span class="nc">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">hinv</span> <span class="k">=</span> <span class="n">invert</span><span class="o">(</span><span class="n">H</span><span class="o">)</span>
   <span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="n">diag</span><span class="o">(</span><span class="n">hinv</span><span class="o">)</span>
   <span class="k">val</span> <span class="n">k</span> <span class="k">=</span> <span class="n">H</span><span class="o">(</span><span class="n">d</span><span class="o">)</span>
@@ -306,7 +310,7 @@ them both to <script type="math/tex">k</script>. This completes the proof. Now a
 
 <p>OK this is impossible. For one, <code>H</code> might not be an onto function. It could be something like</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">h1</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="n">f</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span> <span class="o">*</span> <span class="mi">2</span></code></pre></div>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">h1</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="n">f</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span> <span class="o">*</span> <span class="mi">2</span></code></pre></div>
 
 <p>which only returns even numbers. So <code>invert(h1)</code> won’t be defined on odd numbers and we won’t have a complete
 table to diagonalize.</p>
@@ -624,7 +628,7 @@ collides with a function already in the table.</p>
 
 <p>Here’s the algorithm in code:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="c1">// A table of constant 0 functions</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="c1">// A table of constant 0 functions</span>
 <span class="k">def</span> <span class="n">zeroes</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="o">(</span><span class="nc">Int</span> <span class="k">=&gt;</span> <span class="nc">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">(</span><span class="n">n1</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="n">n2</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="mi">0</span>
 
 <span class="c1">// Update an entry in a function table with a new function at the given position.</span>
@@ -651,7 +655,7 @@ collides with a function already in the table.</p>
 
 <p>So does it work? Let’s try it out on some sample functions.</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">h1</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="n">f</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span> <span class="o">*</span> <span class="mi">2</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">h1</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="n">f</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span> <span class="o">*</span> <span class="mi">2</span>
 
 <span class="k">def</span> <span class="n">h2</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="n">f</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span> <span class="o">+</span> <span class="n">f</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span>
 
@@ -759,7 +763,7 @@ of points. So wouldn’t it be more straightforward to scan through the integers
 
 <p>We could do something like this:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="c1">// The constant 0 function</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="c1">// The constant 0 function</span>
 <span class="k">def</span> <span class="n">g</span> <span class="k">=</span> <span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="mi">0</span>
 
 <span class="c1">// f(i) is zero everywhere except at i.</span>
@@ -840,7 +844,7 @@ But it’s been fun trying!</p>
 
     </div>
 
-    
+  
 
   
 
@@ -869,7 +873,7 @@ But it’s been fun trying!</p>
 
 
     </ul>
-    
+  
     <div style="clear: both"></div>
 
     <hr>
@@ -909,7 +913,7 @@ But it’s been fun trying!</p>
     <a href="/"><div id="photo"></div></a>
     <div id="bio">
       <b>Jason Liszka</b><br/>
-      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
     </div>
     <h4>Popular posts</h4>
     <ul>
@@ -944,7 +948,7 @@ But it’s been fun trying!</p>
       </div>
       <hr>
       <footer>
-        <p>&copy; 2014 Jason Liszka
+        <p>&copy; 2016 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

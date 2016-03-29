@@ -105,6 +105,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -465,7 +469,7 @@ N p(x) log (p(x) / q(x))
 <p>Given two events that are actually independent, by how much do we expect this statistic to vary? It’s easy
 to model:</p>
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">chi2dist</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">q</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">chi2dist</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">q</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
     <span class="n">a</span> <span class="k">&lt;-</span> <span class="n">tf</span><span class="o">(</span><span class="n">p</span><span class="o">)</span>
     <span class="n">b</span> <span class="k">&lt;-</span> <span class="n">tf</span><span class="o">(</span><span class="n">q</span><span class="o">)</span>
@@ -497,7 +501,7 @@ to model:</p>
 
     </div>
 
-    
+  
 
   
 
@@ -510,7 +514,7 @@ to model:</p>
 
 
 
-    
+  
     <div style="clear: both"></div>
 
     <hr>
@@ -546,7 +550,7 @@ to model:</p>
     <a href="/"><div id="photo"></div></a>
     <div id="bio">
       <b>Jason Liszka</b><br/>
-      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
     </div>
     <h4>Popular posts</h4>
     <ul>
@@ -581,7 +585,7 @@ to model:</p>
       </div>
       <hr>
       <footer>
-        <p>&copy; 2014 Jason Liszka
+        <p>&copy; 2016 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

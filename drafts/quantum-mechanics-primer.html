@@ -105,6 +105,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -128,18 +132,24 @@
       <h1>Quantum mechanics for dummies </h1>
     </div>
     <div class="date">
-      <span>01 August 2014</span>
+      <span>02 February 2016</span>
     </div>
     <div class="content">
       
 <h3 id="state-vectors">State vectors</h3>
 
-<p>The state of a quantum system is represented by a vector. You’re probably familiar with vectors in 2-space or 3-space:</p>
+<p>The state of a quantum system is represented by a vector. You’re probably familiar with vectors in 2 or 3 dimensions:</p>
 
 <script type="math/tex; mode=display">
 %<![CDATA[
-v = \begin{pmatrix} 1 \\ 3 \end{pmatrix} \\
-w = \begin{pmatrix} 3 \\ -1 \\ 2 \end{pmatrix}
+\newcommand{\vect}[1]{\vec{#1}}
+\newcommand{\ket}[1]{\lvert #1 \rangle}
+\newcommand{\bra}[1]{\langle #1 \rvert}
+\newcommand{\braket}[2]{\langle #1 \rvert #2 \rangle}
+
+\vect v = \begin{pmatrix} 1 \\ 3 \end{pmatrix}
+\qquad
+\vect w = \begin{pmatrix} 3 \\ -1 \\ 2 \end{pmatrix}
 %]]>
 </script>
 
@@ -147,36 +157,239 @@ w = \begin{pmatrix} 3 \\ -1 \\ 2 \end{pmatrix}
 
 <script type="math/tex; mode=display">
 %<![CDATA[
-v = x + 3y \\
-w = 3x - y + 2z
+\vect v = \vect x + 3 \vect y
+\qquad
+\vect w = 3 \vect x - \vect y + 2 \vect z
 %]]>
 </script>
 
-<p>with <script type="math/tex">x</script>, <script type="math/tex">y</script>, and <script type="math/tex">z</script> being basis vectors in each of the 3 dimensions.</p>
+<p>with <script type="math/tex">\vect x</script>, <script type="math/tex">\vect y</script>, and <script type="math/tex">\vect z</script> being basis vectors in each of the 3 dimensions.</p>
 
-<p>But generalize this notion a bit and imagine vectors over an arbitrary basis. A basis is just a collection of
-symbols that we declare to be unit vectors that are orthogonal to each other. And a vector in that basis is
-just a linear combination of the basis vectors.</p>
-
-<p>Let’s invent a basis: </p>
+<p>We can also write the exact same thing in a different notation:</p>
 
 <script type="math/tex; mode=display">
 %<![CDATA[
-v = 
+\ket v = \ket x + 3 \ket y
+\qquad
+\ket w = 3 \ket x - \ket y + 2 \ket z
 %]]>
 </script>
 
-<h3 id="measurement">Measurement</h3>
+<p>This is called <a href="">Dirac notation</a> and it makes some things in quantum mechanics easier to express.</p>
+
+<p>There’s nothing to restrict our basis vectors to unit vectors in 3 dimensions. A basis is really just a collection of
+symbols that we declare to be unit vectors that are orthogonal to each other. Then a vector in that basis is
+just a linear combination of the basis vectors.</p>
+
+<p>So our basis could be <script type="math/tex">\left\{ \ket H, \ket V \right\}</script> or <script type="math/tex">\left\{ \ket A, \ket B, \ket C \right\}</script>
+or <script type="math/tex">\left\{ \ket 0, \ket 1 \right\}</script> or anything we like. And we could have a vector</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\ket v = 2 \ket 0 - 3 \ket 1
+%]]>
+</script>
+
+<p>And finally we’ll allow coefficients to be complex numbers instead of real numbers. So:</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\ket v = (3 - 2i) \ket 0 - i \ket 1
+%]]>
+</script>
+
+<p>A vector like this is called a state vector, and it’s the basic language of quantum mechanics.</p>
+
+<h3 id="the-meaning-of-the-state-vector">The meaning of the state vector</h3>
+
+<p>Each basis vector represents a possible state that the system could be in. So the basis <script type="math/tex">\left\{ \ket H, \ket V \right\}</script>
+might represent a single photon’s polarization state: either horizontally polarized or vertically polarized. A vector
+in this basis, say</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\frac{1}{\sqrt 2}\ket H + \frac{1}{\sqrt 2}\ket V
+%]]>
+</script>
+
+<p>represents a <em>superposition</em> of states: the photon is simultaneously horizontally and vertically polarized.</p>
+
+<p>Under a common interpretation of quantum mechanics, a system is in a superposition of states until it is <em>measured</em>, at
+which point it “collapses” into being in only one of the states. (Measurement is very tricky to define and that is why
+this is just one interpretation.)</p>
+
+<p>The coefficents in a state vector are called <em>amplitudes</em> and represent the probability that the system will collapse
+into each state. More precisely, it is the <em>squared absolute value</em> of the amplitude that gives that probability. So, for example, if you
+measure the polarization of a photon in state</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\frac{1}{\sqrt 2}\ket H + \frac{1}{\sqrt 2}\ket V
+%]]>
+</script>
+
+<p>you will get <script type="math/tex">H</script> 50% of the time and <script type="math/tex">V</script> 50% of the time. Likewise, if you measure a photon in state</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\frac{i}{2}\ket H + \frac{\sqrt 3}{2}\ket V
+%]]>
+</script>
+
+<p>you will get <script type="math/tex">H</script> 25% of the time and <script type="math/tex">V</script> 75% of the time.</p>
+
+<p>Since the probabilities have to add up to <script type="math/tex">1</script>, you will almost always see state vectors whose coefficents’
+squared absolute values sum to <script type="math/tex">1</script>.</p>
+
+<h3 id="tensor-products">Tensor products</h3>
+
+<p>Now consider a system consisting of two photons. Each photon can be either horizontally or vertically polarized. So
+now there are 4 basis vectors representing states the system can be in:</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\ket{H,H} \quad \ket{H,V} \quad \ket{V,H} \quad \ket{V,V}
+%]]>
+</script>
+
+<p>Suppose you have two photons in the following states:</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\ket{\phi_1} = \frac{1}{\sqrt 2}\ket H - \frac{1}{\sqrt 2}\ket V \\
+\ket{\phi_2} = \frac{1}{\sqrt 2}\ket H + \frac{i}{\sqrt 2}\ket V
+%]]>
+</script>
+
+<p>The combined state vector of the two photons considered together as one system (let’s call it <script type="math/tex">\ket{\phi}</script>) is
+the <em>tensor product</em> of the individual state vectors:</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\begin{align}
+\ket{\phi} &= \ket{\phi_1} \otimes \ket{\phi_2}
+\\ &= \left( \frac{1}{\sqrt 2}\ket H - \frac{1}{\sqrt 2}\ket V \right) \otimes \left( \frac{1}{\sqrt 2}\ket H + \frac{i}{\sqrt 2}\ket V \right)
+\\ &= \frac{1}{\sqrt 2} \cdot \frac{1}{\sqrt 2}\ket{H}\ket{H} + \frac{1}{\sqrt 2} \cdot \frac{i}{\sqrt 2}\ket{H}\ket{V} - \frac{1}{\sqrt 2} \cdot \frac{1}{\sqrt 2}\ket{V}\ket{H} - \frac{1}{\sqrt 2} \cdot \frac{i}{\sqrt 2}\ket{V}\ket{V}
+\\ &= \frac{1}{2}\ket{H,H} + \frac{i}{2}\ket{H,V} - \frac{1}{2}\ket{V,H} - \frac{i}{2}\ket{V,V}
+\end{align}
+%]]>
+</script>
+
+<p>This is just straight multiplication of terms, nothing fancy here. By convention, <script type="math/tex">\ket H \otimes \ket V</script> means
+the same thing as <script type="math/tex">\ket{H}\ket{V}</script> and <script type="math/tex">\ket{H,V}</script> or even <script type="math/tex">\ket{HV}</script>.</p>
+
+<p>The state vector <script type="math/tex">\ket{\phi}</script> indicates that when you measure the polarization of the two photons, you’re
+equally likely to get <script type="math/tex">H,H</script> or <script type="math/tex">H,V</script> or <script type="math/tex">V,H</script> or <script type="math/tex">V,V</script>.</p>
+
+<p>So you can think of a tensor product as two quantum systems (maybe just two particles) considered as one system.</p>
+
+<h3 id="entanglement">Entanglement</h3>
+
+<p>The state <script type="math/tex">\ket \phi</script> above can be “factored” as follows:</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\left( \frac{1}{\sqrt 2}\ket H - \frac{1}{\sqrt 2}\ket V \right) \otimes \left( \frac{1}{\sqrt 2}\ket H + \frac{i}{\sqrt 2}\ket V \right)
+%]]>
+</script>
+
+<p>In this sense they are two independent systems sitting side by side.</p>
+
+<p>But sometimes you can’t factor a state vector. Consider</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\ket{\psi} = \frac{1}{\sqrt 2}\ket{H,H} + \frac{1}{\sqrt 2}\ket{V,V}
+%]]>
+</script>
+
+<p>This state cannot be written as the tensor product of two individual states.</p>
+
+<p>What is the physical meaning of this, though? A system represented by state vector <script type="math/tex">\ket{\psi}</script>, when measured,
+has a 50% chance of both photons being horizontally polarized and a 50% chance of both being vertically polarized. This
+means that if you measure one of the photons, it will be horizontally or vertically polarized with equal likelihood, but
+when you measure the other photon, it will always have the same polarization as the first photon, 100% of the time.</p>
+
+<p>Systems like this are called <em>entangled</em> states, because you can’t separate them out into individual systems.</p>
+
+<h3 id="transforming-quantum-states">Transforming quantum states</h3>
+
+<p>Transforming a quantum state consists of applying transformations to the basis vectors.
+In the lab, transformations are implemented by passing a quantum particle, say a photon, through an optical device,
+say a crystal of some kind, that has some desired properties that are discovered experimentally. For example, a quarter wave plate
+shifts the phase of one of the polarization components of an incoming photon. It corresponds to the transformation:</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\ket{H} \rightarrow \ket{H} \\
+\ket{V} \rightarrow i\ket{V} \\
+%]]>
+</script>
+
+<h3 id="application-bosons-and-fermions">Application: Bosons and Fermions</h3>
+
+<p>In a two-particle system represented as a tensor product, it doesn’t really make sense to distingish one of the particles as the one
+“on the left” in the tensor product and the other “on the right.” So a state vector like</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\ket{0,1}
+%]]>
+</script>
+
+<p>is really best represented this way:</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\frac{1}{\sqrt 2}\ket{0,1} + \frac{1}{\sqrt 2}\ket{1,0}
+%]]>
+</script>
+
+<p>Or in general,</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\ket{\phi_1, \phi_2} \rightarrow \frac{1}{\sqrt 2}\ket{\phi_1, \phi_2} + \frac{1}{\sqrt 2}\ket{\phi_2, \phi_1}
+%]]>
+</script>
+
+<p>Actually, only bosons (e.g., photons) work this way. Fermions (e.g., electrons) behave this way instead:</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\ket{\phi_1, \phi_2} \rightarrow \frac{1}{\sqrt 2}\ket{\phi_1, \phi_2} - \frac{1}{\sqrt 2}\ket{\phi_2, \phi_1}
+%]]>
+</script>
+
+<p>with the difference just being the minus sign. What practical difference does this make? Well, imagine two fermions in the same quantum state:</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\ket{0,0}
+%]]>
+</script>
+
+<p>This becomes</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+\frac{1}{\sqrt 2}\ket{0,0} - \frac{1}{\sqrt 2}\ket{0,0} = 0
+%]]>
+</script>
+
+<p>In other words, the probability of two fermions being in the same state is zero. This is called the Pauli exclusion principle
+and you probably learned it in high school chemistry. Now you know the fundamental quantum explanation for why this is!</p>
 
 <h3 id="inner-product">Inner product</h3>
 
-<h3 id="tensor-product">Tensor product</h3>
-
 <h3 id="outer-product">Outer product</h3>
+
+<h3 id="measurement">Measurement</h3>
+
 
     </div>
 
-    
+  
 
   
 
@@ -189,7 +402,7 @@ v =
 
 
 
-    
+  
     <div style="clear: both"></div>
 
     <hr>
@@ -225,7 +438,7 @@ v =
     <a href="/"><div id="photo"></div></a>
     <div id="bio">
       <b>Jason Liszka</b><br/>
-      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
     </div>
     <h4>Popular posts</h4>
     <ul>
@@ -260,7 +473,7 @@ v =
       </div>
       <hr>
       <footer>
-        <p>&copy; 2014 Jason Liszka
+        <p>&copy; 2016 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

@@ -105,6 +105,10 @@
       
     
   
+    
+      
+    
+  
 
 
 
@@ -142,7 +146,7 @@ because there’s no problem that can’t be solved with more monads.</p>
 
 <!-- more -->
 
-<div class="highlight"><pre><code class="scala"><span class="k">def</span> <span class="n">isTheNBADraftRigged</span><span class="o">(</span><span class="n">prior</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">isTheNBADraftRigged</span><span class="o">(</span><span class="n">prior</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">rigged</span> <span class="k">=</span> <span class="n">tf</span><span class="o">(</span><span class="n">prior</span><span class="o">)</span>
   <span class="k">def</span> <span class="n">cavsGetFirstPick</span><span class="o">(</span><span class="n">rigged</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span> <span class="k">=</span> <span class="n">rigged</span> <span class="k">match</span> <span class="o">{</span>
     <span class="k">case</span> <span class="kc">true</span> <span class="k">=&gt;</span> <span class="n">always</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
@@ -222,7 +226,7 @@ O(A|B) &= O(A) \cdot \frac{P(B|A)}{P(B|\lnot A)} \\
 
     </div>
 
-    
+  
 
   
 
@@ -251,7 +255,7 @@ O(A|B) &= O(A) \cdot \frac{P(B|A)}{P(B|\lnot A)} \\
 
 
     </ul>
-    
+  
     <div style="clear: both"></div>
 
     <hr>
@@ -291,7 +295,7 @@ O(A|B) &= O(A) \cdot \frac{P(B|A)}{P(B|\lnot A)} \\
     <a href="/"><div id="photo"></div></a>
     <div id="bio">
       <b>Jason Liszka</b><br/>
-      <i>Software engineer at Foursquare, CMU alum, Scala fan, new father</i>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
     </div>
     <h4>Popular posts</h4>
     <ul>
@@ -326,7 +330,7 @@ O(A|B) &= O(A) \cdot \frac{P(B|A)}{P(B|\lnot A)} \\
       </div>
       <hr>
       <footer>
-        <p>&copy; 2014 Jason Liszka
+        <p>&copy; 2016 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>
