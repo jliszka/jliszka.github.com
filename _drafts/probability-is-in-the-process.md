@@ -29,8 +29,8 @@ Now—before you remove your hand and look at the result—are you willing to sa
 The frequentist says, "No. Saying 'probability 0.5' means that the coin has an inherent propensity to come up heads as often as tails, so that if we flipped the coin infinitely many times, the ratio of heads to tails would approach 1:1. But we know that the coin is biased, so it can have any probability of coming up heads except 0.5."
 </blockquote>
 
-OK lemme stop right here. I think this mischaracterizes the frequentist's take on this situation.
-First of all, it's conflating two things: the probability that the coin comes up heads, and our estimate of the bias of the coin.
+OK lemme stop right here. I think this mischaracterizes the frequentist's take on this situation, in two ways.
+First, it conflates two things: the probability that the coin comes up heads, and our estimate of the bias of the coin.
 Now sometimes those are the same thing! But in this case they are not. They _are_ the same thing in the following procedure:
 
 1. flip a coin with known bias {%m%}p{%em%}
@@ -75,21 +75,57 @@ prior, and yes, frequentists do make use of priors.
 In this case you can assign a probability of 0.5 to the outcome of `flip` being heads:
 
     scala> flip.pr(_ == H)
-    res1: Double = 0.4993
+    res1: Double = 0.4983
 
-while saying nothing about the bias `p`. So if the question is, what's the probability that the coin comes up heads,
-the frequentist will surely say 50%. If you ask the _different question_ what is the bias of the coin, the frequentist will say
+_while saying nothing about the bias_ `p`. So if the question is, "what is the probability that this procedure results in the coin coming up heads?"
+the frequentist will surely say 50%. If you ask the _different_ question, "what is the bias of the coin?" the frequentist will say
 "anything but 50%" without fear of contradicting herself.
 
+## Calculating posteriors is also a procedure
+
+A related question is, "what is the bias of the coin after observing one heads?" Frequentists can answer this question
+using a procedure. It's pretty straightforward:
+
+1. choose a bias {%m%}p{%em%} uniformly in [0, 1]
+2. flip a coin with bias {%m%}p{%em%}
+3. discard this trial unless the coin lands heads
+4. observe {%m%}p{%em%}
+
+Or in code:
+
+{% highlight scala %}
+def posterior = {
+  case class Trial(p: Double, outcome: Coin)
+  val d = for {
+    p <- uniform
+    outcome <- discrete(H -> p, T -> (1-p))
+  } yield Trial(p, outcome)
+  d.given(_.outcome == H).map(_.p)
+}
+{% endhighlight %}
+
+    scala> posterior.bucketedHist(0, 1, 10, roundDown = true)
+    [0.0, 0.1)  1.06% #
+    [0.1, 0.2)  2.92% ##
+    [0.2, 0.3)  5.07% #####
+    [0.3, 0.4)  6.83% ######
+    [0.4, 0.5)  8.95% ########
+    [0.5, 0.6) 10.90% ##########
+    [0.6, 0.7) 13.08% #############
+    [0.7, 0.8) 15.11% ###############
+    [0.8, 0.9) 17.34% #################
+    [0.9, 1.0) 18.74% ##################
+
+We end up with the exact same answer Bayesians do, but we don't have to make any reference to beliefs or minds.
+We just incorporate our observations into the procedure, simulate it thousands of times, and see what falls out.
 
 ## Probability is not in the coin
-
-The second thing I want to call out is the statement
 
 <blockquote>The frequentist says, "No. Saying 'probability 0.5' means that the coin has an inherent propensity to come up heads as often as tails, so that if we flipped the coin infinitely many times, the ratio of heads to tails would approach 1:1."
 </blockquote>
 
-Eliezer's misreading is about what exactly gets repeated infinitely many times. He seems to believe it's this:
+The second thing I want to address in this statement, which I think gets the heart of the misunderstanding,
+is a confusion over what exactly gets repeated infinitely many times. He seems to think it's this:
 
 1. you are given a coin with an unknown bias
 2. repeat infinitely many times:
@@ -104,6 +140,16 @@ But actually it's this:
 When frequentists say "probability 50%," they're not talking about an inherent property of a coin, they're talking
 about an inherent property of a _procedure_ involving a coin.
 Different procedures with the same coin will produce different outcomes.
+
+Eliezer contrasts this with the Bayesian's take on the situation:
+
+<blockquote>The Bayesian says, "Uncertainty exists in the map, not in the territory.
+In the real world, the coin has either come up heads, or come up tails.
+Any talk of 'probability' must refer to the <i>information</i> that I have about the coin—my state of partial ignorance and partial knowledge—not just the coin itself."
+</blockquote>
+
+This is an unwarranted conclusion. Just because probability doesn't live in the coin itself doesn't mean it must live in the mind.
+There are other places it could live.
 
 ## Incorporating new knowledge
 
@@ -135,7 +181,7 @@ You take 3 kings and an ace, shuffle them and place them face down in a row. The
 Easy, 25%. But now you turn over the last card to reveal a king. _Now_ what is the probability that first card is an ace? It's 33%.
 How can this be?? Nothing changed about the cards, so why should the probability change? The probability must not be not be in the cards.
 
-But this situation does not confuse frequentists who think about probabilities in terms of procedures. Consider the following procedure:
+But this situation does not confuse frequentists, thinking about probabilities in terms of procedures. Consider the following procedure:
 
 1. shuffle the 4 cards and put them down in a row
 2. turn over the last card
@@ -170,10 +216,18 @@ That last term, where you divide by P(E), is the part where you throw out all th
 
 **Information gathering in the Bayesian regime is equivalent to discarding trials in the frequentist regime.**
 
-Anyway, after thoroughly debunking the idea that probability is not in the coin (something frequentists would wholeheartedly agree with him on),
-in a rare misstep of logic, succumbing to a false dilemma, he concludes that probability must be in the mind.
-However, he has overlooked one place probability could live: in the process.
+Anyway, the thrust of his argument rests on two logical fallacies:
 
-Both ways of thinking about probability will lead you to the same answers (well, most of the time). But personally I like
-the frequentist approach because it takes the human observer out of the equation.
+1. It's foolish to believe, as frequentists do, that probability lives in the coin, and
+2. therefore probability is in the mind.
+
+I hope I have pointed out that #1 is a straw man and #2 is a false dilemma, to wit:
+
+1. Frequentists don't believe that, and
+2. he overlooks another place probability could live: in the process.
+
+Both frequentist and Bayesian modes of thinking about probability will lead you to the same answers (well, most of the time).
+But personally I like the frequentist approach because it takes the human observer out of the equation.
+
+Why bring minds into it at all?
 
