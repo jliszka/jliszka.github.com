@@ -105,10 +105,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -132,7 +128,7 @@
       <h1>Probability is in the process </h1>
     </div>
     <div class="date">
-      <span>29 March 2016</span>
+      <span>30 March 2016</span>
     </div>
     <div class="content">
       
@@ -158,8 +154,8 @@ Now—before you remove your hand and look at the result—are you willing to sa
 The frequentist says, "No. Saying 'probability 0.5' means that the coin has an inherent propensity to come up heads as often as tails, so that if we flipped the coin infinitely many times, the ratio of heads to tails would approach 1:1. But we know that the coin is biased, so it can have any probability of coming up heads except 0.5."
 </blockquote>
 
-<p>OK lemme stop right here. I think this mischaracterizes the frequentist’s take on this situation.
-First of all, it’s conflating two things: the probability that the coin comes up heads, and our estimate of the bias of the coin.
+<p>OK lemme stop right here. I think this mischaracterizes the frequentist’s take on this situation, in two ways.
+First, it conflates two things: the probability that the coin comes up heads, and our estimate of the bias of the coin.
 Now sometimes those are the same thing! But in this case they are not. They <em>are</em> the same thing in the following procedure:</p>
 
 <ol>
@@ -205,21 +201,59 @@ prior, and yes, frequentists do make use of priors.</p>
 <p>In this case you can assign a probability of 0.5 to the outcome of <code>flip</code> being heads:</p>
 
 <pre><code>scala&gt; flip.pr(_ == H)
-res1: Double = 0.4993
+res1: Double = 0.4983
 </code></pre>
 
-<p>while saying nothing about the bias <code>p</code>. So if the question is, what’s the probability that the coin comes up heads,
-the frequentist will surely say 50%. If you ask the <em>different question</em> what is the bias of the coin, the frequentist will say
+<p><em>while saying nothing about the bias</em> <code>p</code>. So if the question is, “what is the probability that this procedure results in the coin coming up heads?”
+the frequentist will surely say 50%. If you ask the <em>different</em> question, “what is the bias of the coin?” the frequentist will say
 “anything but 50%” without fear of contradicting herself.</p>
 
-<h2 id="probability-is-not-in-the-coin">Probability is not in the coin</h2>
+<h2 id="calculating-posteriors-is-also-a-procedure">Calculating posteriors is also a procedure</h2>
 
-<p>The second thing I want to call out is the statement</p>
+<p>A related question is, “what is the bias of the coin after observing one heads?” Frequentists can answer this question
+using a procedure. It’s pretty straightforward:</p>
+
+<ol>
+  <li>choose a bias <script type="math/tex">p</script> uniformly in [0, 1]</li>
+  <li>flip a coin with bias <script type="math/tex">p</script></li>
+  <li>discard this trial unless the coin lands heads</li>
+  <li>observe <script type="math/tex">p</script></li>
+</ol>
+
+<p>Or in code:</p>
+
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">posterior</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">case</span> <span class="k">class</span> <span class="nc">Trial</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">outcome</span><span class="k">:</span> <span class="kt">Coin</span><span class="o">)</span>
+  <span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+    <span class="n">p</span> <span class="k">&lt;-</span> <span class="n">uniform</span>
+    <span class="n">outcome</span> <span class="k">&lt;-</span> <span class="n">discrete</span><span class="o">(</span><span class="n">H</span> <span class="o">-&gt;</span> <span class="n">p</span><span class="o">,</span> <span class="n">T</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="o">))</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="nc">Trial</span><span class="o">(</span><span class="n">p</span><span class="o">,</span> <span class="n">outcome</span><span class="o">)</span>
+  <span class="n">d</span><span class="o">.</span><span class="n">given</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">outcome</span> <span class="o">==</span> <span class="n">H</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">p</span><span class="o">)</span>
+<span class="o">}</span></code></pre></div>
+
+<pre><code>scala&gt; posterior.bucketedHist(0, 1, 10, roundDown = true)
+[0.0, 0.1)  1.06% #
+[0.1, 0.2)  2.92% ##
+[0.2, 0.3)  5.07% #####
+[0.3, 0.4)  6.83% ######
+[0.4, 0.5)  8.95% ########
+[0.5, 0.6) 10.90% ##########
+[0.6, 0.7) 13.08% #############
+[0.7, 0.8) 15.11% ###############
+[0.8, 0.9) 17.34% #################
+[0.9, 1.0) 18.74% ##################
+</code></pre>
+
+<p>We end up with the exact same answer Bayesians do, but we don’t have to make any reference to beliefs or minds.
+We just incorporate our observations into the procedure, simulate it thousands of times, and see what falls out.</p>
+
+<h2 id="probability-is-not-in-the-coin">Probability is not in the coin</h2>
 
 <blockquote>The frequentist says, "No. Saying 'probability 0.5' means that the coin has an inherent propensity to come up heads as often as tails, so that if we flipped the coin infinitely many times, the ratio of heads to tails would approach 1:1."
 </blockquote>
 
-<p>Eliezer’s misreading is about what exactly gets repeated infinitely many times. He seems to believe it’s this:</p>
+<p>The second thing I want to address in this statement, which I think gets the heart of the misunderstanding,
+is a confusion over what exactly gets repeated infinitely many times. He seems to think it’s this:</p>
 
 <ol>
   <li>you are given a coin with an unknown bias</li>
@@ -244,6 +278,16 @@ the frequentist will surely say 50%. If you ask the <em>different question</em> 
 <p>When frequentists say “probability 50%,” they’re not talking about an inherent property of a coin, they’re talking
 about an inherent property of a <em>procedure</em> involving a coin.
 Different procedures with the same coin will produce different outcomes.</p>
+
+<p>Eliezer contrasts this with the Bayesian’s take on the situation:</p>
+
+<blockquote>The Bayesian says, "Uncertainty exists in the map, not in the territory.
+In the real world, the coin has either come up heads, or come up tails.
+Any talk of 'probability' must refer to the <i>information</i> that I have about the coin—my state of partial ignorance and partial knowledge—not just the coin itself."
+</blockquote>
+
+<p>This is an unwarranted conclusion. Just because probability doesn’t live in the coin itself doesn’t mean it must live in the mind.
+There are other places it could live.</p>
 
 <h2 id="incorporating-new-knowledge">Incorporating new knowledge</h2>
 
@@ -279,7 +323,7 @@ You take 3 kings and an ace, shuffle them and place them face down in a row. The
 Easy, 25%. But now you turn over the last card to reveal a king. <em>Now</em> what is the probability that first card is an ace? It’s 33%.
 How can this be?? Nothing changed about the cards, so why should the probability change? The probability must not be not be in the cards.</p>
 
-<p>But this situation does not confuse frequentists who think about probabilities in terms of procedures. Consider the following procedure:</p>
+<p>But this situation does not confuse frequentists, thinking about probabilities in terms of procedures. Consider the following procedure:</p>
 
 <ol>
   <li>shuffle the 4 cards and put them down in a row</li>
@@ -316,12 +360,24 @@ That last term, where you divide by P(E), is the part where you throw out all th
 
 <p><strong>Information gathering in the Bayesian regime is equivalent to discarding trials in the frequentist regime.</strong></p>
 
-<p>Anyway, after thoroughly debunking the idea that probability is not in the coin (something frequentists would wholeheartedly agree with him on),
-in a rare misstep of logic, succumbing to a false dilemma, he concludes that probability must be in the mind.
-However, he has overlooked one place probability could live: in the process.</p>
+<p>Anyway, the thrust of his argument rests on two logical fallacies:</p>
 
-<p>Both ways of thinking about probability will lead you to the same answers (well, most of the time). But personally I like
-the frequentist approach because it takes the human observer out of the equation.</p>
+<ol>
+  <li>It’s foolish to believe, as frequentists do, that probability lives in the coin, and</li>
+  <li>therefore probability is in the mind.</li>
+</ol>
+
+<p>I hope I have pointed out that #1 is a straw man and #2 is a false dilemma, to wit:</p>
+
+<ol>
+  <li>Frequentists don’t believe that, and</li>
+  <li>he overlooks another place probability could live: in the process.</li>
+</ol>
+
+<p>Both frequentist and Bayesian modes of thinking about probability will lead you to the same answers (well, most of the time).
+But personally I like the frequentist approach because it takes the human observer out of the equation.</p>
+
+<p>Why bring minds into it at all?</p>
 
 
     </div>
