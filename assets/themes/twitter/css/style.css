@@ -158,9 +158,18 @@ pre {
   background: #444;
 }
 
-blockquote.quote {
+blockquote.quote, blockquote.quote p {
+  font-size: 16px;
   font-family: Georgia, serif;
   text-align: right;
+}
+
+blockquote p {
+  font-size: 14px;
+  font-weight: normal;
+  color: #666;
+  line-height: 20px;
+  margin: 10px 0;
 }
 
 .sidebar {

@@ -2,7 +2,7 @@
 layout: post
 title: "Infinite lazy polynomials"
 description: ""
-category: 
+category:
 tags: [ "polynomials", "automatic differentiation" ]
 ---
 {% include JB/setup %}
@@ -508,7 +508,7 @@ You can even find the generating function for the Fibonacci sequence. It turns o
 \frac{x}{1 - x - x^2} = x + x^2 + 2x^3 + 3x^4 + 5x^6 + 8x^7 + \ldots + F_ix^i + \ldots
 {% endmath %}
 
-There are all sorts of algebraic tricks to figure out what the generating function is for a sequence, given either 
+There are all sorts of algebraic tricks to figure out what the generating function is for a sequence, given either
 a recurrence relation or a formula for each term of the sequence.
 
 If you're curious about it, you should head on over to [Generatingfunctionology](http://www.math.upenn.edu/~wilf/gfologyLinked2.pdf).
@@ -563,7 +563,7 @@ Double checking, say, the 12th derivative (45349.42510889882) against
 
   OK!
 
-If you read my [last post on exact numeric nth derivatives]({{ page.previous.url }}), 
+If you read my [last post on exact numeric nth derivatives]({{ page.previous.url }}),
 you might have noticed that the code for ```Poly``` is pretty similar to the
 [implementation of dual numbers](https://gist.github.com/jliszka/7085427) that I presented in that post.
 Really the only difference is the lack of reference to the rank of the matrix. The matrices were already lazy
@@ -591,7 +591,7 @@ should reduce to {%m%}p(x) / q(x){%em%}. That should be easy to implement.
 I should genericize the implementation of ```Poly``` to work with any numeric type. Might be fun
 to use [spire](http://github.com/non/spire)'s numeric tower for that.
 
-5. While I'm at it I should make ```Poly``` an instace of spire's ```Ring``` typeclass. Infinite polynomials are a ring
+5. While I'm at it I should make ```Poly``` an instance of spire's ```Ring``` typeclass. Infinite polynomials are a ring
 but not a field because some non-zero elements lack a multiplicative inverse, for instance, {%m%}x{%em%}. For any ```p: Poly```,
 ```p / p``` will evaluate to 1 (provided I've implemented cancellation), but ```1 / p``` doesn't always exist as its own ```Poly```,
 and that's what I'd need for it to qualify as a field.

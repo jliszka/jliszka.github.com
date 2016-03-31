@@ -3,7 +3,7 @@ layout: post
 title: "Probability is in the process"
 description: ""
 category:
-tags: []
+tags: [ "probability" ]
 ---
 {% include JB/setup %}
 
@@ -15,19 +15,22 @@ but I'm purely out to address the idea, not the person. So here goes.
 
 First I'll lay out his argument, which he does through a series of examples.
 
-<blockquote>You have a coin.
-<br/><br/>
-The coin is biased.
-<br/><br/>
-You don't know which way it's biased or how much it's biased.  Someone just told you, "The coin is biased" and that's all they said.
+<!-- more -->
+
+> You have a coin.
+>
+> The coin is biased.
+>
+> You don't know which way it's biased or how much it's biased.  Someone just told you, "The coin is biased" and that's all they said.
 This is all the information you have, and the only information you have.
-<br/><br/>
-You draw the coin forth, flip it, and slap it down.
-<br/><br/>
-Now—before you remove your hand and look at the result—are you willing to say that you assign a 0.5 probability to the coin having come up heads?
-<br/><br/>
-The frequentist says, "No. Saying 'probability 0.5' means that the coin has an inherent propensity to come up heads as often as tails, so that if we flipped the coin infinitely many times, the ratio of heads to tails would approach 1:1. But we know that the coin is biased, so it can have any probability of coming up heads except 0.5."
-</blockquote>
+>
+> You draw the coin forth, flip it, and slap it down.
+>
+> Now—before you remove your hand and look at the result—are you willing to say that you assign a 0.5 probability to the coin having come up heads?
+>
+> The frequentist says, "No. Saying 'probability 0.5' means that the coin has an inherent propensity to come up heads as often as tails,
+> so that if we flipped the coin infinitely many times, the ratio of heads to tails would approach 1:1.
+> But we know that the coin is biased, so it can have any probability of coming up heads except 0.5."
 
 OK lemme stop right here. I think this mischaracterizes the frequentist's take on this situation, in two ways.
 First, it conflates two things: the probability that the coin comes up heads, and our estimate of the bias of the coin.
@@ -77,14 +80,16 @@ In this case you can assign a probability of 0.5 to the outcome of `flip` being 
     scala> flip.pr(_ == H)
     res1: Double = 0.4983
 
-_while saying nothing about the bias_ `p`. So if the question is, "what is the probability that this procedure results in the coin coming up heads?"
-the frequentist will surely say 50%. If you ask the _different_ question, "what is the bias of the coin?" the frequentist will say
+_while saying nothing about the bias_ `p`.
+
+So if the question is, "what is the probability that this procedure results in the coin coming up heads?"
+the frequentist will surely say 50%. However, if you ask the _different_ question, "what is the bias of the coin?" the frequentist will say
 "anything but 50%" without fear of contradicting herself.
 
 ## Calculating posteriors is also a procedure
 
-A related question is, "what is the bias of the coin after observing one heads?" Frequentists can answer this question
-using a procedure. It's pretty straightforward:
+A related question is, "what is the bias of the coin after observing one heads?" You can answer this question
+in a frequentist way, using a repeated procedure. Here it is:
 
 1. choose a bias {%m%}p{%em%} uniformly in [0, 1]
 2. flip a coin with bias {%m%}p{%em%}
@@ -121,8 +126,8 @@ We just incorporate our observations into the procedure, simulate it thousands o
 
 ## Probability is not in the coin
 
-<blockquote>The frequentist says, "No. Saying 'probability 0.5' means that the coin has an inherent propensity to come up heads as often as tails, so that if we flipped the coin infinitely many times, the ratio of heads to tails would approach 1:1."
-</blockquote>
+> The frequentist says, "No. Saying 'probability 0.5' means that the coin has an inherent propensity to come up heads as often as tails,
+> so that if we flipped the coin infinitely many times, the ratio of heads to tails would approach 1:1."
 
 The second thing I want to address in this statement, which I think gets the heart of the misunderstanding,
 is a confusion over what exactly gets repeated infinitely many times. He seems to think it's this:
@@ -143,10 +148,9 @@ Different procedures with the same coin will produce different outcomes.
 
 Eliezer contrasts this with the Bayesian's take on the situation:
 
-<blockquote>The Bayesian says, "Uncertainty exists in the map, not in the territory.
-In the real world, the coin has either come up heads, or come up tails.
-Any talk of 'probability' must refer to the <i>information</i> that I have about the coin—my state of partial ignorance and partial knowledge—not just the coin itself."
-</blockquote>
+> The Bayesian says, "Uncertainty exists in the map, not in the territory.
+> In the real world, the coin has either come up heads, or come up tails.
+> Any talk of 'probability' must refer to the _information_ that I have about the coin—my state of partial ignorance and partial knowledge—not just the coin itself."
 
 This is an unwarranted conclusion. Just because probability doesn't live in the coin itself doesn't mean it must live in the mind.
 There are other places it could live.
@@ -155,10 +159,14 @@ There are other places it could live.
 
 A bit later on, he says:
 
-<blockquote>To make the coinflip experiment repeatable, as frequentists are wont to demand, we could build an automated coinflipper, and verify that the results were 50% heads and 50% tails.  But maybe a robot with extra-sensitive eyes and a good grasp of physics, watching the autoflipper prepare to flip, could predict the coin's fall in advance—not with certainty, but with 90% accuracy.  Then what would the <i>real</i> probability be?
-<br/><br/>
-There is no "real probability".  The robot has one state of partial information.  You have a different state of partial information.  The coin itself has no mind, and doesn't assign a probability to anything; it just flips into the air, rotates a few times, bounces off some air molecules, and lands either heads or tails.
-</blockquote>
+> To make the coinflip experiment repeatable, as frequentists are wont to demand, we could build an automated coinflipper,
+> and verify that the results were 50% heads and 50% tails.  But maybe a robot with extra-sensitive eyes and a good grasp of physics,
+> watching the autoflipper prepare to flip, could predict the coin's fall in advance—not with certainty, but with 90% accuracy.
+> Then what would the _real_ probability be?
+>
+> There is no "real probability".  The robot has one state of partial information.  You have a different state of partial information.
+> The coin itself has no mind, and doesn't assign a probability to anything; it just flips into the air, rotates a few times,
+> bounces off some air molecules, and lands either heads or tails.
 
 Again, this is a question of what we consider to be the procedure. If the procedure is
 
@@ -191,28 +199,36 @@ But this situation does not confuse frequentists, thinking about probabilities i
 Under this procedure, the first card is observed to be an ace 33% of the time. No contradiction.
 
 He goes on (interpreting a similar but slightly more complicated procedure):
+{%m%}
+\newcommand\p[1]{P(#1)}
+\newcommand\pg[2]{P(#1 \rvert #2)}
+{%em%}
 
-<blockquote>As for the paradox, there isn't one.  The appearance of paradox comes from thinking that the probabilities must be properties of the cards themselves.  The ace I'm holding has to be either hearts or spades; but that doesn't mean that your knowledge about my cards must be the same as if you knew I was holding hearts, or knew I was holding spades.
-<br/><br/>
-It may help to think of Bayes's Theorem:
-<br/><br/>
-P(H|E) = P(E|H)P(H) / P(E)
-<br/><br/>
-That last term, where you divide by P(E), is the part where you throw out all the possibilities that have been eliminated, and renormalize your probabilities over what remains.
-</blockquote>
+> As for the paradox, there isn't one. The appearance of paradox comes from thinking that the probabilities must be properties of the cards themselves.
+> The ace I'm holding has to be either hearts or spades; but that doesn't mean that your knowledge about my cards must be
+> the same as if you knew I was holding hearts, or knew I was holding spades.
+>
+> It may help to think of Bayes's Theorem:
+>
+> {%m%}\pg{H}{E} = \pg{E}{H}\p{H} \, / \, \p{E}{%em%}
+>
+> That last term, where you divide by {%m%}\p{E}{%em%}, is the part where you throw out all the possibilities that have been eliminated,
+> and renormalize your probabilities over what remains.
 
 Frequentists would agree with this! But they might reword it slightly:
 
-<blockquote>As for the paradox, there isn't one. The appearance of paradox comes from thinking that the probabilities must be properties of the cards themselves. The ace I'm holding has to be either hearts or spades; but that doesn't mean that
-<span style="color: green">the trials you keep when I tell you I'm holding hearts are the same trials you keep in a different procedure where I tell you I'm holding spades</span>.
-<br/><br/>
-It may help to think of Bayes's Theorem:
-<br/><br/>
-P(H|E) = P(E|H)P(H) / P(E)
-<br/><br/>
-That last term, where you divide by P(E), is the part where you throw out all the
-<span style="color: green">trials that don't match the stated outcome in the procedure</span>.
-</blockquote>
+> As for the paradox, there isn't one. The appearance of paradox comes from thinking that the probabilities must be properties of the cards themselves.
+> The ace I'm holding has to be either hearts or spades; but that doesn't mean that
+> <span style="color: green">
+> the trials you keep when I tell you I'm holding hearts are the same trials you keep in a
+> different procedure where I tell you I'm holding spades</span>.
+>
+> It may help to think of Bayes's Theorem:
+>
+> {%m%}\pg{H}{E} = \pg{E}{H}\p{H} \, / \, \p{E}{%em%}
+>
+> That last term, where you divide by {%m%}\p{E}{%em%}, is the part where you throw out all the
+> <span style="color: green">trials that don't match the stated outcome in the procedure</span>.
 
 **Information gathering in the Bayesian regime is equivalent to discarding trials in the frequentist regime.**
 
@@ -226,8 +242,7 @@ I hope I have pointed out that #1 is a straw man and #2 is a false dilemma, to w
 1. Frequentists don't believe that, and
 2. he overlooks another place probability could live: in the process.
 
-Both frequentist and Bayesian modes of thinking about probability will lead you to the same answers (well, most of the time).
+Both frequentist and Bayesian modes of thinking will lead you to the same numeric answers (well, most of the time).
 But personally I like the frequentist approach because it takes the human observer out of the equation.
-
 Why bring minds into it at all?
 
