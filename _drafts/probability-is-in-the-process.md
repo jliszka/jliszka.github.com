@@ -204,9 +204,9 @@ He goes on (interpreting a similar but slightly more complicated procedure):
 \newcommand\pg[2]{P(#1 \rvert #2)}
 {%em%}
 
-> As for the paradox, there isn't one. The appearance of paradox comes from thinking that the probabilities must be properties of the cards themselves.
-> The ace I'm holding has to be either hearts or spades; but that doesn't mean that your knowledge about my cards must be
-> the same as if you knew I was holding hearts, or knew I was holding spades.
+> As for the paradox, there isn't one. The _appearance_ of paradox comes from thinking that the probabilities must be properties of the cards themselves.
+> The ace I'm holding has to be either hearts or spades; but that doesn't mean that your _knowledge about_ my cards must be
+> the same as if you _knew_ I was holding hearts, or _knew_ I was holding spades.
 >
 > It may help to think of Bayes's Theorem:
 >
@@ -217,7 +217,7 @@ He goes on (interpreting a similar but slightly more complicated procedure):
 
 Frequentists would agree with this! But they might reword it slightly:
 
-> As for the paradox, there isn't one. The appearance of paradox comes from thinking that the probabilities must be properties of the cards themselves.
+> As for the paradox, there isn't one. The _appearance_ of paradox comes from thinking that the probabilities must be properties of the cards themselves.
 > The ace I'm holding has to be either hearts or spades; but that doesn't mean that
 > <span style="color: green">
 > the trials you keep when I tell you I'm holding hearts are the same trials you keep in a
