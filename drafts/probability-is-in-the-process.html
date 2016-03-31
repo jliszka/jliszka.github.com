@@ -128,7 +128,7 @@
       <h1>Probability is in the process </h1>
     </div>
     <div class="date">
-      <span>30 March 2016</span>
+      <span>31 March 2016</span>
     </div>
     <div class="content">
       
@@ -140,18 +140,23 @@ but I’m purely out to address the idea, not the person. So here goes.</p>
 
 <p>First I’ll lay out his argument, which he does through a series of examples.</p>
 
-<blockquote>You have a coin.
-<br /><br />
-The coin is biased.
-<br /><br />
-You don't know which way it's biased or how much it's biased.  Someone just told you, "The coin is biased" and that's all they said.
-This is all the information you have, and the only information you have.
-<br /><br />
-You draw the coin forth, flip it, and slap it down.
-<br /><br />
-Now—before you remove your hand and look at the result—are you willing to say that you assign a 0.5 probability to the coin having come up heads?
-<br /><br />
-The frequentist says, "No. Saying 'probability 0.5' means that the coin has an inherent propensity to come up heads as often as tails, so that if we flipped the coin infinitely many times, the ratio of heads to tails would approach 1:1. But we know that the coin is biased, so it can have any probability of coming up heads except 0.5."
+<!-- more -->
+
+<blockquote>
+  <p>You have a coin.</p>
+
+  <p>The coin is biased.</p>
+
+  <p>You don’t know which way it’s biased or how much it’s biased.  Someone just told you, “The coin is biased” and that’s all they said.
+This is all the information you have, and the only information you have.</p>
+
+  <p>You draw the coin forth, flip it, and slap it down.</p>
+
+  <p>Now—before you remove your hand and look at the result—are you willing to say that you assign a 0.5 probability to the coin having come up heads?</p>
+
+  <p>The frequentist says, “No. Saying ‘probability 0.5’ means that the coin has an inherent propensity to come up heads as often as tails,
+so that if we flipped the coin infinitely many times, the ratio of heads to tails would approach 1:1.
+But we know that the coin is biased, so it can have any probability of coming up heads except 0.5.”</p>
 </blockquote>
 
 <p>OK lemme stop right here. I think this mischaracterizes the frequentist’s take on this situation, in two ways.
@@ -204,14 +209,16 @@ prior, and yes, frequentists do make use of priors.</p>
 res1: Double = 0.4983
 </code></pre>
 
-<p><em>while saying nothing about the bias</em> <code>p</code>. So if the question is, “what is the probability that this procedure results in the coin coming up heads?”
-the frequentist will surely say 50%. If you ask the <em>different</em> question, “what is the bias of the coin?” the frequentist will say
+<p><em>while saying nothing about the bias</em> <code>p</code>.</p>
+
+<p>So if the question is, “what is the probability that this procedure results in the coin coming up heads?”
+the frequentist will surely say 50%. However, if you ask the <em>different</em> question, “what is the bias of the coin?” the frequentist will say
 “anything but 50%” without fear of contradicting herself.</p>
 
 <h2 id="calculating-posteriors-is-also-a-procedure">Calculating posteriors is also a procedure</h2>
 
-<p>A related question is, “what is the bias of the coin after observing one heads?” Frequentists can answer this question
-using a procedure. It’s pretty straightforward:</p>
+<p>A related question is, “what is the bias of the coin after observing one heads?” You can answer this question
+in a frequentist way, using a repeated procedure. Here it is:</p>
 
 <ol>
   <li>choose a bias <script type="math/tex">p</script> uniformly in [0, 1]</li>
@@ -249,7 +256,9 @@ We just incorporate our observations into the procedure, simulate it thousands o
 
 <h2 id="probability-is-not-in-the-coin">Probability is not in the coin</h2>
 
-<blockquote>The frequentist says, "No. Saying 'probability 0.5' means that the coin has an inherent propensity to come up heads as often as tails, so that if we flipped the coin infinitely many times, the ratio of heads to tails would approach 1:1."
+<blockquote>
+  <p>The frequentist says, “No. Saying ‘probability 0.5’ means that the coin has an inherent propensity to come up heads as often as tails,
+so that if we flipped the coin infinitely many times, the ratio of heads to tails would approach 1:1.”</p>
 </blockquote>
 
 <p>The second thing I want to address in this statement, which I think gets the heart of the misunderstanding,
@@ -281,9 +290,10 @@ Different procedures with the same coin will produce different outcomes.</p>
 
 <p>Eliezer contrasts this with the Bayesian’s take on the situation:</p>
 
-<blockquote>The Bayesian says, "Uncertainty exists in the map, not in the territory.
+<blockquote>
+  <p>The Bayesian says, “Uncertainty exists in the map, not in the territory.
 In the real world, the coin has either come up heads, or come up tails.
-Any talk of 'probability' must refer to the <i>information</i> that I have about the coin—my state of partial ignorance and partial knowledge—not just the coin itself."
+Any talk of ‘probability’ must refer to the <em>information</em> that I have about the coin—my state of partial ignorance and partial knowledge—not just the coin itself.”</p>
 </blockquote>
 
 <p>This is an unwarranted conclusion. Just because probability doesn’t live in the coin itself doesn’t mean it must live in the mind.
@@ -293,9 +303,15 @@ There are other places it could live.</p>
 
 <p>A bit later on, he says:</p>
 
-<blockquote>To make the coinflip experiment repeatable, as frequentists are wont to demand, we could build an automated coinflipper, and verify that the results were 50% heads and 50% tails.  But maybe a robot with extra-sensitive eyes and a good grasp of physics, watching the autoflipper prepare to flip, could predict the coin's fall in advance—not with certainty, but with 90% accuracy.  Then what would the <i>real</i> probability be?
-<br /><br />
-There is no "real probability".  The robot has one state of partial information.  You have a different state of partial information.  The coin itself has no mind, and doesn't assign a probability to anything; it just flips into the air, rotates a few times, bounces off some air molecules, and lands either heads or tails.
+<blockquote>
+  <p>To make the coinflip experiment repeatable, as frequentists are wont to demand, we could build an automated coinflipper,
+and verify that the results were 50% heads and 50% tails.  But maybe a robot with extra-sensitive eyes and a good grasp of physics,
+watching the autoflipper prepare to flip, could predict the coin’s fall in advance—not with certainty, but with 90% accuracy.
+Then what would the <em>real</em> probability be?</p>
+
+  <p>There is no “real probability”.  The robot has one state of partial information.  You have a different state of partial information.
+The coin itself has no mind, and doesn’t assign a probability to anything; it just flips into the air, rotates a few times,
+bounces off some air molecules, and lands either heads or tails.</p>
 </blockquote>
 
 <p>Again, this is a question of what we consider to be the procedure. If the procedure is</p>
@@ -334,28 +350,40 @@ How can this be?? Nothing changed about the cards, so why should the probability
 
 <p>Under this procedure, the first card is observed to be an ace 33% of the time. No contradiction.</p>
 
-<p>He goes on (interpreting a similar but slightly more complicated procedure):</p>
+<p>He goes on (interpreting a similar but slightly more complicated procedure):
+<script type="math/tex">
+\newcommand\p[1]{P(#1)}
+\newcommand\pg[2]{P(#1 \rvert #2)}
+</script></p>
 
-<blockquote>As for the paradox, there isn't one.  The appearance of paradox comes from thinking that the probabilities must be properties of the cards themselves.  The ace I'm holding has to be either hearts or spades; but that doesn't mean that your knowledge about my cards must be the same as if you knew I was holding hearts, or knew I was holding spades.
-<br /><br />
-It may help to think of Bayes's Theorem:
-<br /><br />
-P(H|E) = P(E|H)P(H) / P(E)
-<br /><br />
-That last term, where you divide by P(E), is the part where you throw out all the possibilities that have been eliminated, and renormalize your probabilities over what remains.
+<blockquote>
+  <p>As for the paradox, there isn’t one. The appearance of paradox comes from thinking that the probabilities must be properties of the cards themselves.
+The ace I’m holding has to be either hearts or spades; but that doesn’t mean that your knowledge about my cards must be
+the same as if you knew I was holding hearts, or knew I was holding spades.</p>
+
+  <p>It may help to think of Bayes’s Theorem:</p>
+
+  <script type="math/tex">\pg{H}{E} = \pg{E}{H}\p{H} \, / \, \p{E}</script>
+
+  <p>That last term, where you divide by <script type="math/tex">\p{E}</script>, is the part where you throw out all the possibilities that have been eliminated,
+and renormalize your probabilities over what remains.</p>
 </blockquote>
 
 <p>Frequentists would agree with this! But they might reword it slightly:</p>
 
-<blockquote>As for the paradox, there isn't one. The appearance of paradox comes from thinking that the probabilities must be properties of the cards themselves. The ace I'm holding has to be either hearts or spades; but that doesn't mean that
-<span style="color: green">the trials you keep when I tell you I'm holding hearts are the same trials you keep in a different procedure where I tell you I'm holding spades</span>.
-<br /><br />
-It may help to think of Bayes's Theorem:
-<br /><br />
-P(H|E) = P(E|H)P(H) / P(E)
-<br /><br />
-That last term, where you divide by P(E), is the part where you throw out all the
-<span style="color: green">trials that don't match the stated outcome in the procedure</span>.
+<blockquote>
+  <p>As for the paradox, there isn’t one. The appearance of paradox comes from thinking that the probabilities must be properties of the cards themselves.
+The ace I’m holding has to be either hearts or spades; but that doesn’t mean that
+<span style="color: green">
+the trials you keep when I tell you I’m holding hearts are the same trials you keep in a
+different procedure where I tell you I’m holding spades</span>.</p>
+
+  <p>It may help to think of Bayes’s Theorem:</p>
+
+  <script type="math/tex">\pg{H}{E} = \pg{E}{H}\p{H} \, / \, \p{E}</script>
+
+  <p>That last term, where you divide by <script type="math/tex">\p{E}</script>, is the part where you throw out all the
+<span style="color: green">trials that don’t match the stated outcome in the procedure</span>.</p>
 </blockquote>
 
 <p><strong>Information gathering in the Bayesian regime is equivalent to discarding trials in the frequentist regime.</strong></p>
@@ -374,10 +402,9 @@ That last term, where you divide by P(E), is the part where you throw out all th
   <li>he overlooks another place probability could live: in the process.</li>
 </ol>
 
-<p>Both frequentist and Bayesian modes of thinking about probability will lead you to the same answers (well, most of the time).
-But personally I like the frequentist approach because it takes the human observer out of the equation.</p>
-
-<p>Why bring minds into it at all?</p>
+<p>Both frequentist and Bayesian modes of thinking will lead you to the same numeric answers (well, most of the time).
+But personally I like the frequentist approach because it takes the human observer out of the equation.
+Why bring minds into it at all?</p>
 
 
     </div>
@@ -395,6 +422,22 @@ But personally I like the frequentist approach because it takes the human observ
 
 
 
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-tags"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="/tags.html#probability-ref">probability <span>9</span></a></li>
+    
+  
+
+
+
+    </ul>
   
     <div style="clear: both"></div>
 

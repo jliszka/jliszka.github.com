@@ -664,7 +664,7 @@ x + 2x^2 + 3x^3 + 4x^4 + \ldots & = x\frac{d}{dx}(1 + x + x^2 + x^3 + \ldots) \\
 %]]>
 </script>
 
-<p>There are all sorts of algebraic tricks to figure out what the generating function is for a sequence, given either 
+<p>There are all sorts of algebraic tricks to figure out what the generating function is for a sequence, given either
 a recurrence relation or a formula for each term of the sequence.</p>
 
 <p>If you’re curious about it, you should head on over to <a href="http://www.math.upenn.edu/~wilf/gfologyLinked2.pdf">Generatingfunctionology</a>.
@@ -722,7 +722,7 @@ res0: Double = 45349.42510889882
 
 <p>OK!</p>
 
-<p>If you read my <a href="/2013/10/24/exact-numeric-nth-derivatives.html">last post on exact numeric nth derivatives</a>, 
+<p>If you read my <a href="/2013/10/24/exact-numeric-nth-derivatives.html">last post on exact numeric nth derivatives</a>,
 you might have noticed that the code for <code>Poly</code> is pretty similar to the
 <a href="https://gist.github.com/jliszka/7085427">implementation of dual numbers</a> that I presented in that post.
 Really the only difference is the lack of reference to the rank of the matrix. The matrices were already lazy
@@ -756,7 +756,7 @@ I should genericize the implementation of <code>Poly</code> to work with any num
 to use <a href="http://github.com/non/spire">spire</a>’s numeric tower for that.</p>
   </li>
   <li>
-    <p>While I’m at it I should make <code>Poly</code> an instace of spire’s <code>Ring</code> typeclass. Infinite polynomials are a ring
+    <p>While I’m at it I should make <code>Poly</code> an instance of spire’s <code>Ring</code> typeclass. Infinite polynomials are a ring
 but not a field because some non-zero elements lack a multiplicative inverse, for instance, <script type="math/tex">x</script>. For any <code>p: Poly</code>,
 <code>p / p</code> will evaluate to 1 (provided I’ve implemented cancellation), but <code>1 / p</code> doesn’t always exist as its own <code>Poly</code>,
 and that’s what I’d need for it to qualify as a field.</p>
