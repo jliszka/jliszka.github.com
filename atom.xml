@@ -4,13 +4,35 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2016-03-31T16:12:38+00:00</updated>
+ <updated>2016-04-05T13:04:20+00:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
    <email>jliszka@alumni.cmu.edu</email>
  </author>
 
+ 
+ <entry>
+   <title>Probability is in the process</title>
+   <link href="http://jliszka.github.io/2016/04/05/probability-is-in-the-process.html"/>
+   <updated>2016-04-05T00:00:00+00:00</updated>
+   <id>http://jliszka.github.io/2016/04/05/probability-is-in-the-process</id>
+   <content type="html">
+    
+      
+&lt;p&gt;I came across an old post by Eliezer Yudkowsky on Less Wrong entitled &lt;a href=&quot;http://lesswrong.com/lw/oj/probability_is_in_the_mind/&quot;&gt;Probability is in the Mind&lt;/a&gt;.
+It immediately struck me as, well, &lt;em&gt;more&lt;/em&gt; wrong, and I want to explain why.&lt;/p&gt;
+
+&lt;p&gt;A brief disclaimer: that article was published 8 years ago and he may have changed his thinking since then,
+but I’m purely out to address the idea, not the person. So here goes.&lt;/p&gt;
+
+&lt;p&gt;First I’ll lay out his argument, which he does through a series of examples.&lt;/p&gt;
+
+
+      &lt;a href="http://jliszka.github.io/2016/04/05/probability-is-in-the-process.html">Read more&lt;/a>
+    
+   </content>
+ </entry>
  
  <entry>
    <title>The quantum eraser demystified</title>
