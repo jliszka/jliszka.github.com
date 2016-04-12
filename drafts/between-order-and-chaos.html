@@ -1,0 +1,592 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Between order and chaos</title>
+    <meta name="description" content="">
+    <meta name="author" content="Jason Liszka">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/themes/twitter/bootstrap/css/bootstrap.2.2.2.min.css" rel="stylesheet">
+    <link href="/assets/themes/twitter/css/style.css?body=1&amp;v=2" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/twitter/css/pygment.css" rel="stylesheet" type="text/css" media="all">
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+
+    <!-- atom & rss feed -->
+    <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="/rss.xml" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container-narrow">
+          <div class="row-fluid">
+            <div class="span9 offset1">
+              <a class="brand" href="/">A Gentleman and a Scala</a>
+              <ul class="nav">
+                
+                
+                
+
+
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+
+
+
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-narrow">
+
+      <div class="content">
+        
+<div class="row-fluid">
+  <div class="span9 offset1 post-content post-spacer"></div>
+</div>
+<div class="row-fluid post-full">
+  <div class="span9 offset1 post-content">
+    <div class="page-header">
+      <h1>Between order and chaos </h1>
+    </div>
+    <div class="date">
+      <span>11 April 2016</span>
+    </div>
+    <div class="content">
+      
+<style type="text/css">
+  .bg {
+    background: no-repeat center url('/assets/img/chaos/map.png');
+    background-size: 700px 700px;
+    position: absolute;
+    width: 700px;
+    height: 700px;
+    z-index: 1;
+  }
+  .canvas {
+    background: black;
+    border: none;
+    margin-bottom: 10px;
+  }
+  .canvas-transparent {
+    border: none;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 2;
+  }
+  p img {
+    background: black;
+  }
+</style>
+
+<script type="text/javascript">
+
+  var xmin = 1.0;
+  var xmax = 4.33333333;
+  var ymin = 1.0;
+  var ymax = 6.0;
+
+  var zoom = null;
+
+  function setupCanvas(id, a, b, doExponent) {
+
+    var canvas = document.getElementById(id);
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "14px Arial";
+
+    if (a && b) {
+      draw(canvas, ctx, a, b);
+    }
+    else {
+      canvas.style.cursor = "crosshair";
+
+      canvas.onclick = function(evt) {
+        if (zoom) {
+          zoom = null;
+        }
+        else {
+          zoom = pixelToParams(canvas, evt.offsetX, evt.offsetY);
+          zoom.a = a;
+          zoom.b = b;
+        }
+        draw(canvas, ctx, a, b, doExponent);
+      };
+
+      canvas.onmousemove = function(evt) {
+        if (evt.metaKey) return;
+
+        var params = pixelToParams(canvas, evt.offsetX, evt.offsetY);
+
+        var da = 0;
+        var db = 0;
+        var d = 0.1;
+        var d2 = 0.01;
+
+        if (zoom) {
+          if (evt.shiftKey) {
+            da = params.px * d2 - d2/2;
+            db = params.py * d2 - d2/2;
+          }
+          else {
+            a = zoom.a + params.px * d - d/2;
+            b = zoom.b + params.py * d - d/2;
+          }
+        }
+        else {
+          if (evt.shiftKey) {
+            da = params.px * d - d/2;
+            db = params.py * d - d/2;
+          }
+          else {
+            a = params.a;
+            b = params.b;
+          }
+        }
+
+        draw(canvas, ctx, a+da, b+db, doExponent);
+      };
+    }
+  }
+
+  function pixelToParams(canvas, x, y) {
+    return {
+      px: x / canvas.clientWidth,
+      py: y / canvas.clientHeight,
+      a: xmin + (xmax - xmin) * (x / canvas.clientWidth),
+      b: ymax - (ymax - ymin) * (y / canvas.clientHeight)
+    };
+  }
+
+  function pointToPixel(canvas, r, f) {
+    if (zoom) {
+      r = (r - zoom.px + 0.05) * 10;
+      f = 1 - ((1 - f) - zoom.py + 0.05) * 10;
+    }
+    return {
+      x: r * canvas.clientWidth,
+      y: (1 - f) * canvas.clientHeight
+    };
+  }
+
+  function draw(canvas, ctx, a, b, doExponent) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillText('a = ' + a.toFixed(5), 520, 20);
+    ctx.fillText('b = ' + b.toFixed(5), 610, 20);
+
+    var L = iterate(a, b, 40000, doExponent, function(r, f) {
+      var p = pointToPixel(canvas, r, f);
+      ctx.fillRect(p.x, p.y, 1, 1);
+    });
+
+    if (doExponent) {
+      ctx.fillText('L = ' + L.toFixed(5), 430, 20);
+    }
+  }
+
+  function iterate(a, b, N, doExponent, cb) {
+    var r = 0.1;
+    var f = 0.1;
+
+    var dx = 0.0000001;
+    var dy = 0.0000001;
+    var d0 = Math.sqrt(dx*dx + dy*dy);
+    var L = 0;
+
+    for (var i = 0; i < N; i++) {
+      var r2 = a * r * (1 - r - f);
+      var f2 = b * f * r;
+
+      if (i == 1000 && (Number.isNaN(f) || Math.abs(f) > 1000)) return null;
+
+      if (doExponent && i > 1000) {
+        var r0 = a * (r+dx) * (1 - (r+dx) - (f+dy));
+        var f0 = b * (f+dy) * (r+dx);
+        var dr = r0 - r2;
+        var df = f0 - f2;
+        var d1 = Math.sqrt(dr*dr + df*df);
+        var dd = d0 / d1;
+        L -= Math.log(dd);
+        dx = dr * dd;
+        dy = df * dd;
+      }
+
+      r = r2;
+      f = f2;
+      cb(r, f);
+    }
+
+    return L / N;
+  }
+</script>
+
+<p>Let me introduce you to a particular population of rabbits and foxes. Each generation, the number of rabbits and
+foxes changes according to a simple set of rules.</p>
+
+<p>Rabbits reproduce at a certain maximum rate, but there is a limited amount of food. So their growth rate is limited by
+the maximum number of rabbits the food supply can support. If the rabbit population is small, they will grow at nearly
+the maxiumum birth rate, but if there are too many rabbits, they will reproduce less (or may die of starvation).
+Also, rabbits will die when they encounter a fox (due to being eaten).</p>
+
+<p>A fox will reproduce only if it encounters (and eats) a rabbit. When it does so, it will produce a certain number of pups.</p>
+
+<p>We will represent the number of rabbits <script type="math/tex">r</script> and the number of foxes <script type="math/tex">f</script> as a percentage of some
+theoretical maximum population; that is, each is a number between 0 and 1.</p>
+
+<p>The number of rabbits in generation <script type="math/tex">n+1</script>, based on the number of rabbits <script type="math/tex">r_n</script>
+and foxes <script type="math/tex">f_n</script> in the previous generation <script type="math/tex">n</script>, is given by:</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+r_{n+1} = a r_n (1 - r_n - f_n)
+%]]>
+</script>
+
+<p>The constant <script type="math/tex">a</script> is the rabbits’ birth rate. For example, if <script type="math/tex">a = 3</script>, then each rabbit produces 2 offspring in the
+next generation. The factor <script type="math/tex">(1 - r_n - f_n)</script> accounts for deaths due to starvation and predation. This is just
+saying that if the number of rabbits is low (remember <script type="math/tex">r_n</script> and <script type="math/tex">f_n</script> are percentages of some maximum population),
+then few will die of starvation, if it’s high then many will; and likewise if the number of foxes is high, many rabbits will die from
+being eaten.</p>
+
+<p>The number of foxes in the next generation is given by:</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+f_{n+1} = b f_n r_n
+%]]>
+</script>
+
+<p>What this says is that the chance that a fox encounters and eats a rabbit is <script type="math/tex">r_n</script>. So if the rabbit population is at
+80% of its theoretical maximum, 80% of foxes will eat enough to reproduce, and will produce <script type="math/tex">b</script> offspring.</p>
+
+<p>So let’s pick some values for <script type="math/tex">a</script> and <script type="math/tex">b</script> and see how the system behaves. We’ll visualize it
+just by plotting the populations on a graph. But instead of plotting both populations on the <script type="math/tex">y</script>-axis against
+time on the <script type="math/tex">x</script>-axis, we’ll plot the populations against each other. That is, we’ll leave time out of it and just
+plot the set of points <script type="math/tex">(r_i, f_i)</script> over, say, 40,000 generations. Let’s see what we get.</p>
+
+<p>For most values of <script type="math/tex">a</script> and <script type="math/tex">b</script>, the system quickly finds a stable point.
+For <script type="math/tex">a = 2</script> and <script type="math/tex">b = 3</script>, it converges in on <script type="math/tex">r = \frac{1}{3}</script> and <script type="math/tex">f = \frac{1}{6}</script>.
+You can check that this is a fixed point of the recurrence.</p>
+<canvas id="canvas0" class="canvas" width="700" height="700"></canvas>
+<script type="text/javascript">
+  setupCanvas("canvas0", 2, 3)
+</script>
+
+<p>Rabbits are on the <script type="math/tex">x</script>-axis, foxes are on the <script type="math/tex">y</script>-axis, and the origin is in the lower left-hand corner.</p>
+
+<p>For other values of <script type="math/tex">a</script> and <script type="math/tex">b</script>, the system converges to a loop instead of a point.</p>
+<canvas id="canvas1" class="canvas" width="700" height="700"></canvas>
+<script type="text/javascript">
+  setupCanvas("canvas1", 2.9, 3.2)
+</script>
+
+<p>Keep in mind the system is not necessarily going from one point to the next around the loop over time.
+It’s actually jumping between points that all happen to be on the same loop. Weird, huh?</p>
+
+<p>Further on, things get weirder.</p>
+<canvas id="canvas2" class="canvas" width="700" height="700"></canvas>
+<script type="text/javascript">
+  setupCanvas("canvas2", 3.15333, 3.44286)
+</script>
+
+<p>Nearby, the loop breaks up into a set of smaller, weird loops…</p>
+<canvas id="canvas3" class="canvas" width="700" height="700"></canvas>
+<script type="text/javascript">
+  setupCanvas("canvas3", 3.08143, 3.66334)
+</script>
+
+<p>… each of which proceeds to get weirder.</p>
+<canvas id="canvas4" class="canvas" width="700" height="700"></canvas>
+<script type="text/javascript">
+  setupCanvas("canvas4", 3.13276, 3.66883)
+</script>
+
+<p>Then, everything gets weird.</p>
+<canvas id="canvas5" class="canvas" width="700" height="700"></canvas>
+<script type="text/javascript">
+  setupCanvas("canvas5", 3.20667, 3.5)
+</script>
+
+<p>This is beautiful if you ask me.</p>
+<canvas id="canvas6" class="canvas" width="700" height="700"></canvas>
+<script type="text/javascript">
+  setupCanvas("canvas6", 3.11376, 3.88351)
+</script>
+
+<p>This is chaos (still beautiful).</p>
+<canvas id="canvas7" class="canvas" width="700" height="700"></canvas>
+<script type="text/javascript">
+  setupCanvas("canvas7", 3.41262, 3.61603)
+</script>
+
+<p>Below, you can explore the parameter space yourself. Your mouse position determines the values of <script type="math/tex">a</script> and <script type="math/tex">b</script>.
+Hold down <code>shift</code> for fine-tuning.</p>
+
+<canvas id="canvas-i" class="canvas" width="700" height="700"></canvas>
+<script type="text/javascript">
+  setupCanvas("canvas-i")
+</script>
+
+<p>If you’re careful with your mouse, you can find places where the top-level loop bifurcates into smaller loops,
+which divide again into smaller loops, presumably indefinitely.
+In fact, it seems like you can make the smaller loops exhibit all the same weird behavior the top-level loop does.
+So there is definitely some self-similar recursive structure here.</p>
+
+<p>As you move your mouse around, doesn’t it feel like you’re looking at 2D slices of some larger, crazy complicated 4D object?
+I thought so too.</p>
+
+<p><a href="/assets/html/chaos.html?3.1">Here is the 3D slice you get</a> when you fix <script type="math/tex">a = 3.1</script>.
+Click and drag to rotate, scroll to zoom. You can also edit the url parameter to try different values for <script type="math/tex">a</script>.</p>
+
+<h2 id="a-map-of-the-territory">A map of the territory</h2>
+
+<p>Playing around with this, it seems like there are regions where the system converges to several points, other regions where
+it’s a loop, and other regions where it’s more like a cloud. Trying to find “interesting” regions of the parameter space
+can feel like wandering around without a map. So, let’s make a map.</p>
+
+<p>We’ll color each point <script type="math/tex">(a, b)</script> according to how the system behaves with those parameter values.
+To do that we’ll use something called the <a href="https://en.wikipedia.org/wiki/Lyapunov_exponent">Lyapunov exponent</a>.
+This is a measure of how quickly two points <script type="math/tex">(r, f)</script> and <script type="math/tex">(r', f')</script>, initially spaced very close together, diverge or converge after
+repeated iteration. It’s assumed that the distance between them will go like <script type="math/tex">e^{nL}</script>, where <script type="math/tex">n</script>
+is the iteration number. If <script type="math/tex">L = 0</script>, they stay the same distance apart. If <script type="math/tex">L \lt 0</script>, they get closer
+together over time. And if <script type="math/tex">L \gt 0</script>, they diverge. Larger exponents mean they diverge (or converge) faster.</p>
+
+<p>I chose shades of green for <script type="math/tex">L \lt 0</script>, yellow for <script type="math/tex">0 \leqslant L \lt 0.01</script>, red for <script type="math/tex">0.01 \leqslant L \lt 0.1</script>, and
+purple for <script type="math/tex">L \gt 0.1</script>.
+If the system diverged to infinity (that is, <script type="math/tex">f</script> gets very large), I colored the point black.</p>
+
+<p>The image below is the what I got for <script type="math/tex">a</script> between 1 and 4.333 and <script type="math/tex">b</script> between 1 and 6.</p>
+
+<p><img src="/assets/img/chaos/map.png" alt="map" /></p>
+
+<p>So, that’s a thing. Here it is as a <a href="/assets/img/chaos/map-2400.png">2400 x 2400 png</a>. You can see some definite fractal structure here.
+You can see this better in the higher resolution image, but the messy yellow/green region looks like moiré pattern, indicating long thin lines of alternating color. Between the big green triangles there are smaller triangles, and the bottom-left corners of these triangles extend all the way to the
+<script type="math/tex">L = 0</script> boundary.</p>
+
+<p>But anyway, laying this map underneath the interactive plot from above, you can see how different regions of the parameter space behave.</p>
+
+<div class="bg"></div>
+<canvas id="canvas-t" class="canvas-transparent" width="700" height="700"></canvas>
+<script type="text/javascript">
+  setupCanvas("canvas-t", null, null, true)
+</script>
+
+<h2 id="what-is-this">What is this?</h2>
+
+<p>I don’t know, but it’s closely related to the <a href="https://en.wikipedia.org/wiki/Logistic_map">logistic map</a>, which is a similar
+recurrence given by:</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+x_{n+1} = r x_n (1 - x_n)
+%]]>
+</script>
+
+<p>This would model a population of rabbits subject only to starvation (no foxes). It’s pretty crazy too:</p>
+
+<p><img src="/assets/img/chaos/logistic.png" alt="logistic map" /></p>
+
+<p><span style="font-size: 12px; font-style: italic">
+  By <a href="//commons.wikimedia.org/wiki/User:Efecretion" title="User:Efecretion">Jordan Pierce</a> - <span class="int-own-work" lang="en">Own work</span>, <a href="http://creativecommons.org/publicdomain/zero/1.0/deed.en" title="Creative Commons Zero, Public Domain Dedication">CC0</a>, <a href="https://commons.wikimedia.org/w/index">https://commons.wikimedia.org/w/index.php?curid=16445229</a>
+</span></p>
+
+<p>This must be the logistic map’s crazy 4D cousin. In fact, the vertical bars on the bottom right of the map match up
+precisely the the bifurcation points of the logistic map. The first split is at <script type="math/tex">r = 3</script> (<script type="math/tex">a = 3</script> on my plot),
+the next is at 3.4, the next at 3.54, and then chaos takes over at 3.55, with breaks of order at 3.62, 3.72 and 3.81.</p>
+
+<p>You can also find the ghost of the logistic map itself if you move your mouse around the small purple triangular region near
+the vertical bars around <script type="math/tex">a = 3.7, b = 1.67</script>. Spooky!</p>
+
+
+    </div>
+
+  
+
+  
+
+
+  <div style="float: right; margin-top: 5px">
+  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jliszka.github.io/drafts/between-order-and-chaos.html" data-text="Between order and chaos" data-via="jliszka">Tweet</a>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+</div>
+
+
+
+
+  
+    <div style="clear: both"></div>
+
+    <hr>
+    <div class="navigation">
+    
+    
+      <div style="clear: both"></div>
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'jliszka'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+
+  <div class="span2 sidebar">
+    <a href="/"><div id="photo"></div></a>
+    <div id="bio">
+      <b>Jason Liszka</b><br/>
+      <i>Engineer at Slack NYC, CMU alum, Scala fan, new father</i>
+    </div>
+    <h4>Popular posts</h4>
+    <ul>
+      <li><a href="/2013/10/01/how-traffic-actually-works.html">How traffic actually works</a></li>
+      <li><a href="/2013/08/12/a-frequentist-approach-to-probability.html">A frequentist approach to probability</a></li>
+      <li><a href="/2013/10/24/exact-numeric-nth-derivatives.html">Exact numeric nth derivatives</a></li>
+      <li><a href="/2013/10/31/infinite-lazy-polynomials.html">Infinite lazy polynomials</a></li>
+    </ul>
+
+    <h4>Recent posts</h4>
+    <ul>
+      
+        <li><a href="/2016/04/05/probability-is-in-the-process.html">Probability is in the process</a></li>
+      
+        <li><a href="/2014/07/31/the-quantum-eraser.html">The quantum eraser demystified</a></li>
+      
+        <li><a href="/2014/07/12/is-the-nba-draft-rigged.html">Is the NBA draft rigged?</a></li>
+      
+        <li><a href="/2014/06/03/programming-with-futures.html">Programming with futures: patterns and anti-patterns</a></li>
+      
+        <li><a href="/2014/01/30/good-tech-lead-bad-tech-lead.html">Good Tech Lead, Bad Tech Lead</a></li>
+      
+    </ul>
+
+    <a href="https://twitter.com/jliszka" class="twitter-follow-button" data-show-count="false" data-size="large" data-show-screen-name="false">Follow @jliszka</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+  </div>
+</div>
+
+
+      </div>
+      <hr>
+      <footer>
+        <p>&copy; 2016 Jason Liszka
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </footer>
+
+    </div>
+
+    
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-42567355-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+  </body>
+</html>
+
