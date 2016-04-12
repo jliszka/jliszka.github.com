@@ -8,22 +8,13 @@ tags: []
 {% include JB/setup %}
 
 <style type="text/css">
-  .bg1 {
-    background: no-repeat center url('/assets/img/chaos/l-map.png');
+  .bg {
+    background: no-repeat center url('/assets/img/chaos/map.png');
     background-size: 700px 700px;
     position: absolute;
     width: 700px;
     height: 700px;
     z-index: 1;
-  }
-  .bg2 {
-    background: black;
-    position: absolute;
-    opacity: 0.3;
-    filter: alpha(opacity=0.5);
-    width: 700px;
-    height: 700px;
-    z-index: 2;
   }
   .canvas {
     background: black;
@@ -34,7 +25,7 @@ tags: []
     border: none;
     margin-bottom: 10px;
     position: relative;
-    z-index: 3;
+    z-index: 2;
   }
   p img {
     background: black;
@@ -44,9 +35,9 @@ tags: []
 <script type="text/javascript">
 
   var xmin = 1.0;
-  var xmax = 6.0;
+  var xmax = 4.33333333;
   var ymin = 1.0;
-  var ymax = 4.33333333;
+  var ymax = 6.0;
 
   var zoom = null;
 
@@ -71,8 +62,8 @@ tags: []
           zoom = pixelToParams(canvas, evt.offsetX, evt.offsetY);
           zoom.a = a;
           zoom.b = b;
-          draw(canvas, ctx, a, b, doExponent);
         }
+        draw(canvas, ctx, a, b, doExponent);
       };
 
       canvas.onmousemove = function(evt) {
@@ -87,18 +78,18 @@ tags: []
 
         if (zoom) {
           if (evt.shiftKey) {
-            da = params.py * d2 - d2/2;
-            db = params.px * d2 - d2/2;
+            da = params.px * d2 - d2/2;
+            db = params.py * d2 - d2/2;
           }
           else {
-            a = zoom.a + params.py * d - d/2;
-            b = zoom.b + params.px * d - d/2;
+            a = zoom.a + params.px * d - d/2;
+            b = zoom.b + params.py * d - d/2;
           }
         }
         else {
           if (evt.shiftKey) {
-            da = params.py * d - d/2;
-            db = params.px * d - d/2;
+            da = params.px * d - d/2;
+            db = params.py * d - d/2;
           }
           else {
             a = params.a;
@@ -115,19 +106,19 @@ tags: []
     return {
       px: x / canvas.clientWidth,
       py: y / canvas.clientHeight,
-      a: ymax - (ymax - ymin) * (y / canvas.clientHeight),
-      b: xmin + (xmax - xmin) * (x / canvas.clientWidth)
+      a: xmin + (xmax - xmin) * (x / canvas.clientWidth),
+      b: ymax - (ymax - ymin) * (y / canvas.clientHeight)
     };
   }
 
   function pointToPixel(canvas, r, f) {
     if (zoom) {
-      f = (f - zoom.px + 0.05) * 10;
-      r = 1 - ((1 - r) - zoom.py + 0.05) * 10;
+      r = (r - zoom.px + 0.05) * 10;
+      f = 1 - ((1 - f) - zoom.py + 0.05) * 10;
     }
     return {
-      x: f * canvas.clientWidth,
-      y: (1 - r) * canvas.clientHeight
+      x: r * canvas.clientWidth,
+      y: (1 - f) * canvas.clientHeight
     };
   }
 
@@ -136,7 +127,7 @@ tags: []
     ctx.fillText('a = ' + a.toFixed(5), 520, 20);
     ctx.fillText('b = ' + b.toFixed(5), 610, 20);
 
-    var L = iterate(a, b, 40000, function(r, f) {
+    var L = iterate(a, b, 40000, doExponent, function(r, f) {
       var p = pointToPixel(canvas, r, f);
       ctx.fillRect(p.x, p.y, 1, 1);
     });
@@ -146,7 +137,7 @@ tags: []
     }
   }
 
-  function iterate(a, b, iters, cb) {
+  function iterate(a, b, N, doExponent, cb) {
     var r = 0.1;
     var f = 0.1;
 
@@ -154,21 +145,23 @@ tags: []
     var dy = 0.0000001;
     var d0 = Math.sqrt(dx*dx + dy*dy);
     var L = 0;
-    var N = 2000;
 
-    for (var i = 0; i < iters; i++) {
+    for (var i = 0; i < N; i++) {
       var r2 = a * r * (1 - r - f);
       var f2 = b * f * r;
 
-      if (i > iters - N) {
+      if (i == 1000 && (Number.isNaN(f) || Math.abs(f) > 1000)) return null;
+
+      if (doExponent && i > 1000) {
         var r0 = a * (r+dx) * (1 - (r+dx) - (f+dy));
         var f0 = b * (f+dy) * (r+dx);
         var dr = r0 - r2;
         var df = f0 - f2;
         var d1 = Math.sqrt(dr*dr + df*df);
-        L += Math.log(Math.abs(d1 / d0));
-        dx = dr * d0 / d1;
-        dy = df * d0 / d1;
+        var dd = d0 / d1;
+        L -= Math.log(dd);
+        dx = dr * dd;
+        dy = df * dd;
       }
 
       r = r2;
@@ -218,16 +211,16 @@ What this says is that the chance that a fox encounters and eats a rabbit is {%m
 So let's pick some values for {%m%}a{%em%} and {%m%}b{%em%} and see how the system behaves. We'll visualize it
 just by plotting the populations on a graph. But instead of plotting both populations on the {%m%}y{%em%}-axis against
 time on the {%m%}x{%em%}-axis, we'll plot the populations against each other. That is, we'll leave time out of it and just
-plot the set of points {%m%}(f_i, r_i){%em%} over, say, 40,000 generations. Let's see what we get.
+plot the set of points {%m%}(r_i, f_i){%em%} over, say, 40,000 generations. Let's see what we get.
 
 For most values of {%m%}a{%em%} and {%m%}b{%em%}, the system quickly finds a stable point.
-For {%m%}a = 2{%em%} and {%m%}b = 3{%em%}, it converges in on {%m%}f = \frac{1}{6}{%em%} and {%m%}r = \frac{1}{3}{%em%}.
+For {%m%}a = 2{%em%} and {%m%}b = 3{%em%}, it converges in on {%m%}r = \frac{1}{3}{%em%} and {%m%}f = \frac{1}{6}{%em%}.
 You can check that this is a fixed point of the recurrence.
 <canvas id="canvas0" class="canvas" width="700" height="700"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas0", 2, 3)
 </script>
-Foxes are on the {%m%}x{%em%}-axis, and the origin is in the lower left-hand corner.
+Rabbits are on the {%m%}x{%em%}-axis, foxes are on the {%m%}y{%em%}-axis, and the origin is in the lower left-hand corner.
 
 For other values of {%m%}a{%em%} and {%m%}b{%em%}, the system converges to a loop instead of a point.
 <canvas id="canvas1" class="canvas" width="700" height="700"></canvas>
@@ -281,46 +274,49 @@ Hold down `shift` for fine-tuning.
   setupCanvas("canvas-i")
 </script>
 
-Playing around with this, it seems like there are regions where the system converges to several points, other regions where
-it's a loop, and other regions where it's more like a cloud. I wanted to see if there were any patterns to how these regions
-are laid out in the parameter space, so I decided to color each point {%m%}(a, b){%em%}
-according to how the system behaves with those parameter values.
-
-For each point, I first ran through 1,000 iterations
-to let the system converge, and from then on kept track of the number of unique points visited during the remaining iterations (rounding
-to the nearest 0.001). Then I colored that point green if the system converged to a small number of fixed points (like less than 100),
-and red if it converged a larger set of points (a loop or a cloud). In both cases I made the color brighter the more unique points were hit.
-If at any point the system got very close to 0, I colored that point black.
-If the system diverged to infinity, I colored that point yellow, purple, orange, or blue depending on whether {%m%}f{%em%} or diverged
-to positive or negative infinity.
-
-The image below is the what I got for {%m%}a{%em%} between 1 and 4.333 and {%m%}b{%em%} between 1 and 6.
-
-![map](/assets/img/chaos/l-map.png)
-
-I'm not sure what to make of this... there definitely are some patterns, but it's hard to tell whether there is any
-kind of fractal structure here or whatever. I might need to render this in higher resolution to find out. Also I'm sure
-my simplistic coloring scheme could be improved to reveal more structure.
-
 If you're careful with your mouse, you can find places where the top-level loop bifurcates into smaller loops,
 which divide again into smaller loops, presumably indefinitely.
 In fact, it seems like you can make the smaller loops exhibit all the same weird behavior the top-level loop does.
 So there is definitely some self-similar recursive structure here.
-
-But anyway, laying this map underneath the interactive plot from above, you can see how different regions of the parameter space behave.
-
-<div class="bg1"></div>
-<div class="bg2"></div>
-<canvas id="canvas-t" class="canvas-transparent" width="700" height="700"></canvas>
-<script type="text/javascript">
-  setupCanvas("canvas-t", null, null, true)
-</script>
 
 As you move your mouse around, doesn't it feel like you're looking at 2D slices of some larger, crazy complicated 4D object?
 I thought so too.
 
 [Here is the 3D slice you get](/assets/html/chaos.html?3.1) when you fix {%m%}a = 3.1{%em%}.
 Click and drag to rotate, scroll to zoom. You can also edit the url parameter to try different values for {%m%}a{%em%}.
+
+## A map of the territory
+
+Playing around with this, it seems like there are regions where the system converges to several points, other regions where
+it's a loop, and other regions where it's more like a cloud. Trying to find "interesting" regions of the parameter space
+can feel like wandering around without a map. So, let's make a map.
+
+We'll color each point {%m%}(a, b){%em%} according to how the system behaves with those parameter values.
+To do that we'll use something called the [Lyapunov exponent](https://en.wikipedia.org/wiki/Lyapunov_exponent).
+This is a measure of how quickly two points {%m%}(r, f){%em%} and {%m%}(r', f'){%em%}, initially spaced very close together, diverge or converge after
+repeated iteration. It's assumed that the distance between them will go like {%m%}e^{nL}{%em%}, where {%m%}n{%em%}
+is the iteration number. If {%m%}L = 0{%em%}, they stay the same distance apart. If {%m%}L \lt 0{%em%}, they get closer
+together over time. And if {%m%}L \gt 0{%em%}, they diverge. Larger exponents mean they diverge (or converge) faster.
+
+I chose shades of green for {%m%}L \lt 0{%em%}, yellow for {%m%}0 \leqslant L \lt 0.01{%em%}, red for {%m%}0.01 \leqslant L \lt 0.1{%em%}, and
+purple for {%m%}L \gt 0.1{%em%}.
+If the system diverged to infinity (that is, {%m%}f{%em%} gets very large), I colored the point black.
+
+The image below is the what I got for {%m%}a{%em%} between 1 and 4.333 and {%m%}b{%em%} between 1 and 6.
+
+![map](/assets/img/chaos/map.png)
+
+So, that's a thing. Here it is as a [2400 x 2400 png](/assets/img/chaos/map-2400.png). You can see some definite fractal structure here.
+You can see this better in the higher resolution image, but the messy yellow/green region looks like moiré pattern, indicating long thin lines of alternating color. Between the big green triangles there are smaller triangles, and the bottom-left corners of these triangles extend all the way to the
+{%m%}L = 0{%em%} boundary.
+
+But anyway, laying this map underneath the interactive plot from above, you can see how different regions of the parameter space behave.
+
+<div class="bg"></div>
+<canvas id="canvas-t" class="canvas-transparent" width="700" height="700"></canvas>
+<script type="text/javascript">
+  setupCanvas("canvas-t", null, null, true)
+</script>
 
 ## What is this?
 
@@ -339,10 +335,10 @@ This would model a population of rabbits subject only to starvation (no foxes). 
   By <a href="//commons.wikimedia.org/wiki/User:Efecretion" title="User:Efecretion">Jordan Pierce</a> - <span class="int-own-work" lang="en">Own work</span>, <a href="http://creativecommons.org/publicdomain/zero/1.0/deed.en" title="Creative Commons Zero, Public Domain Dedication">CC0</a>, <a href="https://commons.wikimedia.org/w/index">https://commons.wikimedia.org/w/index.php?curid=16445229</a>
 </span>
 
-This must be the logistic map's crazy 4D cousin. In fact, the horizontal bars on the left-hand side of the color plot match up
+This must be the logistic map's crazy 4D cousin. In fact, the vertical bars on the bottom right of the map match up
 precisely the the bifurcation points of the logistic map. The first split is at {%m%}r = 3{%em%} ({%m%}a = 3{%em%} on my plot),
 the next is at 3.4, the next at 3.54, and then chaos takes over at 3.55, with breaks of order at 3.62, 3.72 and 3.81.
 
-You can also find the ghost of the logistic map itself if you move your mouse around the small red triangular region near
+You can also find the ghost of the logistic map itself if you move your mouse around the small purple triangular region near
 the vertical bars around {%m%}a = 3.7, b = 1.67{%em%}. Spooky!
 
