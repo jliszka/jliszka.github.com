@@ -52,7 +52,7 @@
     
       
       	
-      	<li><a href="/archive.html">Archive</a></li>
+      	<li><a href="/archive">Archive</a></li>
       	
       
     
@@ -80,7 +80,7 @@
     
       
       	
-      	<li><a href="/tags.html">Tags</a></li>
+      	<li><a href="/tags">Tags</a></li>
       	
       
     
@@ -128,7 +128,9 @@
       <h1>Exact numeric nth derivatives </h1>
     </div>
     <div class="date">
-      <span>24 October 2013</span>
+      
+        <span>24 October 2013</span>
+      
     </div>
     <div class="content">
       
@@ -359,32 +361,32 @@ a & b & c & d \\
 
 <h3 id="code">Code</h3>
 
-<p>OK, enough math, let’s code it up. The <code>Dual</code> class will represent a dual number. The underlying representation is a
+<p>OK, enough math, let’s code it up. The <code class="highlighter-rouge">Dual</code> class will represent a dual number. The underlying representation is a
 square <a href="http://en.wikipedia.org/wiki/Triangular_matrix">upper triangular</a>
 <a href="http://en.wikipedia.org/wiki/Toeplitz_matrix">diagonal-constant</a> matrix. Unlike typical matrix libraries, I’m not
-going to store the cell values as a <code>List[List[Double]]</code> or anything. Instead I’m just going to have a method
-<code>get(r: Int, c: Int): Double</code> that returns the value in the specified cell. Also I’ll memoize it, so yeah, I guess I
+going to store the cell values as a <code class="highlighter-rouge">List[List[Double]]</code> or anything. Instead I’m just going to have a method
+<code class="highlighter-rouge">get(r: Int, c: Int): Double</code> that returns the value in the specified cell. Also I’ll memoize it, so yeah, I guess I
 am storing the cell values somewhere. But this technique makes all the matrix operations easier to write.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">Dual</span><span class="o">(</span><span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">Dual</span><span class="o">(</span><span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
   <span class="n">self</span> <span class="k">=&gt;</span>
 
-  <span class="c1">// Cell value accessor</span>
-  <span class="k">protected</span> <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">c</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span>
+  <span class="c1">// Cell value accessor
+</span>  <span class="k">protected</span> <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">c</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span>
 
-  <span class="c1">// Memoizing cell value accessor.</span>
-  <span class="c1">// Since it&#39;s a diagonal-constant matrix, we can use r - c as the key.</span>
-  <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">c</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="n">memo</span><span class="o">.</span><span class="n">getOrElseUpdate</span><span class="o">(</span><span class="n">r</span> <span class="o">-</span> <span class="n">c</span><span class="o">,</span> <span class="n">self</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">r</span><span class="o">,</span> <span class="n">c</span><span class="o">))</span>
+  <span class="c1">// Memoizing cell value accessor.
+</span>  <span class="c1">// Since it's a diagonal-constant matrix, we can use r - c as the key.
+</span>  <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">c</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="n">memo</span><span class="o">.</span><span class="n">getOrElseUpdate</span><span class="o">(</span><span class="n">r</span> <span class="o">-</span> <span class="n">c</span><span class="o">,</span> <span class="n">self</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">r</span><span class="o">,</span> <span class="n">c</span><span class="o">))</span>
 
-  <span class="c1">// The memo table</span>
-  <span class="k">private</span> <span class="k">val</span> <span class="n">memo</span> <span class="k">=</span> <span class="n">scala</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">mutable</span><span class="o">.</span><span class="nc">HashMap</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">Double</span><span class="o">]()</span>
-<span class="o">}</span></code></pre></div>
+  <span class="c1">// The memo table
+</span>  <span class="k">private</span> <span class="k">val</span> <span class="n">memo</span> <span class="k">=</span> <span class="n">scala</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">mutable</span><span class="o">.</span><span class="nc">HashMap</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">Double</span><span class="o">]()</span>
+<span class="o">}</span></code></pre></figure>
 
 <p>Now the usual matrix operations.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">Dual</span><span class="o">(</span><span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">Dual</span><span class="o">(</span><span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>
   <span class="k">def</span> <span class="o">+(</span><span class="n">other</span><span class="k">:</span> <span class="kt">Dual</span><span class="o">)</span><span class="k">:</span> <span class="kt">Dual</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Dual</span><span class="o">(</span><span class="n">rank</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">c</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="n">self</span><span class="o">(</span><span class="n">r</span><span class="o">,</span> <span class="n">c</span><span class="o">)</span> <span class="o">+</span> <span class="n">other</span><span class="o">(</span><span class="n">r</span><span class="o">,</span> <span class="n">c</span><span class="o">)</span>
   <span class="o">}</span>
@@ -404,7 +406,7 @@ am storing the cell values somewhere. But this technique makes all the matrix op
   <span class="k">def</span> <span class="o">*(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Dual</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Dual</span><span class="o">(</span><span class="n">rank</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">c</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="n">self</span><span class="o">(</span><span class="n">r</span><span class="o">,</span> <span class="n">c</span><span class="o">)</span> <span class="o">*</span> <span class="n">x</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Division is implemented as multiplication by the inverse: <script type="math/tex">A/B = AB^{-1}</script>. Matrix inverses are annoying to find
 and may not exist in the general case, but thankfully all we’re dealing with are square upper triangular matrices, which
@@ -437,9 +439,9 @@ D</script>, where <script type="math/tex">D</script> is a nilpotent matrix, mean
 
 <p>where <script type="math/tex">N = \frac{-1}{a}D</script>. Here’s the code:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">Dual</span><span class="o">(</span><span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">Dual</span><span class="o">(</span><span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>
   <span class="k">def</span> <span class="o">/(</span><span class="n">other</span><span class="k">:</span> <span class="kt">Dual</span><span class="o">)</span><span class="k">:</span> <span class="kt">Dual</span> <span class="o">=</span> <span class="n">self</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">inv</span>
 
   <span class="k">def</span> <span class="o">/(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Dual</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Dual</span><span class="o">(</span><span class="n">rank</span><span class="o">)</span> <span class="o">{</span>
@@ -453,17 +455,17 @@ D</script>, where <script type="math/tex">D</script> is a nilpotent matrix, mean
     <span class="nc">List</span><span class="o">.</span><span class="n">iterate</span><span class="o">(</span><span class="n">I</span><span class="o">,</span> <span class="n">rank</span><span class="o">)(</span><span class="k">_</span> <span class="o">*</span> <span class="n">N</span><span class="o">).</span><span class="n">reduce</span><span class="o">(</span><span class="k">_</span> <span class="o">+</span> <span class="k">_</span><span class="o">)</span> <span class="o">/</span> <span class="n">a</span>
   <span class="o">}</span>
 
-  <span class="c1">// An identity matrix of the same rank as this one</span>
-  <span class="k">lazy</span> <span class="k">val</span> <span class="n">I</span><span class="k">:</span> <span class="kt">Dual</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Dual</span><span class="o">(</span><span class="n">rank</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// An identity matrix of the same rank as this one
+</span>  <span class="k">lazy</span> <span class="k">val</span> <span class="n">I</span><span class="k">:</span> <span class="kt">Dual</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Dual</span><span class="o">(</span><span class="n">rank</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">c</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">r</span> <span class="o">==</span> <span class="n">c</span><span class="o">)</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">0</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Finally, some utility methods:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">Dual</span><span class="o">(</span><span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">Dual</span><span class="o">(</span><span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>
   <span class="k">def</span> <span class="n">pow</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Dual</span> <span class="o">=</span> <span class="o">{</span>
     <span class="k">def</span> <span class="n">helper</span><span class="o">(</span><span class="n">b</span><span class="k">:</span> <span class="kt">Dual</span><span class="o">,</span> <span class="n">e</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">acc</span><span class="k">:</span> <span class="kt">Dual</span><span class="o">)</span><span class="k">:</span> <span class="kt">Dual</span> <span class="o">=</span> <span class="o">{</span>
       <span class="k">if</span> <span class="o">(</span><span class="n">e</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="n">acc</span>
@@ -473,23 +475,23 @@ D</script>, where <script type="math/tex">D</script> is a nilpotent matrix, mean
   <span class="o">}</span>
 
   <span class="k">override</span> <span class="k">def</span> <span class="n">toString</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="o">(</span><span class="mi">1</span> <span class="n">to</span> <span class="n">rank</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">c</span> <span class="k">=&gt;</span> <span class="n">self</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="n">c</span><span class="o">)).</span><span class="n">mkString</span><span class="o">(</span><span class="s">&quot; &quot;</span><span class="o">)</span>
+    <span class="o">(</span><span class="mi">1</span> <span class="n">to</span> <span class="n">rank</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">c</span> <span class="k">=&gt;</span> <span class="n">self</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="n">c</span><span class="o">)).</span><span class="n">mkString</span><span class="o">(</span><span class="s">" "</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Now we need concrete classes representing 1 and <script type="math/tex">\e</script>:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">I</span><span class="o">(</span><span class="k">override</span> <span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Dual</span><span class="o">(</span><span class="n">rank</span><span class="o">)</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">I</span><span class="o">(</span><span class="k">override</span> <span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Dual</span><span class="o">(</span><span class="n">rank</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">c</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">r</span> <span class="o">==</span> <span class="n">c</span><span class="o">)</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">0</span>
 <span class="o">}</span>
 
 <span class="k">class</span> <span class="nc">E</span><span class="o">(</span><span class="k">override</span> <span class="k">val</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Dual</span><span class="o">(</span><span class="n">rank</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">get</span><span class="o">(</span><span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">c</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">r</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">c</span><span class="o">)</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">0</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Let’s try it out. Suppose we want to find the first 5 derivatives of <script type="math/tex">f(x) = x^4</script> at <script type="math/tex">f(2)</script>.</p>
 
-<pre><code>scala&gt; val one = new I(6)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val one = new I(6)
 i: I = 1.0 0.0 0.0 0.0 0.0 0.0
 
 scala&gt; val e = new E(6)
@@ -501,6 +503,7 @@ f: (x: Dual)Dual
 scala&gt; f(one*2 + e)
 res0: Dual = 16.0 32.0 24.0 8.0 1.0 0.0
 </code></pre>
+</div>
 
 <p>This is <script type="math/tex">16 + 32\e + 24\e^2 + 8\e^3 + \e^4</script>. The coefficient of <script type="math/tex">\e^n</script> will be <script type="math/tex">f^{(n)}(x)/n!</script>.
 And it checks out:</p>
@@ -520,7 +523,7 @@ f^{(5)}(x) &= 0 & f^{(5)}(2) &= 0 = 0 \cdot 5!
 
 <p>How about the first 8 derivatives of <script type="math/tex">g(x) = \frac{4x^2}{(1 - x)^3}</script> at <script type="math/tex">g(3)</script>?</p>
 
-<pre><code>scala&gt; val one = new I(9)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val one = new I(9)
 i: I = 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
 
 scala&gt; val e = new E(9)
@@ -532,6 +535,7 @@ g: (x: Dual)Dual
 scala&gt; g(one*3 + e)
 res1: Dual = -4.5 3.75 -2.75 1.875 -1.21875 0.765625 -0.46875 0.28125 -0.166015625
 </code></pre>
+</div>
 
 <p>OK, let’s just check <script type="math/tex">g^{(4)}(3)</script>. I’m gonna use <a href="http://www.wolframalpha.com/input/?i=4th+derivative+of+4x%5E2%2F%281-x%29%5E3">Wolfram Alpha</a>
 for this, because… yeah.</p>
@@ -666,7 +670,7 @@ are certainly ways to do this! But maybe it’s a topic for another post.</p>
       </div>
       <hr>
       <footer>
-        <p>&copy; 2016 Jason Liszka
+        <p>&copy; 2013 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

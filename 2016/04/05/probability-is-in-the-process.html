@@ -52,7 +52,7 @@
     
       
       	
-      	<li><a href="/archive.html">Archive</a></li>
+      	<li><a href="/archive">Archive</a></li>
       	
       
     
@@ -80,7 +80,7 @@
     
       
       	
-      	<li><a href="/tags.html">Tags</a></li>
+      	<li><a href="/tags">Tags</a></li>
       	
       
     
@@ -128,7 +128,9 @@
       <h1>Probability is in the process </h1>
     </div>
     <div class="date">
-      <span>05 April 2016</span>
+      
+        <span>05 April 2016</span>
+      
     </div>
     <div class="content">
       
@@ -170,17 +172,18 @@ Now sometimes those are the same thing! But in this case they are not. They <em>
 
 <p>In code this might be:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">flip</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">flip</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">outcome</span> <span class="k">&lt;-</span> <span class="n">discrete</span><span class="o">(</span><span class="n">H</span> <span class="o">-&gt;</span> <span class="n">p</span><span class="o">,</span> <span class="n">T</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="o">))</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">outcome</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>In this case you should say that the probability of observing a head is <script type="math/tex">p</script>:</p>
 
-<pre><code>scala&gt; flip(0.3).pr(_ == H)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; flip(0.3).pr(_ == H)
 res0: Double = 0.3023
 </code></pre>
+</div>
 
 <p>(Note that <a href="https://github.com/jliszka/probability-monad">this probability library</a> estimates probabilities by simulating thousands of trials and reporting the proportion of the trials that matched the desired outcome. Which is all just to say that the probabilities it reports are not exact.)</p>
 
@@ -193,23 +196,24 @@ res0: Double = 0.3023
 
 <p>You might code this up as follows:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">flip</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">flip</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">p</span> <span class="k">&lt;-</span> <span class="n">uniform</span>
     <span class="n">outcome</span> <span class="k">&lt;-</span> <span class="n">discrete</span><span class="o">(</span><span class="n">H</span> <span class="o">-&gt;</span> <span class="n">p</span><span class="o">,</span> <span class="n">T</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="o">))</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">outcome</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>reasonably interpreting “unknown bias” as “a bias drawn at random from a uniform distribution on [0, 1].” Yes, this is a
 prior, and yes, frequentists do make use of priors.</p>
 
-<p>In this case you can assign a probability of 0.5 to the outcome of <code>flip</code> being heads:</p>
+<p>In this case you can assign a probability of 0.5 to the outcome of <code class="highlighter-rouge">flip</code> being heads:</p>
 
-<pre><code>scala&gt; flip.pr(_ == H)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; flip.pr(_ == H)
 res1: Double = 0.4983
 </code></pre>
+</div>
 
-<p><em>while saying nothing about the bias</em> <code>p</code>.</p>
+<p><em>while saying nothing about the bias</em> <code class="highlighter-rouge">p</code>.</p>
 
 <p>So if the question is, “what is the probability that this procedure results in the coin coming up heads?”
 the frequentist will surely say 50%. However, if you ask the <em>different</em> question, “what is the bias of the coin?” the frequentist will say
@@ -229,16 +233,16 @@ in a frequentist way, using a repeated procedure. Here it is:</p>
 
 <p>Or in code:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">posterior</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">posterior</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">case</span> <span class="k">class</span> <span class="nc">Trial</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">outcome</span><span class="k">:</span> <span class="kt">Coin</span><span class="o">)</span>
   <span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
     <span class="n">p</span> <span class="k">&lt;-</span> <span class="n">uniform</span>
     <span class="n">outcome</span> <span class="k">&lt;-</span> <span class="n">discrete</span><span class="o">(</span><span class="n">H</span> <span class="o">-&gt;</span> <span class="n">p</span><span class="o">,</span> <span class="n">T</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="o">))</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="nc">Trial</span><span class="o">(</span><span class="n">p</span><span class="o">,</span> <span class="n">outcome</span><span class="o">)</span>
   <span class="n">d</span><span class="o">.</span><span class="n">given</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">outcome</span> <span class="o">==</span> <span class="n">H</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">p</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<pre><code>scala&gt; posterior.bucketedHist(0, 1, 10, roundDown = true)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; posterior.bucketedHist(0, 1, 10, roundDown = true)
 [0.0, 0.1)  1.06% #
 [0.1, 0.2)  2.92% ##
 [0.2, 0.3)  5.07% #####
@@ -250,6 +254,7 @@ in a frequentist way, using a repeated procedure. Here it is:</p>
 [0.8, 0.9) 17.34% #################
 [0.9, 1.0) 18.74% ##################
 </code></pre>
+</div>
 
 <p>We end up with the exact same answer Bayesians do, but we don’t have to make any reference to beliefs or minds.
 We just incorporate our observations into the procedure, simulate it thousands of times, and see what falls out.</p>
@@ -511,7 +516,7 @@ Why bring minds into it at all?</p>
       </div>
       <hr>
       <footer>
-        <p>&copy; 2016 Jason Liszka
+        <p>&copy; 2013 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

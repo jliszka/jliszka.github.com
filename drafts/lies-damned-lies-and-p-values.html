@@ -52,7 +52,7 @@
     
       
       	
-      	<li><a href="/archive.html">Archive</a></li>
+      	<li><a href="/archive">Archive</a></li>
       	
       
     
@@ -80,7 +80,7 @@
     
       
       	
-      	<li><a href="/tags.html">Tags</a></li>
+      	<li><a href="/tags">Tags</a></li>
       	
       
     
@@ -128,7 +128,7 @@
       <h1>Lies, damned lies, and <i>p</i>-values </h1>
     </div>
     <div class="date">
-      <span>05 April 2016</span>
+      
     </div>
     <div class="content">
       
@@ -138,7 +138,7 @@
 <p>multiple experiments at once: genetics testing. just as cheap to run 1000 experiments as 1 experiment.
 what is the probability you will find a significant result at random?</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Patient</span><span class="o">(</span><span class="n">hasDisease</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span> <span class="n">genes</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">])</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Patient</span><span class="o">(</span><span class="n">hasDisease</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span> <span class="n">genes</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">])</span>
 
 <span class="k">def</span> <span class="n">genes</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="n">uniform</span><span class="o">.</span><span class="n">repeat</span><span class="o">(</span><span class="n">n</span><span class="o">)</span>
 <span class="k">def</span> <span class="n">patient</span><span class="o">(</span><span class="n">diseasePrevalence</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">genePrevalence</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Double</span><span class="o">])</span> <span class="k">=</span> <span class="o">{</span>
@@ -172,7 +172,7 @@ what is the probability you will find a significant result at random?</p>
   <span class="o">(</span><span class="mi">0</span> <span class="n">to</span> <span class="n">nGenes</span><span class="o">-</span><span class="mi">1</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">g</span> <span class="k">=&gt;</span> <span class="o">{</span>
     <span class="n">corr</span><span class="o">(</span><span class="n">patients</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">p</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="n">p</span><span class="o">.</span><span class="n">hasDisease</span><span class="o">,</span> <span class="n">p</span><span class="o">.</span><span class="n">genes</span><span class="o">(</span><span class="n">g</span><span class="o">))))</span>
   <span class="o">}).</span><span class="n">max</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>diminishing effect size
 publication bias + meta-analyses
@@ -184,7 +184,7 @@ all the true and obvious facts have been discovered already. new hypotheses are 
 
 <p>http://www.newyorker.com/reporting/2010/12/13/101213fa_fact_lehrer</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">meanstdev</span><span class="o">(</span><span class="n">xs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Double</span><span class="o">])</span><span class="k">:</span> <span class="o">(</span><span class="kt">Double</span><span class="o">,</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">meanstdev</span><span class="o">(</span><span class="n">xs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Double</span><span class="o">])</span><span class="k">:</span> <span class="o">(</span><span class="kt">Double</span><span class="o">,</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">n</span> <span class="k">=</span> <span class="n">xs</span><span class="o">.</span><span class="n">size</span>
   <span class="k">val</span> <span class="n">mean</span> <span class="k">=</span> <span class="n">xs</span><span class="o">.</span><span class="n">sum</span> <span class="o">/</span> <span class="n">n</span>
   <span class="k">val</span> <span class="n">stdev</span> <span class="k">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="o">(</span><span class="n">xs</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="n">mean</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="o">).</span><span class="n">sum</span> <span class="o">/</span> <span class="n">n</span><span class="o">)</span>
@@ -206,11 +206,24 @@ all the true and obvious facts have been discovered already. new hypotheses are 
     <span class="k">val</span> <span class="n">p</span> <span class="k">=</span> <span class="o">(</span><span class="n">normal</span> <span class="o">*</span> <span class="n">stderr</span><span class="o">).</span><span class="n">pr</span><span class="o">(</span><span class="k">_</span> <span class="o">&gt;</span> <span class="n">diff</span><span class="o">)</span>
     <span class="o">(</span><span class="n">p</span><span class="o">,</span> <span class="n">diff</span> <span class="o">-</span> <span class="mf">1.96</span><span class="o">*</span><span class="n">stderr</span><span class="o">,</span> <span class="n">diff</span> <span class="o">+</span> <span class="mf">1.96</span><span class="o">*</span><span class="n">stderr</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 
     </div>
 
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-folder-open"></i></li>
+      
+      
+
+
+  
+    
+  
+
+
+    </ul>
   
 
   
@@ -311,7 +324,7 @@ all the true and obvious facts have been discovered already. new hypotheses are 
       </div>
       <hr>
       <footer>
-        <p>&copy; 2016 Jason Liszka
+        <p>&copy; 2013 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

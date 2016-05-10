@@ -52,7 +52,7 @@
     
       
       	
-      	<li><a href="/archive.html">Archive</a></li>
+      	<li><a href="/archive">Archive</a></li>
       	
       
     
@@ -80,7 +80,7 @@
     
       
       	
-      	<li><a href="/tags.html">Tags</a></li>
+      	<li><a href="/tags">Tags</a></li>
       	
       
     
@@ -128,7 +128,9 @@
       <h1>Is the NBA draft rigged? </h1>
     </div>
     <div class="date">
-      <span>12 July 2014</span>
+      
+        <span>12 July 2014</span>
+      
     </div>
     <div class="content">
       
@@ -142,24 +144,25 @@ because there’s no problem that can’t be solved with more monads.</p>
 
 <!-- more -->
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">isTheNBADraftRigged</span><span class="o">(</span><span class="n">prior</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">isTheNBADraftRigged</span><span class="o">(</span><span class="n">prior</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">rigged</span> <span class="k">=</span> <span class="n">tf</span><span class="o">(</span><span class="n">prior</span><span class="o">)</span>
   <span class="k">def</span> <span class="n">cavsGetFirstPick</span><span class="o">(</span><span class="n">rigged</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span> <span class="k">=</span> <span class="n">rigged</span> <span class="k">match</span> <span class="o">{</span>
     <span class="k">case</span> <span class="kc">true</span> <span class="k">=&gt;</span> <span class="n">always</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
     <span class="k">case</span> <span class="kc">false</span> <span class="k">=&gt;</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.017</span><span class="o">)</span>
   <span class="o">}</span>
   <span class="n">rigged</span><span class="o">.</span><span class="n">posterior</span><span class="o">(</span><span class="n">cavsGetFirstPick</span><span class="o">)(</span><span class="k">_</span> <span class="o">==</span> <span class="kc">true</span><span class="o">).</span><span class="n">pr</span><span class="o">(</span><span class="k">_</span> <span class="o">==</span> <span class="kc">true</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<p>This code generates the posterior distribution given a prior (<code>rigged</code>), some experiment that depends on the value of
-the prior distribution (<code>cavsGetFirstPick</code>), and what was observed (that the Cavs indeed got the first pick).</p>
+<p>This code generates the posterior distribution given a prior (<code class="highlighter-rouge">rigged</code>), some experiment that depends on the value of
+the prior distribution (<code class="highlighter-rouge">cavsGetFirstPick</code>), and what was observed (that the Cavs indeed got the first pick).</p>
 
 <p>Harry said his prior for the NBA draft being rigged was 5% and said to assume that if the draft is rigged, then the
 Cavs have a 100% chance of getting the first pick.</p>
 
-<pre><code>scala&gt; isTheNBADraftRigged(0.05)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; isTheNBADraftRigged(0.05)
 res0: Double = 0.755
 </code></pre>
+</div>
 
 <p><strong>Me:</strong> You should now believe there’s a 75% chance that the draft is rigged.</p>
 
@@ -169,9 +172,10 @@ res0: Double = 0.755
 
 <p><strong>Me:</strong></p>
 
-<pre><code>scala&gt; isTheNBADraftRigged(0.01)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; isTheNBADraftRigged(0.01)
 res1: Double = 0.369
 </code></pre>
+</div>
 
 <p><strong>Harry:</strong> Are you telling me that even if I thought there was only a 1% chance that the draft was rigged, I should now
 believe that that probability is now better than 1 in 3?</p>
@@ -326,7 +330,7 @@ O(A|B) &= O(A) \cdot \frac{P(B|A)}{P(B|\lnot A)} \\
       </div>
       <hr>
       <footer>
-        <p>&copy; 2016 Jason Liszka
+        <p>&copy; 2013 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

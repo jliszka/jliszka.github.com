@@ -52,7 +52,7 @@
     
       
       	
-      	<li><a href="/archive.html">Archive</a></li>
+      	<li><a href="/archive">Archive</a></li>
       	
       
     
@@ -80,7 +80,7 @@
     
       
       	
-      	<li><a href="/tags.html">Tags</a></li>
+      	<li><a href="/tags">Tags</a></li>
       	
       
     
@@ -128,7 +128,9 @@
       <h1>Fun with Bayesian Priors </h1>
     </div>
     <div class="date">
-      <span>03 September 2013</span>
+      
+        <span>03 September 2013</span>
+      
     </div>
     <div class="content">
       
@@ -168,32 +170,32 @@ prior knowledge about the bias (commonly just called the “prior”).</p>
 
 <p>So first, we’ll need a case class that represents the outcome of one trial:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Trial</span><span class="o">(</span><span class="n">bias</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">heads</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Trial</span><span class="o">(</span><span class="n">bias</span><span class="k">:</span> <span class="kt">Double</span><span class="o">,</span> <span class="n">heads</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span></code></pre></figure>
 
 <p>And here’s the simulation itself:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">experiment</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Trial</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">experiment</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Trial</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">bias</span> <span class="k">&lt;-</span> <span class="n">uniform</span>
     <span class="n">heads</span> <span class="k">&lt;-</span> <span class="n">binomial</span><span class="o">(</span><span class="n">bias</span><span class="o">,</span> <span class="mi">10</span><span class="o">)</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="nc">Trial</span><span class="o">(</span><span class="n">bias</span><span class="o">,</span> <span class="n">heads</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>(I recommend reading <a href="/2013/08/12/a-frequentist-approach-to-probability.html">this writeup of the probability distribution monad</a>
 if you haven’t seen this before.)</p>
 
 <p>The bias is drawn from the uniform distribution, and a <a href="/2013/08/19/climbing-the-probability-distribution-ladder.html">binomial distribution</a> represents the number of
-heads you will see in 10 coin flips when the probability of seeing a head on a single coin flip is determined by the value of <code>bias</code>.</p>
+heads you will see in 10 coin flips when the probability of seeing a head on a single coin flip is determined by the value of <code class="highlighter-rouge">bias</code>.</p>
 
 <p>Now let’s analyze the experiment. Remember we only care about the trials that resulted in 8 heads.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">posterior</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">posterior</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">experiment</span><span class="o">.</span><span class="n">given</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">heads</span> <span class="o">==</span> <span class="mi">8</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">bias</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Let’s see what it looks like:</p>
 
-<pre><code>scala&gt; posterior.bucketedHist(0, 1, 20)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; posterior.bucketedHist(0, 1, 20)
 0.00  0.00% 
 0.05  0.00% 
 0.10  0.00% 
@@ -216,16 +218,17 @@ heads you will see in 10 coin flips when the probability of seeing a head on a s
 0.95  4.48% ####
 1.00  0.19% 
 </code></pre>
+</div>
 
 <p>That looks pretty good! It’s clear that 0.8 is the most likely bias, as expected.</p>
 
 <h3 id="chaining-posteriors">Chaining posteriors</h3>
 
 <p>Alright, now suppose you flip the same coin 10 more times and get only 6 heads. This can be modeled
-the same way, only this time, instead of using <code>uniform</code> as the prior distribution for the bias, you can use
-<code>posterior</code>, essentially building on top of our new belief about what the bias is from the first experiment.</p>
+the same way, only this time, instead of using <code class="highlighter-rouge">uniform</code> as the prior distribution for the bias, you can use
+<code class="highlighter-rouge">posterior</code>, essentially building on top of our new belief about what the bias is from the first experiment.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">experiment2</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">experiment2</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">bias</span> <span class="k">&lt;-</span> <span class="n">posterior</span>
     <span class="n">heads</span> <span class="k">&lt;-</span> <span class="n">binomial</span><span class="o">(</span><span class="n">bias</span><span class="o">,</span> <span class="mi">10</span><span class="o">)</span>
@@ -233,9 +236,9 @@ the same way, only this time, instead of using <code>uniform</code> as the prior
 <span class="o">}</span>
 <span class="k">val</span> <span class="n">posterior2</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">experiment2</span><span class="o">.</span><span class="n">given</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">heads</span> <span class="o">==</span> <span class="mi">6</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">bias</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<pre><code>scala&gt; posterior2.bucketedHist(0, 1, 20)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; posterior2.bucketedHist(0, 1, 20)
 0.00  0.00% 
 0.05  0.00% 
 0.10  0.00% 
@@ -258,17 +261,18 @@ the same way, only this time, instead of using <code>uniform</code> as the prior
 0.95  0.06% 
 1.00  0.00% 
 </code></pre>
+</div>
 
 <p>Great, exactly what you would expect. The distribution has shifted towards 0.7 (14/20) and has narrowed a bit.</p>
 
 <h3 id="i-cant-not-abstract-this-out-into-a-method">I can’t not abstract this out into a method</h3>
 
 <p>I’ve written almost the exact same code twice, so I basically have to do this now.
-Here’s my attempt, as an instance method of the <code>Distribution</code> interface:</p>
+Here’s my attempt, as an instance method of the <code class="highlighter-rouge">Distribution</code> interface:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-  <span class="k">def</span> <span class="n">posterior</span><span class="o">[</span><span class="kt">B</span><span class="o">](</span><span class="n">experiment</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">B</span><span class="o">])</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>  <span class="k">def</span> <span class="n">posterior</span><span class="o">[</span><span class="kt">B</span><span class="o">](</span><span class="n">experiment</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">B</span><span class="o">])</span>
                    <span class="o">(</span><span class="n">observed</span><span class="k">:</span> <span class="kt">B</span> <span class="o">=&gt;</span> <span class="nc">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
     <span class="k">case</span> <span class="k">class</span> <span class="nc">Trial</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">A</span><span class="o">,</span> <span class="n">outcome</span><span class="k">:</span> <span class="kt">B</span><span class="o">)</span>
     <span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
@@ -277,23 +281,23 @@ Here’s my attempt, as an instance method of the <code>Distribution</code> inte
     <span class="o">}</span> <span class="k">yield</span> <span class="nc">Trial</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">e</span><span class="o">)</span>
     <span class="n">d</span><span class="o">.</span><span class="n">given</span><span class="o">(</span><span class="n">t</span> <span class="k">=&gt;</span> <span class="n">observed</span><span class="o">(</span><span class="n">t</span><span class="o">.</span><span class="n">outcome</span><span class="o">)).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">a</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<p>The idea is that <code>posterior</code> updates a prior distribution according to the outcome of some experiment. It returns
-the new posterior after running the provided <code>experiment</code>, which depends on values sampled from the prior, and in which only certain
-outcomes are observed. The <code>observed</code> parameter is a function that indicates what outcomes were actually observed in the experiment
+<p>The idea is that <code class="highlighter-rouge">posterior</code> updates a prior distribution according to the outcome of some experiment. It returns
+the new posterior after running the provided <code class="highlighter-rouge">experiment</code>, which depends on values sampled from the prior, and in which only certain
+outcomes are observed. The <code class="highlighter-rouge">observed</code> parameter is a function that indicates what outcomes were actually observed in the experiment
 and which were not.</p>
 
 <p>So now our first two experiments become:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">p1</span> <span class="k">=</span> <span class="n">uniform</span><span class="o">.</span><span class="n">posterior</span><span class="o">(</span><span class="n">bias</span> <span class="k">=&gt;</span> <span class="n">binomial</span><span class="o">(</span><span class="n">bias</span><span class="o">,</span> <span class="mi">10</span><span class="o">))(</span><span class="k">_</span> <span class="o">==</span> <span class="mi">8</span><span class="o">)</span>
-<span class="k">val</span> <span class="n">p2</span> <span class="k">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">posterior</span><span class="o">(</span><span class="n">bias</span> <span class="k">=&gt;</span> <span class="n">binomial</span><span class="o">(</span><span class="n">bias</span><span class="o">,</span> <span class="mi">10</span><span class="o">))(</span><span class="k">_</span> <span class="o">==</span> <span class="mi">6</span><span class="o">)</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">p1</span> <span class="k">=</span> <span class="n">uniform</span><span class="o">.</span><span class="n">posterior</span><span class="o">(</span><span class="n">bias</span> <span class="k">=&gt;</span> <span class="n">binomial</span><span class="o">(</span><span class="n">bias</span><span class="o">,</span> <span class="mi">10</span><span class="o">))(</span><span class="k">_</span> <span class="o">==</span> <span class="mi">8</span><span class="o">)</span>
+<span class="k">val</span> <span class="n">p2</span> <span class="k">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">posterior</span><span class="o">(</span><span class="n">bias</span> <span class="k">=&gt;</span> <span class="n">binomial</span><span class="o">(</span><span class="n">bias</span><span class="o">,</span> <span class="mi">10</span><span class="o">))(</span><span class="k">_</span> <span class="o">==</span> <span class="mi">6</span><span class="o">)</span></code></pre></figure>
 
 <p>Pretty clean!</p>
 
-<p>We can eyeball that <code>p2</code> gives the same result as flipping a coin 20 times and observing 14 heads:</p>
+<p>We can eyeball that <code class="highlighter-rouge">p2</code> gives the same result as flipping a coin 20 times and observing 14 heads:</p>
 
-<pre><code>scala&gt; uniform.posterior(bias =&gt; binomial(bias, 20))(_ == 14).bucketedHist(0, 1, 20)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; uniform.posterior(bias =&gt; binomial(bias, 20))(_ == 14).bucketedHist(0, 1, 20)
 0.00  0.00% 
 0.05  0.00% 
 0.10  0.00% 
@@ -316,10 +320,11 @@ and which were not.</p>
 0.95  0.07% 
 1.00  0.00% 
 </code></pre>
+</div>
 
 <p>And that more trials gives a narrower distribution:</p>
 
-<pre><code>scala&gt; uniform.posterior(bias =&gt; binomial(bias, 100))(_ == 72).bucketedHist(0, 1, 20)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; uniform.posterior(bias =&gt; binomial(bias, 100))(_ == 72).bucketedHist(0, 1, 20)
 0.00  0.00% 
 0.05  0.00% 
 0.10  0.00% 
@@ -342,6 +347,7 @@ and which were not.</p>
 0.95  0.00% 
 1.00  0.00% 
 </code></pre>
+</div>
 
 <p>Neat!</p>
 
@@ -356,7 +362,7 @@ In fact it should be exactly 12.5% since we observed 5 total heads in 40 total f
 After I generate the first posterior distribution from the 10-flip experiment, isn’t the information that I flipped it 10 times lost somehow?
 Let’s see.</p>
 
-<pre><code>scala&gt; val p1 = uniform.posterior(bias =&gt; binomial(bias, 10))(_ == 2)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val p1 = uniform.posterior(bias =&gt; binomial(bias, 10))(_ == 2)
 p1: Distribution[Double] = &lt;distribution&gt;
 
 scala&gt; p1.bucketedHist(0, 1, 20)
@@ -408,16 +414,17 @@ scala&gt; p2.bucketedHist(0, 0.5, 20)
 0.475  0.00% 
 0.500  0.00% 
 </code></pre>
+</div>
 
 <p>Hm, yeah, it sure looks like it worked! The most likely bias is 12.5%.</p>
 
-<p>So how does this work? Well, <code>p1</code> actually does encode how many flips went into it — more flips translates into a narrower
+<p>So how does this work? Well, <code class="highlighter-rouge">p1</code> actually does encode how many flips went into it — more flips translates into a narrower
 distribution, and fewer flips will produce a distribution that is more spread out.
 This is pretty easily illustrated: if instead we had done 20 flips and gotten 4 heads, or 40 flips
 and gotten 8 heads, the resulting posterior distributions would have looked different, even though these each encode the same
 20% bias.</p>
 
-<pre><code>scala&gt; uniform.posterior(bias =&gt; binomial(bias, 20))(_ == 4).bucketedHist(0, 1, 20)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; uniform.posterior(bias =&gt; binomial(bias, 20))(_ == 4).bucketedHist(0, 1, 20)
 0.00  0.00% 
 0.05  1.61% #
 0.10  9.57% #########
@@ -463,6 +470,7 @@ scala&gt; uniform.posterior(bias =&gt; binomial(bias, 40))(_ == 8).bucketedHist(
 0.95  0.00% 
 1.00  0.00% 
 </code></pre>
+</div>
 
 <p>The shape of the prior distribution naturally affects the posteriors that result from it.</p>
 
@@ -473,7 +481,7 @@ scala&gt; uniform.posterior(bias =&gt; binomial(bias, 40))(_ == 8).bucketedHist(
 <p>Suppose we start with some knowledge that coin favors tails over heads. So we know the bias is less than 0.5.
 We’ll model this with a uniform distribution between 0 and 0.5.</p>
 
-<pre><code>scala&gt; val prior = uniform.given(_ &lt; 0.5)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val prior = uniform.given(_ &lt; 0.5)
 prior: Distribution[Double] = &lt;distribution&gt;
 
 scala&gt; prior.posterior(bias =&gt; binomial(bias, 10))(_ == 8).bucketedHist(0, 1, 20, roundDown = true)
@@ -499,13 +507,14 @@ scala&gt; prior.posterior(bias =&gt; binomial(bias, 10))(_ == 8).bucketedHist(0,
 0.95  0.00% 
 1.00  0.00% 
 </code></pre>
+</div>
 
 <p>Makes sense, all the probabily mass crowds as close to 0.5 as it can.</p>
 
 <p>Now let’s try something a little silly — say someone tells us that they don’t know what the bias is, but it is
 definitely <em>not</em> between 0.7 and 0.8.</p>
 
-<pre><code>scala&gt; val prior = uniform.given(x =&gt; x &lt;= 0.7 || x &gt;= 0.8)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val prior = uniform.given(x =&gt; x &lt;= 0.7 || x &gt;= 0.8)
 prior: Distribution[Double] = &lt;distribution&gt;
 
 scala&gt; prior.posterior(bias =&gt; binomial(bias, 10))(_ == 8).bucketedHist(0, 1, 20, roundDown = true)
@@ -531,6 +540,7 @@ scala&gt; prior.posterior(bias =&gt; binomial(bias, 10))(_ == 8).bucketedHist(0,
 0.95  2.28% ##
 1.00  0.00% 
 </code></pre>
+</div>
 
 <p>Fun! Makes perfect sense though, the prior distribution isn’t generating any biases between 0.7 and 0.8, so it’s not going
 to show up in the results.</p>
@@ -538,7 +548,7 @@ to show up in the results.</p>
 <p>Now let’s say we know the bias is either 0.5 or 0.9 (we either have a perfectly fair coin or a very biased coin). Our prior
 is then:</p>
 
-<pre><code>scala&gt; val prior = discreteUniform(List(0.5, 0.9))
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val prior = discreteUniform(List(0.5, 0.9))
 prior: Distribution[Double] = &lt;distribution&gt;
 
 scala&gt; prior.bucketedHist(0, 1, 10)
@@ -554,10 +564,11 @@ scala&gt; prior.bucketedHist(0, 1, 10)
 0.9 50.24% ##################################################
 1.0  0.00% 
 </code></pre>
+</div>
 
 <p>Now after flipping the coin 10 times and observing 8 heads, the posterior becomes:</p>
 
-<pre><code>scala&gt; prior.posterior(bias =&gt; binomial(bias, 10))(_ == 8).bucketedHist(0, 1, 10)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; prior.posterior(bias =&gt; binomial(bias, 10))(_ == 8).bucketedHist(0, 1, 10)
 0.0  0.00% 
 0.1  0.00% 
 0.2  0.00% 
@@ -570,6 +581,7 @@ scala&gt; prior.bucketedHist(0, 1, 10)
 0.9 81.60% #################################################################################
 1.0  0.00% 
 </code></pre>
+</div>
 
 <h3 id="bayes-theorem">Bayes’ theorem</h3>
 
@@ -716,7 +728,7 @@ and the observed outcomes of experiments will be used to refine the output of th
       </div>
       <hr>
       <footer>
-        <p>&copy; 2016 Jason Liszka
+        <p>&copy; 2013 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

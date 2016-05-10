@@ -52,7 +52,7 @@
     
       
       	
-      	<li><a href="/archive.html">Archive</a></li>
+      	<li><a href="/archive">Archive</a></li>
       	
       
     
@@ -80,7 +80,7 @@
     
       
       	
-      	<li><a href="/tags.html">Tags</a></li>
+      	<li><a href="/tags">Tags</a></li>
       	
       
     
@@ -128,7 +128,9 @@
       <h1>Programming with futures: patterns and anti-patterns </h1>
     </div>
     <div class="date">
-      <span>03 June 2014</span>
+      
+        <span>03 June 2014</span>
+      
     </div>
     <div class="content">
       
@@ -141,7 +143,7 @@ article outlines a few of the easiest traps to fall into.</p>
 <p>Below is a method from a fictional web application that registers a user by calling the Foursquare API
 to get the user’s profile info, their friend graph and their recent check-ins.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">registerUser</span><span class="o">(</span><span class="n">token</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">registerUser</span><span class="o">(</span><span class="n">token</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">api</span> <span class="k">=</span> <span class="nc">FoursquareApi</span><span class="o">(</span><span class="n">token</span><span class="o">)</span>
 
   <span class="k">def</span> <span class="n">apiFriendsF</span><span class="o">(</span><span class="n">apiUser</span><span class="k">:</span> <span class="kt">ApiUser</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Seq</span><span class="o">[</span><span class="kt">ApiUser</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
@@ -165,7 +167,7 @@ to get the user’s profile info, their friend graph and their recent check-ins.
     <span class="n">apiFriends</span> <span class="k">&lt;-</span> <span class="n">apiFriendsF</span><span class="o">(</span><span class="n">apiUser</span><span class="o">)</span>
     <span class="n">apiCheckins</span> <span class="k">&lt;-</span> <span class="n">apiCheckinsF</span><span class="o">(</span><span class="n">apiUser</span><span class="o">,</span> <span class="n">apiCategories</span><span class="o">)</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">createDBUser</span><span class="o">(</span><span class="n">apiUser</span><span class="o">,</span> <span class="n">apiFriends</span><span class="o">,</span> <span class="n">apiCheckins</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>There are some problems with this code.</p>
 
@@ -173,22 +175,22 @@ to get the user’s profile info, their friend graph and their recent check-ins.
 
 <h3 id="anti-pattern-1-blocking-in-a-yield-or-a-map">Anti-pattern #1: Blocking in a yield or a map</h3>
 
-<p>The last part of the <code>for</code>-comprehension desugars to</p>
+<p>The last part of the <code class="highlighter-rouge">for</code>-comprehension desugars to</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="n">apiCheckinsF</span><span class="o">(</span><span class="n">apiUser</span><span class="o">,</span> <span class="n">apiCategories</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">apiCheckins</span> <span class="k">=&gt;</span> 
-  <span class="n">createDBUser</span><span class="o">(</span><span class="n">apiUser</span><span class="o">,</span> <span class="n">apiFriends</span><span class="o">,</span> <span class="n">apiCheckins</span><span class="o">))</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="n">apiCheckinsF</span><span class="o">(</span><span class="n">apiUser</span><span class="o">,</span> <span class="n">apiCategories</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">apiCheckins</span> <span class="k">=&gt;</span> 
+  <span class="n">createDBUser</span><span class="o">(</span><span class="n">apiUser</span><span class="o">,</span> <span class="n">apiFriends</span><span class="o">,</span> <span class="n">apiCheckins</span><span class="o">))</span></code></pre></figure>
 
-<p>The problem here is that <code>createDBUser</code> makes a blocking call to the database.
-You should never do blocking work in <code>map</code> on a Future.
+<p>The problem here is that <code class="highlighter-rouge">createDBUser</code> makes a blocking call to the database.
+You should never do blocking work in <code class="highlighter-rouge">map</code> on a Future.
 Every Future runs in a thread pool that is (hopefully) tuned for a particular purpose.
-Code inside the <code>map</code> (generally) runs on the thread that completes the Future.
+Code inside the <code class="highlighter-rouge">map</code> (generally) runs on the thread that completes the Future.
 So you’re putting work in a thread pool that wasn’t designed to handle that work.</p>
 
 <p>Furthermore, when you’re dealing with Futures composed from other Futures, it’s often hard to tell by inspection which
-Future will be the last to complete (and whose thread pool will run the <code>map</code> code).
+Future will be the last to complete (and whose thread pool will run the <code class="highlighter-rouge">map</code> code).
 It’s frequently not the “outermost” Future. For example:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">outermostFuture</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">outermostFuture</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">runsInThreadPoolA</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">...</span>
   <span class="k">val</span> <span class="n">runsInThreadPoolB</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">...</span>
   <span class="k">for</span> <span class="o">{</span>
@@ -197,30 +199,30 @@ It’s frequently not the “outermost” Future. For example:</p>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span>
 <span class="o">}</span>
 
-<span class="n">outermostFuture</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="cm">/* where do I run?? */</span><span class="o">)</span></code></pre></div>
+<span class="n">outermostFuture</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="cm">/* where do I run?? */</span><span class="o">)</span></code></pre></figure>
 
-<p>It’s also possible that the Future completes <em>before</em> you call <code>map</code> — in which case the work inside the <code>map</code>
+<p>It’s also possible that the Future completes <em>before</em> you call <code class="highlighter-rouge">map</code> — in which case the work inside the <code class="highlighter-rouge">map</code>
 happens in the main thread. This is bad if your callers expect you to to return instantly with a Future.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">thisActuallyBlocks</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">thisActuallyBlocks</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">anIntF</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">.</span><span class="n">value</span><span class="o">(</span><span class="n">a</span><span class="o">)</span>
-  <span class="c1">// ... some more stuff ...</span>
-  <span class="n">anIntF</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="n">somethingThatBlocks</span><span class="o">(</span><span class="n">i</span><span class="o">))</span>
-<span class="o">}</span></code></pre></div>
+  <span class="c1">// ... some more stuff ...
+</span>  <span class="n">anIntF</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="n">somethingThatBlocks</span><span class="o">(</span><span class="n">i</span><span class="o">))</span>
+<span class="o">}</span></code></pre></figure>
 
-<p>It’s also possible to cause a deadlock (and yes we’ve seen this in production) if the code inside the <code>map</code>
-calls <code>Await</code> on another thread in the same thread pool — but again, it’s hard to know which thread pool that is.</p>
+<p>It’s also possible to cause a deadlock (and yes we’ve seen this in production) if the code inside the <code class="highlighter-rouge">map</code>
+calls <code class="highlighter-rouge">Await</code> on another thread in the same thread pool — but again, it’s hard to know which thread pool that is.</p>
 
 <p>So instead, set up your own thread pool for blocking work:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">object</span> <span class="nc">future</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">object</span> <span class="nc">future</span> <span class="o">{</span>
   <span class="k">private</span> <span class="k">val</span> <span class="n">pool</span> <span class="k">=</span> <span class="nc">FuturePool</span><span class="o">(</span><span class="nc">Executors</span><span class="o">.</span><span class="n">newFixedThreadPool</span><span class="o">(</span><span class="mi">10</span><span class="o">))</span>
   <span class="k">def</span> <span class="n">apply</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">a</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="n">A</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="n">pool</span><span class="o">(</span><span class="n">a</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>And use it like this:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">createDBUserF</span><span class="o">(</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">createDBUserF</span><span class="o">(</span>
     <span class="n">user</span><span class="k">:</span> <span class="kt">ApiUser</span><span class="o">,</span>
     <span class="n">friends</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">ApiUser</span><span class="o">],</span>
     <span class="n">checkins</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">ApiCheckin</span><span class="o">])</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span> <span class="k">=</span> <span class="n">future</span> <span class="o">{</span>
@@ -230,41 +232,41 @@ calls <code>Await</code> on another thread in the same thread pool — but again
 <span class="k">for</span> <span class="o">{</span>
   <span class="o">...</span>
   <span class="n">user</span> <span class="k">&lt;-</span> <span class="n">createDBUserF</span><span class="o">(</span><span class="n">apiUser</span><span class="o">,</span> <span class="n">apiFriends</span><span class="o">,</span> <span class="n">apiCheckins</span><span class="o">)</span>
-<span class="o">}</span> <span class="k">yield</span> <span class="n">user</span></code></pre></div>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">user</span></code></pre></figure>
 
 <p>This now desugars to</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="n">createDBUserF</span><span class="o">(</span><span class="n">apiUser</span><span class="o">,</span> <span class="n">friends</span><span class="o">,</span> <span class="n">checkins</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">user</span> <span class="k">=&gt;</span> <span class="n">user</span><span class="o">)</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="n">createDBUserF</span><span class="o">(</span><span class="n">apiUser</span><span class="o">,</span> <span class="n">friends</span><span class="o">,</span> <span class="n">checkins</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">user</span> <span class="k">=&gt;</span> <span class="n">user</span><span class="o">)</span></code></pre></figure>
 
 <p>which is safe.</p>
 
-<p>So ALWAYS <code>yield</code> a plain value or a simple computation. If you have blocking work, wrap it in a ThreadPool-backed
-Future and <code>flatMap</code> it.</p>
+<p>So ALWAYS <code class="highlighter-rouge">yield</code> a plain value or a simple computation. If you have blocking work, wrap it in a ThreadPool-backed
+Future and <code class="highlighter-rouge">flatMap</code> it.</p>
 
-<p>It’s worth noting that in the Scala-native Future library (<code>scala.concurrent.Future</code>), you must supply an implicit
+<p>It’s worth noting that in the Scala-native Future library (<code class="highlighter-rouge">scala.concurrent.Future</code>), you must supply an implicit
 or explicit execution context when you create a Future. That way, you do have control over where your code executes, so
-the above warnings about <code>map</code> do not apply.</p>
+the above warnings about <code class="highlighter-rouge">map</code> do not apply.</p>
 
 <h3 id="anti-pattern-2-too-much-parallelism">Anti-pattern #2: Too much parallelism</h3>
 
-<p>The method <code>apiFriendsF</code> creates a future for each item in a list of user IDs and collects the results into a single 
+<p>The method <code class="highlighter-rouge">apiFriendsF</code> creates a future for each item in a list of user IDs and collects the results into a single 
 Future:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">apiFriendsF</span><span class="o">(</span><span class="n">apiUser</span><span class="k">:</span> <span class="kt">ApiUser</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Seq</span><span class="o">[</span><span class="kt">ApiUser</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">apiFriendsF</span><span class="o">(</span><span class="n">apiUser</span><span class="k">:</span> <span class="kt">ApiUser</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Seq</span><span class="o">[</span><span class="kt">ApiUser</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="nc">Future</span><span class="o">.</span><span class="n">collect</span><span class="o">(</span><span class="n">apiUser</span><span class="o">.</span><span class="n">friendIDs</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">api</span><span class="o">.</span><span class="n">getUserF</span><span class="o">))</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>But this is too much parallelism! You’ll flood the thread pool with a ton of simultaneous work. Some network or database
 drivers don’t even allow more than a certain number of concurrent connections, and you’ll get a bunch of exceptions, and
 you will not have a good day. A better way to do it is to limit how much you are doing in parallel.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">apiFriendsF</span><span class="o">(</span><span class="n">apiUser</span><span class="k">:</span> <span class="kt">ApiUser</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Seq</span><span class="o">[</span><span class="kt">ApiUser</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">apiFriendsF</span><span class="o">(</span><span class="n">apiUser</span><span class="k">:</span> <span class="kt">ApiUser</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Seq</span><span class="o">[</span><span class="kt">ApiUser</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">future</span><span class="o">.</span><span class="n">groupedCollect</span><span class="o">(</span><span class="n">apiUser</span><span class="o">.</span><span class="n">friendIDs</span><span class="o">,</span> <span class="mi">5</span><span class="o">)(</span><span class="n">api</span><span class="o">.</span><span class="n">getUserF</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<p>The <code>groupedCollect</code> helper method can be impemented as follows:</p>
+<p>The <code class="highlighter-rouge">groupedCollect</code> helper method can be impemented as follows:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">object</span> <span class="nc">future</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">object</span> <span class="nc">future</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">groupedCollect</span><span class="o">[</span><span class="kt">A</span>, <span class="kt">B</span><span class="o">](</span><span class="n">xs</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">A</span><span class="o">],</span> <span class="n">par</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)(</span><span class="n">f</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="nc">Future</span><span class="o">[</span><span class="kt">B</span><span class="o">])</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Seq</span><span class="o">[</span><span class="kt">B</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
     <span class="k">val</span> <span class="n">bsF</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Seq</span><span class="o">[</span><span class="kt">B</span><span class="o">]]</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">.</span><span class="n">value</span><span class="o">(</span><span class="nc">Seq</span><span class="o">.</span><span class="n">empty</span><span class="o">[</span><span class="kt">B</span><span class="o">])</span>
     <span class="n">xs</span><span class="o">.</span><span class="n">grouped</span><span class="o">(</span><span class="n">par</span><span class="o">).</span><span class="n">foldLeft</span><span class="o">(</span><span class="n">bsF</span><span class="o">){</span> <span class="k">case</span> <span class="o">(</span><span class="n">bsF</span><span class="o">,</span> <span class="n">group</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="o">{</span>
@@ -274,9 +276,9 @@ you will not have a good day. A better way to do it is to limit how much you are
       <span class="o">}</span> <span class="k">yield</span> <span class="n">bs</span> <span class="o">++</span> <span class="n">xs</span>
     <span class="o">}}</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<p>The <code>par</code> parameter lets you specify how much work you want done in parallel. For example, if you specify 5, it will
+<p>The <code class="highlighter-rouge">par</code> parameter lets you specify how much work you want done in parallel. For example, if you specify 5, it will
 take 5 items from the list, do them all in parallel, and wait for them to complete before moving on to the next 5 items.</p>
 
 <p>This can be mitigated a different way, by configuring a thread pool with a maximum number of threads, and making sure
@@ -286,24 +288,24 @@ site to prevent it from crowding out other work.</p>
 
 <h3 id="anti-pattern-3-not-enough-parallelism">Anti-pattern #3: Not enough parallelism</h3>
 
-<p>This code invokes <code>api.getSelfF()</code> and <code>api.getCategoriesF()</code> sequentially when they could be run in parallel:</p>
+<p>This code invokes <code class="highlighter-rouge">api.getSelfF()</code> and <code class="highlighter-rouge">api.getCategoriesF()</code> sequentially when they could be run in parallel:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">for</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">for</span> <span class="o">{</span>
   <span class="n">apiUser</span> <span class="k">&lt;-</span> <span class="n">api</span><span class="o">.</span><span class="n">getSelfF</span><span class="o">()</span>
   <span class="n">apiCategories</span> <span class="k">&lt;-</span> <span class="n">api</span><span class="o">.</span><span class="n">getCategoriesF</span><span class="o">()</span>
   <span class="o">...</span>
-<span class="o">}</span> <span class="k">yield</span> <span class="o">...</span></code></pre></div>
+<span class="o">}</span> <span class="k">yield</span> <span class="o">...</span></code></pre></figure>
 
 <p>It desugars to</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="n">api</span><span class="o">.</span><span class="n">getSelfF</span><span class="o">().</span><span class="n">flatMap</span><span class="o">(</span><span class="n">apiUser</span> <span class="k">=&gt;</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="n">api</span><span class="o">.</span><span class="n">getSelfF</span><span class="o">().</span><span class="n">flatMap</span><span class="o">(</span><span class="n">apiUser</span> <span class="k">=&gt;</span>
   <span class="n">api</span><span class="o">.</span><span class="n">getCategoriesF</span><span class="o">().</span><span class="n">flatMap</span><span class="o">(</span><span class="n">apiCategories</span> <span class="k">=&gt;</span>
-    <span class="o">...))</span></code></pre></div>
+    <span class="o">...))</span></code></pre></figure>
 
 <p>So one waits for the other even though it doesn’t need to. The fix is to invoke the methods outside of the
-<code>for</code>-comprehension.</p>
+<code class="highlighter-rouge">for</code>-comprehension.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">apiUserF</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">ApiUser</span><span class="o">]</span> <span class="k">=</span> <span class="n">api</span><span class="o">.</span><span class="n">getSelfF</span><span class="o">()</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">apiUserF</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">ApiUser</span><span class="o">]</span> <span class="k">=</span> <span class="n">api</span><span class="o">.</span><span class="n">getSelfF</span><span class="o">()</span>
 <span class="k">val</span> <span class="n">apiCategoriesF</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Seq</span><span class="o">[</span><span class="kt">ApiCategory</span><span class="o">]]</span> <span class="k">=</span> <span class="n">api</span><span class="o">.</span><span class="n">getCategoriesF</span><span class="o">()</span>
 
 <span class="o">...</span>
@@ -312,35 +314,35 @@ site to prevent it from crowding out other work.</p>
   <span class="n">apiUser</span> <span class="k">&lt;-</span> <span class="n">apiUserF</span>
   <span class="n">apiCategories</span> <span class="k">&lt;-</span> <span class="n">apiCategoriesF</span>
   <span class="o">...</span>
-<span class="o">}</span> <span class="k">yield</span> <span class="o">...</span></code></pre></div>
+<span class="o">}</span> <span class="k">yield</span> <span class="o">...</span></code></pre></figure>
 
 <p>Likewise, we have:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">for</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">for</span> <span class="o">{</span>
   <span class="o">...</span>
   <span class="n">apiFriends</span> <span class="k">&lt;-</span> <span class="n">apiFriendsF</span><span class="o">(</span><span class="n">apiUser</span><span class="o">)</span>
   <span class="n">apiCheckins</span> <span class="k">&lt;-</span> <span class="n">apiCheckinsF</span><span class="o">(</span><span class="n">apiUser</span><span class="o">,</span> <span class="n">apiCategories</span><span class="o">)</span>
   <span class="o">...</span>
-<span class="o">}</span> <span class="k">yield</span> <span class="o">...</span></code></pre></div>
+<span class="o">}</span> <span class="k">yield</span> <span class="o">...</span></code></pre></figure>
 
 <p>These two can also be done in parallel. Write it this way instead:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">for</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">for</span> <span class="o">{</span>
   <span class="o">...</span>
   <span class="o">(</span><span class="n">apiFriends</span><span class="o">,</span> <span class="n">apiCheckins</span><span class="o">)</span> <span class="k">&lt;-</span> <span class="nc">Future</span><span class="o">.</span><span class="n">join</span><span class="o">(</span>
     <span class="n">apiFriendsF</span><span class="o">(</span><span class="n">apiUser</span><span class="o">)</span>
     <span class="n">apiCheckinsF</span><span class="o">(</span><span class="n">apiUser</span><span class="o">,</span> <span class="n">apiCategories</span><span class="o">))</span>
   <span class="o">...</span>
-<span class="o">}</span> <span class="k">yield</span> <span class="o">...</span></code></pre></div>
+<span class="o">}</span> <span class="k">yield</span> <span class="o">...</span></code></pre></figure>
 
-<p>The <code>join</code> method runs multiple Futures in parallel and collects their results in a tuple.
+<p>The <code class="highlighter-rouge">join</code> method runs multiple Futures in parallel and collects their results in a tuple.
 It also explicitly documents that the two calls will happen in parallel.</p>
 
 <h3 id="conclusion">Conclusion</h3>
 
 <p>Here’s what we ended up with:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">registerUser</span><span class="o">(</span><span class="n">token</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">registerUser</span><span class="o">(</span><span class="n">token</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">api</span> <span class="k">=</span> <span class="nc">FoursquareApi</span><span class="o">(</span><span class="n">token</span><span class="o">)</span>
 
   <span class="k">val</span> <span class="n">apiUserF</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">ApiUser</span><span class="o">]</span> <span class="k">=</span> <span class="n">api</span><span class="o">.</span><span class="n">getSelfF</span><span class="o">()</span>
@@ -370,15 +372,15 @@ It also explicitly documents that the two calls will happen in parallel.</p>
       <span class="n">apiCheckinsF</span><span class="o">(</span><span class="n">apiUser</span><span class="o">,</span> <span class="n">apiCategories</span><span class="o">))</span>
     <span class="n">user</span> <span class="k">&lt;-</span> <span class="n">createDBUserF</span><span class="o">(</span><span class="n">apiUser</span><span class="o">,</span> <span class="n">apiFriends</span><span class="o">,</span> <span class="n">apiCheckins</span><span class="o">)</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="n">user</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Things to note here:</p>
 
 <ol>
-  <li>Nested methods take plain values and return Futures, for great <code>flatMap</code>ing.</li>
-  <li>All the work is set up ahead of time via <code>val</code>s and nested methods.</li>
-  <li>Everything is “glued” together with a <code>for</code>-comprehension at the end.</li>
-  <li>Parallelism and dependencies are made explicit in the <code>for</code>-comprehension.</li>
+  <li>Nested methods take plain values and return Futures, for great <code class="highlighter-rouge">flatMap</code>ing.</li>
+  <li>All the work is set up ahead of time via <code class="highlighter-rouge">val</code>s and nested methods.</li>
+  <li>Everything is “glued” together with a <code class="highlighter-rouge">for</code>-comprehension at the end.</li>
+  <li>Parallelism and dependencies are made explicit in the <code class="highlighter-rouge">for</code>-comprehension.</li>
   <li>Blocking work is explicitly wrapped in a thread pool.</li>
 </ol>
 
@@ -473,7 +475,7 @@ It also explicitly documents that the two calls will happen in parallel.</p>
       </div>
       <hr>
       <footer>
-        <p>&copy; 2016 Jason Liszka
+        <p>&copy; 2013 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

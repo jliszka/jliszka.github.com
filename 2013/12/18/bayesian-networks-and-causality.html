@@ -52,7 +52,7 @@
     
       
       	
-      	<li><a href="/archive.html">Archive</a></li>
+      	<li><a href="/archive">Archive</a></li>
       	
       
     
@@ -80,7 +80,7 @@
     
       
       	
-      	<li><a href="/tags.html">Tags</a></li>
+      	<li><a href="/tags">Tags</a></li>
       	
       
     
@@ -128,7 +128,9 @@
       <h1>Bayesian networks and causality </h1>
     </div>
     <div class="date">
-      <span>18 December 2013</span>
+      
+        <span>18 December 2013</span>
+      
     </div>
     <div class="content">
       
@@ -165,38 +167,38 @@ Let’s try the traffic jam graph. I’ll make up some numbers and we’ll see h
 
 <p>Let’s start with the nodes with no incoming arrows.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">rushHour</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.2</span><span class="o">)</span>
-<span class="k">val</span> <span class="n">badWeather</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.05</span><span class="o">)</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">rushHour</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.2</span><span class="o">)</span>
+<span class="k">val</span> <span class="n">badWeather</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.05</span><span class="o">)</span></code></pre></figure>
 
 <p>In this hypothetical world, 20% of the time it’s rush hour, and 5% of the time there’s bad weather.</p>
 
 <p>For nodes with incoming arrows, we return a different distribution depending on the particular value its
 in-neighbor takes.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">accident</span><span class="o">(</span><span class="n">badWeather</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">accident</span><span class="o">(</span><span class="n">badWeather</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">badWeather</span> <span class="k">match</span> <span class="o">{</span>
     <span class="k">case</span> <span class="kc">true</span> <span class="k">=&gt;</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.3</span><span class="o">)</span>
     <span class="k">case</span> <span class="kc">false</span> <span class="k">=&gt;</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.1</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>If the weather is bad, we’re 30% likely to see an accident, but otherwise accidents occur only 10% of the time.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">sirens</span><span class="o">(</span><span class="n">accident</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">sirens</span><span class="o">(</span><span class="n">accident</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">accident</span> <span class="k">match</span> <span class="o">{</span>
     <span class="k">case</span> <span class="kc">true</span> <span class="k">=&gt;</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.9</span><span class="o">)</span>
     <span class="k">case</span> <span class="kc">false</span> <span class="k">=&gt;</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.2</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Straightforward enough.</p>
 
-<p>Now let’s tackle <code>trafficJam</code>. It’s going to have 3 <code>Boolean</code> inputs, and we’ll need
+<p>Now let’s tackle <code class="highlighter-rouge">trafficJam</code>. It’s going to have 3 <code class="highlighter-rouge">Boolean</code> inputs, and we’ll need
 to return a different probabilty distribution depending on which of the inputs are true. Let’s say that
 if any two of of the inputs are true, there’s a 95% chance of a traffic jam, and that
 traffic jams are less likely if only one of them is true, and somewhat unlikely if none are.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">trafficJam</span><span class="o">(</span><span class="n">rushHour</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">trafficJam</span><span class="o">(</span><span class="n">rushHour</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span>
                <span class="n">badWeather</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span>
                <span class="n">accident</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="o">(</span><span class="n">rushHour</span><span class="o">,</span> <span class="n">badWeather</span><span class="o">,</span> <span class="n">accident</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
@@ -208,14 +210,14 @@ traffic jams are less likely if only one of them is true, and somewhat unlikely 
     <span class="k">case</span> <span class="o">(</span><span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.6</span><span class="o">)</span>
     <span class="k">case</span> <span class="o">(</span><span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.1</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>If you’ve done any Scala or Haskell programming, you’ve probably noticed that these are all functions of type
-<code>A =&gt; Distribution[B]</code>—and yeah, you better believe we’re gonna <code>flatMap</code> that shit.</p>
+<code class="highlighter-rouge">A =&gt; Distribution[B]</code>—and yeah, you better believe we’re gonna <code class="highlighter-rouge">flatMap</code> that shit.</p>
 
 <p>So let’s wire everything up and produce the joint probability distribution for all these events.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Traffic</span><span class="o">(</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Traffic</span><span class="o">(</span>
   <span class="n">rushHour</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span>
   <span class="n">badWeather</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span>
   <span class="n">accident</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span>
@@ -228,44 +230,49 @@ traffic jams are less likely if only one of them is true, and somewhat unlikely 
   <span class="n">a</span> <span class="k">&lt;-</span> <span class="n">accident</span><span class="o">(</span><span class="n">w</span><span class="o">)</span>
   <span class="n">s</span> <span class="k">&lt;-</span> <span class="n">sirens</span><span class="o">(</span><span class="n">a</span><span class="o">)</span>
   <span class="n">t</span> <span class="k">&lt;-</span> <span class="n">trafficJam</span><span class="o">(</span><span class="n">r</span><span class="o">,</span> <span class="n">w</span><span class="o">,</span> <span class="n">a</span><span class="o">)</span>
-<span class="o">}</span> <span class="k">yield</span> <span class="nc">Traffic</span><span class="o">(</span><span class="n">r</span><span class="o">,</span> <span class="n">w</span><span class="o">,</span> <span class="n">a</span><span class="o">,</span> <span class="n">s</span><span class="o">,</span> <span class="n">t</span><span class="o">)</span></code></pre></div>
+<span class="o">}</span> <span class="k">yield</span> <span class="nc">Traffic</span><span class="o">(</span><span class="n">r</span><span class="o">,</span> <span class="n">w</span><span class="o">,</span> <span class="n">a</span><span class="o">,</span> <span class="n">s</span><span class="o">,</span> <span class="n">t</span><span class="o">)</span></code></pre></figure>
 
 <p>Now we can query this distribution to see what affects what.</p>
 
 <p>Say you’re about to head home from work and you notice it’s raining pretty hard. What’s the chance there’s a traffic jam?</p>
 
-<pre><code>scala&gt; traffic.given(_.badWeather).pr(_.trafficJam)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; traffic.given(_.badWeather).pr(_.trafficJam)
 res0: Double = 0.5658
 </code></pre>
+</div>
 
 <p>Then you hear sirens.</p>
 
-<pre><code>scala&gt; traffic.given(_.badWeather).given(_.sirens).pr(_.trafficJam)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; traffic.given(_.badWeather).given(_.sirens).pr(_.trafficJam)
 res1: Double = 0.6718
 </code></pre>
+</div>
 
 <p>About what you’d expect. Sirens increases your belief that there’s an accident, which will in turn affect the traffic.</p>
 
 <p>Let’s look at things the other way around. Say you’re sitting in traffic and you want to know whether there’s
 an accident up ahead.</p>
 
-<pre><code>scala&gt; traffic.given(_.trafficJam).pr(_.accident)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; traffic.given(_.trafficJam).pr(_.accident)
 res2: Double = 0.3183
 </code></pre>
+</div>
 
 <p>Also, it’s raining, so you decide to factor that in:</p>
 
-<pre><code>scala&gt; traffic.given(_.trafficJam).given(_.badWeather).pr(_.accident)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; traffic.given(_.trafficJam).given(_.badWeather).pr(_.accident)
 res3: Double = 0.4912
 </code></pre>
+</div>
 
 <p>Makes sense, bad weather increases the chance of an accident.</p>
 
 <p>Suppose instead the weather is fine, but it is rush hour:</p>
 
-<pre><code>scala&gt; traffic.given(_.trafficJam).given(_.rushHour).pr(_.accident)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; traffic.given(_.trafficJam).given(_.rushHour).pr(_.accident)
 res4: Double = 0.1807
 </code></pre>
+</div>
 
 <p>That’s interesting, adding the knowledge that it’s rush hour made the likelihood that there’s an accident go down.
 But there’s no direct causal link in our model between rush hour and accidents. What’s going on?</p>
@@ -393,7 +400,7 @@ observable nodes interact with each other.</p>
 
 <p>This will be pretty fun to code up. Here’s how we’ll represent the genotypes and phenotypes (blood types):</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">sealed</span> <span class="k">trait</span> <span class="nc">BloodGene</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">sealed</span> <span class="k">trait</span> <span class="nc">BloodGene</span>
 <span class="k">case</span> <span class="k">object</span> <span class="nc">A_</span> <span class="k">extends</span> <span class="nc">BloodGene</span>
 <span class="k">case</span> <span class="k">object</span> <span class="nc">B_</span> <span class="k">extends</span> <span class="nc">BloodGene</span>
 <span class="k">case</span> <span class="k">object</span> <span class="nc">O_</span> <span class="k">extends</span> <span class="nc">BloodGene</span>
@@ -402,14 +409,14 @@ observable nodes interact with each other.</p>
 <span class="k">case</span> <span class="k">object</span> <span class="nc">A</span> <span class="k">extends</span> <span class="nc">BloodType</span>
 <span class="k">case</span> <span class="k">object</span> <span class="nc">B</span> <span class="k">extends</span> <span class="nc">BloodType</span>
 <span class="k">case</span> <span class="k">object</span> <span class="nc">AB</span> <span class="k">extends</span> <span class="nc">BloodType</span>
-<span class="k">case</span> <span class="k">object</span> <span class="nc">O</span> <span class="k">extends</span> <span class="nc">BloodType</span></code></pre></div>
+<span class="k">case</span> <span class="k">object</span> <span class="nc">O</span> <span class="k">extends</span> <span class="nc">BloodType</span></code></pre></figure>
 
 <p>Yeah, I know, Scala makes this unnecessarily verbose.</p>
 
-<p>For the arrows linking each person’s genes to their blood type, we need a function that determines <code>BloodType</code> given
-two <code>BloodGene</code>s. This happens to be a deterministic function, but I’m implementing it as a stochastic function anyway.</p>
+<p>For the arrows linking each person’s genes to their blood type, we need a function that determines <code class="highlighter-rouge">BloodType</code> given
+two <code class="highlighter-rouge">BloodGene</code>s. This happens to be a deterministic function, but I’m implementing it as a stochastic function anyway.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">typeFromGene</span><span class="o">(</span><span class="n">g</span><span class="k">:</span> <span class="o">(</span><span class="kt">BloodGene</span><span class="o">,</span> <span class="kt">BloodGene</span><span class="o">))</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">BloodType</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">typeFromGene</span><span class="o">(</span><span class="n">g</span><span class="k">:</span> <span class="o">(</span><span class="kt">BloodGene</span><span class="o">,</span> <span class="kt">BloodGene</span><span class="o">))</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">BloodType</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">g</span> <span class="k">match</span> <span class="o">{</span>
     <span class="k">case</span> <span class="o">(</span><span class="nc">A_</span><span class="o">,</span> <span class="nc">B_</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">always</span><span class="o">(</span><span class="nc">AB</span><span class="o">)</span>
     <span class="k">case</span> <span class="o">(</span><span class="nc">B_</span><span class="o">,</span> <span class="nc">A_</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">always</span><span class="o">(</span><span class="nc">AB</span><span class="o">)</span>
@@ -419,12 +426,12 @@ two <code>BloodGene</code>s. This happens to be a deterministic function, but I�
     <span class="k">case</span> <span class="o">(</span><span class="k">_</span><span class="o">,</span> <span class="nc">B_</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">always</span><span class="o">(</span><span class="n">B</span><span class="o">)</span>
     <span class="k">case</span> <span class="o">(</span><span class="nc">O_</span><span class="o">,</span> <span class="nc">O_</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">always</span><span class="o">(</span><span class="n">O</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>For the arrows linking parents’ genes to their children’s genes, we can implement this function that chooses one
 gene from each parent at random:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">childFromParents</span><span class="o">(</span><span class="n">p1</span><span class="k">:</span> <span class="o">(</span><span class="kt">BloodGene</span><span class="o">,</span> <span class="kt">BloodGene</span><span class="o">),</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">childFromParents</span><span class="o">(</span><span class="n">p1</span><span class="k">:</span> <span class="o">(</span><span class="kt">BloodGene</span><span class="o">,</span> <span class="kt">BloodGene</span><span class="o">),</span>
                      <span class="n">p2</span><span class="k">:</span> <span class="o">(</span><span class="kt">BloodGene</span><span class="o">,</span> <span class="kt">BloodGene</span><span class="o">))</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[(</span><span class="kt">BloodGene</span>, <span class="kt">BloodGene</span><span class="o">)]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="o">(</span><span class="n">p1a</span><span class="o">,</span> <span class="n">p1b</span><span class="o">)</span> <span class="k">=</span> <span class="n">p1</span>
   <span class="k">val</span> <span class="o">(</span><span class="n">p2a</span><span class="o">,</span> <span class="n">p2b</span><span class="o">)</span> <span class="k">=</span> <span class="n">p2</span>
@@ -432,22 +439,22 @@ gene from each parent at random:</p>
     <span class="n">p1</span> <span class="k">&lt;-</span> <span class="nc">List</span><span class="o">(</span><span class="n">p1a</span><span class="o">,</span> <span class="n">p1b</span><span class="o">)</span>
     <span class="n">p2</span> <span class="k">&lt;-</span> <span class="nc">List</span><span class="o">(</span><span class="n">p2a</span><span class="o">,</span> <span class="n">p2b</span><span class="o">)</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="o">(</span><span class="n">p1</span><span class="o">,</span> <span class="n">p2</span><span class="o">))</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Finally, for the people whose parents are not specified, we supply a prior on each of the 3 genes refecting their
 <a href="http://en.wikipedia.org/wiki/Blood_type_distribution_by_country">prevalence in the general population</a>.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">bloodGenePrior</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[(</span><span class="kt">BloodGene</span>, <span class="kt">BloodGene</span><span class="o">)]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">bloodGenePrior</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[(</span><span class="kt">BloodGene</span>, <span class="kt">BloodGene</span><span class="o">)]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">geneFrequencies</span> <span class="k">=</span> <span class="n">discrete</span><span class="o">(</span><span class="nc">A_</span> <span class="o">-&gt;</span> <span class="mf">0.26</span><span class="o">,</span> <span class="nc">B_</span> <span class="o">-&gt;</span> <span class="mf">0.08</span><span class="o">,</span> <span class="nc">O_</span> <span class="o">-&gt;</span> <span class="mf">0.66</span><span class="o">)</span>
   <span class="k">for</span> <span class="o">{</span>
     <span class="n">g1</span> <span class="k">&lt;-</span> <span class="n">geneFrequencies</span>
     <span class="n">g2</span> <span class="k">&lt;-</span> <span class="n">geneFrequencies</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="o">(</span><span class="n">g1</span><span class="o">,</span> <span class="n">g2</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>OK, now let’s wire everything up. This should be a straightforward translation of the Bayesian network above into code.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">BloodTrial</span><span class="o">(</span><span class="n">lisa</span><span class="k">:</span> <span class="kt">BloodType</span><span class="o">,</span> <span class="n">homer</span><span class="k">:</span> <span class="kt">BloodType</span><span class="o">,</span> <span class="n">marge</span><span class="k">:</span> <span class="kt">BloodType</span><span class="o">,</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">BloodTrial</span><span class="o">(</span><span class="n">lisa</span><span class="k">:</span> <span class="kt">BloodType</span><span class="o">,</span> <span class="n">homer</span><span class="k">:</span> <span class="kt">BloodType</span><span class="o">,</span> <span class="n">marge</span><span class="k">:</span> <span class="kt">BloodType</span><span class="o">,</span>
                       <span class="n">selma</span><span class="k">:</span> <span class="kt">BloodType</span><span class="o">,</span> <span class="n">jackie</span><span class="k">:</span> <span class="kt">BloodType</span><span class="o">,</span> <span class="n">harry</span><span class="k">:</span> <span class="kt">BloodType</span><span class="o">)</span>
 
 <span class="k">val</span> <span class="n">bloodType</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">BloodTrial</span><span class="o">]</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
@@ -463,11 +470,11 @@ gene from each parent at random:</p>
   <span class="n">bSelma</span> <span class="k">&lt;-</span> <span class="n">typeFromGene</span><span class="o">(</span><span class="n">gSelma</span><span class="o">)</span>
   <span class="n">bJackie</span> <span class="k">&lt;-</span> <span class="n">typeFromGene</span><span class="o">(</span><span class="n">gJackie</span><span class="o">)</span>
   <span class="n">bHarry</span> <span class="k">&lt;-</span> <span class="n">typeFromGene</span><span class="o">(</span><span class="n">gHarry</span><span class="o">)</span>
-<span class="o">}</span> <span class="k">yield</span> <span class="nc">BloodTrial</span><span class="o">(</span><span class="n">bLisa</span><span class="o">,</span> <span class="n">bHomer</span><span class="o">,</span> <span class="n">bMarge</span><span class="o">,</span> <span class="n">bSelma</span><span class="o">,</span> <span class="n">bJackie</span><span class="o">,</span> <span class="n">bHarry</span><span class="o">)</span></code></pre></div>
+<span class="o">}</span> <span class="k">yield</span> <span class="nc">BloodTrial</span><span class="o">(</span><span class="n">bLisa</span><span class="o">,</span> <span class="n">bHomer</span><span class="o">,</span> <span class="n">bMarge</span><span class="o">,</span> <span class="n">bSelma</span><span class="o">,</span> <span class="n">bJackie</span><span class="o">,</span> <span class="n">bHarry</span><span class="o">)</span></code></pre></figure>
 
 <p>Here it is in action:</p>
 
-<pre><code>scala&gt; bloodType.map(_.marge).hist
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; bloodType.map(_.marge).hist
  A 40.40% ########################################
  B 11.19% ###########
 AB  4.25% ####
@@ -484,10 +491,11 @@ scala&gt; bloodType.given(_.lisa == AB).map(_.marge).hist
  B 37.40% #####################################
 AB 16.89% ################
 </code></pre>
+</div>
 
 <p>Makes sense so far. Let’s look at Lisa and her Aunt Selma:</p>
 
-<pre><code>scala&gt; bloodType.map(_.lisa).hist
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; bloodType.map(_.lisa).hist
  A 41.79% #########################################
  B 11.24% ###########
 AB  3.94% ###
@@ -505,10 +513,11 @@ scala&gt; bloodType.given(_.selma == B).map(_.lisa).hist
 AB  9.08% #########
  O 36.86% ####################################
 </code></pre>
+</div>
 
 <p>Homer and Marge should not affect each other, unless Lisa’s blood type is known:</p>
 
-<pre><code>scala&gt; bloodType.map(_.homer).hist
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; bloodType.map(_.homer).hist
  A 40.34% ########################################
  B 10.74% ##########
 AB  4.21% ####
@@ -530,10 +539,11 @@ scala&gt; bloodType.given(_.lisa == B).given(_.marge == A).map(_.homer).hist
  B 73.99% #########################################################################
 AB 26.01% ##########################
 </code></pre>
+</div>
 
 <p>This is Rule 3b in effect. Even Harry and Jackie are correlated if their grandchild’s blood type is known:</p>
 
-<pre><code>scala&gt; bloodType.given(_.lisa == AB).map(_.harry).hist
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; bloodType.given(_.lisa == AB).map(_.harry).hist
  A 43.83% ###########################################
  B 23.51% #######################
 AB 10.90% ##########
@@ -544,6 +554,7 @@ scala&gt; bloodType.given(_.lisa == AB).given(_.jackie == O).map(_.harry).hist
  B 37.73% #####################################
 AB 17.26% #################
 </code></pre>
+</div>
 
 <p>This is pretty fun to play around with!</p>
 
@@ -676,27 +687,27 @@ arrow that goes directly from “smokes” to “cancer”, without changing the
 
 <p>Suppose we observe that 50% of the population smokes. We’ll have:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">smokes</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.5</span><span class="o">)</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">smokes</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.5</span><span class="o">)</span></code></pre></figure>
 
 <p>We can also encode observations of the frequencies at which smokers and non-smokers have tar in their lungs:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">tar</span><span class="o">(</span><span class="n">smokes</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">tar</span><span class="o">(</span><span class="n">smokes</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">smokes</span> <span class="k">match</span> <span class="o">{</span>
     <span class="k">case</span> <span class="kc">true</span> <span class="k">=&gt;</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.95</span><span class="o">)</span>
     <span class="k">case</span> <span class="kc">false</span> <span class="k">=&gt;</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.05</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>And the last one, observed frequencies of cancer, broken out by whether someone smokes or has tar in their lungs:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">cancer</span><span class="o">(</span><span class="n">smokes</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span> <span class="n">tar</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">cancer</span><span class="o">(</span><span class="n">smokes</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span> <span class="n">tar</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="o">(</span><span class="n">smokes</span><span class="o">,</span> <span class="n">tar</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
     <span class="k">case</span> <span class="o">(</span><span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.1</span><span class="o">)</span>
     <span class="k">case</span> <span class="o">(</span><span class="kc">true</span><span class="o">,</span> <span class="kc">false</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.9</span><span class="o">)</span>
     <span class="k">case</span> <span class="o">(</span><span class="kc">false</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.05</span><span class="o">)</span>
     <span class="k">case</span> <span class="o">(</span><span class="kc">true</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.85</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Again, these numbers represent simple observed frequencies. We could actually do this in practice if we had experimental
 data. (Obviously all the numbers here are extrememly made up.)</p>
@@ -704,7 +715,7 @@ data. (Obviously all the numbers here are extrememly made up.)</p>
 <p>Now let’s wire everything together. We’ll do it two ways: the first way encoding the original graph, and the second way
 encoding the manipulated graph that separates “smokes” from external influences.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">SmokingTrial</span><span class="o">(</span><span class="n">smokes</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span> <span class="n">tar</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span> <span class="n">cancer</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">SmokingTrial</span><span class="o">(</span><span class="n">smokes</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span> <span class="n">tar</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span> <span class="n">cancer</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">)</span>
 
 <span class="k">def</span> <span class="n">smoking1</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">SmokingTrial</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">for</span> <span class="o">{</span>
@@ -721,11 +732,11 @@ encoding the manipulated graph that separates “smokes” from external influen
     <span class="n">t</span> <span class="k">&lt;-</span> <span class="n">tar</span><span class="o">(</span><span class="n">s1</span><span class="o">)</span>
     <span class="n">c</span> <span class="k">&lt;-</span> <span class="n">cancer</span><span class="o">(</span><span class="n">s2</span><span class="o">,</span> <span class="n">t</span><span class="o">)</span>
   <span class="o">}</span> <span class="k">yield</span> <span class="nc">SmokingTrial</span><span class="o">(</span><span class="n">s1</span><span class="o">,</span> <span class="n">t</span><span class="o">,</span> <span class="n">c</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Now let’s see it in action.</p>
 
-<pre><code>scala&gt; smoking1.pr(_.cancer)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; smoking1.pr(_.cancer)
 res0: Double = 0.4723
 
 scala&gt; smoking1.given(_.smokes).pr(_.cancer)
@@ -737,6 +748,7 @@ res2: Double = 0.4759
 scala&gt; smoking2.given(_.smokes).pr(_.cancer)
 res3: Double = 0.4577
 </code></pre>
+</div>
 
 <p>According to these made-up numbers, smoking actually <em>prevents</em> cancer,
 even though empirically, smokers have a higher incidence of cancer than the general population!</p>
@@ -867,7 +879,7 @@ I bet you thought all of probability was worked out in the 1700s!</p>
       </div>
       <hr>
       <footer>
-        <p>&copy; 2016 Jason Liszka
+        <p>&copy; 2013 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

@@ -52,7 +52,7 @@
     
       
       	
-      	<li><a href="/archive.html">Archive</a></li>
+      	<li><a href="/archive">Archive</a></li>
       	
       
     
@@ -80,7 +80,7 @@
     
       
       	
-      	<li><a href="/tags.html">Tags</a></li>
+      	<li><a href="/tags">Tags</a></li>
       	
       
     
@@ -128,7 +128,9 @@
       <h1>The 3 Things You Should Understand about Quantum Computation </h1>
     </div>
     <div class="date">
-      <span>09 September 2013</span>
+      
+        <span>09 September 2013</span>
+      
     </div>
     <div class="content">
       
@@ -544,9 +546,10 @@ In a 10 qubit computer, for example, that measurement gives you a single 10-bit 
 taking the <a href="https://class.coursera.org/qcomp-2012-001/class/index">Quantum Computation Coursera</a>,
 just so I wouldn’t have to do all the math by hand. It turned out to be pretty useful! Here’s a quick demo:</p>
 
-<pre><code>scala&gt; s0
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; s0
 res0: Q[Basis.Std] = 1.0|0&gt;
 </code></pre>
+</div>
 
 <p>This is a very simple quantum state equivalent to the following probability distribution table:</p>
 
@@ -579,9 +582,10 @@ number whose squared absolute value gives the classical probability of that stat
 
 <p>But first, let’s apply a quantum gate to this state:</p>
 
-<pre><code>scala&gt; s0 &gt;&gt;= H
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; s0 &gt;&gt;= H
 res1: Q[Basis.Std] = 0.707107|0&gt; + 0.707107|1&gt;
 </code></pre>
+</div>
 
 <p>This is <script type="math/tex">\frac{1}{\sqrt{2}}\ket{0} + \frac{1}{\sqrt{2}}\ket{1}</script>. It corresponds to the following (classical)
 probability distribution table:</p>
@@ -613,9 +617,10 @@ and so does <script type="math/tex">\frac{-i}{\sqrt{2}}\ket{0} - \frac{1}{\sqrt{
 
 <p>One qubit only gets you so far. So let’s create a 2 qubit state.</p>
 
-<pre><code>scala&gt; s0 * s0
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; s0 * s0
 res2: Q[T[Basis.Std,Basis.Std]] = 1.0|00&gt;
 </code></pre>
+</div>
 
 <p>The state label now contains 2 bits. This state corresponds to this table:</p>
 
@@ -648,22 +653,25 @@ res2: Q[T[Basis.Std,Basis.Std]] = 1.0|00&gt;
 
 <p>Now we’ll apply the H gate to both qubits:</p>
 
-<pre><code>scala&gt; (s0 * s0) &gt;&gt;= lift12(H, H)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; (s0 * s0) &gt;&gt;= lift12(H, H)
 res3: Q[T[Basis.Std,Basis.Std]] = 0.5|00&gt; + 0.5|01&gt; + 0.5|10&gt; + 0.5|11&gt;
 </code></pre>
+</div>
 
 <p>Or just to the first qubit:</p>
 
-<pre><code>scala&gt; (s0 * s0) &gt;&gt;= lift1(H)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; (s0 * s0) &gt;&gt;= lift1(H)
 res4: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|10&gt;
 </code></pre>
+</div>
 
 <p>There are some gates that operate on two qubits at once. The CNOT gate, for example, flips the second qubit only if the
 first qubit is a 1.</p>
 
-<pre><code>scala&gt; val s = (s0 * s0) &gt;&gt;= lift1(H) &gt;&gt;= cnot
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val s = (s0 * s0) &gt;&gt;= lift1(H) &gt;&gt;= cnot
 s: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|11&gt;
 </code></pre>
+</div>
 
 <p>That corresponds to this table:</p>
 
@@ -700,25 +708,27 @@ This is called the <a href="http://en.wikipedia.org/wiki/Bell_state">Bell state<
 
 <p>Let’s see what happens when we measure the first qubit:</p>
 
-<pre><code>scala&gt; val Measurement(m, s2) = s.measure(_._1)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val Measurement(m, s2) = s.measure(_._1)
 m: Basis.Std = |1&gt;
 s2: Q[T[Basis.Std,Basis.Std]] = 1.0|11&gt;
 </code></pre>
+</div>
 
-<p>The result of the measurement is 2 things: the outcome of the measurement itself — <code>m</code>, <script type="math/tex">\ket{1}</script> — and the new state of the
-system — <code>s2</code>, <script type="math/tex">1.0\ket{11}</script>. The measurement gave us one of the possible states, at random, according to
+<p>The result of the measurement is 2 things: the outcome of the measurement itself — <code class="highlighter-rouge">m</code>, <script type="math/tex">\ket{1}</script> — and the new state of the
+system — <code class="highlighter-rouge">s2</code>, <script type="math/tex">1.0\ket{11}</script>. The measurement gave us one of the possible states, at random, according to
 its probability amplitude. The act of measuring changes the state, eliminating all states that are inconsistent with that outcome.
 So now if we measure the second qubit, we are guaranteed to get <script type="math/tex">\ket{1}</script>.</p>
 
 <p>Here’s another example of that.</p>
 
-<pre><code>scala&gt; val s = (s0 * s0) &gt;&gt;= lift12(H, H)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val s = (s0 * s0) &gt;&gt;= lift12(H, H)
 s: Q[T[Basis.Std,Basis.Std]] = 0.5|00&gt; + 0.5|01&gt; + 0.5|10&gt; + 0.5|11&gt;
 
 scala&gt; val Measurement(m, s2) = s.measure(_._2)
 m: Basis.Std = |0&gt;
 s2: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|10&gt;
 </code></pre>
+</div>
 
 <p>This time we measured the second qubit, getting <script type="math/tex">\ket{0}</script>, and you can see that the only states remaining are
 the ones where the second qubit is 0.</p>
@@ -734,22 +744,24 @@ that performs the following transformation on states:
 %]]&gt;
 </script></p>
 
-<p>I’m going to call this gate <code>sqrtNot</code> for reasons that will soon become apparent. Let’s see it in action.</p>
+<p>I’m going to call this gate <code class="highlighter-rouge">sqrtNot</code> for reasons that will soon become apparent. Let’s see it in action.</p>
 
-<pre><code>scala&gt; s0 &gt;&gt;= sqrtNot
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; s0 &gt;&gt;= sqrtNot
 res0: Q[Basis.Std] = 0.707107|0&gt; + 0.707107|1&gt;
 </code></pre>
+</div>
 
 <p>OK, we’ve turned a pure <script type="math/tex">\ket{0}</script> state into an even mix of <script type="math/tex">\ket{0}</script> and <script type="math/tex">\ket{1}</script>.
 In other words, we took a coin that always lands heads and “randomized” it into a completely fair coin.</p>
 
-<p>Now let’s run it through the <code>sqrtNot</code> gate again and see what happens.</p>
+<p>Now let’s run it through the <code class="highlighter-rouge">sqrtNot</code> gate again and see what happens.</p>
 
-<pre><code>scala&gt; s0 &gt;&gt;= sqrtNot &gt;&gt;= sqrtNot
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; s0 &gt;&gt;= sqrtNot &gt;&gt;= sqrtNot
 res1: Q[Basis.Std] = 1.0|1&gt;
 </code></pre>
+</div>
 
-<p>Weird! We now have a coin that always lands tails. (That’s why it’s called <code>sqrtNot</code> — applying it twice inverts
+<p>Weird! We now have a coin that always lands tails. (That’s why it’s called <code class="highlighter-rouge">sqrtNot</code> — applying it twice inverts
 the state.) How does that work? Let’s do the math.</p>
 
 <script type="math/tex; mode=display">
@@ -767,27 +779,30 @@ the state.) How does that work? Let’s do the math.</p>
 
 <p>Let’s keep going:</p>
 
-<pre><code>scala&gt; s0 &gt;&gt;= sqrtNot &gt;&gt;= sqrtNot &gt;&gt;= sqrtNot
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; s0 &gt;&gt;= sqrtNot &gt;&gt;= sqrtNot &gt;&gt;= sqrtNot
 res2: Q[Basis.Std] = -0.707107|0&gt; + 0.707107|1&gt;
 
 scala&gt; s0 &gt;&gt;= sqrtNot &gt;&gt;= sqrtNot &gt;&gt;= sqrtNot &gt;&gt;= sqrtNot
 res3: Q[Basis.Std] = -1.0|0&gt;
 </code></pre>
+</div>
 
 <p>And we’re back to a coin that always lands heads. (We flipped the sign, but remember only the squared absolute value really matters.)</p>
 
 <p>For kicks, let’s see what happens when we introduce another qubit into the mix:</p>
 
-<pre><code>scala&gt; bell
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; bell
 res4: Q[T[Basis.Std,Basis.Std]] = 0.707107|00&gt; + 0.707107|11&gt;
 </code></pre>
+</div>
 
-<p>These qubits happen to be entangled, but that shouldn’t affect our application of <code>sqrtNot</code> to the first
+<p>These qubits happen to be entangled, but that shouldn’t affect our application of <code class="highlighter-rouge">sqrtNot</code> to the first
 qubit, should it?</p>
 
-<pre><code>scala&gt; bell &gt;&gt;= lift1(sqrtNot)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; bell &gt;&gt;= lift1(sqrtNot)
 res5: Q[T[Basis.Std,Basis.Std]] = 0.5|00&gt; + -0.5|01&gt; + 0.5|10&gt; + 0.5|11&gt;
 </code></pre>
+</div>
 
 <p>Oops! The interference effects disappeared. The first qubit now behaves like a classical fair coin — no matter what
 we do to it, we can’t recover those interference effects and get things to cancel. I think this is called
@@ -907,7 +922,7 @@ the qubits in your quantum computer, and flying off to Pluto where you can’t d
       </div>
       <hr>
       <footer>
-        <p>&copy; 2016 Jason Liszka
+        <p>&copy; 2013 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

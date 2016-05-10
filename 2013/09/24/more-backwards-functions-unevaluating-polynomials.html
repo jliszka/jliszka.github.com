@@ -52,7 +52,7 @@
     
       
       	
-      	<li><a href="/archive.html">Archive</a></li>
+      	<li><a href="/archive">Archive</a></li>
       	
       
     
@@ -80,7 +80,7 @@
     
       
       	
-      	<li><a href="/tags.html">Tags</a></li>
+      	<li><a href="/tags">Tags</a></li>
       	
       
     
@@ -128,7 +128,9 @@
       <h1>Unevaluating polynomials </h1>
     </div>
     <div class="date">
-      <span>24 September 2013</span>
+      
+        <span>24 September 2013</span>
+      
     </div>
     <div class="content">
       
@@ -140,13 +142,14 @@ f(x) = 6 + 5x + 2x^3
 </script>
 at <script type="math/tex">f(8)</script>, for example, you do this:</p>
 
-<pre><code>scala&gt; evalPoly(8, List(6, 5, 0, 2))
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; evalPoly(8, List(6, 5, 0, 2))
 res0: (Int, Int) = (8, 1070)
 </code></pre>
+</div>
 
 <p>For some reason it echoes the input back out to you. Here’s the code you might write:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">evalPoly</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">coeffs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">evalPoly</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">coeffs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">eval</span><span class="o">(</span><span class="n">cs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">{</span>
     <span class="n">cs</span> <span class="k">match</span> <span class="o">{</span>
       <span class="k">case</span> <span class="nc">Nil</span> <span class="k">=&gt;</span> <span class="mi">0</span>
@@ -154,28 +157,29 @@ res0: (Int, Int) = (8, 1070)
     <span class="o">}</span>
   <span class="o">}</span>
   <span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">eval</span><span class="o">(</span><span class="n">coeffs</span><span class="o">))</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>This should not be surprising.</p>
 
 <p>But I also have a function that un-evaluates polynomials. To un-evaluate <script type="math/tex">f(8) = 1070</script>, you do this:</p>
 
-<pre><code>scala&gt; unevalPoly(8, 1070)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; unevalPoly(8, 1070)
 res1: (Int, List[Int]) = (8, List(6, 5, 0, 2))
 </code></pre>
+</div>
 
 <p>and it echoes your input and gives you back the coefficients of the polynomial.</p>
 
 <!-- more -->
 
 <p>Wait, what? I thought you needed <script type="math/tex">N+1</script> points to determine an <script type="math/tex">N</script>-degree polynomial.
-Here I’ve seemingly done it with just one point. To spoil the surprise a little, <code>unevalPoly</code> doesn’t
+Here I’ve seemingly done it with just one point. To spoil the surprise a little, <code class="highlighter-rouge">unevalPoly</code> doesn’t
 always work. But how does it work even some of the time? How would you go about coding this up?</p>
 
-<p>Having noticed that the input to <code>unevalPoly</code> is the output of <code>evalPoly</code>, and vice versa,
-one tack we can try is to write <code>evalPoly</code> backwards. First let me rewrite it slightly:</p>
+<p>Having noticed that the input to <code class="highlighter-rouge">unevalPoly</code> is the output of <code class="highlighter-rouge">evalPoly</code>, and vice versa,
+one tack we can try is to write <code class="highlighter-rouge">evalPoly</code> backwards. First let me rewrite it slightly:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">evalPoly</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">coeffs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">evalPoly</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">coeffs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">eval</span><span class="o">(</span><span class="n">cs</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">{</span>
     <span class="n">cs</span> <span class="k">match</span> <span class="o">{</span>
       <span class="k">case</span> <span class="nc">Nil</span> <span class="k">=&gt;</span> <span class="mi">0</span>
@@ -183,22 +187,22 @@ one tack we can try is to write <code>evalPoly</code> backwards. First let me re
     <span class="o">}</span>
   <span class="o">}</span>
   <span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">eval</span><span class="o">(</span><span class="n">coeffs</span><span class="o">))</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<p>I’ve just replaced <code>x * eval(t) + h</code> with a call to this function:</p>
+<p>I’ve just replaced <code class="highlighter-rouge">x * eval(t) + h</code> with a call to this function:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">plustimes</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">q</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">plustimes</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">q</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">r</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">n</span> <span class="o">*</span> <span class="n">q</span> <span class="o">+</span> <span class="n">r</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<p>Now here’s <code>eval</code> as a data flow diagram.
-I’ve threaded through <code>x</code> as a “context” variable because it isn’t an input to <code>eval</code> per se.</p>
+<p>Now here’s <code class="highlighter-rouge">eval</code> as a data flow diagram.
+I’ve threaded through <code class="highlighter-rouge">x</code> as a “context” variable because it isn’t an input to <code class="highlighter-rouge">eval</code> per se.</p>
 
 <p><img src="/assets/img/poly/eval.png" alt="eval" /></p>
 
 <p>Following the arrows backwards from the outputs to the inputs we can write the following code:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">unevalPoly</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">unevalPoly</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">uneval</span><span class="o">(</span><span class="n">y</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
     <span class="n">y</span> <span class="k">match</span> <span class="o">{</span>
       <span class="k">case</span> <span class="mi">0</span> <span class="k">=&gt;</span> <span class="nc">Nil</span>
@@ -209,57 +213,60 @@ I’ve threaded through <code>x</code> as a “context” variable because it is
     <span class="o">}</span>
   <span class="o">}</span>
   <span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">uneval</span><span class="o">(</span><span class="n">y</span><span class="o">))</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<p>Now this should work as long as we can write <code>unplustimes</code>, which is possible only when <code>plustimes</code> doesn’t
-destroy information. So given <code>m</code> and <code>n</code> and <code>m = n * q + r</code>, when can we recover <code>q</code> and <code>r</code>?</p>
+<p>Now this should work as long as we can write <code class="highlighter-rouge">unplustimes</code>, which is possible only when <code class="highlighter-rouge">plustimes</code> doesn’t
+destroy information. So given <code class="highlighter-rouge">m</code> and <code class="highlighter-rouge">n</code> and <code class="highlighter-rouge">m = n * q + r</code>, when can we recover <code class="highlighter-rouge">q</code> and <code class="highlighter-rouge">r</code>?</p>
 
-<p>Well, if <code>r</code> happens to be less than <code>n</code>, this is just like doing long division — <code>q</code> and <code>r</code> are the quotient
-and remainder when dividing <code>m</code> by <code>n</code>:</p>
+<p>Well, if <code class="highlighter-rouge">r</code> happens to be less than <code class="highlighter-rouge">n</code>, this is just like doing long division — <code class="highlighter-rouge">q</code> and <code class="highlighter-rouge">r</code> are the quotient
+and remainder when dividing <code class="highlighter-rouge">m</code> by <code class="highlighter-rouge">n</code>:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">unplustimes</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">m</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">unplustimes</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">m</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">q</span> <span class="k">=</span> <span class="n">m</span> <span class="o">/</span> <span class="n">n</span>
   <span class="k">val</span> <span class="n">r</span> <span class="k">=</span> <span class="n">m</span> <span class="o">%</span> <span class="n">n</span>
   <span class="o">(</span><span class="n">q</span><span class="o">,</span> <span class="n">r</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>This works because for a given positive integer <script type="math/tex">n</script>, any integer <script type="math/tex">m</script> can be written uniquely as
 <script type="math/tex">m = nq + r</script>, where <script type="math/tex">q</script> and <script type="math/tex">r</script> are nonnegative integers and <script type="math/tex">r \lt n</script>.
 Since this formulation is unique, it’s easy to reverse the process and recover <script type="math/tex">q</script> and <script type="math/tex">r</script>.</p>
 
-<p>So what does that mean for <code>unevalPoly</code>? It will only work if</p>
+<p>So what does that mean for <code class="highlighter-rouge">unevalPoly</code>? It will only work if</p>
 
 <ol>
-  <li><code>x</code> is a positive integer, and</li>
-  <li>all of the coefficients are nonnegative integers less than <code>x</code>.</li>
+  <li><code class="highlighter-rouge">x</code> is a positive integer, and</li>
+  <li>all of the coefficients are nonnegative integers less than <code class="highlighter-rouge">x</code>.</li>
 </ol>
 
 <p>Let’s try it out. This works:</p>
 
-<pre><code>scala&gt; evalPoly(8, List(1, 3))
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; evalPoly(8, List(1, 3))
 res0: (Int, Int) = (8, 25)
 
 scala&gt; unevalPoly(8, 25)
 res1: (Int, List[Int]) = (8, List(1, 3))
 </code></pre>
+</div>
 
 <p>But this doesn’t, as expected:</p>
 
-<pre><code>scala&gt; evalPoly(2, List(1, 4, 2))
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; evalPoly(2, List(1, 4, 2))
 res2: (Int, Int) = (2, 17)
 
 scala&gt; unevalPoly(2, 17)
 res3: (Int, List[Int]) = (2, List(1, 0, 0, 0, 1))
 </code></pre>
+</div>
 
 <p>And neither does this:</p>
 
-<pre><code>scala&gt; evalPoly(5, List(1, -2, 1))
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; evalPoly(5, List(1, -2, 1))
 res4: (Int, Int) = (5, 16)
 
 scala&gt; unevalPoly(5, 16)
 res5: (Int, List[Int]) = (5, List(1, 3))
 </code></pre>
+</div>
 
 <p>Neat though!</p>
 
@@ -274,18 +281,20 @@ So all that’s left to the solution is finding some number that satisfies that 
 
 <h3 id="whats-really-going-on">What’s really going on</h3>
 
-<p>You might have noticed that all <code>unevalPoly(n, m)</code> is doing is converting <code>m</code> to its representation in base <code>n</code>.
+<p>You might have noticed that all <code class="highlighter-rouge">unevalPoly(n, m)</code> is doing is converting <code class="highlighter-rouge">m</code> to its representation in base <code class="highlighter-rouge">n</code>.
 Here it is converting 42 to base 2:</p>
 
-<pre><code>scala&gt; unevalPoly(2, 42)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; unevalPoly(2, 42)
 res6: (Int, List[Int]) = (2,List(0, 1, 0, 1, 0, 1))
 </code></pre>
+</div>
 
 <p>And oh, look:</p>
 
-<pre><code>scala&gt; unevalPoly(10, 12345)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; unevalPoly(10, 12345)
 res7: (Int, List[Int]) = (10, List(5, 4, 3, 2, 1))
 </code></pre>
+</div>
 
 <p>This all makes sense now. The polynomial</p>
 
@@ -411,7 +420,7 @@ you should read my <a href="/2013/09/18/insertion-sort-is-dual-to-bubble-sort.ht
       </div>
       <hr>
       <footer>
-        <p>&copy; 2016 Jason Liszka
+        <p>&copy; 2013 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

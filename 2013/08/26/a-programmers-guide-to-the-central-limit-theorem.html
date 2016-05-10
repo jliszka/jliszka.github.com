@@ -52,7 +52,7 @@
     
       
       	
-      	<li><a href="/archive.html">Archive</a></li>
+      	<li><a href="/archive">Archive</a></li>
       	
       
     
@@ -80,7 +80,7 @@
     
       
       	
-      	<li><a href="/tags.html">Tags</a></li>
+      	<li><a href="/tags">Tags</a></li>
       	
       
     
@@ -128,7 +128,9 @@
       <h1>A Programmer's Guide to the Central Limit Theorem </h1>
     </div>
     <div class="date">
-      <span>26 August 2013</span>
+      
+        <span>26 August 2013</span>
+      
     </div>
     <div class="content">
       
@@ -144,9 +146,9 @@ and find the mean of the sample. What can I say about the relationship between t
 
 <p>The most comprehensive answer to this is to look at the distribution of the sample mean.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">sampleMean</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">],</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">100</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">sampleMean</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">],</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">100</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">d</span><span class="o">.</span><span class="n">repeat</span><span class="o">(</span><span class="n">n</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">sum</span> <span class="o">/</span> <span class="n">n</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>This method takes a probability distribution and returns the distribution of means of samples from that distribution. You can
 specify the sample size, but by default we’ll use 100.</p>
@@ -155,7 +157,7 @@ specify the sample size, but by default we’ll use 100.</p>
 
 <!-- more -->
 
-<pre><code>scala&gt; sampleMean(uniform).hist
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; sampleMean(uniform).hist
 0.40  0.01% 
 0.41  0.06% 
 0.42  0.36% 
@@ -178,12 +180,13 @@ specify the sample size, but by default we’ll use 100.</p>
 0.59  0.07% 
 0.60  0.06% 
 </code></pre>
+</div>
 
 <p>Not surprising. All the sample means are clustered around the true mean (0.5).</p>
 
 <p>Let’s try a couple more.</p>
 
-<pre><code>scala&gt; sampleMean(exponential(1)).hist
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; sampleMean(exponential(1)).hist
 0.60  0.00% 
 0.65  0.02% 
 0.70  0.16% 
@@ -230,10 +233,11 @@ scala&gt; sampleMean(chi2(5)).hist
 6.10  0.03% 
 6.20  0.02% 
 </code></pre>
+</div>
 
 <p>OK, starting to see a pattern here. Let’s look at some discrete distributions.</p>
 
-<pre><code>scala&gt; sampleMean(bernoulli(0.8).map(_.toDouble).hist
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; sampleMean(bernoulli(0.8).map(_.toDouble).hist
 0.68  0.33% 
 0.70  0.85% 
 0.72  2.14% ##
@@ -310,6 +314,7 @@ scala&gt; sampleMean(poisson(5).map(_.toDouble)).hist
 5.60  0.64% 
 5.70  0.16% 
 </code></pre>
+</div>
 
 <p>All of these distributions look vaguely normal and they’re all clustered around the mean of the underlying distribution.</p>
 
@@ -336,26 +341,28 @@ to think of the “error” as the difference between the sample mean and the tr
 
 <p>Let’s revisit each of the examples above and see if it pans out.</p>
 
-<pre><code>scala&gt; uniform.ev
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; uniform.ev
 res0: Double = 0.49596431533522234
 
 scala&gt; uniform.stdev
 res1: Double = 0.290545289200811
 </code></pre>
+</div>
 
-<p>So the Central Limit Theorem would predict that <code>sampleMean(uniform)</code> will have mean 0.5 and stdev <script type="math/tex">0.29 / \sqrt{100} = 0.029</script>.</p>
+<p>So the Central Limit Theorem would predict that <code class="highlighter-rouge">sampleMean(uniform)</code> will have mean 0.5 and stdev <script type="math/tex">0.29 / \sqrt{100} = 0.029</script>.</p>
 
-<pre><code>scala&gt; sampleMean(uniform).ev
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; sampleMean(uniform).ev
 res2: Double = 0.49968258747065275
 
 scala&gt; sampleMean(uniform).stdev
 res3: Double = 0.028763987024078164
 </code></pre>
+</div>
 
 <p>Wow, OK! Let’s keep going. (I’m going to omit the mean calculations because it seems like an obvious fact. So I’m just
 looking to see that the standard error is 1/10th the standard deviation of the underlying distribution.)</p>
 
-<pre><code>scala&gt; exponential(1).stdev
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; exponential(1).stdev
 res0: Double = 0.9971584111946743
 
 scala&gt; sampleMean(exponential(1)).stdev
@@ -385,15 +392,17 @@ res9: Double = 4.439230239579939
 scala&gt; sampleMean(geometric(0.2).map(_.toDouble)).stdev
 res10: Double = 0.4428929231078312
 </code></pre>
+</div>
 
 <p>And one more with a different sample size:</p>
 
-<pre><code>scala&gt; sampleMean(geometric(0.2).map(_.toDouble), n = 625).stdev
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; sampleMean(geometric(0.2).map(_.toDouble), n = 625).stdev
 res11: Double = 0.17952533894556522
 
 scala&gt; geometric(0.2).stdev / 25
 res12: Double = 0.17756920958319758
 </code></pre>
+</div>
 
 <p>Crazy! OK that’s enough experimental proof for me.</p>
 
@@ -427,28 +436,30 @@ null hypothesis if you can show that there is less than, say, a 5% chance of los
 
 <p>You can model the distribution of outcomes for a single round of the game as follows:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="n">geometric</span><span class="o">(</span><span class="mf">0.5</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="mf">1.0</span><span class="o">)</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">d</span> <span class="k">=</span> <span class="n">geometric</span><span class="o">(</span><span class="mf">0.5</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span> <span class="o">-</span> <span class="mf">1.0</span><span class="o">)</span></code></pre></figure>
 
-<p><code>geometric(0.5)</code> models your winnings and <code>- 1.0</code> represents the cost to play the round. The expected value
+<p><code class="highlighter-rouge">geometric(0.5)</code> models your winnings and <code class="highlighter-rouge">- 1.0</code> represents the cost to play the round. The expected value
 and standard deviation of this distribution are:</p>
 
-<pre><code>scala&gt; d.ev
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; d.ev
 res102: Double = -0.0093
 
 scala&gt; d.stdev
 res105: Double = 1.406354208583263
 </code></pre>
+</div>
 
 <p>We’ll call that 0 and 1.4. You have a sample of 100 rounds and an average loss of $0.30 per round. What is the probability
-that 100 samples from <code>d</code> would have a mean of -0.3? Well, the distribution of sample means has mean 0 and
+that 100 samples from <code class="highlighter-rouge">d</code> would have a mean of -0.3? Well, the distribution of sample means has mean 0 and
 standard deviation <script type="math/tex">1.4 / \sqrt{100} = 0.14</script>. So your sample mean of -0.3 is more than 2 standard deviations
 away from the average sample mean, which we know will happen less than 5% of the time. So we can reject the null hypothesis.</p>
 
 <p>We can also calculate the probability directly against the distribution of sample means.</p>
 
-<pre><code>scala&gt; sampleMean(d, n = 100).pr(_ &lt; -0.3)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; sampleMean(d, n = 100).pr(_ &lt; -0.3)
 res0: Double = 0.0104
 </code></pre>
+</div>
 
 <p>It’s worth pointing out that this is a one-tailed test (I’m not considering the possibility that we’d see a gain of
 $0.30 per round) because I have no reason to suspect that my friend has rigged the game in my favor.</p>
@@ -466,20 +477,22 @@ chance, or was making the button red a meaningful change?</p>
 
 <p>We can model the number of clicks as a Bernoulli distribution with a 5.8% success probability.</p>
 
-<pre><code>scala&gt; val d = bernoulli(0.058).map(_.toDouble)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val d = bernoulli(0.058).map(_.toDouble)
 d: Distribution[Double] = &lt;distribution&gt;
 
 scala&gt; d.stdev
 res0: Double = 0.24062616233485523
 </code></pre>
+</div>
 
 <p>We want to know the probability of seeing a 6.5% success rate in a sample of 810 visitors. Since we know the standard
-deviation of <code>d</code>, we can apply the Central Limit Theorem to find the standard error for a sample of size 810,
+deviation of <code class="highlighter-rouge">d</code>, we can apply the Central Limit Theorem to find the standard error for a sample of size 810,
 just by dividing by <script type="math/tex">\sqrt{810} = 28.5</script>.</p>
 
-<pre><code>scala&gt; d.stdev / math.sqrt(810)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; d.stdev / math.sqrt(810)
 res2: Double = 0.008313053843054703
 </code></pre>
+</div>
 
 <p>Well, OK. Our difference of 0.7% is less than one standard deviation from the mean, which means it’s pretty likely to happen
 just by chance. In other words, we can’t reject the null hypothesis that making the button red did not change the rate at
@@ -487,7 +500,7 @@ which people click on it.</p>
 
 <p>To illustrate this further, here’s what the distribution of sample means for samples of size 810 looks like:</p>
 
-<pre><code>scala&gt; sampleMean(d, 810).hist
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; sampleMean(d, 810).hist
 0.0350  0.15% 
 0.0375  0.41% 
 0.0400  1.20% #
@@ -508,13 +521,15 @@ which people click on it.</p>
 0.0775  0.84% 
 0.0800  0.47% 
 </code></pre>
+</div>
 
 <p>Seeing 6.5% as the mean of a sample of size 810 is totally within the fat part
 of the distribution. Let’s see just how likely a difference of 0.7% really is:</p>
 
-<pre><code>scala&gt; sampleMean(d, 810).pr(c =&gt; c &lt; 0.051 || c &gt; 0.065)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; sampleMean(d, 810).pr(c =&gt; c &lt; 0.051 || c &gt; 0.065)
 res3: Double = 0.4074
 </code></pre>
+</div>
 
 <p>Pretty likely! (A difference of -0.7% would be just as surprising, so we have to count that too.)</p>
 
@@ -522,16 +537,17 @@ res3: Double = 0.4074
 What does that do to our analysis? Well, first of all, we can expect the standard error
 to be much smaller, since we’re dividing by <script type="math/tex">\sqrt{8100} = 90</script> instead of <script type="math/tex">\sqrt{810} = 28.5</script>.</p>
 
-<pre><code>scala&gt; d.stdev / 90
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; d.stdev / 90
 res0: Double = 0.0026411931460171042
 </code></pre>
+</div>
 
 <p>The standard error is 0.26%, putting our 0.7% difference at more than 2.5 standard deviations from the mean, and so in
 this case we can reject the null hypothesis and conclude that making the button red was a meaningful change.</p>
 
 <p>To further illustrate this, here is the distribution of sample means for samples of size 8100, on the same scale as before:</p>
 
-<pre><code>scala&gt; sampleMean(d, 8100).bucketedHist(0.035, 0.08, 18)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; sampleMean(d, 8100).bucketedHist(0.035, 0.08, 18)
 0.0350  0.00% 
 0.0375  0.00% 
 0.0400  0.00% 
@@ -555,6 +571,7 @@ this case we can reject the null hypothesis and conclude that making the button 
 scala&gt; sampleMean(d, 8100).pr(p =&gt; p &lt; 0.051 || p &gt; 0.065)
 res4: Double = 0.0062
 </code></pre>
+</div>
 
 <p>The range of the distribution of sample means is much narrower, so much so that a difference of 0.7% (in either direction)
 is expected to occur by chance less than 1% of the time.</p>
@@ -568,7 +585,7 @@ methods, it would diverge to infinity.</p>
 
 <p>The means of samples drawn from the Pareto distribution are not normally distributed:</p>
 
-<pre><code>scala&gt; sampleMean(pareto(1)).bucketedHist(0, 20, 20)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; sampleMean(pareto(1)).bucketedHist(0, 20, 20)
  0.0  0.00% 
  1.0  0.00% 
  2.0  0.00% 
@@ -591,15 +608,17 @@ methods, it would diverge to infinity.</p>
 19.0  0.53% 
 20.0  0.22% 
 </code></pre>
+</div>
 
 <p>And the standard error is completely meaningless:</p>
 
-<pre><code>scala&gt; sampleMean(pareto(1)).stdev
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; sampleMean(pareto(1)).stdev
 res0: Double = 157.6098722134558
 
 scala&gt; sampleMean(pareto(1)).stdev
 res1: Double = 477.9797744569662
 </code></pre>
+</div>
 
 <p>So the Central Limit Theorem doesn’t apply.</p>
 
@@ -725,7 +744,7 @@ numbers will be completely meaningless!</p>
       </div>
       <hr>
       <footer>
-        <p>&copy; 2016 Jason Liszka
+        <p>&copy; 2013 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

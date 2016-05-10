@@ -52,7 +52,7 @@
     
       
       	
-      	<li><a href="/archive.html">Archive</a></li>
+      	<li><a href="/archive">Archive</a></li>
       	
       
     
@@ -80,7 +80,7 @@
     
       
       	
-      	<li><a href="/tags.html">Tags</a></li>
+      	<li><a href="/tags">Tags</a></li>
       	
       
     
@@ -128,17 +128,13 @@
       <h1>Between order and chaos </h1>
     </div>
     <div class="date">
-      <span>11 April 2016</span>
+      
     </div>
     <div class="content">
       
 <style type="text/css">
   .bg {
-    background: no-repeat center url('/assets/img/chaos/map.png');
-    background-size: 700px 700px;
     position: absolute;
-    width: 700px;
-    height: 700px;
     z-index: 1;
   }
   .canvas {
@@ -169,6 +165,15 @@
   function setupCanvas(id, a, b, doExponent) {
 
     var canvas = document.getElementById(id);
+    canvas.width = canvas.parentNode.clientWidth - 2;
+    canvas.height = canvas.parentNode.clientWidth - 2;
+
+    var bg = document.getElementById("bg");
+    if (bg) {
+      bg.width = canvas.parentNode.clientWidth - 2;
+      bg.height = canvas.parentNode.clientWidth - 2;
+    }
+
     var ctx = canvas.getContext("2d");
     ctx.fillStyle = "#ffffff";
     ctx.font = "14px Arial";
@@ -224,6 +229,16 @@
 
         draw(canvas, ctx, a+da, b+db, doExponent);
       };
+
+      canvas.ontouchmove = function(evt) {
+        evt.preventDefault();
+        if (evt.changedTouches.length == 0) return;
+        var touch = evt.changedTouches.item(0);
+        var params = pixelToParams(canvas, touch.pageX - touch.target.offsetLeft, touch.pageY - touch.target.offsetTop);
+        a = params.a;
+        b = params.b;
+        draw(canvas, ctx, a, b, doExponent);
+      };
     }
   }
 
@@ -249,8 +264,8 @@
 
   function draw(canvas, ctx, a, b, doExponent) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillText('a = ' + a.toFixed(5), 520, 20);
-    ctx.fillText('b = ' + b.toFixed(5), 610, 20);
+    ctx.fillText('a = ' + a.toFixed(5), canvas.width-180, 20);
+    ctx.fillText('b = ' + b.toFixed(5), canvas.width-90, 20);
 
     var L = iterate(a, b, 40000, doExponent, function(r, f) {
       var p = pointToPixel(canvas, r, f);
@@ -258,7 +273,7 @@
     });
 
     if (doExponent) {
-      ctx.fillText('L = ' + L.toFixed(5), 430, 20);
+      ctx.fillText('L = ' + L.toFixed(5), canvas.width-270, 20);
     }
   }
 
@@ -298,18 +313,11 @@
   }
 </script>
 
-<p>Let me introduce you to a particular population of rabbits and foxes. Each generation, the number of rabbits and
-foxes changes according to a simple set of rules.</p>
+<p>Consider a population of rabbits and foxes. Each generation, the number of rabbits and
+foxes changes according to a simple rule.</p>
 
-<p>Rabbits reproduce at a certain maximum rate, but there is a limited amount of food. So their growth rate is limited by
-the maximum number of rabbits the food supply can support. If the rabbit population is small, they will grow at nearly
-the maxiumum birth rate, but if there are too many rabbits, they will reproduce less (or may die of starvation).
-Also, rabbits will die when they encounter a fox (due to being eaten).</p>
-
-<p>A fox will reproduce only if it encounters (and eats) a rabbit. When it does so, it will produce a certain number of pups.</p>
-
-<p>We will represent the number of rabbits <script type="math/tex">r</script> and the number of foxes <script type="math/tex">f</script> as a percentage of some
-theoretical maximum population; that is, each is a number between 0 and 1.</p>
+<p>The number of rabbits <script type="math/tex">r</script> and the number of foxes <script type="math/tex">f</script> will range between 0 and 1, representing
+the percentage of some theoretical maximum population.</p>
 
 <p>The number of rabbits in generation <script type="math/tex">n+1</script>, based on the number of rabbits <script type="math/tex">r_n</script>
 and foxes <script type="math/tex">f_n</script> in the previous generation <script type="math/tex">n</script>, is given by:</p>
@@ -321,10 +329,9 @@ r_{n+1} = a r_n (1 - r_n - f_n)
 </script>
 
 <p>The constant <script type="math/tex">a</script> is the rabbits’ birth rate. For example, if <script type="math/tex">a = 3</script>, then each rabbit produces 2 offspring in the
-next generation. The factor <script type="math/tex">(1 - r_n - f_n)</script> accounts for deaths due to starvation and predation. This is just
-saying that if the number of rabbits is low (remember <script type="math/tex">r_n</script> and <script type="math/tex">f_n</script> are percentages of some maximum population),
-then few will die of starvation, if it’s high then many will; and likewise if the number of foxes is high, many rabbits will die from
-being eaten.</p>
+next generation. The factor <script type="math/tex">(1 - r_n - f_n)</script> accounts for deaths due to starvation and predation. If the number of
+rabbits is low, then few will die of starvation, if it’s high then many will; and likewise if the number of foxes is high,
+many rabbits will die from being eaten.</p>
 
 <p>The number of foxes in the next generation is given by:</p>
 
@@ -334,18 +341,20 @@ f_{n+1} = b f_n r_n
 %]]>
 </script>
 
-<p>What this says is that the chance that a fox encounters and eats a rabbit is <script type="math/tex">r_n</script>. So if the rabbit population is at
+<p>This says that the chance that a fox encounters and eats a rabbit is <script type="math/tex">r_n</script>. So if the rabbit population is at
 80% of its theoretical maximum, 80% of foxes will eat enough to reproduce, and will produce <script type="math/tex">b</script> offspring.</p>
 
 <p>So let’s pick some values for <script type="math/tex">a</script> and <script type="math/tex">b</script> and see how the system behaves. We’ll visualize it
-just by plotting the populations on a graph. But instead of plotting both populations on the <script type="math/tex">y</script>-axis against
-time on the <script type="math/tex">x</script>-axis, we’ll plot the populations against each other. That is, we’ll leave time out of it and just
-plot the set of points <script type="math/tex">(r_i, f_i)</script> over, say, 40,000 generations. Let’s see what we get.</p>
+by plotting the populations on a graph. But instead of plotting both populations over time, we’ll plot the populations
+against each other. That is, we’ll leave time out of it and just plot the set of points <script type="math/tex">(r_i, f_i)</script> over, say,
+40,000 generations.</p>
+
+<p>Let’s see what we get.</p>
 
 <p>For most values of <script type="math/tex">a</script> and <script type="math/tex">b</script>, the system quickly finds a stable point.
 For <script type="math/tex">a = 2</script> and <script type="math/tex">b = 3</script>, it converges in on <script type="math/tex">r = \frac{1}{3}</script> and <script type="math/tex">f = \frac{1}{6}</script>.
 You can check that this is a fixed point of the recurrence.</p>
-<canvas id="canvas0" class="canvas" width="700" height="700"></canvas>
+<canvas id="canvas0" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas0", 2, 3)
 </script>
@@ -353,7 +362,7 @@ You can check that this is a fixed point of the recurrence.</p>
 <p>Rabbits are on the <script type="math/tex">x</script>-axis, foxes are on the <script type="math/tex">y</script>-axis, and the origin is in the lower left-hand corner.</p>
 
 <p>For other values of <script type="math/tex">a</script> and <script type="math/tex">b</script>, the system converges to a loop instead of a point.</p>
-<canvas id="canvas1" class="canvas" width="700" height="700"></canvas>
+<canvas id="canvas1" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas1", 2.9, 3.2)
 </script>
@@ -361,59 +370,59 @@ You can check that this is a fixed point of the recurrence.</p>
 <p>Keep in mind the system is not necessarily going from one point to the next around the loop over time.
 It’s actually jumping between points that all happen to be on the same loop. Weird, huh?</p>
 
-<p>Further on, things get weirder.</p>
-<canvas id="canvas2" class="canvas" width="700" height="700"></canvas>
+<p>At another point in the parameter space, the loop takes on an irregular shape.</p>
+<canvas id="canvas2" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas2", 3.15333, 3.44286)
 </script>
 
 <p>Nearby, the loop breaks up into a set of smaller, weird loops…</p>
-<canvas id="canvas3" class="canvas" width="700" height="700"></canvas>
+<canvas id="canvas3" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas3", 3.08143, 3.66334)
 </script>
 
 <p>… each of which proceeds to get weirder.</p>
-<canvas id="canvas4" class="canvas" width="700" height="700"></canvas>
+<canvas id="canvas4" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas4", 3.13276, 3.66883)
 </script>
 
 <p>Then, everything gets weird.</p>
-<canvas id="canvas5" class="canvas" width="700" height="700"></canvas>
+<canvas id="canvas5" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas5", 3.20667, 3.5)
 </script>
 
 <p>This is beautiful if you ask me.</p>
-<canvas id="canvas6" class="canvas" width="700" height="700"></canvas>
+<canvas id="canvas6" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas6", 3.11376, 3.88351)
 </script>
 
 <p>This is chaos (still beautiful).</p>
-<canvas id="canvas7" class="canvas" width="700" height="700"></canvas>
+<canvas id="canvas7" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas7", 3.41262, 3.61603)
 </script>
 
 <p>Below, you can explore the parameter space yourself. Your mouse position determines the values of <script type="math/tex">a</script> and <script type="math/tex">b</script>.
-Hold down <code>shift</code> for fine-tuning.</p>
+Hold down <code class="highlighter-rouge">shift</code> for fine-tuning. (On mobile, drag your finger around the canvas.)</p>
 
-<canvas id="canvas-i" class="canvas" width="700" height="700"></canvas>
+<canvas id="canvas-i" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas-i")
 </script>
 
-<p>If you’re careful with your mouse, you can find places where the top-level loop bifurcates into smaller loops,
-which divide again into smaller loops, presumably indefinitely.
+<p>If you’re careful with your mouse, you can find places where the top-level loop divides into smaller loops,
+which divide again into still smaller loops, presumably ad infinitum.
 In fact, it seems like you can make the smaller loops exhibit all the same weird behavior the top-level loop does.
 So there is definitely some self-similar recursive structure here.</p>
 
 <p>As you move your mouse around, doesn’t it feel like you’re looking at 2D slices of some larger, crazy complicated 4D object?
 I thought so too.</p>
 
-<p><a href="/assets/html/chaos.html?3.1">Here is the 3D slice you get</a> when you fix <script type="math/tex">a = 3.1</script>.
+<p><a href="/assets/html/chaos.html?3.1">Here is the 3D slice you get</a> when you fix <script type="math/tex">a = 3.1</script> (not recommended on mobile).
 Click and drag to rotate, scroll to zoom. You can also edit the url parameter to try different values for <script type="math/tex">a</script>.</p>
 
 <h2 id="a-map-of-the-territory">A map of the territory</h2>
@@ -422,14 +431,14 @@ Click and drag to rotate, scroll to zoom. You can also edit the url parameter to
 it’s a loop, and other regions where it’s more like a cloud. Trying to find “interesting” regions of the parameter space
 can feel like wandering around without a map. So, let’s make a map.</p>
 
-<p>We’ll color each point <script type="math/tex">(a, b)</script> according to how the system behaves with those parameter values.
-To do that we’ll use something called the <a href="https://en.wikipedia.org/wiki/Lyapunov_exponent">Lyapunov exponent</a>.
+<p>I’ll color each point <script type="math/tex">(a, b)</script> according to how the system behaves with those parameter values.
+To do that I’ll use something called the <a href="https://en.wikipedia.org/wiki/Lyapunov_exponent">Lyapunov exponent</a>.
 This is a measure of how quickly two points <script type="math/tex">(r, f)</script> and <script type="math/tex">(r', f')</script>, initially spaced very close together, diverge or converge after
 repeated iteration. It’s assumed that the distance between them will go like <script type="math/tex">e^{nL}</script>, where <script type="math/tex">n</script>
 is the iteration number. If <script type="math/tex">L = 0</script>, they stay the same distance apart. If <script type="math/tex">L \lt 0</script>, they get closer
-together over time. And if <script type="math/tex">L \gt 0</script>, they diverge. Larger exponents mean they diverge (or converge) faster.</p>
+together over time, and if <script type="math/tex">L \gt 0</script>, they diverge. Larger exponents mean they diverge (or converge) faster.</p>
 
-<p>I chose shades of green for <script type="math/tex">L \lt 0</script>, yellow for <script type="math/tex">0 \leqslant L \lt 0.01</script>, red for <script type="math/tex">0.01 \leqslant L \lt 0.1</script>, and
+<p>I chose shades of green for <script type="math/tex">L \lt 0</script>, yellow for <script type="math/tex">0 \leq L \lt 0.01</script>, red for <script type="math/tex">0.01 \leq L \lt 0.1</script>, and
 purple for <script type="math/tex">L \gt 0.1</script>.
 If the system diverged to infinity (that is, <script type="math/tex">f</script> gets very large), I colored the point black.</p>
 
@@ -437,14 +446,16 @@ If the system diverged to infinity (that is, <script type="math/tex">f</script> 
 
 <p><img src="/assets/img/chaos/map.png" alt="map" /></p>
 
-<p>So, that’s a thing. Here it is as a <a href="/assets/img/chaos/map-2400.png">2400 x 2400 png</a>. You can see some definite fractal structure here.
-You can see this better in the higher resolution image, but the messy yellow/green region looks like moiré pattern, indicating long thin lines of alternating color. Between the big green triangles there are smaller triangles, and the bottom-left corners of these triangles extend all the way to the
+<p>So, that’s a thing. Here it is as a <a href="/assets/img/chaos/map-2400.png">2400 x 2400 png</a>. There is some definite fractal structure here.
+You can see this better in the higher resolution image, but the moiré pattern in the yellow/green region indicates long thin lines of alternating color.
+Between the big green triangles there are smaller triangles, and the bottom-left corners of these triangles extend all the way to the
 <script type="math/tex">L = 0</script> boundary.</p>
 
-<p>But anyway, laying this map underneath the interactive plot from above, you can see how different regions of the parameter space behave.</p>
+<p>But anyway, laying this map underneath the interactive plot from above, you can see how different regions of the parameter space behave.
+(Works on mobile too.)</p>
 
-<div class="bg"></div>
-<canvas id="canvas-t" class="canvas-transparent" width="700" height="700"></canvas>
+<p><img src="/assets/img/chaos/map.png" class="bg" id="bg" /></p>
+<canvas id="canvas-t" class="canvas-transparent"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas-t", null, null, true)
 </script>
@@ -475,9 +486,26 @@ the next is at 3.4, the next at 3.54, and then chaos takes over at 3.55, with br
 <p>You can also find the ghost of the logistic map itself if you move your mouse around the small purple triangular region near
 the vertical bars around <script type="math/tex">a = 3.7, b = 1.67</script>. Spooky!</p>
 
+<h2 id="so-what">So what?</h2>
+
+<p>There really is no so what. It’s just astonishing to me how much complex behavior can arise from two pretty simple rules.</p>
+
 
     </div>
 
+  
+    <ul class="tag_box inline">
+      <li><i class="icon-folder-open"></i></li>
+      
+      
+
+
+  
+    
+  
+
+
+    </ul>
   
 
   
@@ -562,7 +590,7 @@ the vertical bars around <script type="math/tex">a = 3.7, b = 1.67</script>. Spo
       </div>
       <hr>
       <footer>
-        <p>&copy; 2016 Jason Liszka
+        <p>&copy; 2013 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

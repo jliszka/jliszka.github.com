@@ -52,7 +52,7 @@
     
       
       	
-      	<li><a href="/archive.html">Archive</a></li>
+      	<li><a href="/archive">Archive</a></li>
       	
       
     
@@ -80,7 +80,7 @@
     
       
       	
-      	<li><a href="/tags.html">Tags</a></li>
+      	<li><a href="/tags">Tags</a></li>
       	
       
     
@@ -128,7 +128,9 @@
       <h1>Infinite lazy polynomials </h1>
     </div>
     <div class="date">
-      <span>31 October 2013</span>
+      
+        <span>31 October 2013</span>
+      
     </div>
     <div class="content">
       
@@ -153,35 +155,36 @@ p_c(x) = c(0) + c(1)x + c(2)x^2 + c(3)x^3 + \ldots
 
 <p>Here’s the setup:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
 
-  <span class="c1">// Memoizing coefficient accessor. Returns the coefficient for x^n.</span>
-  <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="n">memo</span><span class="o">.</span><span class="n">getOrElseUpdate</span><span class="o">(</span><span class="n">n</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="n">coeffs</span><span class="o">(</span><span class="n">n</span><span class="o">))</span>
+  <span class="c1">// Memoizing coefficient accessor. Returns the coefficient for x^n.
+</span>  <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="n">memo</span><span class="o">.</span><span class="n">getOrElseUpdate</span><span class="o">(</span><span class="n">n</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="n">coeffs</span><span class="o">(</span><span class="n">n</span><span class="o">))</span>
 
-  <span class="c1">// The memo table</span>
-  <span class="k">private</span> <span class="k">val</span> <span class="n">memo</span> <span class="k">=</span> <span class="n">scala</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">mutable</span><span class="o">.</span><span class="nc">HashMap</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">Double</span><span class="o">]()</span>
+  <span class="c1">// The memo table
+</span>  <span class="k">private</span> <span class="k">val</span> <span class="n">memo</span> <span class="k">=</span> <span class="n">scala</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">mutable</span><span class="o">.</span><span class="nc">HashMap</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">Double</span><span class="o">]()</span>
 
   <span class="k">override</span> <span class="k">def</span> <span class="n">toString</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="s">&quot;{ %s, ... }&quot;</span><span class="o">.</span><span class="n">format</span><span class="o">((</span><span class="mi">0</span> <span class="n">to</span> <span class="mi">10</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="n">df</span><span class="o">.</span><span class="n">format</span><span class="o">(</span><span class="k">this</span><span class="o">(</span><span class="n">i</span><span class="o">))).</span><span class="n">mkString</span><span class="o">(</span><span class="s">&quot;, &quot;</span><span class="o">))</span>
+    <span class="s">"{ %s, ... }"</span><span class="o">.</span><span class="n">format</span><span class="o">((</span><span class="mi">0</span> <span class="n">to</span> <span class="mi">10</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="n">df</span><span class="o">.</span><span class="n">format</span><span class="o">(</span><span class="k">this</span><span class="o">(</span><span class="n">i</span><span class="o">))).</span><span class="n">mkString</span><span class="o">(</span><span class="s">", "</span><span class="o">))</span>
   <span class="o">}</span>
-  <span class="k">private</span> <span class="k">val</span> <span class="n">df</span> <span class="k">=</span> <span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="nc">DecimalFormat</span><span class="o">(</span><span class="s">&quot;#.#######&quot;</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+  <span class="k">private</span> <span class="k">val</span> <span class="n">df</span> <span class="k">=</span> <span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="nc">DecimalFormat</span><span class="o">(</span><span class="s">"#.#######"</span><span class="o">)</span>
+<span class="o">}</span></code></pre></figure>
 
-<p>The <code>Poly</code> class just wraps a function of type <code>Int =&gt; Double</code>, memoizes it, and provides a <code>toString</code>
+<p>The <code class="highlighter-rouge">Poly</code> class just wraps a function of type <code class="highlighter-rouge">Int =&gt; Double</code>, memoizes it, and provides a <code class="highlighter-rouge">toString</code>
 representation including the first so many coefficients.</p>
 
 <p>Now we can create instances like this:</p>
 
-<pre><code>scala&gt; val one = new Poly(n =&gt; if (n == 0) 1 else 0)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val one = new Poly(n =&gt; if (n == 0) 1 else 0)
 one: Poly = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 
 scala&gt; val x = new Poly(n =&gt; if (n == 1) 1 else 0)
 x: Poly = { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 </code></pre>
+</div>
 
-<p>You can access arbitrary coefficients by calling the <code>apply</code> method.</p>
+<p>You can access arbitrary coefficients by calling the <code class="highlighter-rouge">apply</code> method.</p>
 
-<pre><code>scala&gt; x(0)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; x(0)
 res0: Double = 0.0
 
 scala&gt; x(1)
@@ -190,8 +193,9 @@ res1: Double = 1.0
 scala&gt; x(12)
 res2: Double = 0.0
 </code></pre>
+</div>
 
-<p>Just keep in mind that <code>p(n)</code> is the coefficient of <script type="math/tex">x^n</script> in <code>p</code>, not <script type="math/tex">p(n)</script> (i.e.,
+<p>Just keep in mind that <code class="highlighter-rouge">p(n)</code> is the coefficient of <script type="math/tex">x^n</script> in <code class="highlighter-rouge">p</code>, not <script type="math/tex">p(n)</script> (i.e.,
 <script type="math/tex">p</script> evaluated at <script type="math/tex">n</script>) as you might expect to see. I can get away with this because I’m probably never
 going to evaluate these polynomials, I’m just going to treat them formally, as mathematical objects in their own right.
 (To get my terminology straight, as some commenters have pointed out, these objects are called
@@ -201,27 +205,27 @@ going to evaluate these polynomials, I’m just going to treat them formally, as
 
 <h3 id="simple-operations">Simple operations</h3>
 
-<p><code>Poly</code>s aren’t that useful until we can do arithmetic to them. Let’s add support for addition, subtraction and negation:</p>
+<p><code class="highlighter-rouge">Poly</code>s aren’t that useful until we can do arithmetic to them. Let’s add support for addition, subtraction and negation:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>
   <span class="k">def</span> <span class="o">+(</span><span class="n">that</span><span class="k">:</span> <span class="kt">Poly</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">n</span> <span class="k">=&gt;</span> <span class="k">this</span><span class="o">(</span><span class="n">n</span><span class="o">)</span> <span class="o">+</span> <span class="n">that</span><span class="o">(</span><span class="n">n</span><span class="o">))</span>
 
   <span class="k">def</span> <span class="o">-(</span><span class="n">that</span><span class="k">:</span> <span class="kt">Poly</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">n</span> <span class="k">=&gt;</span> <span class="k">this</span><span class="o">(</span><span class="n">n</span><span class="o">)</span> <span class="o">-</span> <span class="n">that</span><span class="o">(</span><span class="n">n</span><span class="o">))</span>
 
   <span class="k">def</span> <span class="n">unary_-</span><span class="o">()</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">n</span> <span class="k">=&gt;</span> <span class="o">-</span><span class="k">this</span><span class="o">(</span><span class="n">n</span><span class="o">))</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>It just goes elementwise. Multiplication and division by a constant are also easy:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>
   <span class="k">def</span> <span class="o">*(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">n</span> <span class="k">=&gt;</span> <span class="k">this</span><span class="o">(</span><span class="n">n</span><span class="o">)</span> <span class="o">*</span> <span class="n">x</span><span class="o">)</span>
 
   <span class="k">def</span> <span class="o">/(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">n</span> <span class="k">=&gt;</span> <span class="k">this</span><span class="o">(</span><span class="n">n</span><span class="o">)</span> <span class="o">/</span> <span class="n">x</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Multiplication of polynomials is the first interesting case. How do you multiply two infinite polynomials? Well, let’s
 just consider the coefficient of <script type="math/tex">x^n</script>. It’s going to be the sum of the products of the coefficents of
@@ -237,19 +241,19 @@ all pairs of powers that add up to <script type="math/tex">n</script>. In math:<
 
 <p>In code:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>
   <span class="k">def</span> <span class="o">*(</span><span class="n">that</span><span class="k">:</span> <span class="kt">Poly</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">n</span> <span class="k">=&gt;</span>
     <span class="o">(</span><span class="mi">0</span> <span class="n">to</span> <span class="n">n</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="k">this</span><span class="o">(</span><span class="n">i</span><span class="o">)</span> <span class="o">*</span> <span class="n">that</span><span class="o">(</span><span class="n">n</span><span class="o">-</span><span class="n">i</span><span class="o">)).</span><span class="n">sum</span>
   <span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>It’s pretty nice to only have to think about the coefficient of one power of <script type="math/tex">x</script> at a time!</p>
 
 <p>Let’s try it out:</p>
 
-<pre><code>scala&gt; one + x
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; one + x
 res0: Poly = { 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 
 scala&gt; one + x*x*3
@@ -258,29 +262,31 @@ res1: Poly = { 1, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 scala&gt; (x + one*4) * (x - one*3)
 res2: Poly = { -12, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 </code></pre>
+</div>
 
-<p>I’m going to get tired of typing <code>one*4</code> every time I mean <code>4</code>, so before I go any further I’m going to add some
-implicit conversions from <code>Int</code> and <code>Double</code> to <code>Poly</code>:</p>
+<p>I’m going to get tired of typing <code class="highlighter-rouge">one*4</code> every time I mean <code class="highlighter-rouge">4</code>, so before I go any further I’m going to add some
+implicit conversions from <code class="highlighter-rouge">Int</code> and <code class="highlighter-rouge">Double</code> to <code class="highlighter-rouge">Poly</code>:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">implicit</span> <span class="k">def</span> <span class="n">intToPoly</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="n">one</span> <span class="o">*</span> <span class="n">i</span>
-<span class="k">implicit</span> <span class="k">def</span> <span class="n">doubleToPoly</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="n">one</span> <span class="o">*</span> <span class="n">d</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">implicit</span> <span class="k">def</span> <span class="n">intToPoly</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="n">one</span> <span class="o">*</span> <span class="n">i</span>
+<span class="k">implicit</span> <span class="k">def</span> <span class="n">doubleToPoly</span><span class="o">(</span><span class="n">d</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="n">one</span> <span class="o">*</span> <span class="n">d</span></code></pre></figure>
 
 <p>The compiler will insert these methods any time they would help get the expression to typecheck. So now I can do</p>
 
-<pre><code>scala&gt; (1 + 2*x + x*x) * (3 - x)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; (1 + 2*x + x*x) * (3 - x)
 res0: Poly = { 3, 5, 1, -1, 0, 0, 0, 0, 0, 0, 0, ... }
 
 scala&gt; (x + 7) * (x - 7)
 res1: Poly = { -49, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 </code></pre>
+</div>
 
 <p>That’s much nicer.</p>
 
 <p>I’m also going to throw in exponentiation as repeated multiplication.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>
   <span class="k">private</span> <span class="k">val</span> <span class="n">powMemo</span> <span class="k">=</span> <span class="n">scala</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">mutable</span><span class="o">.</span><span class="nc">HashMap</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">Poly</span><span class="o">]()</span>
 
   <span class="k">def</span> <span class="o">**(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="o">{</span>
@@ -292,7 +298,7 @@ res1: Poly = { -49, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, ... }
       <span class="o">}</span>
     <span class="o">})</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>I memoized it because I love memoizing things, but also because I’m going to need it in the next section.</p>
 
@@ -347,9 +353,9 @@ q(x) = 1 - \frac{p(x)}{a}
 
 <p>all of which we know how to compute. Here’s the code:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>
   <span class="k">def</span> <span class="o">/(</span><span class="n">that</span><span class="k">:</span> <span class="kt">Poly</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="k">this</span> <span class="o">*</span> <span class="n">that</span><span class="o">.</span><span class="n">inv</span>
 
   <span class="k">def</span> <span class="n">inv</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="o">{</span>
@@ -357,36 +363,39 @@ q(x) = 1 - \frac{p(x)}{a}
     <span class="k">val</span> <span class="n">q</span> <span class="k">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="k">this</span> <span class="o">/</span> <span class="n">a</span>
     <span class="k">new</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">n</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="mi">0</span> <span class="n">to</span> <span class="n">n</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="n">q</span> <span class="o">**</span> <span class="n">i</span><span class="o">)(</span><span class="n">n</span><span class="o">)).</span><span class="n">sum</span> <span class="o">/</span> <span class="n">a</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Let’s try it:</p>
 
-<pre><code>scala&gt; (6 + 5*x + x**2) / (x + 2)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; (6 + 5*x + x**2) / (x + 2)
 res0: Poly = { 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 </code></pre>
+</div>
 
 <p>Nice! How about something that doesn’t divide evenly:</p>
 
-<pre><code>scala&gt; val p = (1 + 2*x - x**2) / (5 + x)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val p = (1 + 2*x - x**2) / (5 + x)
 p: Poly = { 0.2, 0.36, -0.272, 0.0544, -0.01088, 0.002176, -0.0004352, 0.000087, -0.0000174, 0.0000035, -0.0000007, ... }
 
 scala&gt; p * (5 + x)
 res1: Poly = { 1, 2, -1, 0, -0, 0, -0, 0, 0, 0, -0, ... }
 </code></pre>
+</div>
 
 <p>Cool. It looks like there are some floating-point rounding artifacts, but fundamentally it looks like it works.</p>
 
 <p>One more, for fun:</p>
 
-<pre><code>scala&gt; 1 / (1 - x)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; 1 / (1 - x)
 res2: Poly = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ... }
 </code></pre>
+</div>
 
 <p>Looks good!</p>
 
-<p>It’s worth noting that those rounding artifacts are due to my use of <code>Double</code> to store and manipulate the numbers
+<p>It’s worth noting that those rounding artifacts are due to my use of <code class="highlighter-rouge">Double</code> to store and manipulate the numbers
 that make up the polynomial. It’s <em>not</em> because the formulas I’m using are inexact, or because they only approximate the
-“true” answer. The formulas are exact. If I were using an arbitrary precision number class instead of <code>Double</code>, the
+“true” answer. The formulas are exact. If I were using an arbitrary precision number class instead of <code class="highlighter-rouge">Double</code>, the
 numbers would come out as close to correct as I wanted.</p>
 
 <h3 id="fractional-powers">Fractional powers</h3>
@@ -419,9 +428,9 @@ p(x)^r = a^r(1 + q(x))^r
 
 <p>Here’s the code:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>
   <span class="k">def</span> <span class="o">**(</span><span class="n">r</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="o">{</span>
     <span class="k">val</span> <span class="n">a</span> <span class="k">=</span> <span class="k">this</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span>
     <span class="k">val</span> <span class="n">ar</span> <span class="k">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">r</span><span class="o">)</span>
@@ -429,36 +438,39 @@ p(x)^r = a^r(1 + q(x))^r
     <span class="k">def</span> <span class="n">coeff</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">(</span><span class="mi">0</span> <span class="n">to</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="n">r</span> <span class="o">-</span> <span class="n">i</span><span class="o">).</span><span class="n">product</span> <span class="o">/</span> <span class="o">(</span><span class="mi">1</span> <span class="n">to</span> <span class="n">n</span><span class="o">).</span><span class="n">product</span>
     <span class="k">new</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">n</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="mi">0</span> <span class="n">to</span> <span class="n">n</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="n">coeff</span><span class="o">(</span><span class="n">i</span><span class="o">)</span> <span class="o">*</span> <span class="o">(</span><span class="n">q</span> <span class="o">**</span> <span class="n">i</span><span class="o">)(</span><span class="n">n</span><span class="o">)).</span><span class="n">sum</span> <span class="o">*</span> <span class="n">ar</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>OK, let’s see if this actually works…</p>
 
-<pre><code>scala&gt; val p = (4 + x)**2
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val p = (4 + x)**2
 p: Poly = { 16, 8, 1, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 
 scala&gt; p ** 0.5
 res0: Poly = { 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }
 </code></pre>
+</div>
 
 <p>Alright! Let’s try it on a polynomial that is not a perfect square:</p>
 
-<pre><code>scala&gt; val p = (5 + 2*x + x**3) ** 0.5
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val p = (5 + 2*x + x**3) ** 0.5
 p: Poly = { 2.236068, 0.4472136, -0.0447214, 0.2325511, -0.0469574, 0.0140425, -0.0158403, 0.0083325, -0.0039368, 0.0028963, -0.0019013, ... }
 
 scala&gt; p * p
 res1: Poly = { 5, 2, -0, 1, -0, -0, 0, 0, 0, 0, -0, ... }
 </code></pre>
+</div>
 
 <p>Spooky.</p>
 
 <p>Who knew you could take the 5th root of any polynomial you wanted?</p>
 
-<pre><code>scala&gt; val p = (2 - 3*x + x**3 + x**7) ** 0.2
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val p = (2 - 3*x + x**3 + x**7) ** 0.2
 p: Poly = { 1.1486984, -0.3446095, -0.2067657, -0.0712193, -0.0575498, -0.0366596, -0.0297476, 0.0918742, 0.1186057, 0.1700039, 0.200703, ... }
 
 scala&gt; p ** 5
 res1: Poly = { 2, -3, -0, 1, 0, 0, 0, 1, -0, -0, -0, ... }
 </code></pre>
+</div>
 
 <p>WTFFFFF.</p>
 
@@ -485,9 +497,9 @@ e^{p(x)} = e^{a + q(x)} = e^a e^{q(x)}
 
 <p>In code:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>
   <span class="k">def</span> <span class="n">exp</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="o">{</span>
     <span class="k">val</span> <span class="n">a</span> <span class="k">=</span> <span class="k">this</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span>
     <span class="k">val</span> <span class="n">q</span> <span class="k">=</span> <span class="k">this</span> <span class="o">-</span> <span class="n">a</span>
@@ -495,7 +507,7 @@ e^{p(x)} = e^{a + q(x)} = e^a e^{q(x)}
     <span class="k">def</span> <span class="n">fact</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">(</span><span class="mi">1</span> <span class="n">to</span> <span class="n">n</span><span class="o">).</span><span class="n">product</span>
     <span class="k">new</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">n</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="mi">0</span> <span class="n">to</span> <span class="n">n</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="n">q</span> <span class="o">**</span> <span class="n">i</span><span class="o">)(</span><span class="n">n</span><span class="o">)</span> <span class="o">/</span> <span class="n">fact</span><span class="o">(</span><span class="n">i</span><span class="o">)).</span><span class="n">sum</span> <span class="o">*</span> <span class="n">ea</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>For logarithms, the identity we’ll exploit is the <a href="http://en.wikipedia.org/wiki/Mercator_series">Mercator series</a>:</p>
 
@@ -523,9 +535,9 @@ q(x) = \frac{p(x)}{a} - 1
 
 <p>Here’s the code:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>
   <span class="k">def</span> <span class="n">log</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=</span> <span class="o">{</span>
     <span class="k">val</span> <span class="n">a</span> <span class="k">=</span> <span class="k">this</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span>
     <span class="k">val</span> <span class="n">logA</span> <span class="k">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="o">(</span><span class="n">a</span><span class="o">)</span>
@@ -533,11 +545,11 @@ q(x) = \frac{p(x)}{a} - 1
     <span class="k">def</span> <span class="n">alternatingHarmonic</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">n</span> <span class="k">else</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">n</span>
     <span class="n">logA</span> <span class="o">+</span> <span class="k">new</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">n</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="mi">1</span> <span class="n">to</span> <span class="n">n</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="n">alternatingHarmonic</span><span class="o">(</span><span class="n">i</span><span class="o">)</span> <span class="o">*</span> <span class="o">(</span><span class="n">q</span> <span class="o">**</span> <span class="n">i</span><span class="o">)(</span><span class="n">n</span><span class="o">)).</span><span class="n">sum</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<p>Let’s just check the identities and that <code>exp</code> and <code>log</code> are inverses of each other:</p>
+<p>Let’s just check the identities and that <code class="highlighter-rouge">exp</code> and <code class="highlighter-rouge">log</code> are inverses of each other:</p>
 
-<pre><code>scala&gt; x.exp
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; x.exp
 res0: Poly = { 1, 1, 0.5, 0.1666667, 0.0416667, 0.0083333, 0.0013889, 0.0001984, 0.0000248, 0.0000028, 0.0000003, ... }
 
 scala&gt; (1 + x).log
@@ -555,6 +567,7 @@ res4: Poly = { 0, -2, -2, -1.6666667, -2, -2.4, -3.1666667, -4.2857143, -6, -8.5
 scala&gt; (1 - 2*x + x**3).log.exp
 res5: Poly = { 1, -2, 0, 1, -0, -0, 0, -0, 0, 0, -0, ... }
 </code></pre>
+</div>
 
 <p>Awesome.</p>
 
@@ -562,23 +575,25 @@ res5: Poly = { 1, -2, 0, 1, -0, -0, 0, -0, 0, 0, -0, ... }
 
 <p>You can use polynomials to produce binomial coefficients:</p>
 
-<pre><code>scala&gt; (1 + x)**4
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; (1 + x)**4
 res0: Poly = { 1, 4, 6, 4, 1, 0, 0, 0, 0, 0, 0, ... }
 
 scala&gt; (1 + x)**7
 res1: Poly = { 1, 7, 21, 35, 35, 21, 7, 1, 0, 0, 0, ... }
 </code></pre>
+</div>
 
 <p>There’s also a trick for “differentiating” a sequence — I use that term very loosely. All I mean is producing a
 polynomial where the coefficients are the differences between successive coefficients in some other polynomial.
 You do this by multiplying by <script type="math/tex">(1 - x)</script>. For example:</p>
 
-<pre><code>scala&gt; (1 + 2*x + 7*x*x) * (1 - x)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; (1 + 2*x + 7*x*x) * (1 - x)
 res2: Poly = { 1, 1, 5, -7, 0, 0, 0, 0, 0, 0, 0, ... }
 
 scala&gt; (1 + x)**7 * (1 - x)
 res3: Poly = { 1, 6, 14, 14, 0, -14, -14, -6, -1, 0, 0, ... }
 </code></pre>
+</div>
 
 <p>This makes sense because <script type="math/tex">p(x)(1 - x) = p(x) - xp(x)</script>. So you’re literally subtracting one coefficient from the
 next.</p>
@@ -586,7 +601,7 @@ next.</p>
 <p>Well, if that works, it stands to reason that dividing by <script type="math/tex">(1 - x)</script> should “integrate” a sequence — that is,
 keep a running sum of the coefficients. Lo and behold:</p>
 
-<pre><code>scala&gt; (1 + 3*x - 5*(x**3)) / (1 - x)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; (1 + 3*x - 5*(x**3)) / (1 - x)
 res4: Poly = { 1, 4, 4, -1, -1, -1, -1, -1, -1, -1, -1, ... }
 
 scala&gt; (1 + x)**7 / (1 - x)
@@ -595,33 +610,37 @@ res5: Poly = { 1, 8, 29, 64, 99, 120, 127, 128, 128, 128, 128, ... }
 scala&gt; 1 / ((1 - x)**2)
 res6: Poly = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ... }
 </code></pre>
+</div>
 
 <p>The second example there demonstrates the fact that the sum of binomial coefficients is a power of 2. We can also
 demonstrate that the sum of the “even” and “odd” binomial coefficients are equal:</p>
 
-<pre><code>scala&gt; (1 - x)**7
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; (1 - x)**7
 res7: Poly = { 1, -7, 21, -35, 35, -21, 7, -1, 0, 0, 0, ... }
 
 scala&gt; (1 - x)**7 / (1 - x)
 res8: Poly = { 1, -6, 15, -20, 15, -6, 1, 0, 0, 0, 0, ... }
 </code></pre>
+</div>
 
 <p>since the running sum ends up at 0.</p>
 
 <p>Here’s a polynomial with alternating signs:</p>
 
-<pre><code>scala&gt; 1 / (1 + x)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; 1 / (1 + x)
 res9: Poly = { 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, ... }
 </code></pre>
+</div>
 
 <p>Now “integrate” it twice…</p>
 
-<pre><code>scala&gt; 1 / (1 + x) / (1 - x)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; 1 / (1 + x) / (1 - x)
 res10: Poly = { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, ... }
 
 scala&gt; 1 / (1 + x) / ((1 - x)**2)
 res11: Poly = { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, ... }
 </code></pre>
+</div>
 
 <p>What a weird polynomial! This is pretty fun to play around with.</p>
 
@@ -671,10 +690,10 @@ a recurrence relation or a formula for each term of the sequence.</p>
 The intro and first chapter give you a good sense for the power of this
 technique, from counting to statistical analysis to proving certain identities.</p>
 
-<p>After you’ve found a generating function for your sequence, you can use <code>Poly</code> to check your work.
+<p>After you’ve found a generating function for your sequence, you can use <code class="highlighter-rouge">Poly</code> to check your work.
 Let’s try it:</p>
 
-<pre><code>scala&gt; x / ((1 - x)**2)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; x / ((1 - x)**2)
 res0: Poly = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ... }
 
 scala&gt; x / (1 - x - x**2)
@@ -683,10 +702,11 @@ res1: Poly = { 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, ... }
 scala&gt; x * (x + 1) / ((1 - x)**3)
 res2: Poly = { 0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, ... }
 </code></pre>
+</div>
 
 <h3 id="automatic-differentiation">Automatic differentiation</h3>
 
-<p><code>Poly</code> is essentially a trick to produce the Taylor series of a function automatically. Recall that the Taylor series
+<p><code class="highlighter-rouge">Poly</code> is essentially a trick to produce the Taylor series of a function automatically. Recall that the Taylor series
 of a function <script type="math/tex">f</script> around a point <script type="math/tex">c</script> is:</p>
 
 <script type="math/tex; mode=display">
@@ -695,35 +715,37 @@ f(c + x) = f(c) + f'(c)x + \frac{f''(c)}{2!}x^2 + \frac{f^{(3)}(c)}{3!}x^3 + \ld
 %]]>
 </script>
 
-<p>That means if you want to find the derivatives of a function at a point, you can write the function as a <code>Poly =&gt; Poly</code>,
-evaluate it at <code>c + x</code>, and read the derivatives right off the coefficients.</p>
+<p>That means if you want to find the derivatives of a function at a point, you can write the function as a <code class="highlighter-rouge">Poly =&gt; Poly</code>,
+evaluate it at <code class="highlighter-rouge">c + x</code>, and read the derivatives right off the coefficients.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">derivatives</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=&gt;</span> <span class="nc">Poly</span><span class="o">,</span> <span class="n">c</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Stream</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">derivatives</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="kt">Poly</span> <span class="o">=&gt;</span> <span class="nc">Poly</span><span class="o">,</span> <span class="n">c</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Stream</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">fact</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">(</span><span class="mi">1</span> <span class="n">to</span> <span class="n">n</span><span class="o">).</span><span class="n">product</span>
   <span class="k">val</span> <span class="n">fc</span> <span class="k">=</span> <span class="n">f</span><span class="o">(</span><span class="n">c</span> <span class="o">+</span> <span class="n">x</span><span class="o">)</span>
   <span class="nc">Stream</span><span class="o">.</span><span class="n">from</span><span class="o">(</span><span class="mi">1</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="n">fc</span><span class="o">(</span><span class="n">i</span><span class="o">)</span> <span class="o">*</span> <span class="n">fact</span><span class="o">(</span><span class="n">i</span><span class="o">))</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>For example, here are the first 20 derivatives of <script type="math/tex">f(x) = \ln^2 (x + 1)</script> at 1:</p>
 
-<pre><code>scala&gt; derivatives(x =&gt; (x + 1).log ** 2, 1).take(20).toList
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; derivatives(x =&gt; (x + 1).log ** 2, 1).take(20).toList
 res0: List[Double] = List(0.6931471805599453, 0.15342640972002733, -0.4034264097200274, 0.8551396145800411, -2.085279229160082, 5.963198072900205, -19.76459421870062, 74.80107976545214, -318.89181906180863, 1513.7631857781387, -7923.190928890694, 45349.42510889882, -87446.88299088406, 27733.67519683439, -20865.303964105937, 10034.86743176731, 696.0046429573814, -1045.8464120718293, -61.68000765454794, -572.2744267431246)
 </code></pre>
+</div>
 
 <p>Double checking, say, the 12th derivative (45349.42510889882) against
 <a href="http://www.wolframalpha.com/input/?i=12th+derivative+of+%28log+%28x+%2B+1%29%29%5E2">Wolfram Alpha</a>:</p>
 
-<pre><code>scala&gt; def d12(x: Double) = -2880 * (27720 * math.log(x+1) - 83711) / math.pow(x+1, 12)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; def d12(x: Double) = -2880 * (27720 * math.log(x+1) - 83711) / math.pow(x+1, 12)
 d12: (x: Double)Double
 
 scala&gt; d12(1)
 res0: Double = 45349.42510889882
 </code></pre>
+</div>
 
 <p>OK!</p>
 
 <p>If you read my <a href="/2013/10/24/exact-numeric-nth-derivatives.html">last post on exact numeric nth derivatives</a>,
-you might have noticed that the code for <code>Poly</code> is pretty similar to the
+you might have noticed that the code for <code class="highlighter-rouge">Poly</code> is pretty similar to the
 <a href="https://gist.github.com/jliszka/7085427">implementation of dual numbers</a> that I presented in that post.
 Really the only difference is the lack of reference to the rank of the matrix. The matrices were already lazy
 and already only contained <script type="math/tex">O(n)</script> information, so it was a short step to turn them into lazy infinite polynomials.</p>
@@ -740,9 +762,9 @@ getting at is, is there a way to get the coefficients of some polynomial to be t
 having to multiply each one by <script type="math/tex">n!</script>? Kinda silly, but it would be neat.</p>
   </li>
   <li>
-    <p>Right now dividing by <script type="math/tex">x</script> or any polynomial with no constant term results <code>NaN</code>s everywhere. I see why
+    <p>Right now dividing by <script type="math/tex">x</script> or any polynomial with no constant term results <code class="highlighter-rouge">NaN</code>s everywhere. I see why
 it’s happening… the first term of the Taylor series for <script type="math/tex">f(x)</script> is <script type="math/tex">f(0)</script>, so <script type="math/tex">f[0]</script> (a.k.a.
-<code>f(0)</code>) will always equal <script type="math/tex">f(0)</script>. But it should work at least some of the time, for instance when you can
+<code class="highlighter-rouge">f(0)</code>) will always equal <script type="math/tex">f(0)</script>. But it should work at least some of the time, for instance when you can
 factor out a power of <script type="math/tex">x</script> from both the numerator and the denominator and cancel. So <script type="math/tex">xp(x) / xq(x)</script>
 should reduce to <script type="math/tex">p(x) / q(x)</script>. That should be easy to implement.</p>
   </li>
@@ -751,14 +773,14 @@ should reduce to <script type="math/tex">p(x) / q(x)</script>. That should be ea
 (h/t to my friend <a href="http://adereth.github.io/blog/2013/10/10/add-it-up/">Matt Adereth</a> for the idea).</p>
   </li>
   <li>
-    <p>Complex-valued polynomials would let me implement <code>sin</code> and <code>cos</code> in terms of <code>exp</code>.
-I should genericize the implementation of <code>Poly</code> to work with any numeric type. Might be fun
+    <p>Complex-valued polynomials would let me implement <code class="highlighter-rouge">sin</code> and <code class="highlighter-rouge">cos</code> in terms of <code class="highlighter-rouge">exp</code>.
+I should genericize the implementation of <code class="highlighter-rouge">Poly</code> to work with any numeric type. Might be fun
 to use <a href="http://github.com/non/spire">spire</a>’s numeric tower for that.</p>
   </li>
   <li>
-    <p>While I’m at it I should make <code>Poly</code> an instance of spire’s <code>Ring</code> typeclass. Infinite polynomials are a ring
-but not a field because some non-zero elements lack a multiplicative inverse, for instance, <script type="math/tex">x</script>. For any <code>p: Poly</code>,
-<code>p / p</code> will evaluate to 1 (provided I’ve implemented cancellation), but <code>1 / p</code> doesn’t always exist as its own <code>Poly</code>,
+    <p>While I’m at it I should make <code class="highlighter-rouge">Poly</code> an instance of spire’s <code class="highlighter-rouge">Ring</code> typeclass. Infinite polynomials are a ring
+but not a field because some non-zero elements lack a multiplicative inverse, for instance, <script type="math/tex">x</script>. For any <code class="highlighter-rouge">p: Poly</code>,
+<code class="highlighter-rouge">p / p</code> will evaluate to 1 (provided I’ve implemented cancellation), but <code class="highlighter-rouge">1 / p</code> doesn’t always exist as its own <code class="highlighter-rouge">Poly</code>,
 and that’s what I’d need for it to qualify as a field.</p>
   </li>
 </ol>
@@ -876,7 +898,7 @@ supply references where I could find them, but please send me links to relevant 
       </div>
       <hr>
       <footer>
-        <p>&copy; 2016 Jason Liszka
+        <p>&copy; 2013 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>

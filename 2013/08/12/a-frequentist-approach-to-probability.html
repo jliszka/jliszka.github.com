@@ -52,7 +52,7 @@
     
       
       	
-      	<li><a href="/archive.html">Archive</a></li>
+      	<li><a href="/archive">Archive</a></li>
       	
       
     
@@ -80,7 +80,7 @@
     
       
       	
-      	<li><a href="/tags.html">Tags</a></li>
+      	<li><a href="/tags">Tags</a></li>
       	
       
     
@@ -128,7 +128,9 @@
       <h1>A frequentist approach to probability </h1>
     </div>
     <div class="date">
-      <span>12 August 2013</span>
+      
+        <span>12 August 2013</span>
+      
     </div>
     <div class="content">
       
@@ -140,32 +142,32 @@ values you get will be distributed according to some underlying probability dist
 <p>In that way it sort of acts like a container, where the only operation is to sample a value from the container.
 In Scala it might look something like:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">get</span><span class="k">:</span> <span class="kt">A</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<p>The idea is that <code>get</code> returns a different value (of type <code>A</code>) from the distribution every time you call it.</p>
+<p>The idea is that <code class="highlighter-rouge">get</code> returns a different value (of type <code class="highlighter-rouge">A</code>) from the distribution every time you call it.</p>
 
-<p>I’m going to add a <code>sample</code> method that lets me draw a sample of any size I want from the distribution.</p>
+<p>I’m going to add a <code class="highlighter-rouge">sample</code> method that lets me draw a sample of any size I want from the distribution.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">get</span><span class="k">:</span> <span class="kt">A</span>
 
   <span class="k">def</span> <span class="n">sample</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
     <span class="nc">List</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="n">n</span><span class="o">)(</span><span class="k">this</span><span class="o">.</span><span class="n">get</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Now to create a simple distribution. Here’s one whose samples are uniformly distributed between 0 and 1.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">uniform</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">uniform</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">private</span> <span class="k">val</span> <span class="n">rand</span> <span class="k">=</span> <span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Random</span><span class="o">()</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">get</span> <span class="k">=</span> <span class="n">rand</span><span class="o">.</span><span class="n">nextDouble</span><span class="o">()</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>And sampling it gives</p>
 
-<pre><code>scala&gt; uniform.sample(10).foreach(println)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; uniform.sample(10).foreach(println)
 0.15738645964157327
 0.7827120503875181
 0.8787176537434814
@@ -177,27 +179,28 @@ In Scala it might look something like:</p>
 0.4133782959276152
 0.8152378840945975
 </code></pre>
+</div>
 
 <h3 id="transforming-distributions">Transforming distributions</h3>
 
-<p>Every good container should have a <code>map</code> method. <code>map</code> will transform values produced by the distribution
+<p>Every good container should have a <code class="highlighter-rouge">map</code> method. <code class="highlighter-rouge">map</code> will transform values produced by the distribution
 according to some function you pass it.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
   <span class="n">self</span> <span class="k">=&gt;</span>
-  <span class="c1">// ...</span>
-  <span class="k">def</span> <span class="n">map</span><span class="o">[</span><span class="kt">B</span><span class="o">](</span><span class="n">f</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="n">B</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>  <span class="k">def</span> <span class="n">map</span><span class="o">[</span><span class="kt">B</span><span class="o">](</span><span class="n">f</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="n">B</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span> <span class="o">{</span>
     <span class="k">override</span> <span class="k">def</span> <span class="n">get</span> <span class="k">=</span> <span class="n">f</span><span class="o">(</span><span class="n">self</span><span class="o">.</span><span class="n">get</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <!-- more -->
 
-<p>(Quick technical note: I added a self-type annotation that makes <code>self</code> an alias for <code>this</code> so that it’s easier to refer to in anonymous inner classes.)</p>
+<p>(Quick technical note: I added a self-type annotation that makes <code class="highlighter-rouge">self</code> an alias for <code class="highlighter-rouge">this</code> so that it’s easier to refer to in anonymous inner classes.)</p>
 
-<p>Now I can map <code>* 2</code> over the uniform distribution, giving a uniform distribution between 0 and 2:</p>
+<p>Now I can map <code class="highlighter-rouge">* 2</code> over the uniform distribution, giving a uniform distribution between 0 and 2:</p>
 
-<pre><code>scala&gt; uniform.map(_ * 2).sample(10).foreach(println)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; uniform.map(_ * 2).sample(10).foreach(println)
 1.608298200368093
 0.14423181179528677
 0.31844160650777886
@@ -209,60 +212,64 @@ according to some function you pass it.</p>
 1.35497977515358
 0.5874386820078819
 </code></pre>
+</div>
 
-<p><code>map</code> also lets you create distributions of different types:</p>
+<p><code class="highlighter-rouge">map</code> also lets you create distributions of different types:</p>
 
-<pre><code>scala&gt; val tf = uniform.map(_ &lt; 0.5)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val tf = uniform.map(_ &lt; 0.5)
 tf: Distribution[Boolean] = &lt;distribution&gt;
 
 scala&gt; tf.sample(10)
 res2: List[Boolean] = List(true, true, true, true, false, false, false, false, true, false)
 </code></pre>
+</div>
 
-<p><code>tf</code> is a <code>Distribution[Boolean]</code> that should give <code>true</code> and <code>false</code> with equal probability.
-Actually, it would be a bit more useful to be able to create distributions giving <code>true</code> and <code>false</code> with arbitrary
+<p><code class="highlighter-rouge">tf</code> is a <code class="highlighter-rouge">Distribution[Boolean]</code> that should give <code class="highlighter-rouge">true</code> and <code class="highlighter-rouge">false</code> with equal probability.
+Actually, it would be a bit more useful to be able to create distributions giving <code class="highlighter-rouge">true</code> and <code class="highlighter-rouge">false</code> with arbitrary
 probabilities.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">tf</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">tf</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">uniform</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span> <span class="o">&lt;</span> <span class="n">p</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Trying it out:</p>
 
-<pre><code>scala&gt; tf(0.8).sample(10)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; tf(0.8).sample(10)
 res0: List[Boolean] = List(true, false, true, true, true, true, true, true, true, true)
 </code></pre>
+</div>
 
-<p>A very closely related distribution is the Bernoulli distribution, which gives <code>0</code> or <code>1</code> with some
-probability instead of <code>true</code> and <code>false</code>. This can be achieved with a simple <code>map</code>:</p>
+<p>A very closely related distribution is the Bernoulli distribution, which gives <code class="highlighter-rouge">0</code> or <code class="highlighter-rouge">1</code> with some
+probability instead of <code class="highlighter-rouge">true</code> and <code class="highlighter-rouge">false</code>. This can be achieved with a simple <code class="highlighter-rouge">map</code>:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">bernoulli</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">bernoulli</span><span class="o">(</span><span class="n">p</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">tf</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">b</span> <span class="k">=&gt;</span> <span class="k">if</span> <span class="o">(</span><span class="n">b</span><span class="o">)</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">0</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Cool. Now I want to measure the probability that a random variable will take on certain values.
 This is easy to do empirically by pulling 10,000 sample values and counting how many of the values
 satisfy the given predicate.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-  <span class="k">private</span> <span class="k">val</span> <span class="n">N</span> <span class="k">=</span> <span class="mi">10000</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>  <span class="k">private</span> <span class="k">val</span> <span class="n">N</span> <span class="k">=</span> <span class="mi">10000</span>
   <span class="k">def</span> <span class="n">pr</span><span class="o">(</span><span class="n">predicate</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="nc">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="o">{</span>
     <span class="k">this</span><span class="o">.</span><span class="n">sample</span><span class="o">(</span><span class="n">N</span><span class="o">).</span><span class="n">count</span><span class="o">(</span><span class="n">predicate</span><span class="o">).</span><span class="n">toDouble</span> <span class="o">/</span> <span class="n">N</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<pre><code>scala&gt; uniform.pr(_ &lt; 0.4)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; uniform.pr(_ &lt; 0.4)
 res2: Double = 0.4015
 </code></pre>
+</div>
 
 <p>It works! It’s not exact, but it’s close enough.</p>
 
 <p>Now I need two ways to transform a distribution.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-  <span class="k">def</span> <span class="n">given</span><span class="o">(</span><span class="n">predicate</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="nc">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>  <span class="k">def</span> <span class="n">given</span><span class="o">(</span><span class="n">predicate</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="nc">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
     <span class="nd">@tailrec</span>
     <span class="k">override</span> <span class="k">def</span> <span class="n">get</span> <span class="k">=</span> <span class="o">{</span>
       <span class="k">val</span> <span class="n">a</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">get</span>
@@ -275,22 +282,22 @@ res2: Double = 0.4015
       <span class="nc">List</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="n">n</span><span class="o">)(</span><span class="n">self</span><span class="o">.</span><span class="n">get</span><span class="o">)</span>
     <span class="o">}</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<p><code>given</code> creates a new distribution by sampling from the original distribution and discarding values
-that don’t match the given predicate. <code>repeat</code> creates a <code>Distribution[List[A]]</code> from a <code>Distribution[A]</code>
+<p><code class="highlighter-rouge">given</code> creates a new distribution by sampling from the original distribution and discarding values
+that don’t match the given predicate. <code class="highlighter-rouge">repeat</code> creates a <code class="highlighter-rouge">Distribution[List[A]]</code> from a <code class="highlighter-rouge">Distribution[A]</code>
 by producing samples that are lists of samples from the original distributions.</p>
 
 <p>OK, now one more distribution:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">discreteUniform</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">values</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">A</span><span class="o">])</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">discreteUniform</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">values</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">A</span><span class="o">])</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">vec</span> <span class="k">=</span> <span class="n">values</span><span class="o">.</span><span class="n">toVector</span>
   <span class="n">uniform</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="n">vec</span><span class="o">((</span><span class="n">x</span> <span class="o">*</span> <span class="n">vec</span><span class="o">.</span><span class="n">length</span><span class="o">).</span><span class="n">toInt</span><span class="o">))</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Let’s see how all this works.</p>
 
-<pre><code>scala&gt; val die = discreteUniform(1 to 6)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val die = discreteUniform(1 to 6)
 die: Distribution[Int] = &lt;distribution&gt;
 
 scala&gt; die.sample(10)
@@ -314,12 +321,13 @@ res4: Double = 0.0542
 scala&gt; dice.pr(_ &lt; 4)
 res5: Double = 0.0811
 </code></pre>
+</div>
 
 <p>Neat! This is getting useful.</p>
 
 <p>OK I’m tired of looking at individual probabilities. What I really want is a way to visualize the entire distribution.</p>
 
-<pre><code>scala&gt; dice.hist
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; dice.hist
  2  2.67% ##
  3  5.21% #####
  4  8.48% ########
@@ -332,30 +340,32 @@ res5: Double = 0.0811
 11  5.64% #####
 12  2.79% ##
 </code></pre>
+</div>
 
-<p>That’s better. <code>hist</code> pulls 10,000 samples from the distribution, buckets them, counts the size of the buckets,
+<p>That’s better. <code class="highlighter-rouge">hist</code> pulls 10,000 samples from the distribution, buckets them, counts the size of the buckets,
 and finds a good way to display it. (The code is tedious so I’m not going to reproduce it here.)</p>
 
 <h3 id="dont-tell-anyone-its-a-monad">Don’t tell anyone it’s a monad</h3>
 
-<p>Another way to represent two die rolls is to sample from <code>die</code> twice and add the samples.</p>
+<p>Another way to represent two die rolls is to sample from <code class="highlighter-rouge">die</code> twice and add the samples.</p>
 
-<pre><code>scala&gt; val dice = die.map(d1 =&gt; die.map(d2 =&gt; d1 + d2))
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val dice = die.map(d1 =&gt; die.map(d2 =&gt; d1 + d2))
 dice: Distribution[Distribution[Int]] = &lt;distribution&gt;
 </code></pre>
+</div>
 
-<p>But wait, that gives me a <code>Distribution[Distribution[Int]]</code>, which is nonsense. Fortunately there’s an easy fix.</p>
+<p>But wait, that gives me a <code class="highlighter-rouge">Distribution[Distribution[Int]]</code>, which is nonsense. Fortunately there’s an easy fix.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-  <span class="k">def</span> <span class="n">flatMap</span><span class="o">[</span><span class="kt">B</span><span class="o">](</span><span class="n">f</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">B</span><span class="o">])</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>  <span class="k">def</span> <span class="n">flatMap</span><span class="o">[</span><span class="kt">B</span><span class="o">](</span><span class="n">f</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">B</span><span class="o">])</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span> <span class="o">{</span>
     <span class="k">override</span> <span class="k">def</span> <span class="n">get</span> <span class="k">=</span> <span class="n">f</span><span class="o">(</span><span class="n">self</span><span class="o">.</span><span class="n">get</span><span class="o">).</span><span class="n">get</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Let’s try it now.</p>
 
-<pre><code>scala&gt; val dice = die.flatMap(d1 =&gt; die.map(d2 =&gt; d1 + d2))
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val dice = die.flatMap(d1 =&gt; die.map(d2 =&gt; d1 + d2))
 dice: Distribution[Int] = &lt;distribution&gt;
 
 scala&gt; dice.hist
@@ -371,19 +381,20 @@ scala&gt; dice.hist
 11  5.62% #####
 12  2.71% ##
 </code></pre>
+</div>
 
 <p>It worked!</p>
 
-<p>The definition of <code>dice</code> can be re-written using Scala’s <code>for</code>-comprehension syntax:</p>
+<p>The definition of <code class="highlighter-rouge">dice</code> can be re-written using Scala’s <code class="highlighter-rouge">for</code>-comprehension syntax:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">dice</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">dice</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
   <span class="n">d1</span> <span class="k">&lt;-</span> <span class="n">die</span>
   <span class="n">d2</span> <span class="k">&lt;-</span> <span class="n">die</span>
-<span class="o">}</span> <span class="k">yield</span> <span class="n">d1</span> <span class="o">+</span> <span class="n">d2</span></code></pre></div>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">d1</span> <span class="o">+</span> <span class="n">d2</span></code></pre></figure>
 
-<p>This is really nice. The <code>&lt;-</code> notation can be read as sampling a value from a distribution.
-<code>d1</code> and <code>d2</code> are samples from <code>die</code> and both have type <code>Int</code>.
-<code>d1 + d2</code> is a sample from <code>dice</code>, the distribution I’m creating.</p>
+<p>This is really nice. The <code class="highlighter-rouge">&lt;-</code> notation can be read as sampling a value from a distribution.
+<code class="highlighter-rouge">d1</code> and <code class="highlighter-rouge">d2</code> are samples from <code class="highlighter-rouge">die</code> and both have type <code class="highlighter-rouge">Int</code>.
+<code class="highlighter-rouge">d1 + d2</code> is a sample from <code class="highlighter-rouge">dice</code>, the distribution I’m creating.</p>
 
 <p>In other words, I’m creating a new distribution by writing code that constructs a single sample of the distribution
 from individual samples of other distributions.
@@ -393,22 +404,23 @@ This is pretty handy! Lots of common distributions can be constructed this way. 
 
 <p>I think it would be fun to model the <a href="http://en.wikipedia.org/wiki/Monty_Hall_problem">Monty Hall problem</a>.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">montyHall</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[(</span><span class="kt">Int</span>, <span class="kt">Int</span><span class="o">)]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">montyHall</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[(</span><span class="kt">Int</span>, <span class="kt">Int</span><span class="o">)]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="k">val</span> <span class="n">doors</span> <span class="k">=</span> <span class="o">(</span><span class="mi">1</span> <span class="n">to</span> <span class="mi">3</span><span class="o">).</span><span class="n">toSet</span>
   <span class="k">for</span> <span class="o">{</span>
-    <span class="n">prize</span> <span class="k">&lt;-</span> <span class="n">discreteUniform</span><span class="o">(</span><span class="n">doors</span><span class="o">)</span>   <span class="c1">// The prize is placed randomly</span>
-    <span class="n">choice</span> <span class="k">&lt;-</span> <span class="n">discreteUniform</span><span class="o">(</span><span class="n">doors</span><span class="o">)</span>  <span class="c1">// You choose randomly</span>
-    <span class="n">opened</span> <span class="k">&lt;-</span> <span class="n">discreteUniform</span><span class="o">(</span><span class="n">doors</span> <span class="o">-</span> <span class="n">prize</span> <span class="o">-</span> <span class="n">choice</span><span class="o">)</span>   <span class="c1">// Monty opens one of the other doors</span>
-    <span class="n">switch</span> <span class="k">&lt;-</span> <span class="n">discreteUniform</span><span class="o">(</span><span class="n">doors</span> <span class="o">-</span> <span class="n">choice</span> <span class="o">-</span> <span class="n">opened</span><span class="o">)</span>  <span class="c1">// You switch to the unopened door</span>
-  <span class="o">}</span> <span class="k">yield</span> <span class="o">(</span><span class="n">prize</span><span class="o">,</span> <span class="n">switch</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+    <span class="n">prize</span> <span class="k">&lt;-</span> <span class="n">discreteUniform</span><span class="o">(</span><span class="n">doors</span><span class="o">)</span>   <span class="c1">// The prize is placed randomly
+</span>    <span class="n">choice</span> <span class="k">&lt;-</span> <span class="n">discreteUniform</span><span class="o">(</span><span class="n">doors</span><span class="o">)</span>  <span class="c1">// You choose randomly
+</span>    <span class="n">opened</span> <span class="k">&lt;-</span> <span class="n">discreteUniform</span><span class="o">(</span><span class="n">doors</span> <span class="o">-</span> <span class="n">prize</span> <span class="o">-</span> <span class="n">choice</span><span class="o">)</span>   <span class="c1">// Monty opens one of the other doors
+</span>    <span class="n">switch</span> <span class="k">&lt;-</span> <span class="n">discreteUniform</span><span class="o">(</span><span class="n">doors</span> <span class="o">-</span> <span class="n">choice</span> <span class="o">-</span> <span class="n">opened</span><span class="o">)</span>  <span class="c1">// You switch to the unopened door
+</span>  <span class="o">}</span> <span class="k">yield</span> <span class="o">(</span><span class="n">prize</span><span class="o">,</span> <span class="n">switch</span><span class="o">)</span>
+<span class="o">}</span></code></pre></figure>
 
 <p>This code constructs a distribution of pairs representing the door the prize is behind and the door you switched to.
 Let’s see how often those are the same door:</p>
 
-<pre><code>scala&gt; montyHall.pr{ case (prize, switch) =&gt; prize == switch }
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; montyHall.pr{ case (prize, switch) =&gt; prize == switch }
 res0: Double = 0.6671
 </code></pre>
+</div>
 
 <p>Just as expected. Lots of people have a hard time believing
 the explanation behind why this is correct, but there’s no arguing with just trying it 10,000 times!</p>
@@ -420,9 +432,9 @@ heads-tails-heads or heads-tails-tails?</p>
 
 <p>First I need the following method:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-  <span class="k">def</span> <span class="n">until</span><span class="o">(</span><span class="n">pred</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="nc">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">]]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">]]</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>  <span class="k">def</span> <span class="n">until</span><span class="o">(</span><span class="n">pred</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="nc">Boolean</span><span class="o">)</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">]]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">]]</span> <span class="o">{</span>
     <span class="k">override</span> <span class="k">def</span> <span class="n">get</span> <span class="k">=</span> <span class="o">{</span>
       <span class="nd">@tailrec</span>
       <span class="k">def</span> <span class="n">helper</span><span class="o">(</span><span class="n">sofar</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">])</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
@@ -432,19 +444,19 @@ heads-tails-heads or heads-tails-tails?</p>
       <span class="n">helper</span><span class="o">(</span><span class="nc">Nil</span><span class="o">)</span>
     <span class="o">}</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<p><code>until</code> samples from the distribution, adding the samples to the <em>front</em> of the list until the list satisfies some predicate.
+<p><code class="highlighter-rouge">until</code> samples from the distribution, adding the samples to the <em>front</em> of the list until the list satisfies some predicate.
 A single sample from the resulting distribution is a list that satisfies the predicate.</p>
 
 <p>Now I can do:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">hth</span> <span class="k">=</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.5</span><span class="o">).</span><span class="n">until</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">take</span><span class="o">(</span><span class="mi">3</span><span class="o">)</span> <span class="o">==</span> <span class="nc">List</span><span class="o">(</span><span class="kc">true</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">true</span><span class="o">)).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">length</span><span class="o">)</span>
-<span class="k">val</span> <span class="n">htt</span> <span class="k">=</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.5</span><span class="o">).</span><span class="n">until</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">take</span><span class="o">(</span><span class="mi">3</span><span class="o">)</span> <span class="o">==</span> <span class="nc">List</span><span class="o">(</span><span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">true</span><span class="o">)).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">length</span><span class="o">)</span></code></pre></div>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">hth</span> <span class="k">=</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.5</span><span class="o">).</span><span class="n">until</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">take</span><span class="o">(</span><span class="mi">3</span><span class="o">)</span> <span class="o">==</span> <span class="nc">List</span><span class="o">(</span><span class="kc">true</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">true</span><span class="o">)).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">length</span><span class="o">)</span>
+<span class="k">val</span> <span class="n">htt</span> <span class="k">=</span> <span class="n">tf</span><span class="o">(</span><span class="mf">0.5</span><span class="o">).</span><span class="n">until</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">take</span><span class="o">(</span><span class="mi">3</span><span class="o">)</span> <span class="o">==</span> <span class="nc">List</span><span class="o">(</span><span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">true</span><span class="o">)).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">length</span><span class="o">)</span></code></pre></figure>
 
 <p>Looking at the distributions:</p>
 
-<pre><code>scala&gt; hth.hist
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; hth.hist
  3 11.63% ###########
  4 12.43% ############
  5  9.50% #########
@@ -484,44 +496,47 @@ scala&gt; htt.hist
 19  0.78% 
 20  0.60% 
 </code></pre>
+</div>
 
 <p>Eyeballing it, it appears that HTT is likely to occur earlier than HTH. (How can this be? Excercise for the reader!)
 But I’d like to get a more concrete answer than that. What I want to know is how many flips you expect to see before
 seeing either pattern. So let me add a method to compute the expected value of a distribution:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-  <span class="k">def</span> <span class="n">ev</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>  <span class="k">def</span> <span class="n">ev</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="o">{</span>
     <span class="nc">Stream</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="n">N</span><span class="o">)(</span><span class="n">self</span><span class="o">.</span><span class="n">get</span><span class="o">).</span><span class="n">sum</span> <span class="o">/</span> <span class="n">N</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<p>Hm, that <code>.sum</code> is not going to work for all <code>A</code>s.
-I mean, <code>A</code> could certainly be <code>Boolean</code>, as in the case of the <code>tf</code> distribution (what is the expected value of a coin flip?).
-So I need to constrain <code>A</code> to <code>Double</code> for the purposes of this method.</p>
+<p>Hm, that <code class="highlighter-rouge">.sum</code> is not going to work for all <code class="highlighter-rouge">A</code>s.
+I mean, <code class="highlighter-rouge">A</code> could certainly be <code class="highlighter-rouge">Boolean</code>, as in the case of the <code class="highlighter-rouge">tf</code> distribution (what is the expected value of a coin flip?).
+So I need to constrain <code class="highlighter-rouge">A</code> to <code class="highlighter-rouge">Double</code> for the purposes of this method.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-  <span class="k">def</span> <span class="n">ev</span><span class="o">(</span><span class="k">implicit</span> <span class="n">toDouble</span><span class="k">:</span> <span class="kt">A</span> <span class="k">&lt;:</span><span class="kt">&lt;</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>  <span class="k">def</span> <span class="n">ev</span><span class="o">(</span><span class="k">implicit</span> <span class="n">toDouble</span><span class="k">:</span> <span class="kt">A</span> <span class="k">&lt;:</span><span class="kt">&lt;</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="o">{</span>
     <span class="nc">Stream</span><span class="o">.</span><span class="n">fill</span><span class="o">(</span><span class="n">N</span><span class="o">)(</span><span class="n">toDouble</span><span class="o">(</span><span class="n">self</span><span class="o">.</span><span class="n">get</span><span class="o">)).</span><span class="n">sum</span> <span class="o">/</span> <span class="n">N</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<pre><code>scala&gt; hth.ev
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; hth.ev
 &lt;console&gt;:15: error: Cannot prove that Int &lt;:&lt; Double.
               hth.ev
 </code></pre>
+</div>
 
 <p>Perfect. You know, it really bothered me when I first learned that the expected value of a die roll is 3.5.
-Requiring an explicit conversion to <code>Double</code> before computing the expected value of any distribution
+Requiring an explicit conversion to <code class="highlighter-rouge">Double</code> before computing the expected value of any distribution
 makes that fact a lot more palatable.</p>
 
-<pre><code>scala&gt; hth.map(_.toDouble).ev
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; hth.map(_.toDouble).ev
 res0: Double = 9.9204
 
 scala&gt; htt.map(_.toDouble).ev
 res1: Double = 7.9854
 </code></pre>
+</div>
 
 <p>There we go, empirical confirmation that HTT is expected to appear after 8 flips and HTH after 10 flips.</p>
 
@@ -532,14 +547,15 @@ the difference in expected value 2 but the expected difference something else.</
 
 <p>Well, easy enough to try it.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">diff</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">diff</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
   <span class="n">me</span> <span class="k">&lt;-</span> <span class="n">hth</span>
   <span class="n">you</span> <span class="k">&lt;-</span> <span class="n">htt</span>
-<span class="o">}</span> <span class="k">yield</span> <span class="n">me</span> <span class="o">-</span> <span class="n">you</span></code></pre></div>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">me</span> <span class="o">-</span> <span class="n">you</span></code></pre></figure>
 
-<pre><code>scala&gt; diff.map(_.toDouble).ev
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; diff.map(_.toDouble).ev
 res3: Double = 1.9976
 </code></pre>
+</div>
 
 <p>Actually, it does have to be 2. Expectation is linear!</p>
 
@@ -559,7 +575,7 @@ probability that you would see a difference that big after 125 roundings?</p>
 
 <p>Let’s find out.</p>
 
-<pre><code>scala&gt; val d = uniform.map(x =&gt; if (x &lt; 0.5) -x else 1.0-x).repeat(125).map(_.sum)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val d = uniform.map(x =&gt; if (x &lt; 0.5) -x else 1.0-x).repeat(125).map(_.sum)
 d: Distribution[Double] = &lt;distribution&gt;
 
 scala&gt; d.hist
@@ -585,16 +601,18 @@ scala&gt; d.hist
   9.0  0.25% 
  10.0  0.06% 
 </code></pre>
+</div>
 
-<p>There’s the distribution. Each instance is either a loss of <code>x</code> if <code>x &lt; 0.5</code> or a gain of <code>1.0-x</code>.
+<p>There’s the distribution. Each instance is either a loss of <code class="highlighter-rouge">x</code> if <code class="highlighter-rouge">x &lt; 0.5</code> or a gain of <code class="highlighter-rouge">1.0-x</code>.
 Repeat 125 times and sum it all up to get the total gain or loss from rounding.</p>
 
 <p>Now what’s the probability that we’d see a total greater than 8.5 cents? (Or less than -8.5 cents — a loss of 8.5
 cents would be equally surprising.)</p>
 
-<pre><code>scala&gt; d.pr(x =&gt; math.abs(x) &gt; 8.5)
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; d.pr(x =&gt; math.abs(x) &gt; 8.5)
 res0: Double = 0.0098
 </code></pre>
+</div>
 
 <p>Pretty unlikely, about 1%! So the distribution of fractional cents is probably not uniform. We should maybe look into that.</p>
 
@@ -603,13 +621,13 @@ res0: Double = 0.0098
 <p>One last example. It turns out the <a href="http://en.wikipedia.org/wiki/Normal_distribution">normal distribution</a>
 can be approximated pretty well by summing 12 uniformly distributed random variables and subtracting 6. In code:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">normal</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">normal</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
   <span class="n">uniform</span><span class="o">.</span><span class="n">repeat</span><span class="o">(</span><span class="mi">12</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">sum</span> <span class="o">-</span> <span class="mi">6</span><span class="o">)</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>Here’s what it looks like:</p>
 
-<pre><code>scala&gt; normal.hist
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; normal.hist
 -3.50  0.04% 
 -3.00  0.18% 
 -2.50  0.80% 
@@ -635,12 +653,13 @@ res1: Double = 0.9566
 scala&gt; normal.pr(x =&gt; math.abs(x) &lt; 3)
 res2: Double = 0.9972
 </code></pre>
+</div>
 
 <p>I believe it! One more check though.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
-  <span class="c1">// ...</span>
-  <span class="k">def</span> <span class="n">variance</span><span class="o">(</span><span class="k">implicit</span> <span class="n">toDouble</span><span class="k">:</span> <span class="kt">A</span> <span class="k">&lt;:</span><span class="kt">&lt;</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
+  <span class="c1">// ...
+</span>  <span class="k">def</span> <span class="n">variance</span><span class="o">(</span><span class="k">implicit</span> <span class="n">toDouble</span><span class="k">:</span> <span class="kt">A</span> <span class="k">&lt;:</span><span class="kt">&lt;</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="o">{</span>
     <span class="k">val</span> <span class="n">mean</span> <span class="k">=</span> <span class="k">this</span><span class="o">.</span><span class="n">ev</span>
     <span class="k">this</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="o">{</span>
       <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="o">(</span><span class="n">toDouble</span><span class="o">(</span><span class="n">x</span><span class="o">)</span> <span class="o">-</span> <span class="n">mean</span><span class="o">,</span> <span class="mi">2</span><span class="o">)</span>
@@ -650,31 +669,32 @@ res2: Double = 0.9972
   <span class="k">def</span> <span class="n">stdev</span><span class="o">(</span><span class="k">implicit</span> <span class="n">toDouble</span><span class="k">:</span> <span class="kt">A</span> <span class="k">&lt;:</span><span class="kt">&lt;</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="o">{</span>
     <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="n">variance</span><span class="o">)</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>The variance <script type="math/tex">\sigma^2</script> of a random variable <script type="math/tex">X</script> with mean <script type="math/tex">\mu</script> is <script type="math/tex">E[(X-\mu)^2]</script>,
 and the standard deviation <script type="math/tex">\sigma</script> is just the square root of the variance.</p>
 
 <p>And now:</p>
 
-<pre><code>scala&gt; normal.stdev
+<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; normal.stdev
 res0: Double = 0.9990012220368588
 </code></pre>
+</div>
 
 <p>Perfect.</p>
 
-<p>This is a great approximation and all, but <code>java.util.Random</code> actually provides a <code>nextGaussian</code> method,
+<p>This is a great approximation and all, but <code class="highlighter-rouge">java.util.Random</code> actually provides a <code class="highlighter-rouge">nextGaussian</code> method,
 so for the sake of performance I’m just going to use that.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">normal</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">normal</span><span class="k">:</span> <span class="kt">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Distribution</span><span class="o">[</span><span class="kt">Double</span><span class="o">]</span> <span class="o">{</span>
   <span class="k">override</span> <span class="k">def</span> <span class="n">get</span> <span class="k">=</span> <span class="o">{</span>
     <span class="n">rand</span><span class="o">.</span><span class="n">nextGaussian</span><span class="o">()</span>
   <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <h3 id="conclusion">Conclusion</h3>
 
-<p>The frequentist approach lines up really well with my intuitions about probability. And Scala’s <code>for</code>-comprehensions
+<p>The frequentist approach lines up really well with my intuitions about probability. And Scala’s <code class="highlighter-rouge">for</code>-comprehensions
 provide a suggestive syntax for constructing new random variables from existing ones. So I’m going to continue
 to explore various concepts in probability and statistics using these tools.</p>
 
@@ -788,7 +808,7 @@ and a bunch of related distributions.</p>
       </div>
       <hr>
       <footer>
-        <p>&copy; 2016 Jason Liszka
+        <p>&copy; 2013 Jason Liszka
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
         </p>
