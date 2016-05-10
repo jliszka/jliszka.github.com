@@ -9,11 +9,7 @@ tags: []
 
 <style type="text/css">
   .bg {
-    background: no-repeat center url('/assets/img/chaos/map.png');
-    background-size: 700px 700px;
     position: absolute;
-    width: 700px;
-    height: 700px;
     z-index: 1;
   }
   .canvas {
@@ -44,6 +40,15 @@ tags: []
   function setupCanvas(id, a, b, doExponent) {
 
     var canvas = document.getElementById(id);
+    canvas.width = canvas.parentNode.clientWidth - 2;
+    canvas.height = canvas.parentNode.clientWidth - 2;
+
+    var bg = document.getElementById("bg");
+    if (bg) {
+      bg.width = canvas.parentNode.clientWidth - 2;
+      bg.height = canvas.parentNode.clientWidth - 2;
+    }
+
     var ctx = canvas.getContext("2d");
     ctx.fillStyle = "#ffffff";
     ctx.font = "14px Arial";
@@ -99,6 +104,16 @@ tags: []
 
         draw(canvas, ctx, a+da, b+db, doExponent);
       };
+
+      canvas.ontouchmove = function(evt) {
+        evt.preventDefault();
+        if (evt.changedTouches.length == 0) return;
+        var touch = evt.changedTouches.item(0);
+        var params = pixelToParams(canvas, touch.pageX - touch.target.offsetLeft, touch.pageY - touch.target.offsetTop);
+        a = params.a;
+        b = params.b;
+        draw(canvas, ctx, a, b, doExponent);
+      };
     }
   }
 
@@ -124,8 +139,8 @@ tags: []
 
   function draw(canvas, ctx, a, b, doExponent) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillText('a = ' + a.toFixed(5), 520, 20);
-    ctx.fillText('b = ' + b.toFixed(5), 610, 20);
+    ctx.fillText('a = ' + a.toFixed(5), canvas.width-180, 20);
+    ctx.fillText('b = ' + b.toFixed(5), canvas.width-90, 20);
 
     var L = iterate(a, b, 40000, doExponent, function(r, f) {
       var p = pointToPixel(canvas, r, f);
@@ -133,7 +148,7 @@ tags: []
     });
 
     if (doExponent) {
-      ctx.fillText('L = ' + L.toFixed(5), 430, 20);
+      ctx.fillText('L = ' + L.toFixed(5), canvas.width-270, 20);
     }
   }
 
@@ -173,18 +188,11 @@ tags: []
   }
 </script>
 
-Let me introduce you to a particular population of rabbits and foxes. Each generation, the number of rabbits and
-foxes changes according to a simple set of rules.
+Consider a population of rabbits and foxes. Each generation, the number of rabbits and
+foxes changes according to a simple rule.
 
-Rabbits reproduce at a certain maximum rate, but there is a limited amount of food. So their growth rate is limited by
-the maximum number of rabbits the food supply can support. If the rabbit population is small, they will grow at nearly
-the maxiumum birth rate, but if there are too many rabbits, they will reproduce less (or may die of starvation).
-Also, rabbits will die when they encounter a fox (due to being eaten).
-
-A fox will reproduce only if it encounters (and eats) a rabbit. When it does so, it will produce a certain number of pups.
-
-We will represent the number of rabbits {%m%}r{%em%} and the number of foxes {%m%}f{%em%} as a percentage of some
-theoretical maximum population; that is, each is a number between 0 and 1.
+The number of rabbits {%m%}r{%em%} and the number of foxes {%m%}f{%em%} will range between 0 and 1, representing
+the percentage of some theoretical maximum population.
 
 The number of rabbits in generation {%m%}n+1{%em%}, based on the number of rabbits {%m%}r_n{%em%}
 and foxes {%m%}f_n{%em%} in the previous generation {%m%}n{%em%}, is given by:
@@ -194,10 +202,9 @@ r_{n+1} = a r_n (1 - r_n - f_n)
 {% endmath %}
 
 The constant {%m%}a{%em%} is the rabbits' birth rate. For example, if {%m%}a = 3{%em%}, then each rabbit produces 2 offspring in the
-next generation. The factor {%m%}(1 - r_n - f_n){%em%} accounts for deaths due to starvation and predation. This is just
-saying that if the number of rabbits is low (remember {%m%}r_n{%em%} and {%m%}f_n{%em%} are percentages of some maximum population),
-then few will die of starvation, if it's high then many will; and likewise if the number of foxes is high, many rabbits will die from
-being eaten.
+next generation. The factor {%m%}(1 - r_n - f_n){%em%} accounts for deaths due to starvation and predation. If the number of
+rabbits is low, then few will die of starvation, if it's high then many will; and likewise if the number of foxes is high,
+many rabbits will die from being eaten.
 
 The number of foxes in the next generation is given by:
 
@@ -205,84 +212,86 @@ The number of foxes in the next generation is given by:
 f_{n+1} = b f_n r_n
 {% endmath %}
 
-What this says is that the chance that a fox encounters and eats a rabbit is {%m%}r_n{%em%}. So if the rabbit population is at
+This says that the chance that a fox encounters and eats a rabbit is {%m%}r_n{%em%}. So if the rabbit population is at
 80% of its theoretical maximum, 80% of foxes will eat enough to reproduce, and will produce {%m%}b{%em%} offspring.
 
 So let's pick some values for {%m%}a{%em%} and {%m%}b{%em%} and see how the system behaves. We'll visualize it
-just by plotting the populations on a graph. But instead of plotting both populations on the {%m%}y{%em%}-axis against
-time on the {%m%}x{%em%}-axis, we'll plot the populations against each other. That is, we'll leave time out of it and just
-plot the set of points {%m%}(r_i, f_i){%em%} over, say, 40,000 generations. Let's see what we get.
+by plotting the populations on a graph. But instead of plotting both populations over time, we'll plot the populations
+against each other. That is, we'll leave time out of it and just plot the set of points {%m%}(r_i, f_i){%em%} over, say,
+40,000 generations.
+
+Let's see what we get.
 
 For most values of {%m%}a{%em%} and {%m%}b{%em%}, the system quickly finds a stable point.
 For {%m%}a = 2{%em%} and {%m%}b = 3{%em%}, it converges in on {%m%}r = \frac{1}{3}{%em%} and {%m%}f = \frac{1}{6}{%em%}.
 You can check that this is a fixed point of the recurrence.
-<canvas id="canvas0" class="canvas" width="700" height="700"></canvas>
+<canvas id="canvas0" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas0", 2, 3)
 </script>
 Rabbits are on the {%m%}x{%em%}-axis, foxes are on the {%m%}y{%em%}-axis, and the origin is in the lower left-hand corner.
 
 For other values of {%m%}a{%em%} and {%m%}b{%em%}, the system converges to a loop instead of a point.
-<canvas id="canvas1" class="canvas" width="700" height="700"></canvas>
+<canvas id="canvas1" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas1", 2.9, 3.2)
 </script>
 Keep in mind the system is not necessarily going from one point to the next around the loop over time.
 It's actually jumping between points that all happen to be on the same loop. Weird, huh?
 
-Further on, things get weirder.
-<canvas id="canvas2" class="canvas" width="700" height="700"></canvas>
+At another point in the parameter space, the loop takes on an irregular shape.
+<canvas id="canvas2" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas2", 3.15333, 3.44286)
 </script>
 
 Nearby, the loop breaks up into a set of smaller, weird loops...
-<canvas id="canvas3" class="canvas" width="700" height="700"></canvas>
+<canvas id="canvas3" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas3", 3.08143, 3.66334)
 </script>
 
 ... each of which proceeds to get weirder.
-<canvas id="canvas4" class="canvas" width="700" height="700"></canvas>
+<canvas id="canvas4" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas4", 3.13276, 3.66883)
 </script>
 
 Then, everything gets weird.
-<canvas id="canvas5" class="canvas" width="700" height="700"></canvas>
+<canvas id="canvas5" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas5", 3.20667, 3.5)
 </script>
 
 This is beautiful if you ask me.
-<canvas id="canvas6" class="canvas" width="700" height="700"></canvas>
+<canvas id="canvas6" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas6", 3.11376, 3.88351)
 </script>
 
 This is chaos (still beautiful).
-<canvas id="canvas7" class="canvas" width="700" height="700"></canvas>
+<canvas id="canvas7" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas7", 3.41262, 3.61603)
 </script>
 
 Below, you can explore the parameter space yourself. Your mouse position determines the values of {%m%}a{%em%} and {%m%}b{%em%}.
-Hold down `shift` for fine-tuning.
+Hold down `shift` for fine-tuning. (On mobile, drag your finger around the canvas.)
 
-<canvas id="canvas-i" class="canvas" width="700" height="700"></canvas>
+<canvas id="canvas-i" class="canvas"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas-i")
 </script>
 
-If you're careful with your mouse, you can find places where the top-level loop bifurcates into smaller loops,
-which divide again into smaller loops, presumably indefinitely.
+If you're careful with your mouse, you can find places where the top-level loop divides into smaller loops,
+which divide again into still smaller loops, presumably ad infinitum.
 In fact, it seems like you can make the smaller loops exhibit all the same weird behavior the top-level loop does.
 So there is definitely some self-similar recursive structure here.
 
 As you move your mouse around, doesn't it feel like you're looking at 2D slices of some larger, crazy complicated 4D object?
 I thought so too.
 
-[Here is the 3D slice you get](/assets/html/chaos.html?3.1) when you fix {%m%}a = 3.1{%em%}.
+[Here is the 3D slice you get](/assets/html/chaos.html?3.1) when you fix {%m%}a = 3.1{%em%} (not recommended on mobile).
 Click and drag to rotate, scroll to zoom. You can also edit the url parameter to try different values for {%m%}a{%em%}.
 
 ## A map of the territory
@@ -291,14 +300,14 @@ Playing around with this, it seems like there are regions where the system conve
 it's a loop, and other regions where it's more like a cloud. Trying to find "interesting" regions of the parameter space
 can feel like wandering around without a map. So, let's make a map.
 
-We'll color each point {%m%}(a, b){%em%} according to how the system behaves with those parameter values.
-To do that we'll use something called the [Lyapunov exponent](https://en.wikipedia.org/wiki/Lyapunov_exponent).
+I'll color each point {%m%}(a, b){%em%} according to how the system behaves with those parameter values.
+To do that I'll use something called the [Lyapunov exponent](https://en.wikipedia.org/wiki/Lyapunov_exponent).
 This is a measure of how quickly two points {%m%}(r, f){%em%} and {%m%}(r', f'){%em%}, initially spaced very close together, diverge or converge after
 repeated iteration. It's assumed that the distance between them will go like {%m%}e^{nL}{%em%}, where {%m%}n{%em%}
 is the iteration number. If {%m%}L = 0{%em%}, they stay the same distance apart. If {%m%}L \lt 0{%em%}, they get closer
-together over time. And if {%m%}L \gt 0{%em%}, they diverge. Larger exponents mean they diverge (or converge) faster.
+together over time, and if {%m%}L \gt 0{%em%}, they diverge. Larger exponents mean they diverge (or converge) faster.
 
-I chose shades of green for {%m%}L \lt 0{%em%}, yellow for {%m%}0 \leqslant L \lt 0.01{%em%}, red for {%m%}0.01 \leqslant L \lt 0.1{%em%}, and
+I chose shades of green for {%m%}L \lt 0{%em%}, yellow for {%m%}0 \leq L \lt 0.01{%em%}, red for {%m%}0.01 \leq L \lt 0.1{%em%}, and
 purple for {%m%}L \gt 0.1{%em%}.
 If the system diverged to infinity (that is, {%m%}f{%em%} gets very large), I colored the point black.
 
@@ -306,14 +315,16 @@ The image below is the what I got for {%m%}a{%em%} between 1 and 4.333 and {%m%}
 
 ![map](/assets/img/chaos/map.png)
 
-So, that's a thing. Here it is as a [2400 x 2400 png](/assets/img/chaos/map-2400.png). You can see some definite fractal structure here.
-You can see this better in the higher resolution image, but the messy yellow/green region looks like moiré pattern, indicating long thin lines of alternating color. Between the big green triangles there are smaller triangles, and the bottom-left corners of these triangles extend all the way to the
+So, that's a thing. Here it is as a [2400 x 2400 png](/assets/img/chaos/map-2400.png). There is some definite fractal structure here.
+You can see this better in the higher resolution image, but the moiré pattern in the yellow/green region indicates long thin lines of alternating color.
+Between the big green triangles there are smaller triangles, and the bottom-left corners of these triangles extend all the way to the
 {%m%}L = 0{%em%} boundary.
 
 But anyway, laying this map underneath the interactive plot from above, you can see how different regions of the parameter space behave.
+(Works on mobile too.)
 
-<div class="bg"></div>
-<canvas id="canvas-t" class="canvas-transparent" width="700" height="700"></canvas>
+<img src="/assets/img/chaos/map.png" class="bg" id="bg"/>
+<canvas id="canvas-t" class="canvas-transparent"></canvas>
 <script type="text/javascript">
   setupCanvas("canvas-t", null, null, true)
 </script>
@@ -341,4 +352,8 @@ the next is at 3.4, the next at 3.54, and then chaos takes over at 3.55, with br
 
 You can also find the ghost of the logistic map itself if you move your mouse around the small purple triangular region near
 the vertical bars around {%m%}a = 3.7, b = 1.67{%em%}. Spooky!
+
+## So what?
+
+There really is no so what. It's just astonishing to me how much complex behavior can arise from two pretty simple rules.
 
