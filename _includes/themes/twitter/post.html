@@ -7,7 +7,9 @@
       <h1>{{ page.title }} {% if page.tagline %}<small>{{page.tagline}}</small>{% endif %}</h1>
     </div>
     <div class="date">
-      <span>{{ page.date | date_to_long_string }}</span>
+      {% if page.date %}
+        <span>{{ page.date | date_to_long_string }}</span>
+      {% endif %}
     </div>
     <div class="content">
       {{ content }}

@@ -8,7 +8,10 @@ module Jekyll
       return false
     end
     def template
-      "drafts/:title.html"
+      "drafts/:basename.html"
+    end
+    def date
+      return Date.new()
     end
   end
 
@@ -18,7 +21,7 @@ module Jekyll
     def generate(site)
       entries = Dir.chdir("_drafts") { Dir["*.md"] }
       entries.each do |entry|
-        site.pages << DraftPage.new(site, site.source, "", entry)
+        site.pages << DraftPage.new(site, site.source, "_drafts", entry)
       end
     end
   end
