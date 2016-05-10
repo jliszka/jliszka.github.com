@@ -5,10 +5,243 @@
         <description>A Gentleman and a Scala - Jason Liszka</description>
         <link>http://jliszka.github.io</link>
         <link>http://jliszka.github.io</link>
-        <lastBuildDate>2016-05-10T20:14:48+00:00</lastBuildDate>
-        <pubDate>2016-05-10T20:14:48+00:00</pubDate>
+        <lastBuildDate>2016-05-10T20:29:10+00:00</lastBuildDate>
+        <pubDate>2016-05-10T20:29:10+00:00</pubDate>
         <ttl>1800</ttl>
 
+
+        <item>
+                <title>Between order and chaos</title>
+                <description>
+                
+                        
+&lt;style type=&quot;text/css&quot;&gt;
+  .bg {
+    position: absolute;
+    z-index: 1;
+  }
+  .canvas {
+    background: black;
+    border: none;
+    margin-bottom: 10px;
+  }
+  .canvas-transparent {
+    border: none;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 2;
+  }
+  p img {
+    background: black;
+  }
+&lt;/style&gt;
+
+&lt;script type=&quot;text/javascript&quot;&gt;
+
+  var xmin = 1.0;
+  var xmax = 4.33333333;
+  var ymin = 1.0;
+  var ymax = 6.0;
+
+  var zoom = null;
+
+  function setupCanvas(id, a, b, doExponent) {
+
+    var canvas = document.getElementById(id);
+    canvas.width = canvas.parentNode.clientWidth - 2;
+    canvas.height = canvas.parentNode.clientWidth - 2;
+
+    var bg = document.getElementById(&quot;bg&quot;);
+    if (bg) {
+      bg.width = canvas.parentNode.clientWidth - 2;
+      bg.height = canvas.parentNode.clientWidth - 2;
+    }
+
+    var ctx = canvas.getContext(&quot;2d&quot;);
+    ctx.fillStyle = &quot;#ffffff&quot;;
+    ctx.font = &quot;14px Arial&quot;;
+
+    if (a &amp;&amp; b) {
+      draw(canvas, ctx, a, b);
+    }
+    else {
+      canvas.style.cursor = &quot;crosshair&quot;;
+
+      canvas.onclick = function(evt) {
+        if (zoom) {
+          zoom = null;
+        }
+        else {
+          zoom = pixelToParams(canvas, evt.offsetX, evt.offsetY);
+          zoom.a = a;
+          zoom.b = b;
+        }
+        draw(canvas, ctx, a, b, doExponent);
+      };
+
+      canvas.onmousemove = function(evt) {
+        if (evt.metaKey) return;
+
+        var params = pixelToParams(canvas, evt.offsetX, evt.offsetY);
+
+        var da = 0;
+        var db = 0;
+        var d = 0.1;
+        var d2 = 0.01;
+
+        if (zoom) {
+          if (evt.shiftKey) {
+            da = params.px * d2 - d2/2;
+            db = params.py * d2 - d2/2;
+          }
+          else {
+            a = zoom.a + params.px * d - d/2;
+            b = zoom.b + params.py * d - d/2;
+          }
+        }
+        else {
+          if (evt.shiftKey) {
+            da = params.px * d - d/2;
+            db = params.py * d - d/2;
+          }
+          else {
+            a = params.a;
+            b = params.b;
+          }
+        }
+
+        draw(canvas, ctx, a+da, b+db, doExponent);
+      };
+
+      canvas.ontouchmove = function(evt) {
+        evt.preventDefault();
+        if (evt.changedTouches.length == 0) return;
+        var touch = evt.changedTouches.item(0);
+        var params = pixelToParams(canvas, touch.pageX - touch.target.offsetLeft, touch.pageY - touch.target.offsetTop);
+        a = params.a;
+        b = params.b;
+        draw(canvas, ctx, a, b, doExponent);
+      };
+    }
+  }
+
+  function pixelToParams(canvas, x, y) {
+    return {
+      px: x / canvas.clientWidth,
+      py: y / canvas.clientHeight,
+      a: xmin + (xmax - xmin) * (x / canvas.clientWidth),
+      b: ymax - (ymax - ymin) * (y / canvas.clientHeight)
+    };
+  }
+
+  function pointToPixel(canvas, r, f) {
+    if (zoom) {
+      r = (r - zoom.px + 0.05) * 10;
+      f = 1 - ((1 - f) - zoom.py + 0.05) * 10;
+    }
+    return {
+      x: r * canvas.clientWidth,
+      y: (1 - f) * canvas.clientHeight
+    };
+  }
+
+  function draw(canvas, ctx, a, b, doExponent) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillText(&#39;a = &#39; + a.toFixed(5), canvas.width-180, 20);
+    ctx.fillText(&#39;b = &#39; + b.toFixed(5), canvas.width-90, 20);
+
+    var L = iterate(a, b, 40000, doExponent, function(r, f) {
+      var p = pointToPixel(canvas, r, f);
+      ctx.fillRect(p.x, p.y, 1, 1);
+    });
+
+    if (doExponent) {
+      ctx.fillText(&#39;L = &#39; + L.toFixed(5), canvas.width-270, 20);
+    }
+  }
+
+  function iterate(a, b, N, doExponent, cb) {
+    var r = 0.1;
+    var f = 0.1;
+
+    var dx = 0.0000001;
+    var dy = 0.0000001;
+    var d0 = Math.sqrt(dx*dx + dy*dy);
+    var L = 0;
+
+    for (var i = 0; i &lt; N; i++) {
+      var r2 = a * r * (1 - r - f);
+      var f2 = b * f * r;
+
+      if (i == 1000 &amp;&amp; (Number.isNaN(f) || Math.abs(f) &gt; 1000)) return null;
+
+      if (doExponent &amp;&amp; i &gt; 1000) {
+        var r0 = a * (r+dx) * (1 - (r+dx) - (f+dy));
+        var f0 = b * (f+dy) * (r+dx);
+        var dr = r0 - r2;
+        var df = f0 - f2;
+        var d1 = Math.sqrt(dr*dr + df*df);
+        var dd = d0 / d1;
+        L -= Math.log(dd);
+        dx = dr * dd;
+        dy = df * dd;
+      }
+
+      r = r2;
+      f = f2;
+      cb(r, f);
+    }
+
+    return L / N;
+  }
+&lt;/script&gt;
+
+&lt;p&gt;Consider a population of rabbits and foxes. Each generation, the number of rabbits and
+foxes changes according to a simple rule.&lt;/p&gt;
+
+&lt;p&gt;The number of rabbits &lt;script type=&quot;math/tex&quot;&gt;r&lt;/script&gt; and the number of foxes &lt;script type=&quot;math/tex&quot;&gt;f&lt;/script&gt; will range between 0 and 1, representing
+the percentage of some theoretical maximum population.&lt;/p&gt;
+
+&lt;p&gt;The number of rabbits in generation &lt;script type=&quot;math/tex&quot;&gt;n+1&lt;/script&gt;, based on the number of rabbits &lt;script type=&quot;math/tex&quot;&gt;r_n&lt;/script&gt;
+and foxes &lt;script type=&quot;math/tex&quot;&gt;f_n&lt;/script&gt; in the previous generation &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt;, is given by:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;
+%&lt;![CDATA[
+r_{n+1} = a r_n (1 - r_n - f_n)
+%]]&gt;
+&lt;/script&gt;
+
+&lt;p&gt;The constant &lt;script type=&quot;math/tex&quot;&gt;a&lt;/script&gt; is the rabbits’ birth rate. For example, if &lt;script type=&quot;math/tex&quot;&gt;a = 3&lt;/script&gt;, then each rabbit produces 2 offspring in the
+next generation. The factor &lt;script type=&quot;math/tex&quot;&gt;(1 - r_n - f_n)&lt;/script&gt; accounts for deaths due to starvation and predation. If the number of
+rabbits is low, then few will die of starvation, if it’s high then many will; and likewise if the number of foxes is high,
+many rabbits will die from being eaten.&lt;/p&gt;
+
+&lt;p&gt;The number of foxes in the next generation is given by:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;
+%&lt;![CDATA[
+f_{n+1} = b f_n r_n
+%]]&gt;
+&lt;/script&gt;
+
+&lt;p&gt;This says that the chance that a fox encounters and eats a rabbit is &lt;script type=&quot;math/tex&quot;&gt;r_n&lt;/script&gt;. So if the rabbit population is at
+80% of its theoretical maximum, 80% of foxes will eat enough to reproduce, and will produce &lt;script type=&quot;math/tex&quot;&gt;b&lt;/script&gt; offspring.&lt;/p&gt;
+
+&lt;p&gt;So let’s pick some values for &lt;script type=&quot;math/tex&quot;&gt;a&lt;/script&gt; and &lt;script type=&quot;math/tex&quot;&gt;b&lt;/script&gt; and see how the system behaves. We’ll visualize it
+by plotting the populations on a graph. But instead of plotting both populations over time, we’ll plot the populations
+against each other. That is, we’ll leave time out of it and just plot the set of points &lt;script type=&quot;math/tex&quot;&gt;(r_i, f_i)&lt;/script&gt; over, say,
+40,000 generations.&lt;/p&gt;
+
+&lt;p&gt;Let’s see what we get.&lt;/p&gt;
+
+
+                        &lt;a href="http://jliszka.github.io   /2016/05/10/between-order-and-chaos.html">Read more&lt;/a>
+                
+                </description>
+                <link>http://jliszka.github.io/2016/05/10/between-order-and-chaos.html</link>
+                <guid>http://jliszka.github.io/2016/05/10/between-order-and-chaos</guid>
+                <pubDate>2016-05-10T00:00:00+00:00</pubDate>
+        </item>
 
         <item>
                 <title>Probability is in the process</title>

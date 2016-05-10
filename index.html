@@ -101,10 +101,6 @@
       
     
   
-    
-      
-    
-  
 
 
 
@@ -130,6 +126,8 @@
     
 <h2 id="archive">Archive</h2>
 <ul class="posts">
+  
+    <li><a href="/2016/05/10/between-order-and-chaos.html">Between order and chaos</a></li>
   
     <li><a href="/2016/04/05/probability-is-in-the-process.html">Probability is in the process</a></li>
   
@@ -176,6 +174,233 @@
 </ul>
 
 <div class="post-content-truncate">
+
+  
+    <h2 class="title">Between order and chaos</h2>
+    
+<style type="text/css">
+  .bg {
+    position: absolute;
+    z-index: 1;
+  }
+  .canvas {
+    background: black;
+    border: none;
+    margin-bottom: 10px;
+  }
+  .canvas-transparent {
+    border: none;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 2;
+  }
+  p img {
+    background: black;
+  }
+</style>
+
+<script type="text/javascript">
+
+  var xmin = 1.0;
+  var xmax = 4.33333333;
+  var ymin = 1.0;
+  var ymax = 6.0;
+
+  var zoom = null;
+
+  function setupCanvas(id, a, b, doExponent) {
+
+    var canvas = document.getElementById(id);
+    canvas.width = canvas.parentNode.clientWidth - 2;
+    canvas.height = canvas.parentNode.clientWidth - 2;
+
+    var bg = document.getElementById("bg");
+    if (bg) {
+      bg.width = canvas.parentNode.clientWidth - 2;
+      bg.height = canvas.parentNode.clientWidth - 2;
+    }
+
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "14px Arial";
+
+    if (a && b) {
+      draw(canvas, ctx, a, b);
+    }
+    else {
+      canvas.style.cursor = "crosshair";
+
+      canvas.onclick = function(evt) {
+        if (zoom) {
+          zoom = null;
+        }
+        else {
+          zoom = pixelToParams(canvas, evt.offsetX, evt.offsetY);
+          zoom.a = a;
+          zoom.b = b;
+        }
+        draw(canvas, ctx, a, b, doExponent);
+      };
+
+      canvas.onmousemove = function(evt) {
+        if (evt.metaKey) return;
+
+        var params = pixelToParams(canvas, evt.offsetX, evt.offsetY);
+
+        var da = 0;
+        var db = 0;
+        var d = 0.1;
+        var d2 = 0.01;
+
+        if (zoom) {
+          if (evt.shiftKey) {
+            da = params.px * d2 - d2/2;
+            db = params.py * d2 - d2/2;
+          }
+          else {
+            a = zoom.a + params.px * d - d/2;
+            b = zoom.b + params.py * d - d/2;
+          }
+        }
+        else {
+          if (evt.shiftKey) {
+            da = params.px * d - d/2;
+            db = params.py * d - d/2;
+          }
+          else {
+            a = params.a;
+            b = params.b;
+          }
+        }
+
+        draw(canvas, ctx, a+da, b+db, doExponent);
+      };
+
+      canvas.ontouchmove = function(evt) {
+        evt.preventDefault();
+        if (evt.changedTouches.length == 0) return;
+        var touch = evt.changedTouches.item(0);
+        var params = pixelToParams(canvas, touch.pageX - touch.target.offsetLeft, touch.pageY - touch.target.offsetTop);
+        a = params.a;
+        b = params.b;
+        draw(canvas, ctx, a, b, doExponent);
+      };
+    }
+  }
+
+  function pixelToParams(canvas, x, y) {
+    return {
+      px: x / canvas.clientWidth,
+      py: y / canvas.clientHeight,
+      a: xmin + (xmax - xmin) * (x / canvas.clientWidth),
+      b: ymax - (ymax - ymin) * (y / canvas.clientHeight)
+    };
+  }
+
+  function pointToPixel(canvas, r, f) {
+    if (zoom) {
+      r = (r - zoom.px + 0.05) * 10;
+      f = 1 - ((1 - f) - zoom.py + 0.05) * 10;
+    }
+    return {
+      x: r * canvas.clientWidth,
+      y: (1 - f) * canvas.clientHeight
+    };
+  }
+
+  function draw(canvas, ctx, a, b, doExponent) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillText('a = ' + a.toFixed(5), canvas.width-180, 20);
+    ctx.fillText('b = ' + b.toFixed(5), canvas.width-90, 20);
+
+    var L = iterate(a, b, 40000, doExponent, function(r, f) {
+      var p = pointToPixel(canvas, r, f);
+      ctx.fillRect(p.x, p.y, 1, 1);
+    });
+
+    if (doExponent) {
+      ctx.fillText('L = ' + L.toFixed(5), canvas.width-270, 20);
+    }
+  }
+
+  function iterate(a, b, N, doExponent, cb) {
+    var r = 0.1;
+    var f = 0.1;
+
+    var dx = 0.0000001;
+    var dy = 0.0000001;
+    var d0 = Math.sqrt(dx*dx + dy*dy);
+    var L = 0;
+
+    for (var i = 0; i < N; i++) {
+      var r2 = a * r * (1 - r - f);
+      var f2 = b * f * r;
+
+      if (i == 1000 && (Number.isNaN(f) || Math.abs(f) > 1000)) return null;
+
+      if (doExponent && i > 1000) {
+        var r0 = a * (r+dx) * (1 - (r+dx) - (f+dy));
+        var f0 = b * (f+dy) * (r+dx);
+        var dr = r0 - r2;
+        var df = f0 - f2;
+        var d1 = Math.sqrt(dr*dr + df*df);
+        var dd = d0 / d1;
+        L -= Math.log(dd);
+        dx = dr * dd;
+        dy = df * dd;
+      }
+
+      r = r2;
+      f = f2;
+      cb(r, f);
+    }
+
+    return L / N;
+  }
+</script>
+
+<p>Consider a population of rabbits and foxes. Each generation, the number of rabbits and
+foxes changes according to a simple rule.</p>
+
+<p>The number of rabbits <script type="math/tex">r</script> and the number of foxes <script type="math/tex">f</script> will range between 0 and 1, representing
+the percentage of some theoretical maximum population.</p>
+
+<p>The number of rabbits in generation <script type="math/tex">n+1</script>, based on the number of rabbits <script type="math/tex">r_n</script>
+and foxes <script type="math/tex">f_n</script> in the previous generation <script type="math/tex">n</script>, is given by:</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+r_{n+1} = a r_n (1 - r_n - f_n)
+%]]>
+</script>
+
+<p>The constant <script type="math/tex">a</script> is the rabbits’ birth rate. For example, if <script type="math/tex">a = 3</script>, then each rabbit produces 2 offspring in the
+next generation. The factor <script type="math/tex">(1 - r_n - f_n)</script> accounts for deaths due to starvation and predation. If the number of
+rabbits is low, then few will die of starvation, if it’s high then many will; and likewise if the number of foxes is high,
+many rabbits will die from being eaten.</p>
+
+<p>The number of foxes in the next generation is given by:</p>
+
+<script type="math/tex; mode=display">
+%<![CDATA[
+f_{n+1} = b f_n r_n
+%]]>
+</script>
+
+<p>This says that the chance that a fox encounters and eats a rabbit is <script type="math/tex">r_n</script>. So if the rabbit population is at
+80% of its theoretical maximum, 80% of foxes will eat enough to reproduce, and will produce <script type="math/tex">b</script> offspring.</p>
+
+<p>So let’s pick some values for <script type="math/tex">a</script> and <script type="math/tex">b</script> and see how the system behaves. We’ll visualize it
+by plotting the populations on a graph. But instead of plotting both populations over time, we’ll plot the populations
+against each other. That is, we’ll leave time out of it and just plot the set of points <script type="math/tex">(r_i, f_i)</script> over, say,
+40,000 generations.</p>
+
+<p>Let’s see what we get.</p>
+
+
+    <a href="/2016/05/10/between-order-and-chaos.html">Read more</a>
+    <hr />
+  
 
   
     <h2 class="title">Probability is in the process</h2>
@@ -415,81 +640,6 @@ itself.</p>
 
 
     <a href="/2013/11/07/effective-peer-reviews.html">Read more</a>
-    <hr />
-  
-
-  
-    <h2 class="title">Infinite lazy polynomials</h2>
-    
-<blockquote class="quote">
-  <p>"Never underestimate the insights encoded into the coefficients of a polynomial!"</p>
-  —Steven Rudich
-</blockquote>
-
-<p>In this post I’m going to write a toy library for manipulating infinite lazy polynomials. I promise this will be fun.</p>
-
-<h3 id="representation">Representation</h3>
-
-<p>You might try representing a polynomial of infinite degree as an infinite stream of coefficients. But I think it would be
-easier to think about it in terms of a function <script type="math/tex">c:\mathbb{N} \rightarrow \mathbb{R}</script> that gives you the coefficient
-for a given power of <script type="math/tex">x</script> in the polynomial. So the polynomial represented by some function <script type="math/tex">c</script> would be</p>
-
-<script type="math/tex; mode=display">
-%<![CDATA[
-p_c(x) = c(0) + c(1)x + c(2)x^2 + c(3)x^3 + \ldots
-%]]>
-</script>
-
-<p>Here’s the setup:</p>
-
-<figure class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Poly</span><span class="o">(</span><span class="n">coeffs</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)</span> <span class="o">{</span>
-
-  <span class="c1">// Memoizing coefficient accessor. Returns the coefficient for x^n.
-</span>  <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="n">memo</span><span class="o">.</span><span class="n">getOrElseUpdate</span><span class="o">(</span><span class="n">n</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="n">coeffs</span><span class="o">(</span><span class="n">n</span><span class="o">))</span>
-
-  <span class="c1">// The memo table
-</span>  <span class="k">private</span> <span class="k">val</span> <span class="n">memo</span> <span class="k">=</span> <span class="n">scala</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">mutable</span><span class="o">.</span><span class="nc">HashMap</span><span class="o">[</span><span class="kt">Int</span>, <span class="kt">Double</span><span class="o">]()</span>
-
-  <span class="k">override</span> <span class="k">def</span> <span class="n">toString</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="s">"{ %s, ... }"</span><span class="o">.</span><span class="n">format</span><span class="o">((</span><span class="mi">0</span> <span class="n">to</span> <span class="mi">10</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">i</span> <span class="k">=&gt;</span> <span class="n">df</span><span class="o">.</span><span class="n">format</span><span class="o">(</span><span class="k">this</span><span class="o">(</span><span class="n">i</span><span class="o">))).</span><span class="n">mkString</span><span class="o">(</span><span class="s">", "</span><span class="o">))</span>
-  <span class="o">}</span>
-  <span class="k">private</span> <span class="k">val</span> <span class="n">df</span> <span class="k">=</span> <span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="nc">DecimalFormat</span><span class="o">(</span><span class="s">"#.#######"</span><span class="o">)</span>
-<span class="o">}</span></code></pre></figure>
-
-<p>The <code class="highlighter-rouge">Poly</code> class just wraps a function of type <code class="highlighter-rouge">Int =&gt; Double</code>, memoizes it, and provides a <code class="highlighter-rouge">toString</code>
-representation including the first so many coefficients.</p>
-
-<p>Now we can create instances like this:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; val one = new Poly(n =&gt; if (n == 0) 1 else 0)
-one: Poly = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }
-
-scala&gt; val x = new Poly(n =&gt; if (n == 1) 1 else 0)
-x: Poly = { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, ... }
-</code></pre>
-</div>
-
-<p>You can access arbitrary coefficients by calling the <code class="highlighter-rouge">apply</code> method.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>scala&gt; x(0)
-res0: Double = 0.0
-
-scala&gt; x(1)
-res1: Double = 1.0
-
-scala&gt; x(12)
-res2: Double = 0.0
-</code></pre>
-</div>
-
-<p>Just keep in mind that <code class="highlighter-rouge">p(n)</code> is the coefficient of <script type="math/tex">x^n</script> in <code class="highlighter-rouge">p</code>, not <script type="math/tex">p(n)</script> (i.e.,
-<script type="math/tex">p</script> evaluated at <script type="math/tex">n</script>) as you might expect to see. I can get away with this because I’m probably never
-going to evaluate these polynomials, I’m just going to treat them formally, as mathematical objects in their own right.
-(To get my terminology straight, as some commenters have pointed out, these objects are called
-<a href="http://en.wikipedia.org/wiki/Formal_power_series">formal power series</a>.)</p>
-
-
-    <a href="/2013/10/31/infinite-lazy-polynomials.html">Read more</a>
     <hr />
   
 
