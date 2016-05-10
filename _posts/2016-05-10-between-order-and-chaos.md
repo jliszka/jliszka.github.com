@@ -222,6 +222,8 @@ against each other. That is, we'll leave time out of it and just plot the set of
 
 Let's see what we get.
 
+<!-- more -->
+
 For most values of {%m%}a{%em%} and {%m%}b{%em%}, the system quickly finds a stable point.
 For {%m%}a = 2{%em%} and {%m%}b = 3{%em%}, it converges in on {%m%}r = \frac{1}{3}{%em%} and {%m%}f = \frac{1}{6}{%em%}.
 You can check that this is a fixed point of the recurrence.
