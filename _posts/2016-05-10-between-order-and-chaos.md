@@ -188,11 +188,10 @@ tags: []
   }
 </script>
 
-Consider a population of rabbits and foxes. Each generation, the number of rabbits and
-foxes changes according to a simple rule.
-
+Consider a population of rabbits and foxes.
 The number of rabbits {%m%}r{%em%} and the number of foxes {%m%}f{%em%} will range between 0 and 1, representing
 the percentage of some theoretical maximum population.
+Each generation, the number of rabbits and foxes changes according to a simple rule.
 
 The number of rabbits in generation {%m%}n+1{%em%}, based on the number of rabbits {%m%}r_n{%em%}
 and foxes {%m%}f_n{%em%} in the previous generation {%m%}n{%em%}, is given by:
