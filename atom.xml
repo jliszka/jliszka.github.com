@@ -4,7 +4,7 @@
  <title>A Gentleman and a Scala</title>
  <link href="http://jliszka.github.io/" rel="self"/>
  <link href="http://jliszka.github.io"/>
- <updated>2016-05-10T20:29:10+00:00</updated>
+ <updated>2016-05-11T15:31:26+00:00</updated>
  <id>http://jliszka.github.io</id>
  <author>
    <name>Jason Liszka</name>
@@ -201,11 +201,10 @@
   }
 &lt;/script&gt;
 
-&lt;p&gt;Consider a population of rabbits and foxes. Each generation, the number of rabbits and
-foxes changes according to a simple rule.&lt;/p&gt;
-
-&lt;p&gt;The number of rabbits &lt;script type=&quot;math/tex&quot;&gt;r&lt;/script&gt; and the number of foxes &lt;script type=&quot;math/tex&quot;&gt;f&lt;/script&gt; will range between 0 and 1, representing
-the percentage of some theoretical maximum population.&lt;/p&gt;
+&lt;p&gt;Consider a population of rabbits and foxes.
+The number of rabbits &lt;script type=&quot;math/tex&quot;&gt;r&lt;/script&gt; and the number of foxes &lt;script type=&quot;math/tex&quot;&gt;f&lt;/script&gt; will range between 0 and 1, representing
+the percentage of some theoretical maximum population.
+Each generation, the number of rabbits and foxes changes according to a simple rule.&lt;/p&gt;
 
 &lt;p&gt;The number of rabbits in generation &lt;script type=&quot;math/tex&quot;&gt;n+1&lt;/script&gt;, based on the number of rabbits &lt;script type=&quot;math/tex&quot;&gt;r_n&lt;/script&gt;
 and foxes &lt;script type=&quot;math/tex&quot;&gt;f_n&lt;/script&gt; in the previous generation &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt;, is given by:&lt;/p&gt;
