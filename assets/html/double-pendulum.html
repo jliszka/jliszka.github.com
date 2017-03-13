@@ -5,7 +5,14 @@
  <canvas id="layer2" width="800" height="800"
    style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
 </div>
-<div style="font-family: monospace;">
+<div style="font-family: monospace;position: relative; z-index: 2;">
+  <div>
+    m<sub>1</sub> = <input id="m1" size="3" value="2"/>
+    m<sub>2</sub> = <input id="m2" size="3" value="1"/>
+    r<sub>1</sub> = <input id="r1" size="3" value="2"/>
+    r<sub>2</sub> = <input id="r2" size="3" value="1"/>
+    <input type="button" onclick="reset()" value="reset"/>
+  </div>
   <div>E<sub>&nbsp;</sub> = <span id="e"></span></div>
   <div>T<sub>1</sub> = <span id="t1"></span></div>
   <div>V<sub>1</sub> = <span id="v1"></span></div>
@@ -44,6 +51,18 @@ var dtheta1 = 0;
 var dtheta2 = 0;
 var dt = 0.003;
 var g = 9.81;
+
+function reset() {
+  m1 = parseFloat(document.getElementById("m1").value);
+  m2 = parseFloat(document.getElementById("m2").value);
+  r1 = parseFloat(document.getElementById("r1").value);
+  r2 = parseFloat(document.getElementById("r2").value);
+  theta1 = 0;
+  theta2 = - tau / 8;
+  dtheta1 = 0;
+  dtheta2 = 0;
+  ctx1.clearRect(0, 0, 800, 800);
+}
 
 function step() {
   theta1 += dt * dtheta1;
