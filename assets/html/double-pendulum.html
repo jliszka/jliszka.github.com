@@ -1,0 +1,103 @@
+
+<div style="position: relative;">
+ <canvas id="layer1" width="800" height="800"
+   style="position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
+ <canvas id="layer2" width="800" height="800"
+   style="position: absolute; left: 0; top: 0; z-index: 1;"></canvas>
+</div>
+<div style="font-family: monospace;">
+  <div>E<sub>&nbsp;</sub> = <span id="e"></span></div>
+  <div>T<sub>1</sub> = <span id="t1"></span></div>
+  <div>V<sub>1</sub> = <span id="v1"></span></div>
+  <div>T<sub>2</sub> = <span id="t2"></span></div>
+  <div>V<sub>2</sub> = <span id="v2"></span></div>
+</div>
+
+<script type="text/javascript">
+
+var $e = document.getElementById("e");
+var $t1 = document.getElementById("t1");
+var $v1 = document.getElementById("v1");
+var $t2 = document.getElementById("t2");
+var $v2 = document.getElementById("v2");
+
+var layer1 = document.getElementById("layer1");
+var ctx1 = layer1.getContext("2d");
+ctx1.fillStyle = "rgba(255, 0, 0, 0.3)";
+
+var layer2 = document.getElementById("layer2");
+var ctx = layer2.getContext("2d");
+ctx.fillStyle = "#000";
+
+var cos = Math.cos;
+var sin = Math.sin;
+
+var tau = Math.PI * 2;
+var r1 = 2;
+var r2 = 1;
+var m1 = 2;
+var m2 = 1;
+var M = m2 / (m1 + m2);
+var theta1 = 0;
+var theta2 = - tau / 8;
+var dtheta1 = 0;
+var dtheta2 = 0;
+var dt = 0.003;
+var g = 9.81;
+
+function step() {
+  theta1 += dt * dtheta1;
+  theta2 += dt * dtheta2;
+
+  var t1t2 = theta1 - theta2;
+
+  var ddtheta1N = g / r1 * cos(theta1) - M * (cos(t1t2) * (g / r1 * cos(theta2) + dtheta1 * dtheta1 * sin(t1t2)) + r2 / r1 * dtheta2 * dtheta2 * sin(t1t2));
+  var ddtheta1D = 1 - M * cos(t1t2) * cos(t1t2);
+  var ddtheta1 = ddtheta1N / ddtheta1D;
+  var ddtheta2 = g / r2 * cos(theta2) - r1 / r2 * ddtheta1 * cos(t1t2) + r1 / r2 * dtheta1 * dtheta1 * sin(t1t2);
+
+  dtheta1 += dt * ddtheta1;
+  dtheta2 += dt * ddtheta2;
+
+  var e1t = 0.5 * m1 * r1 * r1 * dtheta1 * dtheta1;
+  var e1v = - (m1 * g * r1 * Math.sin(theta1));
+  var e2t = 0.5 * m2 * (r1 * r1 * dtheta1 * dtheta1 + r2 * r2 * dtheta2 * dtheta2 + 2 * r1 * r2 * dtheta1 * dtheta2 * Math.cos(t1t2));
+  var e2v = - (m2 * g * (r1 * Math.sin(theta1) + r2 * Math.sin(theta2)));
+  $t1.innerText = e1t;
+  $v1.innerText = e1v;
+  $t2.innerText = e2t;
+  $v2.innerText = e2v;
+  $e.innerText = e1t + e1v + e2t + e2v;
+
+  draw(theta1, theta2, r1 * 100, r2 * 100);
+}
+
+window.setInterval(step, 1);
+
+function draw(theta1, theta2, r1, r2) {
+	ctx.clearRect(0, 0, 800, 800);
+  ctx.beginPath();
+  ctx.moveTo(400, 300);
+  var x1 = r1 * Math.cos(theta1) + 400;
+  var y1 = r1 * Math.sin(theta1) + 300;
+  ctx.lineTo(x1, y1);
+  var x2 = x1 + r2 * Math.cos(theta2);
+  var y2 = y1 + r2 * Math.sin(theta2);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(x1, y1, Math.sqrt(m1 * 50), 0, tau);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(x2, y2, Math.sqrt(m2 * 50), 0, tau);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx1.fillRect(x2, y2, 1, 1);
+}
+
+
+</script>
