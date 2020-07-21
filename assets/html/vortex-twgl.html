@@ -238,7 +238,7 @@ function setColor(color) {
 }
 
 function colorAngle(i, j) {
-  return Math.round((pts[i][j] + tau*2) / tau * 2 * 360) % 360;
+  return Math.round((pts[i][j] % tau + tau) / tau * 2 * 360) % 360;
 }
 
 function colorSpeed(i, j) {
