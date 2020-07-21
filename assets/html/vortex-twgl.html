@@ -288,7 +288,7 @@ function iter() {
   if (heatLevel > 0) {
     for (var i = 0; i < N; i++) {
       for (var j = 0; j < N; j++) {
-        pts[i][j] += gaussian() * heatLevel / 150;
+        pts[i][j] += gaussian() * heatLevel / 100;
       }
     }
   }
