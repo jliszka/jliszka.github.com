@@ -1,0 +1,419 @@
+<script src="https://twgljs.org/dist/2.x/twgl.min.js"></script>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+  precision highp float;
+  attribute vec3 a_point;
+  attribute vec3 a_color;
+  varying vec3 v_color;
+
+  void main() {
+    v_color = a_color;
+    gl_Position = vec4(a_point, 1.0);
+  }
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+  precision highp float;
+  varying vec3 v_color;
+  void main() {
+    gl_FragColor = vec4(v_color, 1.0);
+  }
+</script>
+
+
+<canvas id="canvas2" width="900" height="900" style="position: absolute; z-index: 2"></canvas>
+<canvas id="canvas" width="900" height="900" style="position: relative; float:left; margin-right: 5px"></canvas>
+<div>
+  <!-- <button onclick="step()" style="margin:5px">step</button><br/> -->
+  <button onclick="start()" style="margin:5px">start</button><br/>
+  <button onclick="randomize()" style="margin:5px">randomize</button><br/>
+  Temperature: <input type="range" min="0" max="100" value="0" onchange="heat(this.value)" style="margin:5px"/><br/>
+  <div style="margin:15px">
+    Color:<br/>
+    <input type="radio" name="color" onclick="setColor(0)" checked>angle</input><br/>
+    <input type="radio" name="color" onclick="setColor(1)">speed</input><br/>
+    <input type="radio" name="color" onclick="setColor(2)">curl</input><br/>
+    <input type="radio" name="color" onclick="setColor(3)">div</input><br/>
+    <input type="radio" name="color" onclick="setColor(4)">winding</input><br/>
+  </div>
+  <div style="margin:15px">
+    Size:<br/>
+    <input type="radio" name="size" onclick="setSize(50)">50</input><br/>
+    <input type="radio" name="size" onclick="setSize(100)" checked>100</input><br/>
+    <input type="radio" name="size" onclick="setSize(150)">150</input><br/>
+    <input type="radio" name="size" onclick="setSize(180)">180</input><br/>
+  </div>
+  <br/><br/>
+  Iteration time: <span id="iterTime">0</span> ms
+  <br/>
+  Iterations: <span id="iters">0</span>/s
+  <br/>
+  Render: <span id="render">0</span> fps
+</div>
+
+<script type="text/javascript">
+
+var canvas = document.getElementById("canvas");
+var gl = twgl.getWebGLContext(canvas);
+
+var canvas2 = document.getElementById("canvas2");
+var ctx2 = canvas2.getContext("2d");
+ctx2.fillStyle = "black";
+
+var renderSpan = document.getElementById("render");
+var itersSpan = document.getElementById("iters");
+var iterTimeSpan = document.getElementById("iterTime");
+
+var tau = Math.PI * 2;
+
+var randomize;
+var running;
+var heatLevel = 0;
+var interval;
+var colorFn = colorAngle;
+
+var N = 100;
+var WIDTH = 900;
+var LEN = WIDTH / N;
+var VLEN = 0.9;
+var pts = [];
+var pts2 = [];
+
+function setSize(n) {
+  N = n;
+  LEN = WIDTH / N;
+  init();
+  running = false;
+}
+
+canvas2.onclick = function(e) {
+  var x0 = e.offsetX / LEN - 0.5;
+  var y0 = (WIDTH - e.offsetY) / LEN - 0.5;
+
+  var x1 = (x0 + N/2) % N;
+  var y1 = y0;
+
+  for (var x = 0; x < N; x++) {
+    for (var y = 0; y < N; y++) {
+      var dx0 = smallest([
+        dist(x0, x),
+        dist(x0 + N, x),
+        dist(x0 - N, x),
+      ]);
+      var dy0 = smallest([
+        dist(y0, y),
+        dist(y0 + N, y),
+        dist(y0 - N, y),
+      ]);
+      var dx1 = smallest([
+        dist(x1, x),
+        dist(x1 + N, x),
+        dist(x1 - N, x),
+      ]);
+      var dy1 = smallest([
+        dist(y1, y),
+        dist(y1 + N, y),
+        dist(y1 - N, y),
+      ]);
+      var d0 = dx0 * dx0 + dy0 * dy0;
+      var d1 = dx1 * dx1 + dy1 * dy1;
+      var dx = dx0 / d0 - dx1 / d1;
+      var dy = dy0 / d0 + dy1 / d1;
+      var t = Math.atan2(dx, dy * (e.shiftKey ? 1 : -1)) + dy0 / N * tau / 2;
+      pts[x][y] += t;
+    }
+  }
+  draw();
+}
+
+function dist(x0, x) {
+  var dx = x - x0;
+  return { dx: dx, d: Math.abs(dx) };
+}
+
+function smallest(ds) {
+  var j = 0;
+  for (var i = 1; i < ds.length; i++) {
+    if (ds[i].d < ds[j].d) {
+      j = i;
+    }
+  }
+  return ds[j].dx;
+}
+
+var ptsData;  
+var colorData;
+var programInfo;
+var bufferInfo;
+
+function init() {
+  pts = [];
+  pts2 = [];
+  for (var i = 0; i < N; i++) {
+    pts.push([]);
+    pts2.push([]);
+    for (var j = 0; j < N; j++) {
+      pts[i].push(0);
+      pts2[i].push(0);
+    }
+  }
+
+  programInfo = twgl.createProgramInfo(gl, ["vertex-shader", "fragment-shader"]);
+
+  ptsData = new Float32Array(N * N * 3 * 2);
+  colorData = new Float32Array(N * N * 3 * 2);
+
+  bufferInfo = twgl.createBufferInfoFromArrays(gl, {
+    a_point: { numComponents: 3, data: ptsData },
+    a_color: { numComponents: 3, data: colorData },
+  });
+
+  twgl.resizeCanvasToDisplaySize(gl.canvas);
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+  gl.useProgram(programInfo.program);
+  twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+
+  draw();
+  draw2();
+}
+
+function draw() {
+  for (var i = 0; i < N; i++) {
+    for (var j = 0; j < N; j++) {
+      var k = i * N * 3 * 2 + j * 3 * 2;
+      var x0 = (i + 0.5) / N * 2 - 1;
+      var y0 = (j + 0.5) / N * 2 - 1;
+      var x1 = x0 + VLEN * (2 / N) * Math.cos(pts[i][j]);
+      var y1 = y0 + VLEN * (2 / N) * Math.sin(pts[i][j]);
+      ptsData[k] = x0;
+      ptsData[k+1] = y0;
+      ptsData[k+3] = x1;
+      ptsData[k+4] = y1;
+
+      var h = colorFn(i, j);
+
+      var x = 1 - Math.abs((h / 60) % 2 - 1);
+      var idx = Math.floor(h / 60);
+      var r = [1, x, 0, 0, x, 1][idx];
+      var g = [x, 1, 1, x, 0, 0][idx];
+      var b = [0, 0, x, 1, 1, x][idx];
+      colorData[k] = r;
+      colorData[k+1] = g;
+      colorData[k+2] = b;
+      colorData[k+3] = r;
+      colorData[k+4] = g;
+      colorData[k+5] = b;
+    }
+  }
+
+  twgl.setAttribInfoBufferFromArray(gl, bufferInfo.attribs.a_point, ptsData);
+  twgl.setAttribInfoBufferFromArray(gl, bufferInfo.attribs.a_color, colorData);
+
+  twgl.drawBufferInfo(gl, bufferInfo, gl.LINES);
+}
+
+function draw2() {
+  ctx2.clearRect(0, 0, WIDTH, WIDTH);
+  for (var i = 0; i < N; i++) {
+    for (var j = 0; j < N; j++) {
+      var x = ((i + 0.5) * LEN) | 0;
+      var y = ((j + 0.5) * LEN) | 0;
+      ctx2.fillRect(x, y, 1, 1);
+    }
+  }
+}
+
+function setColor(color) {
+  if (color == 0)
+    colorFn = colorAngle;
+  else if (color == 1)
+    colorFn = colorSpeed;
+  else if (color == 2)
+    colorFn = colorCurl;
+  else if (color == 3)
+    colorFn = colorDiv;
+  else if (color == 4)
+    colorFn = colorWinding;
+  draw();
+}
+
+function colorAngle(i, j) {
+  return Math.round((pts[i][j] + tau*2) / tau * 2 * 360) % 360;
+}
+
+function colorSpeed(i, j) {
+  var diff = Math.sqrt(Math.min(
+    0.01, 
+    Math.abs(pts[i][j] - pts2[i][j]),
+    Math.abs(pts[i][j] - pts2[i][j] + tau),
+    Math.abs(pts[i][j] - pts2[i][j] - tau),
+  ));
+  return (360 + 240 - Math.round(300 * diff / 0.1)) % 360;
+}
+
+function colorCurl(i, j) {
+  var c = 0;
+  c += Math.cos(pts[(i+1)%N][j] - tau/4);
+  c += Math.cos(pts[i][(j+1+N)%N] - tau/2);
+  c += Math.cos(pts[(i-1+N)%N][j]- 3*tau/4);
+  c += Math.cos(pts[i][(j-1+N)%N] - 0);
+  return Math.round((c/8 * 360 + 180) % 360);
+}
+
+function colorDiv(i, j) {
+  var c = 0;
+  c += Math.sin(pts[(i+1)%N][j] - tau/4);
+  c += Math.sin(pts[i][(j+1+N)%N] - tau/2);
+  c += Math.sin(pts[(i-1+N)%N][j]- 3*tau/4);
+  c += Math.sin(pts[i][(j-1+N)%N] - 0);
+  return Math.round((c/8 * 360 + 180) % 360);
+}
+
+function colorWinding(i, j) {
+  var c = 0;
+  c += Math.sin(pts[(i+1)%N][j] - pts[i][(j-1+N)%N]) / 4;
+  c += Math.sin(pts[i][(j+1+N)%N] - pts[(i+1)%N][j]) / 4;
+  c += Math.sin(pts[(i-1+N)%N][j] - pts[i][(j+1+N)%N]) / 4;
+  c += Math.sin(pts[i][(j-1+N)%N] - pts[(i-1+N)%N][j]) / 4;
+  c = Math.sign(c) * Math.pow(Math.abs(c), 0.1);
+  return Math.round((c/2 * 240 + 120) % 360);
+}
+
+
+var it = 0;
+function iter() {
+  var t0 = performance.now();
+  it++;
+
+  if (heatLevel > 0) {
+    for (var i = 0; i < N; i++) {
+      for (var j = 0; j < N; j++) {
+        pts[i][j] += gaussian() * heatLevel / 150;
+      }
+    }
+  }
+
+  for (var i = 0; i < N; i++) {
+    for (var j = 0; j < N; j++) {
+      pts2[i][j] = gradCos(i, j);
+    }
+  }
+
+  var temp = pts;
+  pts = pts2;
+  pts2 = temp;
+  
+  var t1 = performance.now();
+  perf[it % 100] = t1 - t0;
+}
+
+function grad1(i, j) {
+  var tx = 0;
+  var ty = 0;
+  for (var a = -1; a <= 1; a++) {
+    for (var b = -1; b <= 1; b++) {
+      if (a == 0 && b == 0) continue;
+      var ii = (i + a + N) % N;
+      var jj = (j + b + N) % N;
+      var t = pts[ii][jj];
+      tx += Math.cos(t);
+      ty += Math.sin(t);
+    }
+  }
+  //tx += (Math.sin(pts[i][j]) - Math.cos(pts2[i][j])) * 1;
+  //ty += (Math.sin(pts[i][j]) - Math.cos(pts2[i][j])) * 1;
+  tx += (Math.cos(pts[i][j]) - Math.cos(pts2[i][j])) * 1;
+  ty += (Math.sin(pts[i][j]) - Math.sin(pts2[i][j])) * 1;
+  return Math.atan2(ty, tx);
+}
+
+function gradCos(i, j) {
+  var g = 0;
+  var t = pts[i][j];
+  var n = 0;
+  var W = 1;
+  for (var a = -W; a <= W; a++) {
+    for (var b = -W; b <= W; b++) {
+      if (a == 0 && b == 0) continue;
+      var ii = (i + a + N) % N;
+      var jj = (j + b + N) % N;
+      var d = 1 / (a*a + b*b)
+      g += Math.sin(pts[ii][jj] - t) * d;
+      n += d;
+    }
+  }
+  return pts[i][j] + g / n;
+}
+
+function gaussian() {
+  var u1 = Math.random();
+  var u2 = Math.random();
+  return Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(tau * u2);
+}
+
+function step() {
+  iter();
+  draw();
+}
+
+var perf = [0];
+function p() {
+  total = 0;
+  for (var i = 0; i < perf.length; i++) {
+    total += perf[i];
+  }
+  return total/100;
+}
+
+function start() {
+  if (!running) {
+    running = true;
+    interval = window.setInterval(iter, 0);
+    renderLoop();
+  } else {
+    running = false;
+    window.clearInterval(interval);
+  }
+}
+
+var frames = 0;
+function renderLoop() {
+  frames++;
+  if (frames % 2 == 0) {
+    draw();
+  }
+  if (running) {
+    requestAnimationFrame(renderLoop);
+  }
+}
+
+var lastFrames = 0;
+var lastIter = 0;
+function fps() {
+  renderSpan.innerText = ((frames - lastFrames) / 2) | 0;
+  itersSpan.innerText = it - lastIter;
+  iterTimeSpan.innerText = p().toFixed(2);
+  lastFrames = frames;
+  lastIter = it;
+}
+
+window.setInterval(fps, 1000);
+
+function randomize() {
+  for (var i = 0; i < N; i++) {
+    for (var j = 0; j < N; j++) {
+      pts[i][j] = Math.random() * tau - tau/2;
+    }
+  }
+  draw();
+}
+
+function heat(level) {
+  heatLevel = level;
+}
+
+init();
+
+</script>
+
+
